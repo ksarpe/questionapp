@@ -1,0 +1,151 @@
+import 'package:flutter/material.dart';
+
+import 'styled_question_text.dart';
+
+/// Builds a question one word at a time: each word drops in from above and
+/// settles into place with a small bounce, so the sentence assembles itself
+/// left-to-right, top-to-bottom.
+///
+/// Whenever [text] changes the build replays from scratch. [onWordLanded] fires
+/// once for each word the moment it settles — the natural seam for adding a
+/// haptic tick per landing later on.
+class FallingWordsText extends StatefulWidget {
+  const FallingWordsText(this.text, {super.key, this.onWordLanded});
+
+  final String text;
+
+  /// Called once per word as it lands. Intended for haptic feedback.
+  final VoidCallback? onWordLanded;
+
+  @override
+  State<FallingWordsText> createState() => _FallingWordsTextState();
+}
+
+class _FallingWordsTextState extends State<FallingWordsText>
+    with SingleTickerProviderStateMixin {
+  // How far each word travels (logical px) and how it lands.
+  static const double _dropDistance = 180;
+  static const Duration _wordDuration = Duration(milliseconds: 380);
+  static const Duration _stagger = Duration(milliseconds: 90);
+
+  late final AnimationController _controller;
+  List<String> _words = const [];
+
+  /// Words whose landing callback has already fired this run.
+  int _landed = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(vsync: this);
+    _controller.addListener(_emitLandings);
+    _play(widget.text);
+  }
+
+  @override
+  void didUpdateWidget(FallingWordsText oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.text != widget.text) _play(widget.text);
+  }
+
+  @override
+  void dispose() {
+    _controller
+      ..removeListener(_emitLandings)
+      ..dispose();
+    super.dispose();
+  }
+
+  /// (Re)start the staggered build for [text].
+  void _play(String text) {
+    _words = text.trim().split(RegExp(r'\s+'));
+    _landed = 0;
+    final count = _words.length;
+    // Total span covers every word's stagger offset plus one full word fall.
+    _controller.duration = _stagger * (count - 1) + _wordDuration;
+    _controller.forward(from: 0);
+  }
+
+  /// Fraction of the whole timeline at which word [i] starts and finishes.
+  ({double start, double end}) _window(int i) {
+    final total = _controller.duration!.inMilliseconds;
+    final start = (_stagger.inMilliseconds * i) / total;
+    final end =
+        (_stagger.inMilliseconds * i + _wordDuration.inMilliseconds) / total;
+    return (start: start, end: end);
+  }
+
+  /// Fire [onWordLanded] for any word that has just reached the end of its
+  /// window since the last tick.
+  void _emitLandings() {
+    if (widget.onWordLanded == null) return;
+    final t = _controller.value;
+    var landed = _landed;
+    while (landed < _words.length && t >= _window(landed).end) {
+      widget.onWordLanded!.call();
+      landed++;
+    }
+    _landed = landed;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      alignment: WrapAlignment.center,
+      runAlignment: WrapAlignment.center,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      spacing: 14,
+      runSpacing: 2,
+      children: [
+        for (var i = 0; i < _words.length; i++)
+          _FallingWord(
+            word: _words[i],
+            controller: _controller,
+            window: _window(i),
+            dropDistance: _dropDistance,
+          ),
+      ],
+    );
+  }
+}
+
+/// One word, translated down from above and faded in across its slice of the
+/// shared timeline.
+class _FallingWord extends StatelessWidget {
+  const _FallingWord({
+    required this.word,
+    required this.controller,
+    required this.window,
+    required this.dropDistance,
+  });
+
+  final String word;
+  final AnimationController controller;
+  final ({double start, double end}) window;
+  final double dropDistance;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: controller,
+      builder: (context, child) {
+        final span = (window.end - window.start);
+        final raw = span <= 0
+            ? 1.0
+            : ((controller.value - window.start) / span).clamp(0.0, 1.0);
+        // easeOutBack overshoots past 1, which reads as a tiny landing bounce.
+        final eased = Curves.easeOutBack.transform(raw);
+        // Starts [dropDistance] above its resting spot, falls to 0 (and a hair
+        // below, then up, thanks to the overshoot).
+        final dy = -(1 - eased) * dropDistance;
+        // Fade in a little faster than the fall so the word is solid as it lands.
+        final opacity = (raw * 1.4).clamp(0.0, 1.0);
+        return Transform.translate(
+          offset: Offset(0, dy),
+          child: Opacity(opacity: opacity, child: child),
+        );
+      },
+      child: StyledWord(word),
+    );
+  }
+}
