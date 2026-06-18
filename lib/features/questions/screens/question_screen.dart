@@ -6,7 +6,8 @@ import '../../account/providers/session_providers.dart';
 import '../../monetization/providers/monetization_providers.dart';
 import '../../settings/screens/settings_screen.dart';
 import '../providers/question_providers.dart';
-import '../widgets/hint_handle.dart';
+import '../widgets/daily_badge.dart';
+import '../widgets/go_deeper_button.dart';
 import '../widgets/smaczki_panel.dart';
 import '../widgets/wind_question_view.dart';
 
@@ -17,22 +18,32 @@ class QuestionScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final questions = ref.watch(questionsProvider);
-
     // Kick off silent anonymous auth + entitlement loading at launch, and start
     // pre-loading a rewarded ad so the unlock sheet is responsive the first time
     // a free user is gated. Reading them here is enough to instantiate them; the
-    // screen renders regardless of their state (the first question is free).
+    // daily question every user opens to is free.
     ref.watch(sessionProvider);
     ref.watch(rewardedAdServiceProvider);
 
+    // The deck drives the body: it stays empty until today's daily resolves, so
+    // every user opens to the daily rather than a flash of the pool. Watching it
+    // here also kicks off the daily fetch at launch, alongside the question pool.
+    final questionsError = ref.watch(questionsProvider).error;
+    final deck = ref.watch(questionDeckProvider);
+
     return Scaffold(
-      // The "Smaczki" panel slides in from the right, opened by the hand handle.
-      endDrawer: const SmaczkiPanel(),
       // Let the body fill the whole screen so the question centres against the
       // true midpoint; the (transparent) app bar floats over the top.
       extendBodyBehindAppBar: true,
       appBar: AppBar(
+        // "Daily" badge in the top-left, facing the settings gear. Wider than
+        // the default leading slot so the localized label is not clipped; the
+        // badge hides itself unless the daily question is the one on screen.
+        leadingWidth: 180,
+        leading: const Padding(
+          padding: EdgeInsets.only(left: 12),
+          child: Align(alignment: Alignment.centerLeft, child: DailyBadge()),
+        ),
         // Settings gear in the top-right corner.
         actions: [
           IconButton(
@@ -44,32 +55,46 @@ class QuestionScreen extends ConsumerWidget {
           ),
         ],
       ),
-      body: questions.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Text(
-              'Could not load questions.\n$e',
-              textAlign: TextAlign.center,
-              style: const TextStyle(color: AppTheme.subtle),
-            ),
-          ),
-        ),
-        data: (_) => const _QuestionBody(),
-      ),
+      body: questionsError != null
+          ? Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Text(
+                  'Could not load questions.\n$questionsError',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(color: AppTheme.subtle),
+                ),
+              ),
+            )
+          : deck.isEmpty
+          ? const Center(child: CircularProgressIndicator())
+          : const _QuestionBody(),
     );
   }
 }
 
-class _QuestionBody extends StatelessWidget {
+class _QuestionBody extends ConsumerWidget {
   const _QuestionBody();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Which question's smaczki the "go deeper" panel loads. The body only
+    // renders once the deck is ready, so this is non-null in practice.
+    final questionId = ref.watch(currentQuestionProvider)?.id;
+
+    // Warm the smaczki for the visible question in the background, so the
+    // "go deeper" panel opens straight to content instead of a spinner. The
+    // result is ignored here — the panel reads the same, now-resolved provider
+    // (FutureProvider.family caches per question id). Each swipe re-warms the
+    // newly visible question.
+    if (questionId != null) {
+      ref.watch(smaczkiProvider(questionId));
+    }
+
     // The question is centred against the FULL screen (no SafeArea around it),
     // so the app bar and system insets don't nudge it off-centre. Only the
-    // overlays — the hand handle and the swipe hint — respect the safe area.
+    // bottom overlay — the swipe hint and the "go deeper" button — respects the
+    // safe area.
     return Stack(
       children: [
         const Positioned.fill(
@@ -78,20 +103,28 @@ class _QuestionBody extends StatelessWidget {
             child: Center(child: WindQuestionView()),
           ),
         ),
-        // Hand handle poking out of the right edge, just above the question.
-        // Tap it or pull it left to open the "Smaczki" panel.
-        const SafeArea(
-          child: Align(alignment: Alignment(1, -0.5), child: HintHandle()),
-        ),
-        // Subtle hint that questions are swipeable.
-        const SafeArea(
+        SafeArea(
           child: Align(
             alignment: Alignment.bottomCenter,
             child: Padding(
-              padding: EdgeInsets.only(bottom: 16),
-              child: Text(
-                'Swipe for the next question',
-                style: TextStyle(color: AppTheme.subtle, fontSize: 13),
+              padding: const EdgeInsets.only(bottom: 20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Subtle hint that questions are swipeable.
+                  const Text(
+                    'Przesuń, aby zobaczyć następne pytanie',
+                    style: TextStyle(color: AppTheme.subtle, fontSize: 13),
+                  ),
+                  const SizedBox(height: 14),
+                  // The glowing "go deeper" pill opens the Smaczki panel for
+                  // the question currently on screen.
+                  GoDeeperButton(
+                    onTap: questionId == null
+                        ? () {}
+                        : () => showSmaczkiSheet(context, questionId),
+                  ),
+                ],
               ),
             ),
           ),

@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../core/config/app_config.dart';
@@ -63,17 +64,6 @@ class SupabaseService {
     await client.auth.signOut();
   }
 
-  static Future<void> sendEmailLink(String email) async {
-    if (!_initialised) {
-      throw StateError('Supabase is not configured.');
-    }
-
-    await client.auth.signInWithOtp(
-      email: email.trim(),
-      shouldCreateUser: false,
-    );
-  }
-
   static Future<void> signInWithPassword({
     required String email,
     required String password,
@@ -86,6 +76,45 @@ class SupabaseService {
       email: email.trim(),
       password: password,
     );
+  }
+
+  /// Signs in with Google via the native account picker, then exchanges the
+  /// Google ID token for a Supabase session. Returns null if the user cancels.
+  ///
+  /// First sign-in creates the account, so this covers both login and
+  /// registration.
+  static Future<User?> signInWithGoogle() async {
+    if (!_initialised) {
+      throw StateError('Supabase is not configured.');
+    }
+    if (AppConfig.googleServerClientId.isEmpty) {
+      throw StateError(
+        'Missing GOOGLE_SERVER_CLIENT_ID (the Google "Web" OAuth client id).',
+      );
+    }
+
+    final googleSignIn = GoogleSignIn(
+      serverClientId: AppConfig.googleServerClientId,
+    );
+    final account = await googleSignIn.signIn();
+    if (account == null) return null; // user cancelled
+
+    final auth = await account.authentication;
+    final idToken = auth.idToken;
+    final accessToken = auth.accessToken;
+    if (accessToken == null) {
+      throw const AuthException('Google did not return an access token.');
+    }
+    if (idToken == null) {
+      throw const AuthException('Google did not return an ID token.');
+    }
+
+    final response = await client.auth.signInWithIdToken(
+      provider: OAuthProvider.google,
+      idToken: idToken,
+      accessToken: accessToken,
+    );
+    return response.user;
   }
 
   /// Creates a permanent email/password account.

@@ -21,8 +21,10 @@ android {
         applicationId = "com.aknsoftware.questionapp"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        // google_mobile_ads requires minSdk 23; raise the Flutter default if lower.
-        minSdk = maxOf(flutter.minSdkVersion, 23)
+        // RevenueCat's paywall UI (purchases_ui_flutter) requires minSdk 24;
+        // this also covers google_mobile_ads' minSdk 23. Raise the Flutter
+        // default if it is lower.
+        minSdk = maxOf(flutter.minSdkVersion, 24)
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName

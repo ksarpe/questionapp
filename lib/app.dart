@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'core/theme/app_theme.dart';
 import 'features/questions/screens/question_screen.dart';
@@ -13,6 +14,17 @@ class QuestionApp extends StatelessWidget {
       title: 'Spark',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.dark,
+      // Supported UI languages. The device locale picks one (falls back to en);
+      // widgets read it via Localizations.localeOf(context).
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('en'),
+        Locale('pl'),
+      ],
       home: const QuestionScreen(),
     );
   }

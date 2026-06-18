@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../core/config/app_config.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../services/supabase_service.dart';
 import '../providers/session_providers.dart';
 
-enum _AuthMode { emailLink, password, register }
+enum _AuthMode { password, register }
 
 class AuthScreen extends ConsumerStatefulWidget {
   const AuthScreen({super.key});
@@ -21,7 +22,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
 
-  _AuthMode _mode = _AuthMode.emailLink;
+  _AuthMode _mode = _AuthMode.password;
   bool _isSubmitting = false;
   bool _obscurePassword = true;
 
@@ -37,6 +38,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
   Widget build(BuildContext context) {
     final session = ref.watch(sessionProvider).value;
     final isConfigured = SupabaseService.isInitialised;
+    final canUseGoogle = isConfigured && AppConfig.hasGoogleSignIn;
 
     return Scaffold(
       appBar: AppBar(title: const Text('Konto')),
@@ -78,6 +80,13 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                                 'Brakuje konfiguracji Supabase. Uruchom aplikację z SUPABASE_URL i SUPABASE_ANON_KEY.',
                           ),
                           const SizedBox(height: 14),
+                        ] else if (!AppConfig.hasGoogleSignIn) ...[
+                          const _Notice(
+                            icon: Icons.info_outline,
+                            text:
+                                'Brakuje GOOGLE_SERVER_CLIENT_ID, więc Google jest chwilowo wyłączone.',
+                          ),
+                          const SizedBox(height: 14),
                         ],
                         _AuthFormPanel(
                           formKey: _formKey,
@@ -97,6 +106,44 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                           validateEmail: _validateEmail,
                           validatePassword: _validatePassword,
                           validateConfirmPassword: _validateConfirmPassword,
+                        ),
+                        const SizedBox(height: 16),
+                        Row(
+                          children: [
+                            const Expanded(
+                              child: Divider(color: AppTheme.accent),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                              ),
+                              child: const Text(
+                                'lub',
+                                style: TextStyle(color: AppTheme.subtle),
+                              ),
+                            ),
+                            const Expanded(
+                              child: Divider(color: AppTheme.accent),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        SizedBox(
+                          height: 52,
+                          child: OutlinedButton.icon(
+                            onPressed: canUseGoogle && !_isSubmitting
+                                ? _signInWithGoogle
+                                : null,
+                            icon: const Icon(Icons.g_mobiledata, size: 30),
+                            label: const Text('Kontynuuj z Google'),
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: AppTheme.ink,
+                              side: const BorderSide(color: AppTheme.accent),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                          ),
                         ),
                         const SizedBox(height: 10),
                         _SecondaryActions(
@@ -120,13 +167,11 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
   }
 
   String get _submitLabel => switch (_mode) {
-    _AuthMode.emailLink => 'Wyślij link',
     _AuthMode.password => 'Zaloguj się',
     _AuthMode.register => 'Utwórz konto',
   };
 
   IconData get _submitIcon => switch (_mode) {
-    _AuthMode.emailLink => Icons.send_outlined,
     _AuthMode.password => Icons.login,
     _AuthMode.register => Icons.person_add_alt_1_outlined,
   };
@@ -168,10 +213,6 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
       final password = _passwordController.text;
 
       switch (_mode) {
-        case _AuthMode.emailLink:
-          await SupabaseService.sendEmailLink(email);
-          if (!mounted) return;
-          _showMessage('Link wysłany. Sprawdź skrzynkę.');
         case _AuthMode.password:
           await SupabaseService.signInWithPassword(
             email: email,
@@ -196,6 +237,25 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
             Navigator.of(context).pop();
           }
       }
+    } on AuthException catch (error) {
+      if (mounted) _showMessage(error.message);
+    } catch (error) {
+      if (mounted) _showMessage(error.toString());
+    } finally {
+      if (mounted) setState(() => _isSubmitting = false);
+    }
+  }
+
+  Future<void> _signInWithGoogle() async {
+    if (_isSubmitting) return;
+    setState(() => _isSubmitting = true);
+
+    try {
+      final user = await SupabaseService.signInWithGoogle();
+      if (user == null) return; // user cancelled the picker
+      await ref.read(sessionProvider.notifier).refresh();
+      if (!mounted) return;
+      Navigator.of(context).pop();
     } on AuthException catch (error) {
       if (mounted) _showMessage(error.message);
     } catch (error) {
@@ -297,22 +357,11 @@ class _AuthModeSelector extends StatelessWidget {
       children: [
         Expanded(
           child: _AuthModeButton(
-            mode: _AuthMode.emailLink,
-            selected: mode == _AuthMode.emailLink,
-            enabled: enabled,
-            icon: Icons.mark_email_read_outlined,
-            label: 'Link',
-            onTap: onChanged,
-          ),
-        ),
-        const SizedBox(width: 8),
-        Expanded(
-          child: _AuthModeButton(
             mode: _AuthMode.password,
             selected: mode == _AuthMode.password,
             enabled: enabled,
             icon: Icons.lock_open_outlined,
-            label: 'Hasło',
+            label: 'Login',
             onTap: onChanged,
           ),
         ),
@@ -323,7 +372,7 @@ class _AuthModeSelector extends StatelessWidget {
             selected: mode == _AuthMode.register,
             enabled: enabled,
             icon: Icons.person_add_alt_1_outlined,
-            label: 'Nowe',
+            label: 'Rejestracja',
             onTap: onChanged,
           ),
         ),
@@ -443,54 +492,47 @@ class _AuthFormPanel extends StatelessWidget {
                 controller: emailController,
                 enabled: !isSubmitting,
                 keyboardType: TextInputType.emailAddress,
-                textInputAction: mode == _AuthMode.emailLink
-                    ? TextInputAction.done
-                    : TextInputAction.next,
+                textInputAction: TextInputAction.next,
                 autofillHints: const [AutofillHints.email],
                 decoration: _inputDecoration(
                   label: 'Email',
                   icon: Icons.alternate_email,
                 ),
                 validator: validateEmail,
+              ),
+              const SizedBox(height: 14),
+              TextFormField(
+                controller: passwordController,
+                enabled: !isSubmitting,
+                obscureText: obscurePassword,
+                textInputAction: mode == _AuthMode.register
+                    ? TextInputAction.next
+                    : TextInputAction.done,
+                autofillHints: mode == _AuthMode.register
+                    ? const [AutofillHints.newPassword]
+                    : const [AutofillHints.password],
+                decoration:
+                    _inputDecoration(
+                      label: 'Hasło',
+                      icon: Icons.lock_outline,
+                    ).copyWith(
+                      suffixIcon: IconButton(
+                        tooltip: obscurePassword
+                            ? 'Pokaż hasło'
+                            : 'Ukryj hasło',
+                        icon: Icon(
+                          obscurePassword
+                              ? Icons.visibility_outlined
+                              : Icons.visibility_off_outlined,
+                        ),
+                        onPressed: onTogglePassword,
+                      ),
+                    ),
+                validator: validatePassword,
                 onFieldSubmitted: (_) {
-                  if (mode == _AuthMode.emailLink) onSubmit();
+                  if (mode == _AuthMode.password) onSubmit();
                 },
               ),
-              if (mode != _AuthMode.emailLink) ...[
-                const SizedBox(height: 14),
-                TextFormField(
-                  controller: passwordController,
-                  enabled: !isSubmitting,
-                  obscureText: obscurePassword,
-                  textInputAction: mode == _AuthMode.register
-                      ? TextInputAction.next
-                      : TextInputAction.done,
-                  autofillHints: mode == _AuthMode.register
-                      ? const [AutofillHints.newPassword]
-                      : const [AutofillHints.password],
-                  decoration:
-                      _inputDecoration(
-                        label: 'Hasło',
-                        icon: Icons.lock_outline,
-                      ).copyWith(
-                        suffixIcon: IconButton(
-                          tooltip: obscurePassword
-                              ? 'Pokaż hasło'
-                              : 'Ukryj hasło',
-                          icon: Icon(
-                            obscurePassword
-                                ? Icons.visibility_outlined
-                                : Icons.visibility_off_outlined,
-                          ),
-                          onPressed: onTogglePassword,
-                        ),
-                      ),
-                  validator: validatePassword,
-                  onFieldSubmitted: (_) {
-                    if (mode == _AuthMode.password) onSubmit();
-                  },
-                ),
-              ],
               if (mode == _AuthMode.register) ...[
                 const SizedBox(height: 14),
                 TextFormField(
@@ -564,18 +606,10 @@ class _SecondaryActions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final actions = switch (mode) {
-      _AuthMode.emailLink => [
-        _SecondaryAction('Mam hasło', _AuthMode.password),
-        _SecondaryAction('Utwórz konto', _AuthMode.register),
-      ],
       _AuthMode.password => [
-        _SecondaryAction('Wyślij link', _AuthMode.emailLink),
         _SecondaryAction('Utwórz konto', _AuthMode.register),
       ],
-      _AuthMode.register => [
-        _SecondaryAction('Mam konto', _AuthMode.password),
-        _SecondaryAction('Link na maila', _AuthMode.emailLink),
-      ],
+      _AuthMode.register => [_SecondaryAction('Mam konto', _AuthMode.password)],
     };
 
     return Wrap(

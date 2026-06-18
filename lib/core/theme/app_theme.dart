@@ -17,6 +17,9 @@ class AppTheme {
   /// Slightly darker grey used for raised/accent surfaces on the black canvas.
   static const Color accent = Color(0xFF2A2A2A);
 
+  /// Violet "spark" accent — used for the glowing "go deeper" affordance.
+  static const Color spark = Color(0xFF8B5CF6);
+
   static ThemeData get dark {
     final base = ThemeData(
       useMaterial3: true,

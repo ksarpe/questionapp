@@ -264,6 +264,26 @@ language sql stable set search_path = public as $$
 $$;
 
 -- ============================================================================
+-- 7b) PRIVILEGES
+-- RLS controls WHICH ROWS a role may see; it does NOT grant access to the table
+-- itself. Postgres needs an explicit GRANT *on top of* RLS, otherwise the role
+-- gets "permission denied" (42501) before any policy is even evaluated.
+-- ============================================================================
+grant select on public.questions             to anon, authenticated;
+grant select on public.question_translations to anon, authenticated;
+grant select on public.daily_questions       to anon, authenticated;
+
+grant select on public.profiles          to authenticated;
+grant select on public.subscriptions     to authenticated;
+grant select on public.ad_reward_events  to authenticated;
+grant select on public.question_unlocks  to anon, authenticated;
+
+grant execute on function public.get_daily_question(text, date) to anon, authenticated;
+grant execute on function public.is_premium(uuid)               to anon, authenticated;
+
+-- billing_events: intentionally NOT granted (service_role bypasses RLS/grants).
+
+-- ============================================================================
 -- 8) SEED DATA + PRE-FILL CALENDAR
 --    (runs as the migration owner, so RLS does not block these inserts)
 -- ============================================================================

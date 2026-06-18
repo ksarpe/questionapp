@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart' show PlatformException;
 import 'package:purchases_flutter/purchases_flutter.dart';
+import 'package:purchases_ui_flutter/purchases_ui_flutter.dart';
 
 import '../core/config/app_config.dart';
 
@@ -58,34 +58,45 @@ class PurchasesService {
     }
   }
 
-  /// Purchases the first package of the current offering and reports whether the
-  /// premium entitlement is active afterwards.
+  /// Presents the RevenueCat-hosted paywall — the one designed in the dashboard
+  /// and attached to the current offering — and reports whether the user ended
+  /// up with the premium entitlement (bought or restored).
   ///
-  /// This is a pragmatic stand-in for a full paywall: it buys the default
-  /// package so the unlock flow works end-to-end. A user-cancelled purchase is
-  /// treated as a quiet `false`, not an error.
-  static Future<bool> purchasePremium() async {
+  /// A cancelled / dismissed paywall is a quiet `false`, not an error.
+  static Future<bool> presentPaywall() async {
     if (!_configured) {
-      debugPrint('PurchasesService: not configured — cannot purchase.');
+      debugPrint('PurchasesService: not configured — cannot show paywall.');
       return false;
     }
     try {
-      final offerings = await Purchases.getOfferings();
-      final packages = offerings.current?.availablePackages ?? const [];
-      if (packages.isEmpty) {
-        debugPrint('PurchasesService.purchasePremium: no packages available.');
-        return false;
+      final result = await RevenueCatUI.presentPaywall();
+      switch (result) {
+        case PaywallResult.purchased:
+        case PaywallResult.restored:
+          // The entitlement is the source of truth — re-check it rather than
+          // trusting the result alone.
+          return await isPremium();
+        case PaywallResult.cancelled:
+        case PaywallResult.error:
+        case PaywallResult.notPresented:
+          return false;
       }
+    } catch (e) {
+      debugPrint('PurchasesService.presentPaywall failed: $e');
+      return false;
+    }
+  }
 
-      final result =
-          await Purchases.purchase(PurchaseParams.package(packages.first));
-      return result.customerInfo.entitlements.active
-          .containsKey(_premiumEntitlementId);
-    } on PlatformException catch (e) {
-      final code = PurchasesErrorHelper.getErrorCode(e);
-      if (code != PurchasesErrorCode.purchaseCancelledError) {
-        debugPrint('PurchasesService.purchasePremium failed: $e');
-      }
+  /// Restores a previous purchase (e.g. after reinstalling or switching device)
+  /// and reports whether premium is active afterwards. Required by the App
+  /// Store review guidelines for any app that sells a non-consumable.
+  static Future<bool> restorePurchases() async {
+    if (!_configured) return false;
+    try {
+      await Purchases.restorePurchases();
+      return await isPremium();
+    } catch (e) {
+      debugPrint('PurchasesService.restorePurchases failed: $e');
       return false;
     }
   }

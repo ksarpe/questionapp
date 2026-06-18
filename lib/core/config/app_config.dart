@@ -18,6 +18,11 @@ class AppConfig {
   static const String supabaseAnonKey =
       String.fromEnvironment('SUPABASE_ANON_KEY', defaultValue: '');
 
+  /// Google "Web" OAuth client id. Passed as serverClientId for native Google
+  /// sign-in so Google returns an ID token Supabase can verify.
+  static const String googleServerClientId =
+      String.fromEnvironment('GOOGLE_SERVER_CLIENT_ID', defaultValue: '');
+
   static const String revenueCatApiKey =
       String.fromEnvironment('REVENUECAT_API_KEY', defaultValue: '');
 
@@ -41,4 +46,6 @@ class AppConfig {
 
   static bool get hasSupabaseCredentials =>
       supabaseUrl.isNotEmpty && supabaseAnonKey.isNotEmpty;
+
+  static bool get hasGoogleSignIn => googleServerClientId.isNotEmpty;
 }

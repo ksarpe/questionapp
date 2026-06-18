@@ -76,7 +76,7 @@ class _UnlockQuestionSheetState extends ConsumerState<UnlockQuestionSheet> {
   Future<void> _getPremium() async {
     setState(() => _busy = true);
 
-    final purchased = await PurchasesService.purchasePremium();
+    final purchased = await PurchasesService.presentPaywall();
     if (!mounted) return;
 
     if (purchased) {
@@ -91,8 +91,9 @@ class _UnlockQuestionSheetState extends ConsumerState<UnlockQuestionSheet> {
   }
 
   void _notify(String message) {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(message)));
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
@@ -117,7 +118,11 @@ class _UnlockQuestionSheetState extends ConsumerState<UnlockQuestionSheet> {
             const Text(
               'Unlock the next question to keep the conversation going.',
               textAlign: TextAlign.center,
-              style: TextStyle(color: AppTheme.subtle, fontSize: 14, height: 1.3),
+              style: TextStyle(
+                color: AppTheme.subtle,
+                fontSize: 14,
+                height: 1.3,
+              ),
             ),
             const SizedBox(height: 24),
             _UnlockOption(
