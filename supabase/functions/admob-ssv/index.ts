@@ -3,17 +3,19 @@
 //
 // Google calls this endpoint (GET) after a user finishes a rewarded ad, with
 // signed query params. We verify the ECDSA signature against Google's public
-// keys, then log the (verified) reward — and optionally grant an unlock.
+// keys, then log the (verified) reward.
+//
+// This is now a PURE AUDIT log. Under the reveal-feed model the next question is
+// SERVER-PICKED (random unseen) by the reveal_ad_question RPC the client calls
+// once the reward fires — so there is no specific question id to attribute here,
+// and nothing for this callback to grant. It only records the verified reward.
 //
 // Setup
 //   1. AdMob: set the rewarded ad unit's SSV callback URL to
 //        https://<project-ref>.functions.supabase.co/admob-ssv
 //   2. In the Flutter app, when showing the ad, set the SSV options so we know
-//      WHO and WHICH question to unlock:
-//        ServerSideVerificationOptions(
-//          userId: supabaseUserId,          // -> ?user_id=
-//          customData: questionId,          // -> ?custom_data=
-//        )
+//      WHO earned the reward:
+//        ServerSideVerificationOptions(userId: supabaseUserId)  // -> ?user_id=
 //   3. Deploy (public, no JWT — Google calls it):
 //        supabase functions deploy admob-ssv --no-verify-jwt
 //
@@ -28,10 +30,6 @@ const supabase = createClient(
 );
 
 const KEYS_URL = "https://www.gstatic.com/admob/reward/verifier-keys.json";
-
-// Flip this on once the client passes custom_data = question_id and you're
-// ready to grant unlocks. The question_unlocks table already exists.
-const GRANT_UNLOCKS = false;
 
 // ---- Google public keys (cached ~24h) -------------------------------------
 let keyCache: { at: number; keys: Record<string, CryptoKey> } | null = null;
@@ -117,10 +115,11 @@ Deno.serve(async (req) => {
   // ---- verified -> read the reward fields ----
   const transactionId = p.get("transaction_id")!;
   const userId = p.get("user_id");          // we passed this when loading the ad
-  const questionId = p.get("custom_data");  // we passed the question id here
   const rewardAmount = p.get("reward_amount");
 
-  // Idempotent log (unique transaction_id)
+  // Idempotent audit log (unique transaction_id). The actual reveal is done
+  // client-side via reveal_ad_question, which server-picks a random unseen
+  // question — so there is nothing question-specific to grant here.
   const { error: logErr } = await supabase.from("ad_reward_events").insert({
     user_id: userId,
     ad_unit_id: p.get("ad_unit"),
@@ -132,15 +131,6 @@ Deno.serve(async (req) => {
   if (logErr && logErr.code !== "23505") { // 23505 = already processed
     console.error("ad_reward_events insert failed:", logErr);
     return new Response("DB error", { status: 500 });
-  }
-
-  // Grant the unlock (enable when ready — table already exists).
-  if (GRANT_UNLOCKS && userId && questionId) {
-    const { error: unlockErr } = await supabase.from("question_unlocks").upsert(
-      { user_id: userId, question_id: questionId, source: "ad" },
-      { onConflict: "user_id,question_id" },
-    );
-    if (unlockErr) console.error("question_unlocks upsert failed:", unlockErr);
   }
 
   return new Response("OK", { status: 200 });

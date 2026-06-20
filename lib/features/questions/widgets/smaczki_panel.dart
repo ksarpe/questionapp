@@ -260,8 +260,35 @@ class _LockedSmaczekCard extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 8),
-          const Icon(Icons.lock_outline, color: AppTheme.subtle, size: 18),
+          const _ProBadge(),
         ],
+      ),
+    );
+  }
+}
+
+/// Small yellow "PRO" pill marking a locked smaczek.
+class _ProBadge extends StatelessWidget {
+  const _ProBadge();
+
+  static const Color _gold = Color(0xFFF5C518);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+      decoration: BoxDecoration(
+        color: _gold.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: const Text(
+        'PRO',
+        style: TextStyle(
+          color: _gold,
+          fontSize: 11,
+          fontWeight: FontWeight.w800,
+          letterSpacing: 0.5,
+        ),
       ),
     );
   }
@@ -296,64 +323,39 @@ class _IndexDot extends StatelessWidget {
   }
 }
 
-/// The "unlock everything with Premium" button. A null [onTap] (while busy)
-/// disables it and shows a spinner.
+/// A discreet "go PRO" link shown when some smaczki are locked. A null [onTap]
+/// (while busy) disables it and swaps the label for a small spinner.
 class _PremiumCta extends StatelessWidget {
   const _PremiumCta({required this.busy, required this.onTap});
+
+  static const Color _gold = Color(0xFFF5C518);
 
   final bool busy;
   final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: AppTheme.ink,
-      borderRadius: BorderRadius.circular(16),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(16),
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
-          child: Row(
-            children: [
-              const Icon(
-                Icons.workspace_premium_outlined,
-                color: AppTheme.background,
-                size: 26,
-              ),
-              const SizedBox(width: 14),
-              const Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Odblokuj wszystkie smaczki',
-                      style: TextStyle(
-                        color: AppTheme.background,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    SizedBox(height: 2),
-                    Text(
-                      'Premium — pełne podpowiedzi do każdego pytania.',
-                      style: TextStyle(color: Colors.black54, fontSize: 13),
-                    ),
-                  ],
-                ),
-              ),
-              if (busy)
-                const SizedBox(
-                  height: 18,
-                  width: 18,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: AppTheme.background,
-                  ),
-                ),
-            ],
-          ),
+    return Align(
+      alignment: Alignment.center,
+      child: TextButton(
+        onPressed: onTap,
+        style: TextButton.styleFrom(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         ),
+        child: busy
+            ? const SizedBox(
+                height: 16,
+                width: 16,
+                child: CircularProgressIndicator(strokeWidth: 2, color: _gold),
+              )
+            : const Text(
+                'Przejdź na PRO',
+                style: TextStyle(
+                  color: _gold,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
       ),
     );
   }

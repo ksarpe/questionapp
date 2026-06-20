@@ -19,8 +19,15 @@ class AdsService {
   static bool get isInitialised => _initialised;
 
   static Future<void> initialise() async {
-    await MobileAds.instance.initialize();
-    _initialised = true;
+    // Degrade gracefully like SupabaseService / PurchasesService: if the AdMob
+    // SDK fails to initialise we leave [_initialised] false so ad-loading code
+    // cleanly no-ops, rather than letting the exception abort app launch.
+    try {
+      await MobileAds.instance.initialize();
+      _initialised = true;
+    } catch (e) {
+      debugPrint('AdsService: initialisation failed — ads disabled. $e');
+    }
   }
 
   static BannerAd createBannerAd({

@@ -11,12 +11,22 @@ class SessionState {
   const SessionState({
     this.userId,
     this.email,
+    this.displayName,
+    this.createdAt,
     this.isAnonymous,
     this.isPremium = false,
   });
 
   final String? userId;
   final String? email;
+
+  /// Human name from the auth provider (e.g. Google `full_name`), when present.
+  /// Email/password accounts have none — the UI falls back to the email handle.
+  final String? displayName;
+
+  /// When the account was created — drives the "member since" badge.
+  final DateTime? createdAt;
+
   final bool? isAnonymous;
   final bool isPremium;
 
@@ -26,11 +36,15 @@ class SessionState {
   SessionState copyWith({
     String? userId,
     String? email,
+    String? displayName,
+    DateTime? createdAt,
     bool? isAnonymous,
     bool? isPremium,
   }) => SessionState(
     userId: userId ?? this.userId,
     email: email ?? this.email,
+    displayName: displayName ?? this.displayName,
+    createdAt: createdAt ?? this.createdAt,
     isAnonymous: isAnonymous ?? this.isAnonymous,
     isPremium: isPremium ?? this.isPremium,
   );
@@ -58,9 +72,18 @@ class SessionNotifier extends AsyncNotifier<SessionState> {
     // 3. Resolve the current premium entitlement.
     final isPremium = await PurchasesService.isPremium();
 
+    // 4. Pull the display name (social logins only) and the account's creation
+    // date for the profile header.
+    final metadata = user?.userMetadata;
+    final displayName =
+        (metadata?['full_name'] ?? metadata?['name']) as String?;
+    final createdAt = user != null ? DateTime.tryParse(user.createdAt) : null;
+
     return SessionState(
       userId: userId,
       email: user?.email,
+      displayName: displayName,
+      createdAt: createdAt,
       isAnonymous: user?.isAnonymous ?? false,
       isPremium: isPremium,
     );

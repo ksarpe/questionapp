@@ -1,9 +1,13 @@
+import 'dart:math';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../data/models/question.dart';
 import '../../../data/models/smaczek.dart';
+import '../../../data/models/vote_result.dart';
 import '../../../data/repositories/question_repository.dart';
 import '../../../services/supabase_service.dart';
+import '../../account/providers/session_providers.dart';
 
 /// The active question source.
 ///
@@ -54,19 +58,46 @@ class QuestionDeckNotifier extends Notifier<int> {
   @override
   int build() => 0;
 
-  int get _length => ref.watch(questionDeckProvider).length;
+  // read, NOT watch: this is a one-off length lookup inside an action. Watching
+  // here would subscribe the index notifier to the deck, so a pool refetch
+  // (e.g. when an ad unlock invalidates questionsProvider) would rebuild this
+  // notifier and reset the index to 0 — snapping the user back to the daily
+  // instead of leaving them on the question they just unlocked.
+  int get _length => ref.read(questionDeckProvider).length;
 
+  /// Premium-only wrap-around forward (the full catalog is a loop).
   void next() {
     final length = _length;
     if (length == 0) return;
     state = (state + 1) % length;
   }
 
+  /// Premium-only wrap-around backward.
   void previous() {
     final length = _length;
     if (length == 0) return;
     state = (state - 1 + length) % length;
   }
+
+  /// Free-feed forward: advance by one WITHOUT wrapping, allowing exactly one
+  /// step past the last item onto the "reveal slot" (index == length), where the
+  /// paywall / auto-credit reveal kicks in. A no-op once already at the slot.
+  void forwardLinear() {
+    final length = _length;
+    if (state < length) state = state + 1;
+  }
+
+  /// Free-feed backward: step back through this session's revealed questions,
+  /// clamped at the daily (index 0). Also the way back off the reveal slot.
+  void backLinear() {
+    if (state > 0) state = state - 1;
+  }
+
+  /// Jumps straight back to the daily, which the deck always keeps at index 0
+  /// (see [questionDeckProvider]). This is the escape hatch for a free user who
+  /// swiped onto the reveal slot and doesn't want to watch an ad: instead of
+  /// being stuck on the paywall, they can return to the free daily in one tap.
+  void toDaily() => state = 0;
 }
 
 /// Index of the currently displayed question.
@@ -84,39 +115,109 @@ final todaysDailyQuestionProvider = FutureProvider<Question?>((ref) async {
   return repo.fetchDailyQuestion(DateTime.now());
 });
 
+/// The community vote split (TAK/NIE) plus the caller's own vote for a question.
+///
+/// Keyed by question id so each question caches its own state. The daily vote
+/// panel watches this to decide between showing the vote buttons (`myChoice`
+/// null) or the result bars. After casting, the panel holds the fresh result
+/// returned by the RPC, so it does not need to invalidate this to update — but
+/// invalidating it forces a re-read when desired.
+final dailyVoteStateProvider = FutureProvider.family<VoteResult, String>((
+  ref,
+  questionId,
+) async {
+  final repo = ref.watch(questionRepositoryProvider);
+  return repo.getDailyVoteState(questionId);
+});
+
+/// A shuffle seed fixed once per app launch.
+///
+/// A [Provider] is computed lazily and then cached for the life of its
+/// container, so this picks a fresh random seed exactly once each time the app
+/// starts (a new [ProviderContainer]) and keeps returning it for the rest of
+/// the session. That gives the deck order two properties at once:
+///
+///   * fresh on every relaunch — reopening the app reshuffles the tail, so the
+///     non-daily questions appear in a different order each visit;
+///   * stable within a session — an unlock invalidates [questionsProvider] to
+///     pick up the now-readable text, and because the seed is unchanged the
+///     deck does NOT reshuffle, so the user stays on the question they unlocked.
+///
+/// Override it in tests to make the order deterministic.
+final deckShuffleSeedProvider = Provider<int>(
+  (ref) => Random().nextInt(1 << 32),
+);
+
+/// The questions a free user has revealed THIS session, in the order they were
+/// revealed. Held only in memory: revealed text is no longer re-readable through
+/// the gate, so it lives here until the app closes (then it is gone — not
+/// re-readable, not re-served). Each reveal RPC appends one question.
+class RevealedFeedNotifier extends Notifier<List<Question>> {
+  @override
+  List<Question> build() => const [];
+
+  void append(Question q) => state = [...state, q];
+
+  void clear() => state = const [];
+}
+
+final revealedFeedProvider =
+    NotifierProvider<RevealedFeedNotifier, List<Question>>(
+      RevealedFeedNotifier.new,
+    );
+
 /// The ordered deck the home screen walks through.
 ///
-/// Position 0 is always today's daily — the same free question for everyone,
-/// shown alone when the app opens. The tail is the rest of the pool in a random
-/// order, revealed one at a time as the user swipes (each swipe gated by the
-/// monetization rules in [SwipeGate]). The daily is filtered out of the tail so
-/// it is not repeated right after it is shown.
+/// Position 0 is always today's daily. PREMIUM gets the whole catalog after it
+/// (random, seeded order) and reads everything. A FREE user instead gets a
+/// forward "feed": the daily plus the questions they've revealed this session
+/// (one ad / credit at a time), and nothing else — the locked catalog is never
+/// shipped to them.
 ///
 /// While the daily is still loading the deck stays empty on purpose, so the
 /// screen shows its spinner rather than flashing a non-daily question first.
 final questionDeckProvider = Provider<List<Question>>((ref) {
-  final pool = ref.watch(questionsProvider).asData?.value ?? const <Question>[];
   final dailyAsync = ref.watch(todaysDailyQuestionProvider);
-
   if (dailyAsync.isLoading) return const [];
-
   final daily = dailyAsync.asData?.value;
-  if (daily == null) {
-    // No daily scheduled (or the fetch failed) — degrade to the plain pool so
-    // the screen still has something to show; no badge is shown in this case.
-    return pool;
+
+  if (ref.watch(isPremiumProvider)) {
+    final pool =
+        ref.watch(questionsProvider).asData?.value ?? const <Question>[];
+    if (daily == null) return pool;
+    // Shuffle the tail with the per-launch seed: random each open, STABLE across
+    // refetches within the session so the user doesn't get jumped around.
+    final rest = pool.where((q) => q.id != daily.id).toList()
+      ..shuffle(Random(ref.watch(deckShuffleSeedProvider)));
+    return [daily, ...rest];
   }
 
-  final rest = pool.where((q) => q.id != daily.id).toList()..shuffle();
-  return [daily, ...rest];
+  final revealed = ref.watch(revealedFeedProvider);
+  if (daily == null) return revealed;
+  return [daily, ...revealed];
 });
 
-/// The single question to render, or null while the deck is not yet ready.
+/// The single question to render, or null when there is nothing to show.
+///
+/// For a free user the index may sit one past the last item — the "reveal slot"
+/// — where there is no question yet (the paywall / auto-reveal shows instead);
+/// that returns null. Premium wraps around its catalog and never hits the slot.
 final currentQuestionProvider = Provider<Question?>((ref) {
   final deck = ref.watch(questionDeckProvider);
   if (deck.isEmpty) return null;
   final index = ref.watch(questionIndexProvider);
-  return deck[index % deck.length];
+  if (ref.watch(isPremiumProvider)) return deck[index % deck.length];
+  if (index >= deck.length) return null; // the reveal slot
+  return deck[index];
+});
+
+/// True when a free user has swiped one step past the last revealed question and
+/// is sitting on the reveal slot (where the paywall / auto-credit reveal lives).
+final isAtRevealSlotProvider = Provider<bool>((ref) {
+  if (ref.watch(isPremiumProvider)) return false;
+  final deck = ref.watch(questionDeckProvider);
+  if (deck.isEmpty) return false;
+  return ref.watch(questionIndexProvider) >= deck.length;
 });
 
 /// Whether the question currently on screen is today's free daily question.

@@ -21,8 +21,16 @@ class DailyBadge extends ConsumerWidget {
     final isDaily = ref.watch(isShowingDailyProvider);
     final isPolish = Localizations.localeOf(context).languageCode == 'pl';
 
-    // Fade + slight scale so the badge appears with the daily and slips away as
-    // the user swipes to a non-daily question, rather than popping in/out.
+    // The pill marks the one no-paywall question — today's daily — and fades
+    // away on the gated deck. Fade + slight scale so it slips in/out rather than
+    // popping.
+    final Widget pill = isDaily
+        ? _Pill(
+            label: isPolish ? 'PYTANIE DNIA' : 'DAILY',
+            icon: Icons.wb_sunny_rounded,
+          )
+        : const SizedBox.shrink();
+
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 250),
       transitionBuilder: (child, animation) => FadeTransition(
@@ -33,17 +41,16 @@ class DailyBadge extends ConsumerWidget {
           child: child,
         ),
       ),
-      child: isDaily
-          ? _Pill(label: isPolish ? 'PYTANIE DNIA' : 'DAILY')
-          : const SizedBox.shrink(),
+      child: pill,
     );
   }
 }
 
 class _Pill extends StatelessWidget {
-  const _Pill({required this.label});
+  const _Pill({required this.label, required this.icon});
 
   final String label;
+  final IconData icon;
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +70,7 @@ class _Pill extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.wb_sunny_rounded, color: AppTheme.spark, size: 14),
+            Icon(icon, color: AppTheme.spark, size: 14),
             const SizedBox(width: 6),
             Text(
               label,

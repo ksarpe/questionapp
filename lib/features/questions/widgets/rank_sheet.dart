@@ -1,0 +1,340 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../../core/theme/app_theme.dart';
+import '../../../data/models/rank.dart';
+import '../../account/providers/stats_providers.dart';
+
+/// Opens the rank sheet: the user's current rank, streak, progress to the next
+/// rank, and the full controversy ladder. Styled to match [showSmaczkiSheet].
+Future<void> showRankSheet(BuildContext context) {
+  return showModalBottomSheet<void>(
+    context: context,
+    backgroundColor: AppTheme.background,
+    showDragHandle: true,
+    isScrollControlled: true,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+    ),
+    builder: (_) => const _RankSheet(),
+  );
+}
+
+/// Maps a rank's icon key (from the `ranks` table) to a Material glyph.
+IconData rankIcon(String? key) {
+  switch (key) {
+    case 'seedling':
+      return Icons.eco_rounded;
+    case 'spark':
+      return Icons.auto_awesome_rounded;
+    case 'flame':
+      return Icons.local_fire_department_rounded;
+    case 'mask':
+      return Icons.theater_comedy_rounded;
+    case 'storm':
+      return Icons.cyclone_rounded;
+    case 'bolt':
+      return Icons.bolt_rounded;
+    case 'crown':
+      return Icons.workspace_premium_rounded;
+    default:
+      return Icons.military_tech_rounded;
+  }
+}
+
+class _RankSheet extends ConsumerWidget {
+  const _RankSheet();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final stats = ref.watch(userStatsValueProvider);
+    final ranksAsync = ref.watch(ranksProvider);
+    final lang = Localizations.localeOf(context).languageCode;
+    final isPolish = lang == 'pl';
+    final streak = stats.currentStreak;
+
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(24, 4, 24, 28),
+        child: ranksAsync.when(
+          loading: () => const Padding(
+            padding: EdgeInsets.all(40),
+            child: Center(child: CircularProgressIndicator()),
+          ),
+          error: (e, _) => Padding(
+            padding: const EdgeInsets.all(24),
+            child: Text(
+              isPolish ? 'Nie udało się wczytać rang.' : 'Could not load ranks.',
+              style: const TextStyle(color: AppTheme.subtle),
+            ),
+          ),
+          data: (ranks) {
+            final ladder = [...ranks]..sort((a, b) => a.tier.compareTo(b.tier));
+            final current = _currentRank(ladder, streak);
+            final next = _nextRank(ladder, streak);
+
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _Header(rank: current, streak: streak, lang: lang),
+                const SizedBox(height: 20),
+                _Progress(streak: streak, current: current, next: next, isPolish: isPolish),
+                const SizedBox(height: 16),
+                _LongestLine(longest: stats.longestStreak, isPolish: isPolish),
+                const SizedBox(height: 20),
+                const Divider(color: AppTheme.accent, height: 1),
+                const SizedBox(height: 16),
+                Text(
+                  isPolish ? 'Drabinka rang' : 'Rank ladder',
+                  style: const TextStyle(
+                    color: AppTheme.subtle,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 1.2,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Flexible(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        for (final r in ladder)
+                          _LadderRow(
+                            rank: r,
+                            lang: lang,
+                            isPolish: isPolish,
+                            unlocked: streak >= r.minStreak,
+                            isCurrent: r.tier == current.tier,
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Rank _currentRank(List<Rank> ladder, int streak) {
+    var result = ladder.first;
+    for (final r in ladder) {
+      if (streak >= r.minStreak) result = r;
+    }
+    return result;
+  }
+
+  Rank? _nextRank(List<Rank> ladder, int streak) {
+    for (final r in ladder) {
+      if (r.minStreak > streak) return r;
+    }
+    return null;
+  }
+}
+
+class _Header extends StatelessWidget {
+  const _Header({required this.rank, required this.streak, required this.lang});
+
+  final Rank rank;
+  final int streak;
+  final String lang;
+
+  @override
+  Widget build(BuildContext context) {
+    final isPolish = lang == 'pl';
+    return Row(
+      children: [
+        Container(
+          width: 56,
+          height: 56,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: AppTheme.spark.withValues(alpha: 0.14),
+            border: Border.all(color: AppTheme.spark.withValues(alpha: 0.45)),
+          ),
+          child: Icon(rankIcon(rank.icon), color: AppTheme.spark, size: 28),
+        ),
+        const SizedBox(width: 16),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                isPolish ? 'TWOJA RANGA' : 'YOUR RANK',
+                style: const TextStyle(
+                  color: AppTheme.subtle,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 1.4,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                rank.nameFor(lang),
+                style: const TextStyle(
+                  color: AppTheme.ink,
+                  fontSize: 22,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Row(
+                children: [
+                  const Icon(Icons.local_fire_department_rounded,
+                      color: Color(0xFFF59E0B), size: 16),
+                  const SizedBox(width: 4),
+                  Text(
+                    isPolish
+                        ? 'Seria: $streak ${_dni(streak)}'
+                        : 'Streak: $streak ${streak == 1 ? 'day' : 'days'}',
+                    style: const TextStyle(color: AppTheme.ink, fontSize: 14),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _Progress extends StatelessWidget {
+  const _Progress({
+    required this.streak,
+    required this.current,
+    required this.next,
+    required this.isPolish,
+  });
+
+  final int streak;
+  final Rank current;
+  final Rank? next;
+  final bool isPolish;
+
+  @override
+  Widget build(BuildContext context) {
+    if (next == null) {
+      return Text(
+        isPolish ? 'Najwyższa ranga — szacun.' : 'Top rank — respect.',
+        style: const TextStyle(color: AppTheme.spark, fontWeight: FontWeight.w600),
+      );
+    }
+
+    final span = (next!.minStreak - current.minStreak).clamp(1, 1 << 30);
+    final done = (streak - current.minStreak).clamp(0, span);
+    final fraction = done / span;
+    final remaining = next!.minStreak - streak;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(6),
+          child: LinearProgressIndicator(
+            value: fraction,
+            minHeight: 8,
+            backgroundColor: AppTheme.accent,
+            valueColor: const AlwaysStoppedAnimation(AppTheme.spark),
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          isPolish
+              ? 'Jeszcze $remaining ${_dni(remaining)} do rangi „${next!.nameFor('pl')}”'
+              : '$remaining more ${remaining == 1 ? 'day' : 'days'} to “${next!.nameFor('en')}”',
+          style: const TextStyle(color: AppTheme.subtle, fontSize: 13),
+        ),
+      ],
+    );
+  }
+}
+
+class _LongestLine extends StatelessWidget {
+  const _LongestLine({required this.longest, required this.isPolish});
+
+  final int longest;
+  final bool isPolish;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        const Icon(Icons.emoji_events_outlined, color: AppTheme.subtle, size: 16),
+        const SizedBox(width: 6),
+        Text(
+          isPolish
+              ? 'Najdłuższa seria: $longest ${_dni(longest)}'
+              : 'Longest streak: $longest ${longest == 1 ? 'day' : 'days'}',
+          style: const TextStyle(color: AppTheme.subtle, fontSize: 13),
+        ),
+      ],
+    );
+  }
+}
+
+class _LadderRow extends StatelessWidget {
+  const _LadderRow({
+    required this.rank,
+    required this.lang,
+    required this.isPolish,
+    required this.unlocked,
+    required this.isCurrent,
+  });
+
+  final Rank rank;
+  final String lang;
+  final bool isPolish;
+  final bool unlocked;
+  final bool isCurrent;
+
+  @override
+  Widget build(BuildContext context) {
+    final fg = unlocked ? AppTheme.ink : AppTheme.subtle;
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(14),
+        color: isCurrent ? AppTheme.spark.withValues(alpha: 0.12) : AppTheme.accent,
+        border: isCurrent
+            ? Border.all(color: AppTheme.spark.withValues(alpha: 0.5))
+            : null,
+      ),
+      child: Row(
+        children: [
+          Icon(rankIcon(rank.icon),
+              color: unlocked ? AppTheme.spark : AppTheme.subtle, size: 22),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              rank.nameFor(lang),
+              style: TextStyle(
+                color: fg,
+                fontSize: 15,
+                fontWeight: isCurrent ? FontWeight.w800 : FontWeight.w600,
+              ),
+            ),
+          ),
+          Text(
+            isPolish ? 'od ${rank.minStreak}' : '${rank.minStreak}+',
+            style: const TextStyle(color: AppTheme.subtle, fontSize: 12),
+          ),
+          const SizedBox(width: 8),
+          Icon(
+            unlocked ? Icons.check_circle_rounded : Icons.lock_outline_rounded,
+            color: unlocked ? AppTheme.spark : AppTheme.subtle,
+            size: 16,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Polish day-count word (dzień / dni) — good enough for the small numbers shown
+/// here (1 → "dzień", everything else → "dni").
+String _dni(int n) => n == 1 ? 'dzień' : 'dni';

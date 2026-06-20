@@ -1,6 +1,9 @@
 import '../mock/mock_questions.dart';
 import '../models/question.dart';
+import '../models/rank.dart';
 import '../models/smaczek.dart';
+import '../models/user_stats.dart';
+import '../models/vote_result.dart';
 import '../../services/supabase_service.dart';
 
 /// Abstraction over the source of questions.
@@ -18,6 +21,48 @@ abstract class QuestionRepository {
   /// readable plus the rest as locked placeholders (no text), premium users get
   /// them all. See [Smaczek].
   Future<List<Smaczek>> fetchSmaczki(String questionId);
+
+  /// Reveals the next UNSEEN question after a rewarded ad.
+  ///
+  /// The server picks a random eligible question (active, non-premium, not
+  /// today's daily, not already seen by this user), records it in the seen-memory
+  /// (`question_seen`) so it never repeats, and returns it WITH text. The reveal
+  /// is ephemeral: the gate no longer grants this text later, so the caller must
+  /// keep the returned question in session memory. Returns null when the user has
+  /// seen everything eligible. Available to guests too.
+  Future<Question?> revealAdQuestion();
+
+  /// Syncs and returns the user's engagement state (streak, free-unlock
+  /// credits, rank).
+  ///
+  /// Calls `sync_user_state`, which ALSO tops up the daily free-unlock credit
+  /// (once per server-UTC day, capped at 1, never for premium) as a side
+  /// effect. Returns null when there is no signed-in user / no backend.
+  Future<UserStats?> syncUserState();
+
+  /// The current community split + the caller's own vote for [questionId].
+  ///
+  /// Returns [VoteResult] with TAK/NIE counts and `myChoice` (null when the user
+  /// hasn't voted), so the UI can show the buttons or the result bars.
+  Future<VoteResult> getDailyVoteState(String questionId);
+
+  /// Casts the user's binary vote ([choice] = 1 TAK / 2 NIE) on [questionId].
+  ///
+  /// When the question is the current daily, this also advances the user's
+  /// streak server-side (at most once per UTC day). Returns the updated split.
+  Future<VoteResult> castDailyVote(String questionId, int choice);
+
+  /// Reveals the next UNSEEN question paid with the daily free credit instead of
+  /// an ad (real accounts only, once per day).
+  ///
+  /// Same server-side pick + seen-memory record as [revealAdQuestion], but
+  /// charges one credit — only on a successful reveal. Returns the revealed
+  /// question, or null when nothing eligible is left (no charge). Throws when
+  /// there is no credit, the user is premium, or the user is a guest.
+  Future<Question?> revealFreeQuestion();
+
+  /// The full rank ladder (ordered by tier), for the rank sheet.
+  Future<List<Rank>> fetchRanks();
 }
 
 /// Default implementation backed by the in-memory mock list.
@@ -31,7 +76,15 @@ class MockQuestionRepository implements QuestionRepository {
   Future<List<Question>> fetchQuestions() async {
     // Simulate a small network delay so loading states are exercised in the UI.
     await Future.delayed(const Duration(milliseconds: 300));
-    return kMockQuestions;
+    // Mirror the free-tier shape the get_questions RPC returns: the catalog
+    // comes back in full but every question is locked, each carrying a short
+    // teaser (the first two words) so the locked-card "Czy miliarderzy…" tease
+    // is exercised offline. Only the daily is free, and the deck shows that
+    // separately (fetchDailyQuestion, always unlocked) at position 0.
+    return [
+      for (final q in kMockQuestions)
+        q.copyWith(isLocked: true, teaser: _teaserOf(q.questionText)),
+    ];
   }
 
   @override
@@ -39,7 +92,9 @@ class MockQuestionRepository implements QuestionRepository {
     await Future.delayed(const Duration(milliseconds: 300));
     if (kMockQuestions.isEmpty) return null;
 
-    return kMockQuestions[date.day % kMockQuestions.length];
+    // The daily is always free to read, regardless of its position in the pool.
+    return kMockQuestions[date.day % kMockQuestions.length]
+        .copyWith(isLocked: false);
   }
 
   @override
@@ -61,6 +116,63 @@ class MockQuestionRepository implements QuestionRepository {
       Smaczek(position: 3, isLocked: true),
     ];
   }
+
+  @override
+  Future<Question?> revealAdQuestion() async {
+    await Future.delayed(const Duration(milliseconds: 200));
+    // Offline preview: hand back a mock pool question (not the daily) as if it
+    // were freshly revealed. No real seen-memory in mock mode, so this can
+    // repeat — fine for a dev preview; tests use a custom fake repository.
+    if (kMockQuestions.length < 2) return null;
+    final pick = kMockQuestions[
+        1 + DateTime.now().microsecond % (kMockQuestions.length - 1)];
+    return pick.copyWith(isLocked: false);
+  }
+
+  @override
+  Future<UserStats?> syncUserState() async {
+    // Offline preview: a fresh free user with the daily credit available and no
+    // streak yet. The real top-up / streak logic is server-side (off the server
+    // clock), so mock mode just shows the entry state.
+    return const UserStats(
+      currentStreak: 0,
+      longestStreak: 0,
+      freeUnlockCredits: 1,
+      rankTier: 0,
+      rankName: 'Amator kontrowersji',
+      nextRankStreak: 3,
+    );
+  }
+
+  @override
+  Future<VoteResult> getDailyVoteState(String questionId) async {
+    await Future.delayed(const Duration(milliseconds: 150));
+    // Not voted yet in mock mode, with a plausible community split to preview.
+    return const VoteResult(yesCount: 0, noCount: 0);
+  }
+
+  @override
+  Future<VoteResult> castDailyVote(String questionId, int choice) async {
+    await Future.delayed(const Duration(milliseconds: 150));
+    // Fake a 60/40-ish split so the result bars render in dev; the user's own
+    // vote is folded into the side they picked.
+    return VoteResult(
+      yesCount: choice == VoteResult.yes ? 61 : 60,
+      noCount: choice == VoteResult.no ? 41 : 40,
+      myChoice: choice,
+    );
+  }
+
+  @override
+  Future<Question?> revealFreeQuestion() async {
+    await Future.delayed(const Duration(milliseconds: 200));
+    // Offline preview: same as the ad reveal — the credit accounting is
+    // server-side, so mock just hands back a readable pool question.
+    return revealAdQuestion();
+  }
+
+  @override
+  Future<List<Rank>> fetchRanks() async => kDefaultRanks;
 }
 
 /// Supabase-backed implementation used in production builds.
@@ -77,23 +189,19 @@ class SupabaseQuestionRepository implements QuestionRepository {
 
   @override
   Future<List<Question>> fetchQuestions() async {
-    // Drive the query from question_translations so the locale text comes back
-    // flat; RLS decides which rows the current user is allowed to read.
-    final rows = await SupabaseService.client
-        .from('question_translations')
-        .select('question_text, questions!inner(id, category, is_premium)')
-        .eq('locale', locale)
-        .eq('questions.is_active', true);
+    // The deck is the full catalog. get_questions returns every active question
+    // with a `locked` flag, and frees the text of exactly ONE — the daily for
+    // the device's local date (`p_date`), which the gate clamps to UTC ±1 so the
+    // user's real "today" is honoured but the archive can't be harvested.
+    // Everything else comes back locked (no text) and renders as a locked card.
+    final data = await SupabaseService.client.rpc(
+      'get_questions',
+      params: {'p_locale': locale, 'p_date': _dateOnly(DateTime.now())},
+    );
 
-    return rows
-        .map<Question>((row) {
-          final q = row['questions'] as Map<String, dynamic>;
-          return Question.fromJson({
-            ...q,
-            'question_text': row['question_text'],
-          });
-        })
-        .where((question) => question.questionText.trim().isNotEmpty)
+    return (data as List)
+        .cast<Map<String, dynamic>>()
+        .map(Question.fromJson)
         .toList();
   }
 
@@ -129,6 +237,96 @@ class SupabaseQuestionRepository implements QuestionRepository {
         .toList();
   }
 
+  @override
+  Future<Question?> revealAdQuestion() async {
+    // SECURITY DEFINER RPC: server-picks a random unseen, non-premium, non-daily
+    // question, records it in question_seen, and returns it WITH text. Empty
+    // result = nothing unseen left.
+    final data = await SupabaseService.client.rpc(
+      'reveal_ad_question',
+      params: {'p_locale': locale, 'p_date': _dateOnly(DateTime.now())},
+    );
+    final rows = (data as List).cast<Map<String, dynamic>>();
+    if (rows.isEmpty) return null;
+    return Question.fromJson(rows.first).copyWith(isLocked: false);
+  }
+
+  @override
+  Future<UserStats?> syncUserState() async {
+    // SECURITY DEFINER RPC: returns the server's view of streak / credits / rank
+    // and tops up today's free credit (once per UTC day, capped at 1) as a side
+    // effect. Returns a single row.
+    final data = await SupabaseService.client.rpc(
+      'sync_user_state',
+      params: {'p_locale': locale},
+    );
+
+    final rows = (data as List).cast<Map<String, dynamic>>();
+    if (rows.isEmpty) return null;
+    return UserStats.fromJson(rows.first);
+  }
+
+  @override
+  Future<VoteResult> getDailyVoteState(String questionId) async {
+    final data = await SupabaseService.client.rpc(
+      'get_daily_vote_state',
+      params: {'p_question_id': questionId},
+    );
+
+    final rows = (data as List).cast<Map<String, dynamic>>();
+    if (rows.isEmpty) return VoteResult.empty;
+    return VoteResult.fromJson(rows.first);
+  }
+
+  @override
+  Future<VoteResult> castDailyVote(String questionId, int choice) async {
+    // The RPC records the vote, advances the streak when this is the daily, and
+    // returns the fresh community split. Pass the device's local date so the
+    // streak's "is this the daily" check honours the user's timezone (clamped to
+    // UTC ±1 server-side).
+    final data = await SupabaseService.client.rpc(
+      'cast_daily_vote',
+      params: {
+        'p_question_id': questionId,
+        'p_choice': choice,
+        'p_date': _dateOnly(DateTime.now()),
+        'p_locale': locale,
+      },
+    );
+
+    final rows = (data as List).cast<Map<String, dynamic>>();
+    if (rows.isEmpty) return VoteResult.empty;
+    return VoteResult.fromJson(rows.first);
+  }
+
+  @override
+  Future<Question?> revealFreeQuestion() async {
+    // SECURITY DEFINER RPC: same pick as reveal_ad_question but charges one
+    // daily credit (real accounts only). Empty result = nothing unseen left
+    // (no charge). Throws on no-credit / premium / guest — the caller surfaces it.
+    final data = await SupabaseService.client.rpc(
+      'reveal_free_question',
+      params: {'p_locale': locale, 'p_date': _dateOnly(DateTime.now())},
+    );
+    final rows = (data as List).cast<Map<String, dynamic>>();
+    if (rows.isEmpty) return null;
+    return Question.fromJson(rows.first).copyWith(isLocked: false);
+  }
+
+  @override
+  Future<List<Rank>> fetchRanks() async {
+    // The ranks table is public-readable; order by tier for the ladder.
+    final data = await SupabaseService.client
+        .from('ranks')
+        .select()
+        .order('tier');
+
+    return (data as List)
+        .cast<Map<String, dynamic>>()
+        .map(Rank.fromJson)
+        .toList();
+  }
+
   static String _dateOnly(DateTime date) {
     final local = date.toLocal();
     final month = local.month.toString().padLeft(2, '0');
@@ -136,3 +334,10 @@ class SupabaseQuestionRepository implements QuestionRepository {
     return '${local.year}-$month-$day';
   }
 }
+
+/// The first two words of [text], used as the locked-card teaser in mock mode.
+///
+/// Mirrors what the `get_questions` RPC computes server-side, so the offline
+/// preview shows the same "two words + ellipsis" tease as production.
+String _teaserOf(String text) =>
+    text.trim().split(RegExp(r'\s+')).take(2).join(' ');

@@ -52,7 +52,16 @@ class RewardedAdService {
   /// the reward. Completes once the ad is dismissed — or immediately if no ad
   /// was ready (in which case a fresh load is kicked off). A replacement ad is
   /// always pre-loaded for next time.
-  Future<void> showRewardedAd({required VoidCallback onReward}) async {
+  ///
+  /// [userId] and [questionId] are forwarded to AdMob as Server-Side
+  /// Verification options, so Google's SSV callback to our `admob-ssv` edge
+  /// function knows WHO watched the ad and WHICH question to unlock. Without
+  /// them the verified-unlock backstop has no id to grant.
+  Future<void> showRewardedAd({
+    required VoidCallback onReward,
+    String? userId,
+    String? questionId,
+  }) async {
     final ad = _ad;
     if (ad == null) {
       preload();
@@ -61,6 +70,14 @@ class RewardedAdService {
 
     // Consume the reference up front so the same ad can't be shown twice.
     _ad = null;
+
+    // Must be set before show(): tags the impression so the SSV callback can
+    // attribute the verified reward to this user + question.
+    if (userId != null || questionId != null) {
+      await ad.setServerSideOptions(
+        ServerSideVerificationOptions(userId: userId, customData: questionId),
+      );
+    }
 
     final completer = Completer<void>();
     ad.fullScreenContentCallback = FullScreenContentCallback(
