@@ -320,13 +320,14 @@ class _WindQuestionViewState extends ConsumerState<WindQuestionView>
     final current = ref.watch(currentQuestionProvider);
     if (!_animating && current != null) _displayed = current;
 
-    // Off the slot, clear any transient reveal flags so the next slot starts
-    // clean (e.g. after swiping back, or after going premium).
+    // Off the slot, clear the in-flight flags so the next slot starts clean.
+    // NOTE: we deliberately do NOT null _peeked here — a transient rebuild while
+    // the paywall is on screen would otherwise wipe the teaser. It's harmless
+    // off the slot (never read), and re-entering the slot re-peeks over it.
     if (!atRevealSlot) {
       _revealing = false;
       _exhausted = false;
       _peeking = false;
-      _peeked = null;
     }
 
     final width = MediaQuery.of(context).size.width;

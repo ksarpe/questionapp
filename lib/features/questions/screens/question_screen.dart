@@ -176,7 +176,11 @@ class _QuestionBody extends ConsumerWidget {
                   // Self-hiding "Daily" pill, sitting just above the question.
                   const DailyBadge(),
                   if (isDaily) const SizedBox(height: 18),
-                  const WindQuestionView(),
+                  // Stable key: the conditional SizedBox above shifts this
+                  // widget's position in the Column when `isDaily` flips, which
+                  // would otherwise rebuild it with a fresh State and drop its
+                  // in-memory state (the peeked teaser). The key preserves it.
+                  const WindQuestionView(key: ValueKey('wind_question_view')),
                   // Vote on the daily — builds the streak and reveals the
                   // community split. Keyed by (user, id) so it resets both when
                   // swiping to a new question and when the account changes.
