@@ -133,11 +133,18 @@ void main() {
   });
 }
 
-/// Mock repo that hands back a fresh question per reveal and counts them.
+/// Mock repo that hands back a fresh question per reveal and counts reveals/peeks.
 class _RevealRepo extends MockQuestionRepository {
   int freeReveals = 0;
   int adReveals = 0;
+  int peeks = 0;
   int _n = 0;
+
+  @override
+  Future<({String id, String teaser})?> peekNextQuestion() async {
+    peeks++;
+    return (id: 'peek$peeks', teaser: 'Czy coś');
+  }
 
   @override
   Future<Question?> revealFreeQuestion() async {
@@ -147,9 +154,13 @@ class _RevealRepo extends MockQuestionRepository {
   }
 
   @override
-  Future<Question?> revealAdQuestion() async {
+  Future<Question?> revealAdQuestion({String? questionId}) async {
     adReveals++;
     _n++;
-    return Question(id: 'ad$_n', category: 'C', questionText: 'Ad $_n?');
+    return Question(
+      id: questionId ?? 'ad$_n',
+      category: 'C',
+      questionText: 'Ad $_n?',
+    );
   }
 }

@@ -91,21 +91,29 @@ void main() {
     await swipeLeft(tester);
 
     // No credit: nothing is revealed and the user sits on the reveal slot, where
-    // the ad / PRO paywall is shown.
+    // the ad / PRO paywall is shown — with the next question peeked for its teaser.
     expect(repo.freeReveals, 0);
     expect(repo.adReveals, 0);
+    expect(repo.peeks, greaterThanOrEqualTo(1));
     expect(container.read(revealedFeedProvider), isEmpty);
     expect(container.read(isAtRevealSlotProvider), isTrue);
     expect(find.text('Odblokuj reklamą'.toUpperCase()), findsOneWidget);
   });
 }
 
-/// Mock repo that records how many questions were revealed via credit vs ad and
-/// hands back a fresh question each time.
+/// Mock repo that records reveals (credit vs ad) and peeks, handing back a fresh
+/// question each time.
 class _RevealRepo extends MockQuestionRepository {
   int freeReveals = 0;
   int adReveals = 0;
+  int peeks = 0;
   int _n = 0;
+
+  @override
+  Future<({String id, String teaser})?> peekNextQuestion() async {
+    peeks++;
+    return (id: 'peek$peeks', teaser: 'Czy coś');
+  }
 
   @override
   Future<Question?> revealFreeQuestion() async {
@@ -115,9 +123,13 @@ class _RevealRepo extends MockQuestionRepository {
   }
 
   @override
-  Future<Question?> revealAdQuestion() async {
+  Future<Question?> revealAdQuestion({String? questionId}) async {
     adReveals++;
     _n++;
-    return Question(id: 'ad$_n', category: 'C', questionText: 'Ad $_n?');
+    return Question(
+      id: questionId ?? 'ad$_n',
+      category: 'C',
+      questionText: 'Ad $_n?',
+    );
   }
 }

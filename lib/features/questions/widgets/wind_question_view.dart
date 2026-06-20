@@ -9,6 +9,7 @@ import '../../account/providers/stats_providers.dart';
 import '../../monetization/providers/monetization_providers.dart';
 import '../providers/question_providers.dart';
 import 'falling_words_text.dart';
+import 'styled_question_text.dart';
 
 /// Displays the current question and runs the signature "wind" transition.
 ///
@@ -59,6 +60,14 @@ class _WindQuestionViewState extends ConsumerState<WindQuestionView>
   /// A reveal came back empty — the user has seen everything eligible for now.
   bool _exhausted = false;
 
+  /// The next question peeked for the paywall teaser ({id, teaser}), or null
+  /// before it's fetched. Its id is passed to the ad reveal so the ad reveals the
+  /// exact question that was teased.
+  ({String id, String teaser})? _peeked;
+
+  /// A peek RPC is in flight — the slot shows a spinner until the teaser arrives.
+  bool _peeking = false;
+
   @override
   void initState() {
     super.initState();
@@ -76,7 +85,7 @@ class _WindQuestionViewState extends ConsumerState<WindQuestionView>
 
   /// [direction] is the sign of the swipe: -1 leftward, +1 rightward.
   Future<void> _advance(int direction) async {
-    if (_animating || _unlocking || _revealing) return;
+    if (_animating || _unlocking || _revealing || _peeking) return;
 
     // PREMIUM: any swipe advances forward through the wrapped catalog.
     if (ref.read(isPremiumProvider)) {
@@ -135,26 +144,56 @@ class _WindQuestionViewState extends ConsumerState<WindQuestionView>
 
     final landedOnSlot = ref.read(isAtRevealSlotProvider);
     final hasCredit = ref.read(freeUnlockCreditsProvider) >= 1;
-    // Auto-reveal with the credit; otherwise the slot shows the paywall by default.
+    // Set the slot's state BEFORE settling in so there's no flash of the generic
+    // "next question" text: with a credit we auto-reveal (spinner), otherwise we
+    // peek the teaser (spinner until it arrives).
     if (landedOnSlot && hasCredit) {
-      _revealing = true; // picked up by the _settleIn setState below
+      _revealing = true;
+    } else if (landedOnSlot) {
+      _peeking = true;
     }
     _settleIn(ref.read(currentQuestionProvider));
     _animating = false;
 
-    if (landedOnSlot && hasCredit) await _reveal(viaAd: false);
+    if (landedOnSlot && hasCredit) {
+      await _reveal(viaAd: false);
+    } else if (landedOnSlot) {
+      await _peekNext(); // fetch the teaser for the paywall
+    }
+  }
+
+  /// Peeks the next question (id + teaser) to bait the paywall, without revealing
+  /// it. Empty result => the user has run out, so the slot shows the "no more"
+  /// state instead.
+  Future<void> _peekNext() async {
+    setState(() => _peeking = true);
+    try {
+      final peeked = await ref.read(questionRepositoryProvider).peekNextQuestion();
+      if (!mounted) return;
+      setState(() {
+        _peeking = false;
+        _peeked = peeked;
+        if (peeked == null) _exhausted = true;
+      });
+    } catch (e) {
+      debugPrint('peek failed: $e');
+      if (!mounted) return;
+      setState(() => _peeking = false); // paywall shows without a teaser
+    }
   }
 
   /// Accelerates the current text off the swiped edge, fading as it goes, then
   /// holds an empty canvas for a beat before the next content assembles.
   Future<void> _animateOut(int direction) async {
     final exitEnd = Offset(1.5 * direction, 0);
-    _offset = Tween(begin: Offset.zero, end: exitEnd).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInCubic),
-    );
-    _opacity = Tween(begin: 1.0, end: 0.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeIn),
-    );
+    _offset = Tween(
+      begin: Offset.zero,
+      end: exitEnd,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInCubic));
+    _opacity = Tween(
+      begin: 1.0,
+      end: 0.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeIn));
     await _controller.forward(from: 0);
     await Future.delayed(const Duration(milliseconds: 80));
   }
@@ -172,11 +211,12 @@ class _WindQuestionViewState extends ConsumerState<WindQuestionView>
   /// and appends it to this session's feed. The index already points at the new
   /// question's slot, so appending lands the user on it. Empty result => the
   /// user has run out for now.
-  Future<void> _reveal({required bool viaAd}) async {
+  Future<void> _reveal({required bool viaAd, String? questionId}) async {
     try {
       final repo = ref.read(questionRepositoryProvider);
-      final q =
-          viaAd ? await repo.revealAdQuestion() : await repo.revealFreeQuestion();
+      final q = viaAd
+          ? await repo.revealAdQuestion(questionId: questionId)
+          : await repo.revealFreeQuestion();
       if (!mounted) return;
 
       if (q == null) {
@@ -191,6 +231,7 @@ class _WindQuestionViewState extends ConsumerState<WindQuestionView>
       if (!viaAd) ref.invalidate(userStatsProvider); // a credit was spent
       setState(() {
         _revealing = false;
+        _peeked = null; // consumed
         _displayed = q;
       });
     } catch (e) {
@@ -228,7 +269,9 @@ class _WindQuestionViewState extends ConsumerState<WindQuestionView>
         _unlocking = false;
         _revealing = true;
       });
-      await _reveal(viaAd: true);
+      // Reveal the teased question (falls back to random server-side if it's no
+      // longer eligible).
+      await _reveal(viaAd: true, questionId: _peeked?.id);
     } else {
       _notify('Brak nagrody — obejrzyj całe wideo, aby odblokować.');
       setState(() => _unlocking = false);
@@ -282,6 +325,8 @@ class _WindQuestionViewState extends ConsumerState<WindQuestionView>
     if (!atRevealSlot) {
       _revealing = false;
       _exhausted = false;
+      _peeking = false;
+      _peeked = null;
     }
 
     final width = MediaQuery.of(context).size.width;
@@ -289,12 +334,13 @@ class _WindQuestionViewState extends ConsumerState<WindQuestionView>
 
     final Widget child;
     if (atRevealSlot) {
-      if (_revealing) {
+      if (_revealing || _peeking) {
         child = const _Revealing();
       } else if (_exhausted) {
         child = const _NoMoreQuestions();
       } else {
         child = _RevealPaywall(
+          teaser: _peeked?.teaser,
           onWatchAd: _watchAdReveal,
           onGetPremium: _goPremium,
           busy: _unlocking,
@@ -342,7 +388,10 @@ class _Revealing extends StatelessWidget {
         SizedBox(
           height: 22,
           width: 22,
-          child: CircularProgressIndicator(strokeWidth: 2, color: AppTheme.spark),
+          child: CircularProgressIndicator(
+            strokeWidth: 2,
+            color: AppTheme.spark,
+          ),
         ),
       ],
     );
@@ -388,26 +437,35 @@ class _RevealPaywall extends StatelessWidget {
     required this.onWatchAd,
     required this.onGetPremium,
     required this.busy,
+    this.teaser,
   });
 
   final VoidCallback onWatchAd;
   final VoidCallback onGetPremium;
   final bool busy;
 
+  /// First couple of words of the next question (from `peek_next_question`),
+  /// teased above the CTAs. Falls back to a generic line when absent.
+  final String? teaser;
+
   @override
   Widget build(BuildContext context) {
+    final tease = teaser?.trim() ?? '';
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        const Text(
-          'Kolejne pytanie czeka',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: AppTheme.ink,
-            fontSize: 24,
-            fontWeight: FontWeight.w700,
+        if (tease.isNotEmpty)
+          StyledQuestionText('$tease…')
+        else
+          const Text(
+            'Kolejne pytanie czeka',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: AppTheme.ink,
+              fontSize: 24,
+              fontWeight: FontWeight.w700,
+            ),
           ),
-        ),
         const SizedBox(height: 10),
         const Text(
           'Obejrzyj reklamę, aby odsłonić nowe pytanie.',
@@ -486,7 +544,11 @@ class _UnlockButton extends StatelessWidget {
           borderRadius: _radius,
           boxShadow: primary
               ? const [
-                  BoxShadow(color: Color(0x558B5CF6), blurRadius: 20, spreadRadius: 1),
+                  BoxShadow(
+                    color: Color(0x558B5CF6),
+                    blurRadius: 20,
+                    spreadRadius: 1,
+                  ),
                 ]
               : null,
         ),

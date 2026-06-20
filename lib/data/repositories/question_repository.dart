@@ -22,15 +22,22 @@ abstract class QuestionRepository {
   /// them all. See [Smaczek].
   Future<List<Smaczek>> fetchSmaczki(String questionId);
 
+  /// Peeks the next UNSEEN question's teaser WITHOUT revealing it — the paywall
+  /// bait. Returns its id (echo back to [revealAdQuestion] so the ad reveals the
+  /// teased question) and the first two words of its text. No text, not marked
+  /// seen. Null when nothing eligible is left.
+  Future<({String id, String teaser})?> peekNextQuestion();
+
   /// Reveals the next UNSEEN question after a rewarded ad.
   ///
-  /// The server picks a random eligible question (active, non-premium, not
-  /// today's daily, not already seen by this user), records it in the seen-memory
-  /// (`question_seen`) so it never repeats, and returns it WITH text. The reveal
-  /// is ephemeral: the gate no longer grants this text later, so the caller must
-  /// keep the returned question in session memory. Returns null when the user has
-  /// seen everything eligible. Available to guests too.
-  Future<Question?> revealAdQuestion();
+  /// Pass [questionId] (from [peekNextQuestion]) to reveal exactly the teased
+  /// question; the server validates it is still eligible and otherwise picks a
+  /// random one so the watched ad is never wasted. Records the reveal in the
+  /// seen-memory (`question_seen`) so it never repeats, and returns it WITH text.
+  /// The reveal is ephemeral: the gate no longer grants this text later, so the
+  /// caller must keep the returned question in session memory. Returns null when
+  /// the user has seen everything eligible. Available to guests too.
+  Future<Question?> revealAdQuestion({String? questionId});
 
   /// Syncs and returns the user's engagement state (streak, free-unlock
   /// credits, rank).
@@ -118,14 +125,32 @@ class MockQuestionRepository implements QuestionRepository {
   }
 
   @override
-  Future<Question?> revealAdQuestion() async {
-    await Future.delayed(const Duration(milliseconds: 200));
-    // Offline preview: hand back a mock pool question (not the daily) as if it
-    // were freshly revealed. No real seen-memory in mock mode, so this can
-    // repeat — fine for a dev preview; tests use a custom fake repository.
+  Future<({String id, String teaser})?> peekNextQuestion() async {
+    await Future.delayed(const Duration(milliseconds: 150));
     if (kMockQuestions.length < 2) return null;
     final pick = kMockQuestions[
         1 + DateTime.now().microsecond % (kMockQuestions.length - 1)];
+    final teaser =
+        pick.questionText.trim().split(RegExp(r'\s+')).take(2).join(' ');
+    return (id: pick.id, teaser: teaser);
+  }
+
+  @override
+  Future<Question?> revealAdQuestion({String? questionId}) async {
+    await Future.delayed(const Duration(milliseconds: 200));
+    // Offline preview: reveal the requested mock question (or a random pool one).
+    // No real seen-memory in mock mode, so this can repeat — fine for a dev
+    // preview; tests use a custom fake repository.
+    if (kMockQuestions.isEmpty) return null;
+    final pick = questionId != null
+        ? kMockQuestions.firstWhere(
+            (q) => q.id == questionId,
+            orElse: () => kMockQuestions.first,
+          )
+        : kMockQuestions[
+            kMockQuestions.length < 2
+                ? 0
+                : 1 + DateTime.now().microsecond % (kMockQuestions.length - 1)];
     return pick.copyWith(isLocked: false);
   }
 
@@ -238,13 +263,31 @@ class SupabaseQuestionRepository implements QuestionRepository {
   }
 
   @override
-  Future<Question?> revealAdQuestion() async {
-    // SECURITY DEFINER RPC: server-picks a random unseen, non-premium, non-daily
-    // question, records it in question_seen, and returns it WITH text. Empty
-    // result = nothing unseen left.
+  Future<({String id, String teaser})?> peekNextQuestion() async {
+    // SECURITY DEFINER RPC: previews the next unseen pick's teaser without
+    // revealing it (no text, not marked seen). Empty = nothing left.
+    final data = await SupabaseService.client.rpc(
+      'peek_next_question',
+      params: {'p_locale': locale, 'p_date': _dateOnly(DateTime.now())},
+    );
+    final rows = (data as List).cast<Map<String, dynamic>>();
+    if (rows.isEmpty) return null;
+    final row = rows.first;
+    return (id: row['id'].toString(), teaser: row['teaser'] as String? ?? '');
+  }
+
+  @override
+  Future<Question?> revealAdQuestion({String? questionId}) async {
+    // SECURITY DEFINER RPC: reveals the peeked question (when still eligible) or
+    // a random unseen, non-premium, non-daily one, records it in question_seen,
+    // and returns it WITH text. Empty result = nothing unseen left.
     final data = await SupabaseService.client.rpc(
       'reveal_ad_question',
-      params: {'p_locale': locale, 'p_date': _dateOnly(DateTime.now())},
+      params: {
+        'p_locale': locale,
+        'p_date': _dateOnly(DateTime.now()),
+        'p_question_id': ?questionId,
+      },
     );
     final rows = (data as List).cast<Map<String, dynamic>>();
     if (rows.isEmpty) return null;
