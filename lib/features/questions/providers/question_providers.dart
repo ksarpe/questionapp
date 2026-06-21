@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/locale/app_locale.dart';
 import '../../../data/models/question.dart';
 import '../../../data/models/smaczek.dart';
 import '../../../data/models/vote_result.dart';
@@ -14,9 +15,17 @@ import '../../account/providers/session_providers.dart';
 /// In production builds, providing SUPABASE_URL and SUPABASE_ANON_KEY makes the
 /// app read questions from Supabase. Without credentials, local mock data keeps
 /// development and tests simple.
+///
+/// The Supabase source is built with the active app language (see
+/// [localeControllerProvider]) so its `p_locale` matches the UI. Watching the
+/// locale means switching language rebuilds this provider, which in turn
+/// invalidates every downstream question/smaczki fetch — they re-load in the
+/// newly chosen language.
 final questionRepositoryProvider = Provider<QuestionRepository>(
   (ref) => SupabaseService.isInitialised
-      ? const SupabaseQuestionRepository()
+      ? SupabaseQuestionRepository(
+          locale: ref.watch(localeControllerProvider).languageCode,
+        )
       : const MockQuestionRepository(),
 );
 
@@ -184,11 +193,15 @@ final questionDeckProvider = Provider<List<Question>>((ref) {
   if (ref.watch(isPremiumProvider)) {
     final pool =
         ref.watch(questionsProvider).asData?.value ?? const <Question>[];
-    if (daily == null) return pool;
-    // Shuffle the tail with the per-launch seed: random each open, STABLE across
-    // refetches within the session so the user doesn't get jumped around.
+    final seed = ref.watch(deckShuffleSeedProvider);
+    // Shuffle with the per-launch seed: random each open, STABLE across refetches
+    // within the session so the user doesn't get jumped around. Done even when
+    // the daily fails to resolve — otherwise the deck would fall back to the raw
+    // catalog order (get_questions returns it by created_at), which is exactly
+    // the "questions feel sequential" symptom.
+    if (daily == null) return pool.toList()..shuffle(Random(seed));
     final rest = pool.where((q) => q.id != daily.id).toList()
-      ..shuffle(Random(ref.watch(deckShuffleSeedProvider)));
+      ..shuffle(Random(seed));
     return [daily, ...rest];
   }
 

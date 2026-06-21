@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/theme/app_theme.dart';
 import 'styled_question_text.dart';
 
 /// Builds a question one word at a time: each word drops in from above and
@@ -90,16 +91,21 @@ class _FallingWordsTextState extends State<FallingWordsText>
 
   @override
   Widget build(BuildContext context) {
+    // One size for the whole question; long ones shrink so they don't overflow.
+    final fontSize = QuestionTextStyles.fontSizeFor(widget.text);
+    // Keep the gap between words proportional to the (possibly reduced) size.
+    final spacing = fontSize * (14 / QuestionTextStyles.maxFontSize);
     return Wrap(
       alignment: WrapAlignment.center,
       runAlignment: WrapAlignment.center,
       crossAxisAlignment: WrapCrossAlignment.center,
-      spacing: 14,
+      spacing: spacing,
       runSpacing: 2,
       children: [
         for (var i = 0; i < _words.length; i++)
           _FallingWord(
             word: _words[i],
+            fontSize: fontSize,
             controller: _controller,
             window: _window(i),
             dropDistance: _dropDistance,
@@ -114,12 +120,14 @@ class _FallingWordsTextState extends State<FallingWordsText>
 class _FallingWord extends StatelessWidget {
   const _FallingWord({
     required this.word,
+    required this.fontSize,
     required this.controller,
     required this.window,
     required this.dropDistance,
   });
 
   final String word;
+  final double fontSize;
   final AnimationController controller;
   final ({double start, double end}) window;
   final double dropDistance;
@@ -145,7 +153,7 @@ class _FallingWord extends StatelessWidget {
           child: Opacity(opacity: opacity, child: child),
         );
       },
-      child: StyledWord(word),
+      child: StyledWord(word, fontSize: fontSize),
     );
   }
 }

@@ -54,6 +54,8 @@ class AppTheme {
 
   /// Base geometry for the question text. Colour/stroke are applied per-layer
   /// in [QuestionTextStyles], so this only carries size, weight and spacing.
+  /// The size is the *largest* used; long questions shrink it via
+  /// [QuestionTextStyles.fontSizeFor] so they don't become a wall of text.
   static const TextStyle questionBase = TextStyle(
     fontFamily: 'Anton',
     fontSize: 42,
@@ -70,21 +72,48 @@ class AppTheme {
 class QuestionTextStyles {
   QuestionTextStyles._();
 
-  static const double _strokeWidth = 6;
+  /// Largest font size, used for short questions.
+  static const double maxFontSize = 42;
+
+  /// Smallest font size, used for very long questions.
+  static const double minFontSize = 26;
+
+  /// Length (in characters) up to which the text stays at [maxFontSize], and
+  /// the length at/after which it bottoms out at [minFontSize]. Between them the
+  /// size scales linearly so longer questions read as several tidy lines rather
+  /// than an overflowing block.
+  static const int _shortLen = 55;
+  static const int _longLen = 150;
+
+  /// Outline width relative to the font size, so the stroke stays proportional
+  /// when the text shrinks (6px at the 42px base size).
+  static const double _strokeRatio = 6 / 42;
+
+  /// Picks a font size for [text] based on its length, clamped to
+  /// [minFontSize]..[maxFontSize].
+  static double fontSizeFor(String text) {
+    final len = text.trim().length;
+    if (len <= _shortLen) return maxFontSize;
+    if (len >= _longLen) return minFontSize;
+    final t = (len - _shortLen) / (_longLen - _shortLen);
+    return maxFontSize - t * (maxFontSize - minFontSize);
+  }
 
   /// Bottom layer: the black outline, drawn slightly wider, with a drop shadow.
-  static TextStyle get stroke => AppTheme.questionBase.copyWith(
-    foreground: Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = _strokeWidth
-      ..strokeJoin = StrokeJoin.round
-      ..color = Colors.black,
-    shadows: const [
-      Shadow(color: Color(0x55000000), offset: Offset(0, 4), blurRadius: 6),
-    ],
-  );
+  static TextStyle strokeFor(double fontSize) =>
+      AppTheme.questionBase.copyWith(
+        fontSize: fontSize,
+        foreground: Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = fontSize * _strokeRatio
+          ..strokeJoin = StrokeJoin.round
+          ..color = Colors.black,
+        shadows: const [
+          Shadow(color: Color(0x55000000), offset: Offset(0, 4), blurRadius: 6),
+        ],
+      );
 
   /// Top layer: the white fill sitting inside the outline.
-  static TextStyle get fill =>
-      AppTheme.questionBase.copyWith(color: Colors.white);
+  static TextStyle fillFor(double fontSize) =>
+      AppTheme.questionBase.copyWith(fontSize: fontSize, color: Colors.white);
 }

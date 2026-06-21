@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/locale/l10n_extension.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../data/models/vote_result.dart';
 import '../../account/providers/session_providers.dart';
@@ -45,13 +46,8 @@ class _DailyVotePanelState extends ConsumerState<DailyVotePanel> {
       setState(() => _local = result);
     } catch (e) {
       if (!mounted) return;
-      final isPolish = Localizations.localeOf(context).languageCode == 'pl';
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            isPolish ? 'Nie udało się zagłosować.' : 'Could not record your vote.',
-          ),
-        ),
+        SnackBar(content: Text(context.l10n.voteFailed)),
       );
     } finally {
       if (mounted) setState(() => _busy = false);
@@ -60,7 +56,6 @@ class _DailyVotePanelState extends ConsumerState<DailyVotePanel> {
 
   @override
   Widget build(BuildContext context) {
-    final isPolish = Localizations.localeOf(context).languageCode == 'pl';
     final hasAccount = ref.watch(
       sessionProvider.select((s) => s.value?.hasAccount ?? false),
     );
@@ -71,7 +66,6 @@ class _DailyVotePanelState extends ConsumerState<DailyVotePanel> {
     // we don't even fetch the split for a guest.)
     if (!hasAccount) {
       return _Buttons(
-        isPolish: isPolish,
         busy: false,
         onVote: (_) => showAuthSheet(context),
       );
@@ -89,10 +83,9 @@ class _DailyVotePanelState extends ConsumerState<DailyVotePanel> {
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 250),
       child: result.hasVoted
-          ? _Results(key: const ValueKey('results'), result: result, isPolish: isPolish)
+          ? _Results(key: const ValueKey('results'), result: result)
           : _Buttons(
               key: const ValueKey('buttons'),
-              isPolish: isPolish,
               busy: _busy,
               onVote: _vote,
             ),
@@ -102,13 +95,11 @@ class _DailyVotePanelState extends ConsumerState<DailyVotePanel> {
 
 class _Buttons extends StatelessWidget {
   const _Buttons({
-    required this.isPolish,
     required this.busy,
     required this.onVote,
     super.key,
   });
 
-  final bool isPolish;
   final bool busy;
   final void Function(int choice) onVote;
 
@@ -120,14 +111,14 @@ class _Buttons extends StatelessWidget {
         children: [
           Expanded(
             child: _VoteButton(
-              label: isPolish ? 'TAK' : 'YES',
+              label: context.l10n.voteYes,
               onTap: busy ? null : () => onVote(VoteResult.yes),
             ),
           ),
           const SizedBox(width: 12),
           Expanded(
             child: _VoteButton(
-              label: isPolish ? 'NIE' : 'NO',
+              label: context.l10n.voteNo,
               onTap: busy ? null : () => onVote(VoteResult.no),
             ),
           ),
@@ -174,10 +165,9 @@ class _VoteButton extends StatelessWidget {
 }
 
 class _Results extends StatelessWidget {
-  const _Results({required this.result, required this.isPolish, super.key});
+  const _Results({required this.result, super.key});
 
   final VoteResult result;
-  final bool isPolish;
 
   @override
   Widget build(BuildContext context) {
@@ -187,36 +177,26 @@ class _Results extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           _ResultBar(
-            label: isPolish ? 'TAK' : 'YES',
+            label: context.l10n.voteYes,
             pct: result.yesPct,
             fraction: result.yesFraction,
             mine: result.myChoice == VoteResult.yes,
           ),
           const SizedBox(height: 8),
           _ResultBar(
-            label: isPolish ? 'NIE' : 'NO',
+            label: context.l10n.voteNo,
             pct: result.noPct,
             fraction: result.noFraction,
             mine: result.myChoice == VoteResult.no,
           ),
           const SizedBox(height: 6),
           Text(
-            isPolish
-                ? '${result.total} ${_glosy(result.total)}'
-                : '${result.total} ${result.total == 1 ? 'vote' : 'votes'}',
+            context.l10n.votesCount(result.total),
             style: const TextStyle(color: AppTheme.subtle, fontSize: 12),
           ),
         ],
       ),
     );
-  }
-
-  String _glosy(int n) {
-    if (n == 1) return 'głos';
-    final lastTwo = n % 100;
-    final last = n % 10;
-    if (last >= 2 && last <= 4 && (lastTwo < 12 || lastTwo > 14)) return 'głosy';
-    return 'głosów';
   }
 }
 

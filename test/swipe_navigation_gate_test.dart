@@ -9,6 +9,8 @@ import 'package:questionapp/features/account/providers/stats_providers.dart';
 import 'package:questionapp/features/questions/providers/question_providers.dart';
 import 'package:questionapp/features/questions/widgets/wind_question_view.dart';
 
+import 'support/localized_test_app.dart';
+
 /// Navigation rules of the reveal feed ([WindQuestionView._advance]):
 ///   * PREMIUM walks the full catalog, wrapping around — never walled.
 ///   * a FREE user goes forward onto the reveal slot; with a credit it reveals,
@@ -44,7 +46,7 @@ void main() {
     await tester.pumpWidget(
       UncontrolledProviderScope(
         container: container,
-        child: const MaterialApp(
+        child: const LocalizedTestApp(
           home: Scaffold(
             body: Center(
               child: SizedBox(width: 300, height: 600, child: WindQuestionView()),

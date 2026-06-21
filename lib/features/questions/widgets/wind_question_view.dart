@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/locale/l10n_extension.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../data/models/question.dart';
 import '../../../services/purchases_service.dart';
+import '../../../services/supabase_service.dart';
 import '../../account/providers/session_providers.dart';
 import '../../account/providers/stats_providers.dart';
+import '../../account/widgets/save_pro_prompt.dart';
 import '../../monetization/providers/monetization_providers.dart';
 import '../providers/question_providers.dart';
 import 'falling_words_text.dart';
@@ -67,6 +70,25 @@ class _WindQuestionViewState extends ConsumerState<WindQuestionView>
 
   /// A peek RPC is in flight — the slot shows a spinner until the teaser arrives.
   bool _peeking = false;
+
+  /// The in-flight peek future, or null. A peek is non-consuming (no text, no
+  /// credit, not marked seen), so it is started EAGERLY while the user is still
+  /// on the last feed item (see [_maybePrefetchPeek]) — by the time they swipe to
+  /// the slot the teaser is usually already in [_peeked] and the paywall shows
+  /// instantly, with no round-trip on the critical path. Held so a swipe that
+  /// beats the prefetch reuses the same in-flight call instead of firing another.
+  Future<({String id, String teaser})?>? _peekFuture;
+
+  /// A credit reveal started BEFORE the wind-out animation, so its round-trip
+  /// hides behind the ~320ms animation instead of a spinner afterwards. Held
+  /// alongside its result/error and a "done" flag so the post-animation step can
+  /// paint the revealed question in the same frame when the round-trip already
+  /// won the race — and only fall back to the [_Revealing] spinner when the
+  /// network is genuinely slower than the animation.
+  Future<Question?>? _pendingReveal;
+  Question? _pendingRevealResult;
+  Object? _pendingRevealError;
+  bool _pendingRevealDone = false;
 
   @override
   void initState() {
@@ -134,6 +156,41 @@ class _WindQuestionViewState extends ConsumerState<WindQuestionView>
     }
 
     // LEFT swipe forward onto the next position (a revealed question, or the slot).
+    //
+    // If this swipe is going to land on the reveal slot, start its network work
+    // NOW — concurrently with the wind-out animation — so the round-trip hides
+    // behind the ~320ms animation instead of a spinner afterwards. With a credit
+    // we auto-reveal the next question (the credit is spent ONLY here, on a
+    // committed forward swipe, never while merely reading the daily); without one
+    // we peek the teaser for the paywall. Both are awaited after the animation.
+    // `willLandOnSlot` is exact: nothing mutates the deck during the animation
+    // (we are the only writer and have not appended yet), so it equals the
+    // post-animation slot check — the credit is never spent for a swipe that
+    // ends up elsewhere.
+    final willLandOnSlot = (idx + 1) >= deckLen;
+    final hasCredit = ref.read(freeUnlockCreditsProvider) >= 1;
+    if (willLandOnSlot && !_exhausted) {
+      if (hasCredit) {
+        _pendingRevealResult = null;
+        _pendingRevealError = null;
+        _pendingRevealDone = false;
+        final reveal = ref.read(questionRepositoryProvider).revealFreeQuestion();
+        _pendingReveal = reveal;
+        // Record the outcome as it arrives so the post-animation step can skip
+        // the spinner when the reveal already won the race against the animation.
+        reveal
+            .then(
+              (q) => _pendingRevealResult = q,
+              onError: (Object e) => _pendingRevealError = e,
+            )
+            .whenComplete(() => _pendingRevealDone = true);
+      } else if (_peeked == null && _peekFuture == null) {
+        // No eager prefetch yet (e.g. a very fast swipe) — start the peek now so
+        // it at least overlaps the wind-out animation.
+        _startPeek();
+      }
+    }
+
     _animating = true;
     await _animateOut(direction);
     if (!mounted) {
@@ -142,38 +199,100 @@ class _WindQuestionViewState extends ConsumerState<WindQuestionView>
     }
     notifier.forwardLinear();
 
-    final landedOnSlot = ref.read(isAtRevealSlotProvider);
-    final hasCredit = ref.read(freeUnlockCreditsProvider) >= 1;
-    // Set the slot's state BEFORE settling in so there's no flash of the generic
-    // "next question" text: with a credit we auto-reveal (spinner), otherwise we
-    // peek the teaser (spinner until it arrives).
-    if (landedOnSlot && hasCredit) {
-      _revealing = true;
-    } else if (landedOnSlot) {
-      _peeking = true;
+    if (!ref.read(isAtRevealSlotProvider)) {
+      // Landed on an already-revealed question — step straight onto it.
+      _settleIn(ref.read(currentQuestionProvider));
+      _animating = false;
+      return;
     }
-    _settleIn(ref.read(currentQuestionProvider));
-    _animating = false;
 
-    if (landedOnSlot && hasCredit) {
-      await _reveal(viaAd: false);
-    } else if (landedOnSlot) {
-      await _peekNext(); // fetch the teaser for the paywall
+    // On the reveal slot. Apply whatever we pre-started during the animation.
+    final pendingReveal = _pendingReveal;
+    _pendingReveal = null;
+    if (pendingReveal != null) {
+      if (_pendingRevealDone) {
+        // The reveal beat the animation — paint it in the same frame, no spinner
+        // and no paywall flash (these setStates coalesce into one rebuild).
+        _animating = false;
+        _settleIn(null); // snap the transform back to centre
+        _applyRevealResult(
+          _pendingRevealResult,
+          _pendingRevealError,
+          viaAd: false,
+        );
+      } else {
+        // Slower than the animation: show the brief spinner until it lands.
+        setState(() => _revealing = true);
+        _settleIn(ref.read(currentQuestionProvider));
+        _animating = false;
+        await _applyReveal(pendingReveal, viaAd: false);
+      }
+    } else {
+      // No credit: show the paywall. Its teaser is usually already prefetched
+      // (instant); only a swipe that beat the prefetch waits on the peek here.
+      _settleIn(ref.read(currentQuestionProvider));
+      _animating = false;
+      await _peekNext();
     }
   }
 
-  /// Peeks the next question (id + teaser) to bait the paywall, without revealing
-  /// it. Empty result => the user has run out, so the slot shows the "no more"
-  /// state instead.
+  /// Eagerly prefetches the next teaser while the user is still parked on the
+  /// last item of the feed (the daily, or the most recent revealed question), so
+  /// the reveal-slot paywall is instant instead of waiting on a round-trip. Only
+  /// for a free user who would actually hit the paywall: premium never does, and
+  /// a user holding the daily credit auto-reveals (consuming) rather than peeks,
+  /// so peeking ahead for them would be wasted. Cheap and idempotent — a single
+  /// in-flight peek is kept and reused. Called from [build].
+  void _maybePrefetchPeek() {
+    if (_animating || ref.read(isPremiumProvider)) return;
+    if (_peeked != null || _peekFuture != null) return; // already have / getting it
+    final deck = ref.read(questionDeckProvider);
+    if (deck.isEmpty) return;
+    if (ref.read(questionIndexProvider) != deck.length - 1) return; // not the last item
+    if (ref.read(freeUnlockCreditsProvider) >= 1) return; // a credit reveals, not peeks
+    _startPeek();
+  }
+
+  /// Fires a peek and resolves it into [_peeked] whenever it lands — even if no
+  /// one is awaiting (the eager prefetch case). Stores the future in [_peekFuture]
+  /// so a concurrent swipe reuses it. A null result (ran out) is left for
+  /// [_peekNext] / the slot to turn into the "no more" state.
+  Future<({String id, String teaser})?> _startPeek() {
+    final future = ref.read(questionRepositoryProvider).peekNextQuestion();
+    _peekFuture = future;
+    future
+        .then((peeked) {
+          if (!mounted || !identical(_peekFuture, future)) return;
+          _peekFuture = null;
+          if (peeked != null && _peeked == null) {
+            setState(() => _peeked = peeked);
+          }
+        })
+        .catchError((Object e) {
+          debugPrint('peek failed: $e');
+          if (mounted && identical(_peekFuture, future)) _peekFuture = null;
+          return null;
+        });
+    return future;
+  }
+
+  /// Ensures the paywall has its teaser, awaiting the peek only when it isn't
+  /// ready yet. Returns instantly when the teaser was already prefetched, so the
+  /// common path shows no spinner; an empty result marks the slot "exhausted".
   Future<void> _peekNext() async {
+    if (_peeked != null) return; // already prefetched — instant paywall
+    final future = _peekFuture ?? _startPeek();
     setState(() => _peeking = true);
     try {
-      final peeked = await ref.read(questionRepositoryProvider).peekNextQuestion();
+      final peeked = await future;
       if (!mounted) return;
       setState(() {
         _peeking = false;
-        _peeked = peeked;
-        if (peeked == null) _exhausted = true;
+        if (peeked != null) {
+          _peeked = peeked;
+        } else {
+          _exhausted = true;
+        }
       });
     } catch (e) {
       debugPrint('peek failed: $e');
@@ -211,37 +330,67 @@ class _WindQuestionViewState extends ConsumerState<WindQuestionView>
   /// and appends it to this session's feed. The index already points at the new
   /// question's slot, so appending lands the user on it. Empty result => the
   /// user has run out for now.
-  Future<void> _reveal({required bool viaAd, String? questionId}) async {
+  Future<void> _reveal({required bool viaAd, String? questionId}) {
+    final repo = ref.read(questionRepositoryProvider);
+    final future = viaAd
+        ? repo.revealAdQuestion(questionId: questionId)
+        : repo.revealFreeQuestion();
+    return _applyReveal(future, viaAd: viaAd);
+  }
+
+  /// Awaits an in-flight reveal [future] (started here or earlier, in parallel
+  /// with the wind-out animation) and paints its result.
+  Future<void> _applyReveal(
+    Future<Question?> future, {
+    required bool viaAd,
+  }) async {
+    Question? q;
+    Object? error;
     try {
-      final repo = ref.read(questionRepositoryProvider);
-      final q = viaAd
-          ? await repo.revealAdQuestion(questionId: questionId)
-          : await repo.revealFreeQuestion();
-      if (!mounted) return;
-
-      if (q == null) {
-        setState(() {
-          _revealing = false;
-          _exhausted = true;
-        });
-        return;
-      }
-
-      ref.read(revealedFeedProvider.notifier).append(q);
-      if (!viaAd) ref.invalidate(userStatsProvider); // a credit was spent
-      setState(() {
-        _revealing = false;
-        _peeked = null; // consumed
-        _displayed = q;
-      });
+      q = await future;
     } catch (e) {
-      debugPrint('reveal failed: $e');
-      if (!mounted) return;
-      _notify('Nie udało się odsłonić pytania — spróbuj ponownie.');
+      error = e;
+    }
+    _applyRevealResult(q, error, viaAd: viaAd);
+  }
+
+  /// Paints a resolved reveal: appends the revealed [q] to this session's feed
+  /// (which grows the deck and steps the user off the slot onto it), or shows the
+  /// "exhausted" / error state. Synchronous so the credit auto-reveal can apply a
+  /// result that beat the animation in the same frame as [_settleIn] — coalesced
+  /// into one rebuild, so there's no spinner and no paywall flash.
+  void _applyRevealResult(Question? q, Object? error, {required bool viaAd}) {
+    if (!mounted) return;
+    if (error != null) {
+      debugPrint('reveal failed: $error');
+      _notify(context.l10n.revealFailed);
+      // Re-sync the server's view of the credit. A free reveal can fail because
+      // the client thought it had a credit but the server disagreed (already
+      // spent on another device, or stale after a UTC-midnight rollover). Without
+      // this the next forward swipe re-reads the same stale credit and re-fires
+      // the doomed reveal — an infinite retry loop. Re-syncing drops the credit
+      // to 0 so the slot falls through to the ad / PRO paywall instead.
+      ref.invalidate(userStatsProvider);
       // Stay on the slot; with _revealing cleared the paywall shows again so the
       // user can retry via ad / PRO.
       setState(() => _revealing = false);
+      return;
     }
+    if (q == null) {
+      setState(() {
+        _revealing = false;
+        _exhausted = true;
+      });
+      return;
+    }
+
+    ref.read(revealedFeedProvider.notifier).append(q);
+    if (!viaAd) ref.invalidate(userStatsProvider); // a credit was spent
+    setState(() {
+      _revealing = false;
+      _peeked = null; // consumed
+      _displayed = q;
+    });
   }
 
   /// Watches a rewarded video, then reveals the next unseen question.
@@ -252,30 +401,55 @@ class _WindQuestionViewState extends ConsumerState<WindQuestionView>
     final ads = ref.read(rewardedAdServiceProvider);
     if (!ads.isReady) {
       ads.preload();
-      _notify('Reklama jeszcze się ładuje — spróbuj za chwilę.');
+      _notify(context.l10n.adLoading);
       if (mounted) setState(() => _unlocking = false);
       return;
     }
 
-    var earned = false;
-    await ads.showRewardedAd(
-      onReward: () => earned = true,
-      userId: ref.read(sessionProvider).value?.userId,
-    );
-    if (!mounted) return;
-
-    if (earned) {
-      setState(() {
-        _unlocking = false;
-        _revealing = true;
-      });
-      // Reveal the teased question (falls back to random server-side if it's no
-      // longer eligible).
-      await _reveal(viaAd: true, questionId: _peeked?.id);
-    } else {
-      _notify('Brak nagrody — obejrzyj całe wideo, aby odblokować.');
-      setState(() => _unlocking = false);
+    // showRewardedAd resolves to whether the reward was actually earned — the
+    // reward is captured inside the service and is no longer raced by the
+    // dismiss callback (see RewardedAdService). Wrapped so a throw here can't
+    // leave the paywall stuck with _unlocking == true (a wedged spinner reads as
+    // "it broke" to the user).
+    bool earned;
+    try {
+      earned = await ads.showRewardedAd(
+        userId: ref.read(sessionProvider).value?.userId,
+        questionId: _peeked?.id,
+      );
+    } catch (e) {
+      debugPrint('showRewardedAd failed: $e');
+      earned = false;
     }
+    if (!mounted) return; // widget torn down while the ad was on screen
+
+    if (!earned) {
+      _notify(context.l10n.adNoReward);
+      setState(() => _unlocking = false);
+      return;
+    }
+
+    // Reward earned. Guarantee a live authenticated session BEFORE the reveal
+    // RPC: the JWT can lapse during a 30s ad, or a guest's anon sign-in may have
+    // failed silently at launch — either way reveal_ad_question (granted to
+    // `authenticated` only) would throw a raw "permission denied" AFTER the user
+    // already watched the whole ad. ensureSignedIn is a no-op fast path when a
+    // session already exists.
+    final userId = await SupabaseService.ensureSignedIn();
+    if (!mounted) return;
+    if (SupabaseService.isInitialised && userId == null) {
+      _notify(context.l10n.noConnection);
+      setState(() => _unlocking = false);
+      return;
+    }
+
+    setState(() {
+      _unlocking = false;
+      _revealing = true;
+    });
+    // Reveal the teased question (falls back to random server-side if it's no
+    // longer eligible).
+    await _reveal(viaAd: true, questionId: _peeked?.id);
   }
 
   /// Opens the RevenueCat paywall. On a completed purchase the session is
@@ -291,9 +465,44 @@ class _WindQuestionViewState extends ConsumerState<WindQuestionView>
       await ref.read(sessionProvider.notifier).refresh();
       if (!mounted) return;
       ref.invalidate(questionsProvider); // load the catalog premium now reads
+      setState(() => _unlocking = false);
+      // A guest's PRO rides on the anonymous identity — nudge them to save it to
+      // a real account so a reinstall / new device can't lose it. No-ops for a
+      // user who already has an account.
+      await promptSaveProAccount(context, ref);
     } else {
-      _notify('Zakup nie został dokończony.');
+      _notify(context.l10n.purchaseNotCompleted);
+      setState(() => _unlocking = false);
     }
+  }
+
+  /// Escape hatch from the reveal slot back to the free daily — wired into both
+  /// the paywall and the "no more questions" state so neither is a dead end.
+  void _backToDaily() {
+    if (_unlocking || _revealing) return;
+    ref.read(questionIndexProvider.notifier).toDaily();
+  }
+
+  /// Restores a previous purchase — the store-required path for someone who
+  /// already bought PRO (reinstalled, or a guest now on a fresh anonymous
+  /// identity) so they aren't charged twice. Surfaced on the paywall because the
+  /// other restore lives in Settings, which a guest can't reach.
+  Future<void> _restorePurchases() async {
+    if (_unlocking || _revealing) return;
+    setState(() => _unlocking = true);
+
+    final restored = await PurchasesService.restorePurchases();
+    if (!mounted) return;
+    if (restored) {
+      await ref.read(sessionProvider.notifier).refresh();
+      if (!mounted) return;
+      ref.invalidate(questionsProvider); // load the catalog premium now reads
+    }
+    _notify(
+      restored
+          ? context.l10n.purchaseRestoredCelebrate
+          : context.l10n.noPreviousPurchase,
+    );
     if (mounted) setState(() => _unlocking = false);
   }
 
@@ -315,6 +524,16 @@ class _WindQuestionViewState extends ConsumerState<WindQuestionView>
   Widget build(BuildContext context) {
     final atRevealSlot = ref.watch(isAtRevealSlotProvider);
 
+    // A new signed-in identity invalidates any teaser peeked for the previous one
+    // (peek eligibility is per-uuid). Drop it so [_maybePrefetchPeek] re-peeks for
+    // the new user rather than teasing a question they may already have seen.
+    ref.listen(sessionProvider.select((s) => s.value?.userId), (prev, next) {
+      if (prev != next) {
+        _peeked = null;
+        _peekFuture = null;
+      }
+    });
+
     // Keep the painted question in sync with the provider while idle. Assigning
     // the field here (rather than setState) is safe — we are already building.
     final current = ref.watch(currentQuestionProvider);
@@ -330,6 +549,10 @@ class _WindQuestionViewState extends ConsumerState<WindQuestionView>
       _peeking = false;
     }
 
+    // Warm the next teaser while the user lingers on the last feed item, so the
+    // reveal-slot paywall opens instantly instead of after a round-trip.
+    _maybePrefetchPeek();
+
     final width = MediaQuery.of(context).size.width;
     final displayed = _displayed;
 
@@ -338,12 +561,14 @@ class _WindQuestionViewState extends ConsumerState<WindQuestionView>
       if (_revealing || _peeking) {
         child = const _Revealing();
       } else if (_exhausted) {
-        child = const _NoMoreQuestions();
+        child = _NoMoreQuestions(onBackToDaily: _backToDaily);
       } else {
         child = _RevealPaywall(
           teaser: _peeked?.teaser,
           onWatchAd: _watchAdReveal,
           onGetPremium: _goPremium,
+          onBackToDaily: _backToDaily,
+          onRestore: _restorePurchases,
           busy: _unlocking,
         );
       }
@@ -400,32 +625,62 @@ class _Revealing extends StatelessWidget {
 }
 
 /// Shown on the reveal slot when the user has run out of eligible questions.
+/// Carries its own "back to the daily" action so it is never a dead end — the
+/// user has consumed every ad/credit-revealable question, so the only forward
+/// path left is PRO, and the only sideways path is back to today's free daily.
 class _NoMoreQuestions extends StatelessWidget {
-  const _NoMoreQuestions();
+  const _NoMoreQuestions({required this.onBackToDaily});
+
+  final VoidCallback onBackToDaily;
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
+    return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(Icons.check_circle_outline, color: AppTheme.subtle, size: 40),
-        SizedBox(height: 16),
+        const Icon(Icons.check_circle_outline, color: AppTheme.subtle, size: 40),
+        const SizedBox(height: 16),
         Text(
-          'To wszystkie pytania na teraz',
+          context.l10n.noMoreTitle,
           textAlign: TextAlign.center,
-          style: TextStyle(
+          style: const TextStyle(
             color: AppTheme.ink,
             fontSize: 20,
             fontWeight: FontWeight.w600,
           ),
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         Text(
-          'Wróć po więcej wkrótce.',
+          context.l10n.noMoreBody,
           textAlign: TextAlign.center,
-          style: TextStyle(color: AppTheme.subtle, fontSize: 14),
+          style: const TextStyle(color: AppTheme.subtle, fontSize: 14),
         ),
+        const SizedBox(height: 28),
+        _BackToDailyLink(onTap: onBackToDaily),
       ],
+    );
+  }
+}
+
+/// A borderless "← Wróć do pytania dnia" link used on the reveal-slot states,
+/// so the paywall and the "no more" screen each carry their own visible escape
+/// back to today's free daily instead of relying on a faint bottom-of-screen
+/// link the user may not notice.
+class _BackToDailyLink extends StatelessWidget {
+  const _BackToDailyLink({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton.icon(
+      onPressed: onTap,
+      style: TextButton.styleFrom(
+        foregroundColor: AppTheme.subtle,
+        textStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+      ),
+      icon: const Icon(Icons.arrow_back, size: 16),
+      label: Text(context.l10n.backToDailyQuestion),
     );
   }
 }
@@ -437,12 +692,16 @@ class _RevealPaywall extends StatelessWidget {
   const _RevealPaywall({
     required this.onWatchAd,
     required this.onGetPremium,
+    required this.onBackToDaily,
+    required this.onRestore,
     required this.busy,
     this.teaser,
   });
 
   final VoidCallback onWatchAd;
   final VoidCallback onGetPremium;
+  final VoidCallback onBackToDaily;
+  final VoidCallback onRestore;
   final bool busy;
 
   /// First couple of words of the next question (from `peek_next_question`),
@@ -458,20 +717,20 @@ class _RevealPaywall extends StatelessWidget {
         if (tease.isNotEmpty)
           StyledQuestionText('$tease…')
         else
-          const Text(
-            'Kolejne pytanie czeka',
+          Text(
+            context.l10n.nextQuestionWaiting,
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: const TextStyle(
               color: AppTheme.ink,
               fontSize: 24,
               fontWeight: FontWeight.w700,
             ),
           ),
         const SizedBox(height: 10),
-        const Text(
-          'Obejrzyj reklamę, aby odsłonić nowe pytanie.',
+        Text(
+          context.l10n.watchAdToReveal,
           textAlign: TextAlign.center,
-          style: TextStyle(color: AppTheme.subtle, fontSize: 14),
+          style: const TextStyle(color: AppTheme.subtle, fontSize: 14),
         ),
         const SizedBox(height: 32),
         ConstrainedBox(
@@ -482,13 +741,13 @@ class _RevealPaywall extends StatelessWidget {
             children: [
               _UnlockButton(
                 icon: Icons.play_circle_outline,
-                label: 'Odblokuj reklamą',
+                label: context.l10n.unlockWithAd,
                 onTap: busy ? null : onWatchAd,
               ),
               const SizedBox(height: 12),
               _UnlockButton(
                 icon: Icons.workspace_premium_outlined,
-                label: 'Przejdź na PRO',
+                label: context.l10n.goPro,
                 onTap: busy ? null : onGetPremium,
                 primary: true,
               ),
@@ -511,6 +770,20 @@ class _RevealPaywall extends StatelessWidget {
               ),
             ],
           ),
+        ),
+        const SizedBox(height: 4),
+        // Visible escape back to the free daily, so a user who doesn't want to
+        // watch an ad isn't cornered on the paywall.
+        _BackToDailyLink(onTap: busy ? () {} : onBackToDaily),
+        // Store-required restore path — reachable here because a guest can't
+        // open Settings (where the other restore lives).
+        TextButton(
+          onPressed: busy ? null : onRestore,
+          style: TextButton.styleFrom(
+            foregroundColor: AppTheme.subtle,
+            textStyle: const TextStyle(fontSize: 13),
+          ),
+          child: Text(context.l10n.restorePurchase),
         ),
       ],
     );

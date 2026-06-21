@@ -66,6 +66,12 @@ użytkownika: co widzi, co może zrobić, a czego nie. Stan na 2026-06-20 (model
    wcześniej **nie wracają** (nie powtórzą się) i **nie są** ponownie czytelne.
 8. **„Go deeper" (smaczki)** na czytelnym pytaniu → pierwszy smaczek za darmo,
    reszta zablokowana (PRO).
+9. **Zakup PRO jako gość** → działa, ale entitlement siedzi na tożsamości
+   anonimowej. Zaraz po zakupie pojawia się delikatny dialog **„PRO aktywne 🎉 —
+   załóż konto"**, żeby podpiąć subskrypcję pod prawdziwe konto (rejestracja
+   e-mail/hasło **ulepsza gościa w miejscu** — to samo `uuid`, więc PRO zostaje).
+   Można odłożyć („Później"). Restore na poziomie sklepu i tak działa, to tylko
+   przyjaźniejsza, odzyskiwalna ścieżka.
 
 **Czego gość NIE może:** głosować, widzieć wyników, mieć serii, dostać darmowego
 pytania bez reklamy, czytać całego katalogu, wracać do pytań po restarcie.

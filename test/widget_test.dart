@@ -1,18 +1,60 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:questionapp/app.dart';
+import 'package:questionapp/core/locale/app_locale.dart';
+import 'package:questionapp/features/account/providers/session_providers.dart';
 import 'package:questionapp/features/account/screens/auth_screen.dart';
+import 'package:questionapp/features/onboarding/providers/onboarding_providers.dart';
+import 'package:questionapp/features/onboarding/screens/onboarding_screen.dart';
 import 'package:questionapp/features/questions/widgets/go_deeper_button.dart';
 import 'package:questionapp/features/settings/screens/settings_screen.dart';
 
+import 'support/localized_test_app.dart';
+
+/// The Polish label of the "go deeper" pill (was `GoDeeperButton.label` before
+/// the string moved into the ARB localizations). Tests pin the locale to Polish
+/// (see [_mockPrefs] / [LocalizedTestApp]), so this is what renders.
+const _goDeeperLabelPl = 'WEJDŹ GŁĘBIEJ';
+
+/// In-memory SharedPreferences pinned to Polish so [localeControllerProvider]
+/// (read by QuestionApp/SettingsScreen) resolves deterministically to `pl`
+/// regardless of the host device locale — the assertions below are in Polish.
+///
+/// Onboarding is marked complete so `AppEntry` behaves like a returning user:
+/// after the brief launch splash it drops straight to the daily rather than the
+/// first-run tutorial (which has its own test below).
+Future<SharedPreferences> _mockPrefs() async {
+  SharedPreferences.setMockInitialValues({
+    kLocalePrefKey: 'pl',
+    kOnboardingCompletePrefKey: true,
+  });
+  return SharedPreferences.getInstance();
+}
+
+/// Pumps past the launch splash so the routed-to screen (the daily, or the
+/// tutorial) is on screen. Driven by fixed pumps rather than `pumpAndSettle`
+/// because the splash logo runs a looping glow that never settles.
+Future<void> _passSplash(WidgetTester tester) async {
+  await tester.pump(); // first frame: the splash
+  await tester.pump(const Duration(milliseconds: 2000)); // splash timer fires
+  await tester.pump(const Duration(milliseconds: 500)); // phase cross-fade
+}
+
 void main() {
   testWidgets('App renders the first question', (WidgetTester tester) async {
-    await tester.pumpWidget(const ProviderScope(child: QuestionApp()));
+    final prefs = await _mockPrefs();
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
+        child: const QuestionApp(),
+      ),
+    );
 
-    // Initial frame shows the loading spinner.
-    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    // Returning user (onboarding complete): the splash gives way to the daily.
+    await _passSplash(tester);
 
     // Let the mock repository's simulated delay resolve.
     await tester.pump(const Duration(milliseconds: 400));
@@ -24,14 +66,56 @@ void main() {
     expect(find.text('Zaloguj'), findsOneWidget);
     expect(find.byIcon(Icons.person_outline), findsNothing);
     expect(find.byIcon(Icons.local_fire_department_rounded), findsNothing);
-    expect(find.text(GoDeeperButton.label), findsOneWidget);
+    expect(find.text(_goDeeperLabelPl), findsOneWidget);
+  });
+
+  testWidgets('First launch shows onboarding; skip leads to the account choice', (
+    WidgetTester tester,
+  ) async {
+    // A brand-new install: no onboarding flag, so AppEntry runs the tutorial.
+    SharedPreferences.setMockInitialValues({kLocalePrefKey: 'pl'});
+    final prefs = await SharedPreferences.getInstance();
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
+        child: const QuestionApp(),
+      ),
+    );
+
+    await _passSplash(tester);
+
+    // The welcome card opens the deck, with a "Skip" affordance.
+    expect(find.text('Witaj w Spark'), findsOneWidget);
+    expect(find.text('Pomiń'), findsOneWidget);
+
+    // Skip jumps to the final account-choice card.
+    await tester.tap(find.text('Pomiń'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
+
+    expect(find.text('Jak chcesz zacząć?'), findsOneWidget);
+    expect(find.text('Zacznij anonimowo'), findsOneWidget);
+    expect(find.text('Zaloguj / Załóż konto'), findsOneWidget);
+
+    // Choosing anonymous records that onboarding is done and reveals the app.
+    await tester.tap(find.text('Zacznij anonimowo'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
+
+    expect(prefs.getBool(kOnboardingCompletePrefKey), isTrue);
+    expect(find.byType(OnboardingScreen), findsNothing);
+
+    // Drain the daily's mock-load timers so the test ends without a pending one.
+    await tester.pump(const Duration(milliseconds: 400));
+    await tester.pumpAndSettle();
   });
 
   testWidgets('Auth screen renders when Supabase is not configured', (
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(
-      const ProviderScope(child: MaterialApp(home: AuthScreen())),
+      const ProviderScope(child: LocalizedTestApp(home: AuthScreen())),
     );
     await tester.pumpAndSettle();
 
@@ -48,8 +132,12 @@ void main() {
   testWidgets('Settings screen renders the profile hub', (
     WidgetTester tester,
   ) async {
+    final prefs = await _mockPrefs();
     await tester.pumpWidget(
-      const ProviderScope(child: MaterialApp(home: SettingsScreen())),
+      ProviderScope(
+        overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
+        child: const LocalizedTestApp(home: SettingsScreen()),
+      ),
     );
     await tester.pumpAndSettle();
 
@@ -62,24 +150,73 @@ void main() {
     expect(find.text('Zaloguj się'), findsOneWidget);
   });
 
+  testWidgets('Premium user can open the Manage subscription sheet', (
+    WidgetTester tester,
+  ) async {
+    final prefs = await _mockPrefs();
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          sharedPreferencesProvider.overrideWithValue(prefs),
+          // Force a signed-in, premium session so the account card shows the
+          // "Premium active" row instead of the upsell.
+          sessionProvider.overrideWith(_PremiumSessionNotifier.new),
+        ],
+        child: const LocalizedTestApp(home: SettingsScreen()),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    // The premium row replaces the "Go Premium" upsell.
+    expect(find.text('Premium aktywne'), findsOneWidget);
+    expect(find.text('Przejdź na Premium'), findsNothing);
+
+    // Tapping it opens the manage-subscription sheet, which deep-links out to
+    // the store rather than trying to cancel in-app. The row sits below the fold
+    // on the test viewport, so scroll it into view first.
+    await tester.ensureVisible(find.text('Premium aktywne'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Premium aktywne'));
+    await tester.pumpAndSettle();
+
+    // Sheet title + (RevenueCat unconfigured in tests, so the generic) manage
+    // button both read "Zarządzaj subskrypcją".
+    expect(find.text('Zarządzaj subskrypcją'), findsNWidgets(2));
+    expect(find.text('Później'), findsOneWidget);
+  });
+
   testWidgets('GoDeeperButton uses the requested label and tappable glow', (
     WidgetTester tester,
   ) async {
     var taps = 0;
 
     await tester.pumpWidget(
-      MaterialApp(
+      LocalizedTestApp(
         home: Scaffold(
           body: Center(child: GoDeeperButton(onTap: () => taps++)),
         ),
       ),
     );
 
-    expect(find.text(GoDeeperButton.label), findsOneWidget);
+    expect(find.text(_goDeeperLabelPl), findsOneWidget);
 
     final buttonTopLeft = tester.getTopLeft(find.byType(GoDeeperButton));
     await tester.tapAt(buttonTopLeft + const Offset(2, 2));
 
     expect(taps, 1);
   });
+}
+
+/// A session pinned to a signed-in, premium account. Overriding [build] skips
+/// the real notifier's Supabase/RevenueCat wiring (unavailable in tests) while
+/// keeping the same provider type the UI watches.
+class _PremiumSessionNotifier extends SessionNotifier {
+  @override
+  Future<SessionState> build() async => SessionState(
+    userId: 'test-user',
+    email: 'premium@example.com',
+    isAnonymous: false,
+    isPremium: true,
+    createdAt: DateTime.utc(2026, 1, 1),
+  );
 }

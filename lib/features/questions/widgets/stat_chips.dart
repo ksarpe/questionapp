@@ -1,35 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/locale/l10n_extension.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../account/providers/stats_providers.dart';
 import '../providers/question_providers.dart';
+import 'animated_flame_icon.dart';
 import 'rank_sheet.dart';
-
-/// Warm amber used for an active streak — the one place the app steps off its
-/// violet/mono palette, so the "fire" reads as fire and is clearly distinct from
-/// the violet free-unlock chip next to it.
-const Color _flame = Color(0xFFF59E0B);
 
 /// The two minimalist status icons that sit in the top bar: the streak flame
 /// and the free-unlock count. Kept deliberately light (icon + number, a soft
 /// glow when active) so they sit quietly on the black canvas.
 
-/// 🔥 Streak — consecutive days the user voted on the daily. Muted at 0; warm +
-/// glowing once it is running. Tapping it opens the rank sheet.
+/// 🔥 Streak — consecutive days the user voted on the daily. Muted at 0; a
+/// living, shimmering flame once it is running (see [AnimatedFlameIcon]).
+/// Tapping it opens the rank sheet.
 class StreakChip extends ConsumerWidget {
   const StreakChip({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final streak = ref.watch(currentStreakProvider);
-    final active = streak > 0;
+    final stats = ref.watch(userStatsValueProvider);
+    final active = stats.currentStreak > 0;
     return _StatChip(
-      icon: Icons.local_fire_department_rounded,
-      label: '$streak',
-      color: active ? _flame : AppTheme.subtle,
-      glow: active,
-      tooltip: 'Twoja seria',
+      icon: AnimatedFlameIcon(
+        streak: stats.currentStreak,
+        rankTier: stats.rankTier,
+      ),
+      label: '${stats.currentStreak}',
+      labelColor: active ? kFlame : AppTheme.subtle,
+      tooltip: context.l10n.streakTooltip,
       onTap: () => showRankSheet(context),
     );
   }
@@ -51,42 +51,44 @@ class FreeUnlockChip extends ConsumerWidget {
     if (isPremium || !onDaily || credits <= 0) return const SizedBox.shrink();
 
     return _StatChip(
-      icon: Icons.lock_open_rounded,
+      icon: Icon(
+        Icons.lock_open_rounded,
+        color: AppTheme.spark,
+        size: 20,
+        shadows: [
+          Shadow(color: AppTheme.spark.withValues(alpha: 0.6), blurRadius: 12),
+        ],
+      ),
       label: '$credits',
-      color: AppTheme.spark,
-      glow: true,
-      tooltip: 'Darmowe odblokowanie',
+      labelColor: AppTheme.spark,
+      tooltip: context.l10n.freeUnlockTooltip,
       onTap: () => _explain(context),
     );
   }
 
   void _explain(BuildContext context) {
-    final isPolish = Localizations.localeOf(context).languageCode == 'pl';
-    final message = isPolish
-        ? 'Masz jedno darmowe odblokowanie — przesuń na kolejne pytanie, a odblokuje się automatycznie.'
-        : 'You have one free unlock — swipe to the next question and it unlocks automatically.';
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text(message)));
+      ..showSnackBar(SnackBar(content: Text(context.l10n.freeUnlockExplain)));
   }
 }
 
-/// Shared chrome for both top chips: an icon + count, lit with a soft halo when
-/// [glow] is set, wrapped in a tap target.
+/// Shared chrome for both top chips: a (pre-built) [icon] + count, wrapped in a
+/// tap target. The caller renders the icon so each chip can carry its own
+/// treatment — a plain glowing glyph for free-unlocks, the living
+/// [AnimatedFlameIcon] for the streak.
 class _StatChip extends StatelessWidget {
   const _StatChip({
     required this.icon,
     required this.label,
-    required this.color,
-    required this.glow,
+    required this.labelColor,
     required this.tooltip,
     required this.onTap,
   });
 
-  final IconData icon;
+  final Widget icon;
   final String label;
-  final Color color;
-  final bool glow;
+  final Color labelColor;
   final String tooltip;
   final VoidCallback onTap;
 
@@ -102,19 +104,12 @@ class _StatChip extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(
-                icon,
-                color: color,
-                size: 20,
-                shadows: glow
-                    ? [Shadow(color: color.withValues(alpha: 0.6), blurRadius: 12)]
-                    : null,
-              ),
+              icon,
               const SizedBox(width: 4),
               Text(
                 label,
                 style: TextStyle(
-                  color: color,
+                  color: labelColor,
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
                 ),

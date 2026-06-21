@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/locale/l10n_extension.dart';
 import '../../../core/theme/app_theme.dart';
 import '../providers/question_providers.dart';
 
@@ -19,14 +20,13 @@ class DailyBadge extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isDaily = ref.watch(isShowingDailyProvider);
-    final isPolish = Localizations.localeOf(context).languageCode == 'pl';
 
     // The pill marks the one no-paywall question — today's daily — and fades
     // away on the gated deck. Fade + slight scale so it slips in/out rather than
     // popping.
     final Widget pill = isDaily
         ? _Pill(
-            label: isPolish ? 'PYTANIE DNIA' : 'DAILY',
+            label: context.l10n.dailyBadge,
             icon: Icons.wb_sunny_rounded,
           )
         : const SizedBox.shrink();

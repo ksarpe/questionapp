@@ -3,10 +3,12 @@ import 'dart:ui' show ImageFilter;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/locale/l10n_extension.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../data/models/smaczek.dart';
 import '../../../services/purchases_service.dart';
 import '../../account/providers/session_providers.dart';
+import '../../account/widgets/save_pro_prompt.dart';
 import '../providers/question_providers.dart';
 
 /// Opens the "Smaczki" panel as a modal sheet that slides up from the bottom.
@@ -54,13 +56,16 @@ class _SmaczkiSheetState extends ConsumerState<_SmaczkiSheet> {
       await ref.read(sessionProvider.notifier).refresh();
       if (!mounted) return;
       ref.invalidate(smaczkiProvider(widget.questionId));
+      setState(() => _busy = false);
+      // A guest's PRO rides on the anonymous identity — nudge them to save it to
+      // a real account. No-ops for a user who already has an account.
+      await promptSaveProAccount(context, ref);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Zakup nie został dokończony.')),
+        SnackBar(content: Text(context.l10n.purchaseNotCompleted)),
       );
+      setState(() => _busy = false);
     }
-
-    if (mounted) setState(() => _busy = false);
   }
 
   @override
@@ -83,7 +88,7 @@ class _SmaczkiSheetState extends ConsumerState<_SmaczkiSheet> {
                   const Icon(Icons.bolt, color: AppTheme.spark),
                   const SizedBox(width: 10),
                   Text(
-                    'Smaczki',
+                    context.l10n.smaczkiTitle,
                     style: Theme.of(context)
                         .textTheme
                         .headlineSmall
@@ -92,9 +97,9 @@ class _SmaczkiSheetState extends ConsumerState<_SmaczkiSheet> {
                 ],
               ),
               const SizedBox(height: 6),
-              const Text(
-                'Podpowiedzi, jak pogłębić rozmowę wokół tego pytania.',
-                style: TextStyle(color: AppTheme.subtle, fontSize: 13),
+              Text(
+                context.l10n.smaczkiSubtitle,
+                style: const TextStyle(color: AppTheme.subtle, fontSize: 13),
               ),
               const SizedBox(height: 16),
               const Divider(),
@@ -108,7 +113,7 @@ class _SmaczkiSheetState extends ConsumerState<_SmaczkiSheet> {
                   error: (e, _) => Padding(
                     padding: const EdgeInsets.symmetric(vertical: 24),
                     child: Text(
-                      'Nie udało się wczytać smaczków.\n$e',
+                      context.l10n.smaczkiLoadError(e.toString()),
                       style: const TextStyle(color: AppTheme.subtle),
                     ),
                   ),
@@ -143,11 +148,11 @@ class _SmaczkiList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (smaczki.isEmpty) {
-      return const Padding(
-        padding: EdgeInsets.symmetric(vertical: 24),
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 24),
         child: Text(
-          'Do tego pytania nie ma jeszcze smaczków.',
-          style: TextStyle(color: AppTheme.subtle),
+          context.l10n.smaczkiEmpty,
+          style: const TextStyle(color: AppTheme.subtle),
         ),
       );
     }
@@ -348,9 +353,9 @@ class _PremiumCta extends StatelessWidget {
                 width: 16,
                 child: CircularProgressIndicator(strokeWidth: 2, color: _gold),
               )
-            : const Text(
-                'Przejdź na PRO',
-                style: TextStyle(
+            : Text(
+                context.l10n.goPro,
+                style: const TextStyle(
                   color: _gold,
                   fontSize: 14,
                   fontWeight: FontWeight.w700,

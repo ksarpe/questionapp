@@ -14,18 +14,20 @@ class StyledQuestionText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final upper = text.toUpperCase();
+    final size = QuestionTextStyles.fontSizeFor(text);
     return Stack(
       alignment: Alignment.center,
       children: [
         Text(
-          text.toUpperCase(),
+          upper,
           textAlign: TextAlign.center,
-          style: QuestionTextStyles.stroke,
+          style: QuestionTextStyles.strokeFor(size),
         ),
         Text(
-          text.toUpperCase(),
+          upper,
           textAlign: TextAlign.center,
-          style: QuestionTextStyles.fill,
+          style: QuestionTextStyles.fillFor(size),
         ),
       ],
     );
@@ -35,10 +37,14 @@ class StyledQuestionText extends StatelessWidget {
 /// A single word in the question's signature style — the same stacked
 /// stroke + fill treatment as [StyledQuestionText], but sized to one word so it
 /// can be laid out and animated independently (see `FallingWordsText`).
+///
+/// [fontSize] is decided from the whole sentence (not this word), so every word
+/// in a question shares one size — see [QuestionTextStyles.fontSizeFor].
 class StyledWord extends StatelessWidget {
-  const StyledWord(this.word, {super.key});
+  const StyledWord(this.word, {required this.fontSize, super.key});
 
   final String word;
+  final double fontSize;
 
   @override
   Widget build(BuildContext context) {
@@ -46,8 +52,8 @@ class StyledWord extends StatelessWidget {
     return Stack(
       alignment: Alignment.center,
       children: [
-        Text(upper, style: QuestionTextStyles.stroke),
-        Text(upper, style: QuestionTextStyles.fill),
+        Text(upper, style: QuestionTextStyles.strokeFor(fontSize)),
+        Text(upper, style: QuestionTextStyles.fillFor(fontSize)),
       ],
     );
   }

@@ -9,6 +9,8 @@ import 'package:questionapp/features/account/providers/stats_providers.dart';
 import 'package:questionapp/features/questions/providers/question_providers.dart';
 import 'package:questionapp/features/questions/widgets/wind_question_view.dart';
 
+import 'support/localized_test_app.dart';
+
 /// Reveal-feed credit behaviour: a free user swiping forward off the daily lands
 /// on the "reveal slot". With a daily credit it auto-reveals the next question
 /// (no button); with no credit it lands on the paywall instead. The rule lives
@@ -39,7 +41,7 @@ void main() {
     await tester.pumpWidget(
       UncontrolledProviderScope(
         container: container,
-        child: const MaterialApp(
+        child: const LocalizedTestApp(
           home: Scaffold(
             body: Center(
               child: SizedBox(width: 300, height: 600, child: WindQuestionView()),
@@ -80,6 +82,25 @@ void main() {
     expect(container.read(revealedFeedProvider).length, 1);
     expect(container.read(questionIndexProvider), 1);
     expect(container.read(isAtRevealSlotProvider), isFalse);
+  });
+
+  testWidgets('the next teaser is prefetched on the daily, instant paywall',
+      (tester) async {
+    final daily = q('daily');
+    final repo = _RevealRepo();
+    final container = await pumpFeed(tester, daily: daily, credits: 0, repo: repo);
+
+    // Warmed while parked on the daily — before any swipe touches the network.
+    expect(repo.peeks, 1);
+
+    await swipeLeft(tester);
+
+    // The swipe reused the prefetched teaser: no second peek on the critical
+    // path, and the paywall is on screen straight away.
+    expect(repo.peeks, 1);
+    expect(repo.freeReveals, 0);
+    expect(container.read(isAtRevealSlotProvider), isTrue);
+    expect(find.text('Odblokuj reklamą'.toUpperCase()), findsOneWidget);
   });
 
   testWidgets('with no credit the swipe lands on the paywall, no reveal',

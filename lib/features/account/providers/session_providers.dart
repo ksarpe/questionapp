@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../services/purchases_service.dart';
 import '../../../services/supabase_service.dart';
@@ -57,7 +58,50 @@ class SessionState {
 /// it at launch (see `QuestionScreen`) so anonymous sign-in happens up front.
 class SessionNotifier extends AsyncNotifier<SessionState> {
   @override
-  Future<SessionState> build() => _load();
+  Future<SessionState> build() {
+    _subscribeToAuthChanges();
+    _subscribeToEntitlementChanges();
+    return _load();
+  }
+
+  /// Keep `isPremium` live when the entitlement changes OUTSIDE the in-app
+  /// paywall — a renewal, an expiry, or a restore on another device. Without
+  /// this the session reads premium once at launch and only `refresh()` (called
+  /// after an in-app purchase) updates it, so an entitlement that lapses or is
+  /// restored elsewhere is invisible until the app is killed and relaunched.
+  /// Guarded on a real change so RevenueCat's immediate replay (and repeat
+  /// pushes of identical info) don't trigger redundant reloads.
+  void _subscribeToEntitlementChanges() {
+    final listener = PurchasesService.addPremiumListener((isPremium) {
+      if (state.hasValue && state.value!.isPremium != isPremium) refresh();
+    });
+    ref.onDispose(() => PurchasesService.removePremiumListener(listener));
+  }
+
+  /// Converge the app on the real identity whenever Supabase changes it OUTSIDE
+  /// an in-app action — a refresh-token failure / server-side revocation fires
+  /// `signedOut`, and an anonymous→email upgrade fires `userUpdated`. Without
+  /// this the session is loaded once and a silent sign-out leaves a zombie UI
+  /// (stale userId, every RPC 401-ing) recoverable only by an app restart.
+  ///
+  /// We reload via [refresh] (no loading flash) rather than `invalidateSelf` so
+  /// the QuestionScreen identity listener isn't tripped by a transient null. A
+  /// `signedOut` reload re-runs `ensureSignedIn`, minting a fresh guest so the
+  /// app is never left sign-in-less. The initial-session / signedIn / token
+  /// refresh events are ignored (no identity change to act on).
+  void _subscribeToAuthChanges() {
+    if (!SupabaseService.isInitialised) return;
+    final sub = SupabaseService.client.auth.onAuthStateChange.listen((data) {
+      switch (data.event) {
+        case AuthChangeEvent.signedOut:
+        case AuthChangeEvent.userUpdated:
+          refresh();
+        default:
+          break;
+      }
+    });
+    ref.onDispose(sub.cancel);
+  }
 
   Future<SessionState> _load() async {
     // 1. Make sure every user — even a brand-new guest — has a stable UUID.
@@ -69,8 +113,17 @@ class SessionNotifier extends AsyncNotifier<SessionState> {
       await PurchasesService.identify(userId);
     }
 
-    // 3. Resolve the current premium entitlement.
-    final isPremium = await PurchasesService.isPremium();
+    // 3. Resolve the current premium entitlement. The RevenueCat SDK is the
+    // device's local truth; reconcile it into the backend (sets
+    // `profiles.is_premium`, which the server-side question/smaczki gate reads)
+    // so the SERVER agrees before any RPC fetches catalog text. Without this the
+    // device shows PRO while every RPC keeps returning locked content until the
+    // async webhook lands — exactly the "bought PRO but see nothing" gap. The
+    // edge function re-derives premium from RevenueCat's REST API, so its result
+    // is authoritative; fall back to the local SDK value when it can't run.
+    var isPremium = await PurchasesService.isPremium();
+    final synced = await SupabaseService.syncEntitlement();
+    if (synced != null) isPremium = synced;
 
     // 4. Pull the display name (social logins only) and the account's creation
     // date for the profile header.
@@ -91,8 +144,16 @@ class SessionNotifier extends AsyncNotifier<SessionState> {
 
   /// Re-reads the premium entitlement, e.g. immediately after a purchase so the
   /// swipe gate sees the upgrade.
+  ///
+  /// Deliberately does NOT flip to `AsyncValue.loading()` first. Doing so nulls
+  /// out `value` mid-reload, so `userId` momentarily reads null and the
+  /// QuestionScreen identity listener fires on the guest→null→guest flicker —
+  /// wiping the revealed feed, snapping back to the daily and flashing a
+  /// full-screen spinner. That's the "freeze" a guest sees after buying PRO from
+  /// the reveal-slot paywall (a logged-in user buys from Settings, so the flicker
+  /// hides under that pushed route). Keeping the previous SessionState visible
+  /// while `_load` runs means only `isPremium` changes, exactly once.
   Future<void> refresh() async {
-    state = const AsyncValue.loading();
     state = await AsyncValue.guard(_load);
   }
 }
@@ -106,3 +167,14 @@ final sessionProvider = AsyncNotifierProvider<SessionNotifier, SessionState>(
 final isPremiumProvider = Provider<bool>(
   (ref) => ref.watch(sessionProvider).value?.isPremium ?? false,
 );
+
+/// Details of the active premium subscription (renewal date, billing store,
+/// management deep link) for the Manage-subscription screen. Re-fetched whenever
+/// the premium entitlement flips, and only resolves to non-null while premium is
+/// active; otherwise the SDK has nothing to report.
+final premiumStatusProvider = FutureProvider.autoDispose<PremiumStatus?>((
+  ref,
+) async {
+  if (!ref.watch(isPremiumProvider)) return null;
+  return PurchasesService.premiumStatus();
+});

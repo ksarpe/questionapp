@@ -122,24 +122,24 @@ gracefully when SDK keys are absent, so it still runs against mock data.
   if `currentUser` is null. Every guest gets a stable Supabase UUID — no email,
   no password — and that UUID is also passed to RevenueCat (`Purchases.logIn`)
   so entitlements follow the same identity.
-- **The swipe gate.** The first question is free. On a swipe,
-  `WindQuestionView` asks `SwipeGate.requestAdvance()`
-  ([monetization_providers.dart](lib/features/monetization/providers/monetization_providers.dart)):
-  premium users pass instantly; free users spend an unlock credit; with none
-  left the swipe is *not* animated and the unlock sheet opens instead.
-- **Unlock sheet.**
-  [unlock_question_sheet.dart](lib/features/monetization/widgets/unlock_question_sheet.dart)
-  offers "Watch a short video" (a Google AdMob rewarded ad via
-  [`RewardedAdService`](lib/services/rewarded_ad_service.dart)) or "Get
-  Premium" (RevenueCat). Watching one ad grants `kUnlocksPerAd` swipes (3 by
-  default) so users aren't prompted on every single swipe; a fresh ad is
-  pre-loaded in the background each time.
-
-## Next steps (placeholders to flesh out)
-
-- Swap `MockQuestionRepository` for a Supabase-backed implementation.
-- Wire Login/Logout in `SettingsScreen` to Supabase Auth.
-- Replace `PurchasesService.purchasePremium()` (buys the default package) with a
-  proper RevenueCat paywall, and gate `isPremium` questions in the deck.
-- Persist earned unlock credits / progress per user UUID in Supabase.
-- Replace the info bottom-sheet placeholder with real "arguments for discussion".
+- **The reveal feed.** Today's daily question is free for everyone. Beyond it
+  the tiers diverge in `WindQuestionView`
+  ([wind_question_view.dart](lib/features/questions/widgets/wind_question_view.dart)):
+  *premium* walks the whole catalog (every question reads); a *free* user walks
+  a forward feed — the daily, then the questions they reveal one at a time.
+  Swiping past the last item lands on the **reveal slot**: a free user with the
+  daily credit auto-reveals one new question (once per day), otherwise a paywall
+  offers a rewarded ad or PRO. Revealed text is held in session memory only
+  (`revealedFeedProvider`) — it is not re-readable after the app closes.
+- **Server-mediated reveals.** Question text is gated by Supabase RLS, so the
+  reveal goes through SECURITY DEFINER RPCs: `peek_next_question` teases the
+  next pick, `reveal_free_question` charges the daily credit, and
+  `reveal_ad_question` reveals after a [`RewardedAdService`](lib/services/rewarded_ad_service.dart)
+  ad. The reward is captured authoritatively inside the service (decoupled from
+  the ad-dismiss callback) and a live session is ensured before the RPC, so a
+  watched ad never resolves to a generic error.
+- **Premium.** RevenueCat drives the paywall and a Supabase edge function
+  (`revenue-cat-webhook`) reflects entitlement changes onto `profiles.is_premium`
+  (the flag the RLS gate reads). Restore-purchases is reachable from both
+  Settings and the reveal-slot paywall (the latter for guests, who can't open
+  Settings).

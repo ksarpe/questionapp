@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../core/config/app_config.dart';
+import '../../../core/locale/l10n_extension.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../services/supabase_service.dart';
 import '../providers/session_providers.dart';
@@ -150,21 +151,19 @@ class _AuthCardState extends ConsumerState<_AuthCard> {
 
                     const SizedBox(height: 22),
                     if (!isConfigured) ...[
-                      const _Notice(
+                      _Notice(
                         icon: Icons.info_outline,
-                        text:
-                            'Brakuje konfiguracji Supabase. Uruchom aplikację z SUPABASE_URL i SUPABASE_ANON_KEY.',
+                        text: context.l10n.authMissingSupabaseConfig,
                       ),
                       const SizedBox(height: 18),
                     ] else if (!AppConfig.hasGoogleSignIn) ...[
-                      const _Notice(
+                      _Notice(
                         icon: Icons.info_outline,
-                        text:
-                            'Brakuje GOOGLE_SERVER_CLIENT_ID, więc Google jest chwilowo wyłączone.',
+                        text: context.l10n.authMissingGoogleConfig,
                       ),
                       const SizedBox(height: 18),
                     ],
-                    _fieldLabel('EMAIL'),
+                    _fieldLabel(context.l10n.authEmailLabel),
                     TextFormField(
                       controller: _emailController,
                       enabled: !_isSubmitting,
@@ -176,7 +175,7 @@ class _AuthCardState extends ConsumerState<_AuthCard> {
                       validator: _validateEmail,
                     ),
                     const SizedBox(height: 18),
-                    _fieldLabel('HASŁO'),
+                    _fieldLabel(context.l10n.authPasswordLabel),
                     TextFormField(
                       controller: _passwordController,
                       enabled: !_isSubmitting,
@@ -192,8 +191,8 @@ class _AuthCardState extends ConsumerState<_AuthCard> {
                         hint: '••••••••',
                         suffixIcon: IconButton(
                           tooltip: _obscurePassword
-                              ? 'Pokaż hasło'
-                              : 'Ukryj hasło',
+                              ? context.l10n.authShowPassword
+                              : context.l10n.authHidePassword,
                           icon: Icon(
                             _obscurePassword
                                 ? Icons.visibility_outlined
@@ -213,7 +212,7 @@ class _AuthCardState extends ConsumerState<_AuthCard> {
                     ),
                     if (!_isLogin) ...[
                       const SizedBox(height: 18),
-                      _fieldLabel('POWTÓRZ HASŁO'),
+                      _fieldLabel(context.l10n.authConfirmPasswordLabel),
                       TextFormField(
                         controller: _confirmPasswordController,
                         enabled: !_isSubmitting,
@@ -232,9 +231,9 @@ class _AuthCardState extends ConsumerState<_AuthCard> {
                         alignment: Alignment.centerRight,
                         child: GestureDetector(
                           onTap: _isSubmitting ? null : _forgotPassword,
-                          child: const Text(
-                            'Nie pamiętasz hasła?',
-                            style: TextStyle(
+                          child: Text(
+                            context.l10n.authForgotPassword,
+                            style: const TextStyle(
                               color: AppTheme.spark,
                               fontWeight: FontWeight.w600,
                               fontSize: 13,
@@ -245,7 +244,9 @@ class _AuthCardState extends ConsumerState<_AuthCard> {
                     ],
                     const SizedBox(height: 22),
                     _PrimaryButton(
-                      label: _isLogin ? 'Zaloguj się' : 'Utwórz konto',
+                      label: _isLogin
+                          ? context.l10n.signIn
+                          : context.l10n.authCreateAccount,
                       loading: _isSubmitting,
                       onPressed: isConfigured ? _submit : null,
                     ),
@@ -328,7 +329,7 @@ class _AuthCardState extends ConsumerState<_AuthCard> {
       crossAxisAlignment: WrapCrossAlignment.center,
       children: [
         Text(
-          _isLogin ? 'Nie masz konta? ' : 'Masz już konto? ',
+          _isLogin ? context.l10n.authNoAccount : context.l10n.authHaveAccount,
           style: const TextStyle(color: AppTheme.subtle, fontSize: 14),
         ),
         GestureDetector(
@@ -338,7 +339,7 @@ class _AuthCardState extends ConsumerState<_AuthCard> {
                   _isLogin ? _AuthMode.register : _AuthMode.password,
                 ),
           child: Text(
-            _isLogin ? 'Załóż za darmo' : 'Zaloguj się',
+            _isLogin ? context.l10n.authSignUpFree : context.l10n.signIn,
             style: const TextStyle(
               color: AppTheme.spark,
               fontWeight: FontWeight.w700,
@@ -394,25 +395,25 @@ class _AuthCardState extends ConsumerState<_AuthCard> {
 
   String? _validateEmail(String? value) {
     final email = value?.trim() ?? '';
-    if (email.isEmpty) return 'Podaj email.';
+    if (email.isEmpty) return context.l10n.authEnterEmail;
     if (!email.contains('@') || !email.contains('.')) {
-      return 'Podaj poprawny email.';
+      return context.l10n.authEnterValidEmail;
     }
     return null;
   }
 
   String? _validatePassword(String? value) {
     final password = value ?? '';
-    if (password.isEmpty) return 'Podaj hasło.';
+    if (password.isEmpty) return context.l10n.authEnterPassword;
     if (_mode == _AuthMode.register && password.length < 6) {
-      return 'Minimum 6 znaków.';
+      return context.l10n.authMinPassword;
     }
     return null;
   }
 
   String? _validateConfirmPassword(String? value) {
     if (value != _passwordController.text) {
-      return 'Hasła nie są takie same.';
+      return context.l10n.authPasswordsMismatch;
     }
     return null;
   }
@@ -446,8 +447,8 @@ class _AuthCardState extends ConsumerState<_AuthCard> {
           if (!mounted) return;
           _showMessage(
             SupabaseService.currentUserHasAccount
-                ? 'Konto utworzone.'
-                : 'Sprawdź email i potwierdź konto.',
+                ? context.l10n.authAccountCreated
+                : context.l10n.authConfirmEmail,
           );
           if (SupabaseService.currentUserHasAccount) {
             Navigator.of(context).maybePop();
@@ -482,11 +483,11 @@ class _AuthCardState extends ConsumerState<_AuthCard> {
   }
 
   void _signInWithApple() {
-    _showMessage('Logowanie przez Apple — wkrótce.');
+    _showMessage(context.l10n.authAppleSoon);
   }
 
   void _forgotPassword() {
-    _showMessage('Reset hasła — wkrótce.');
+    _showMessage(context.l10n.authPasswordResetSoon);
   }
 
   void _showMessage(String message) {
@@ -544,8 +545,12 @@ class _SegmentedTabs extends StatelessWidget {
                 ),
                 Row(
                   children: [
-                    _tab('ZALOGUJ SIĘ', _AuthMode.password, isLogin),
-                    _tab('ZAŁÓŻ KONTO', _AuthMode.register, !isLogin),
+                    _tab(context.l10n.authTabSignIn, _AuthMode.password, isLogin),
+                    _tab(
+                      context.l10n.authTabSignUp,
+                      _AuthMode.register,
+                      !isLogin,
+                    ),
                   ],
                 ),
               ],
@@ -664,8 +669,8 @@ class _OrDivider extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12),
           child: Text(
-            'LUB',
-            style: TextStyle(
+            context.l10n.orDivider,
+            style: const TextStyle(
               color: AppTheme.subtle,
               fontSize: 11.5,
               fontWeight: FontWeight.w700,

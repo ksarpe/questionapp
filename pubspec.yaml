@@ -42,6 +42,9 @@ dependencies:
   purchases_ui_flutter: ^10.2.3
   google_mobile_ads: ^9.0.0
   google_sign_in: ^6.2.1
+  shared_preferences: ^2.5.5
+  intl: ^0.20.2
+  url_launcher: ^6.3.2
 
 dev_dependencies:
   flutter_test:
@@ -64,6 +67,11 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+
+  # Generate the localizations (AppLocalizations) from the ARB files in lib/l10n
+  # via `flutter gen-l10n`, configured by l10n.yaml. The ARB files are the single
+  # source of truth for every user-facing string.
+  generate: true
 
   fonts:
     - family: Anton

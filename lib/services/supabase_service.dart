@@ -145,6 +145,30 @@ class SupabaseService {
     return response.user;
   }
 
+  /// Reconciles the backend's premium flag with RevenueCat's REST truth for the
+  /// current identity, returning the authoritative `is_premium` (or null when it
+  /// couldn't run — no backend, no session, or the function isn't configured).
+  ///
+  /// This is the PULL counterpart to the inbound `revenue-cat-webhook`: the app
+  /// calls it right after a purchase/restore and on launch so the server-side
+  /// gate (`profiles.is_premium`, read by every question/smaczki RPC) matches
+  /// what the device already knows, without waiting on — or depending on — the
+  /// async webhook ever landing. Best-effort: a failure leaves the flag as-is.
+  static Future<bool?> syncEntitlement() async {
+    if (!_initialised || client.auth.currentUser == null) return null;
+    try {
+      final res = await client.functions.invoke('sync-entitlement');
+      final data = res.data;
+      if (data is Map && data['is_premium'] is bool) {
+        return data['is_premium'] as bool;
+      }
+      return null;
+    } catch (e) {
+      debugPrint('SupabaseService.syncEntitlement failed: $e');
+      return null;
+    }
+  }
+
   static User? get currentUser => _initialised ? client.auth.currentUser : null;
 
   static bool get currentUserHasAccount {

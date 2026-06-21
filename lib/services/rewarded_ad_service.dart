@@ -48,24 +48,30 @@ class RewardedAdService {
     );
   }
 
-  /// Shows the loaded ad, invoking [onReward] if (and only if) the user earns
-  /// the reward. Completes once the ad is dismissed — or immediately if no ad
-  /// was ready (in which case a fresh load is kicked off). A replacement ad is
-  /// always pre-loaded for next time.
+  /// Shows the loaded ad and resolves to `true` if (and only if) the user
+  /// actually earned the reward, `false` otherwise (no ad ready, failed to
+  /// show, or dismissed without earning). Always completes once the ad is
+  /// dismissed. A replacement ad is always pre-loaded for next time.
+  ///
+  /// The reward is AUTHORITATIVE and decoupled from dismissal: AdMob does NOT
+  /// guarantee `onUserEarnedReward` fires before `onAdDismissedFullScreenContent`
+  /// — on several mediation adapters dismiss lands first. The old design read an
+  /// `earned` bool set by a separate callback right after the future completed
+  /// (on dismiss), so a late reward callback was mis-reported as "no reward",
+  /// and the user who watched the whole ad got an error instead of their
+  /// question. Now we record the reward when it lands and resolve the future
+  /// with that flag on dismissal, never letting dismiss overwrite an earned
+  /// reward.
   ///
   /// [userId] and [questionId] are forwarded to AdMob as Server-Side
   /// Verification options, so Google's SSV callback to our `admob-ssv` edge
-  /// function knows WHO watched the ad and WHICH question to unlock. Without
-  /// them the verified-unlock backstop has no id to grant.
-  Future<void> showRewardedAd({
-    required VoidCallback onReward,
-    String? userId,
-    String? questionId,
-  }) async {
+  /// function knows WHO watched the ad and WHICH question. Best-effort — a
+  /// failure setting them must not abort the reward flow (SSV is audit-only).
+  Future<bool> showRewardedAd({String? userId, String? questionId}) async {
     final ad = _ad;
     if (ad == null) {
       preload();
-      return;
+      return false;
     }
 
     // Consume the reference up front so the same ad can't be shown twice.
@@ -74,27 +80,36 @@ class RewardedAdService {
     // Must be set before show(): tags the impression so the SSV callback can
     // attribute the verified reward to this user + question.
     if (userId != null || questionId != null) {
-      await ad.setServerSideOptions(
-        ServerSideVerificationOptions(userId: userId, customData: questionId),
-      );
+      try {
+        await ad.setServerSideOptions(
+          ServerSideVerificationOptions(userId: userId, customData: questionId),
+        );
+      } catch (e) {
+        debugPrint('RewardedAdService: setServerSideOptions failed — $e');
+      }
     }
 
-    final completer = Completer<void>();
+    var earned = false;
+    final completer = Completer<bool>();
+    void finish() {
+      if (!completer.isCompleted) completer.complete(earned);
+    }
+
     ad.fullScreenContentCallback = FullScreenContentCallback(
       onAdDismissedFullScreenContent: (ad) {
         ad.dispose();
         preload();
-        if (!completer.isCompleted) completer.complete();
+        finish();
       },
       onAdFailedToShowFullScreenContent: (ad, error) {
         debugPrint('RewardedAdService: failed to show — $error');
         ad.dispose();
         preload();
-        if (!completer.isCompleted) completer.complete();
+        finish();
       },
     );
 
-    await ad.show(onUserEarnedReward: (_, _) => onReward());
+    await ad.show(onUserEarnedReward: (_, _) => earned = true);
     return completer.future;
   }
 

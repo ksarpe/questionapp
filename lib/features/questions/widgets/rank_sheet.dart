@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/locale/l10n_extension.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../data/models/rank.dart';
 import '../../account/providers/stats_providers.dart';
@@ -50,7 +51,6 @@ class _RankSheet extends ConsumerWidget {
     final stats = ref.watch(userStatsValueProvider);
     final ranksAsync = ref.watch(ranksProvider);
     final lang = Localizations.localeOf(context).languageCode;
-    final isPolish = lang == 'pl';
     final streak = stats.currentStreak;
 
     return SafeArea(
@@ -64,7 +64,7 @@ class _RankSheet extends ConsumerWidget {
           error: (e, _) => Padding(
             padding: const EdgeInsets.all(24),
             child: Text(
-              isPolish ? 'Nie udało się wczytać rang.' : 'Could not load ranks.',
+              context.l10n.ranksLoadError,
               style: const TextStyle(color: AppTheme.subtle),
             ),
           ),
@@ -79,14 +79,14 @@ class _RankSheet extends ConsumerWidget {
               children: [
                 _Header(rank: current, streak: streak, lang: lang),
                 const SizedBox(height: 20),
-                _Progress(streak: streak, current: current, next: next, isPolish: isPolish),
+                _Progress(streak: streak, current: current, next: next),
                 const SizedBox(height: 16),
-                _LongestLine(longest: stats.longestStreak, isPolish: isPolish),
+                _LongestLine(longest: stats.longestStreak),
                 const SizedBox(height: 20),
                 const Divider(color: AppTheme.accent, height: 1),
                 const SizedBox(height: 16),
                 Text(
-                  isPolish ? 'Drabinka rang' : 'Rank ladder',
+                  context.l10n.rankLadder,
                   style: const TextStyle(
                     color: AppTheme.subtle,
                     fontSize: 12,
@@ -103,7 +103,6 @@ class _RankSheet extends ConsumerWidget {
                           _LadderRow(
                             rank: r,
                             lang: lang,
-                            isPolish: isPolish,
                             unlocked: streak >= r.minStreak,
                             isCurrent: r.tier == current.tier,
                           ),
@@ -144,7 +143,6 @@ class _Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isPolish = lang == 'pl';
     return Row(
       children: [
         Container(
@@ -163,7 +161,7 @@ class _Header extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                isPolish ? 'TWOJA RANGA' : 'YOUR RANK',
+                context.l10n.yourRankUpper,
                 style: const TextStyle(
                   color: AppTheme.subtle,
                   fontSize: 11,
@@ -187,9 +185,7 @@ class _Header extends StatelessWidget {
                       color: Color(0xFFF59E0B), size: 16),
                   const SizedBox(width: 4),
                   Text(
-                    isPolish
-                        ? 'Seria: $streak ${_dni(streak)}'
-                        : 'Streak: $streak ${streak == 1 ? 'day' : 'days'}',
+                    context.l10n.streakDays(streak),
                     style: const TextStyle(color: AppTheme.ink, fontSize: 14),
                   ),
                 ],
@@ -207,22 +203,22 @@ class _Progress extends StatelessWidget {
     required this.streak,
     required this.current,
     required this.next,
-    required this.isPolish,
   });
 
   final int streak;
   final Rank current;
   final Rank? next;
-  final bool isPolish;
 
   @override
   Widget build(BuildContext context) {
     if (next == null) {
       return Text(
-        isPolish ? 'Najwyższa ranga — szacun.' : 'Top rank — respect.',
+        context.l10n.topRankRespect,
         style: const TextStyle(color: AppTheme.spark, fontWeight: FontWeight.w600),
       );
     }
+
+    final lang = Localizations.localeOf(context).languageCode;
 
     final span = (next!.minStreak - current.minStreak).clamp(1, 1 << 30);
     final done = (streak - current.minStreak).clamp(0, span);
@@ -243,9 +239,7 @@ class _Progress extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(
-          isPolish
-              ? 'Jeszcze $remaining ${_dni(remaining)} do rangi „${next!.nameFor('pl')}”'
-              : '$remaining more ${remaining == 1 ? 'day' : 'days'} to “${next!.nameFor('en')}”',
+          context.l10n.daysToRank(remaining, next!.nameFor(lang)),
           style: const TextStyle(color: AppTheme.subtle, fontSize: 13),
         ),
       ],
@@ -254,10 +248,9 @@ class _Progress extends StatelessWidget {
 }
 
 class _LongestLine extends StatelessWidget {
-  const _LongestLine({required this.longest, required this.isPolish});
+  const _LongestLine({required this.longest});
 
   final int longest;
-  final bool isPolish;
 
   @override
   Widget build(BuildContext context) {
@@ -266,9 +259,7 @@ class _LongestLine extends StatelessWidget {
         const Icon(Icons.emoji_events_outlined, color: AppTheme.subtle, size: 16),
         const SizedBox(width: 6),
         Text(
-          isPolish
-              ? 'Najdłuższa seria: $longest ${_dni(longest)}'
-              : 'Longest streak: $longest ${longest == 1 ? 'day' : 'days'}',
+          context.l10n.longestStreakDays(longest),
           style: const TextStyle(color: AppTheme.subtle, fontSize: 13),
         ),
       ],
@@ -280,14 +271,12 @@ class _LadderRow extends StatelessWidget {
   const _LadderRow({
     required this.rank,
     required this.lang,
-    required this.isPolish,
     required this.unlocked,
     required this.isCurrent,
   });
 
   final Rank rank;
   final String lang;
-  final bool isPolish;
   final bool unlocked;
   final bool isCurrent;
 
@@ -320,7 +309,7 @@ class _LadderRow extends StatelessWidget {
             ),
           ),
           Text(
-            isPolish ? 'od ${rank.minStreak}' : '${rank.minStreak}+',
+            context.l10n.rankFrom(rank.minStreak),
             style: const TextStyle(color: AppTheme.subtle, fontSize: 12),
           ),
           const SizedBox(width: 8),
@@ -334,7 +323,3 @@ class _LadderRow extends StatelessWidget {
     );
   }
 }
-
-/// Polish day-count word (dzień / dni) — good enough for the small numbers shown
-/// here (1 → "dzień", everything else → "dni").
-String _dni(int n) => n == 1 ? 'dzień' : 'dni';

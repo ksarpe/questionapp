@@ -1,0 +1,199 @@
+{
+  "@@locale": "en",
+
+  "ok": "OK",
+  "later": "Later",
+  "tryAgain": "Try again",
+  "orDivider": "OR",
+  "restorePurchase": "Restore purchase",
+  "purchaseNotCompleted": "Purchase not completed.",
+  "purchaseRestored": "Purchase restored.",
+  "purchaseRestoredCelebrate": "Purchase restored. 🎉",
+  "noPreviousPurchase": "No previous purchase found.",
+  "goPro": "Go PRO",
+
+  "signIn": "Sign in",
+  "signInShort": "Sign in",
+  "authCreateAccount": "Create account",
+  "authEmailLabel": "EMAIL",
+  "authPasswordLabel": "PASSWORD",
+  "authConfirmPasswordLabel": "REPEAT PASSWORD",
+  "authShowPassword": "Show password",
+  "authHidePassword": "Hide password",
+  "authForgotPassword": "Forgot your password?",
+  "authNoAccount": "Don't have an account? ",
+  "authHaveAccount": "Already have an account? ",
+  "authSignUpFree": "Sign up free",
+  "authTabSignIn": "SIGN IN",
+  "authTabSignUp": "SIGN UP",
+  "authEnterEmail": "Enter your email.",
+  "authEnterValidEmail": "Enter a valid email.",
+  "authEnterPassword": "Enter your password.",
+  "authMinPassword": "At least 6 characters.",
+  "authPasswordsMismatch": "Passwords don't match.",
+  "authAccountCreated": "Account created.",
+  "authConfirmEmail": "Check your email and confirm your account.",
+  "authAppleSoon": "Sign in with Apple — coming soon.",
+  "authPasswordResetSoon": "Password reset — coming soon.",
+  "authMissingSupabaseConfig": "Supabase configuration is missing. Run the app with SUPABASE_URL and SUPABASE_ANON_KEY.",
+  "authMissingGoogleConfig": "GOOGLE_SERVER_CLIENT_ID is missing, so Google is temporarily disabled.",
+
+  "settingsSectionApp": "APP SETTINGS",
+  "settingsSectionAccount": "ACCOUNT",
+  "settingsReminders": "Reminders",
+  "settingsRemindersSubtitle": "A reminder about the daily question",
+  "settingsLanguage": "Language",
+  "chooseLanguage": "Choose language",
+  "settingsPremiumActive": "Premium active",
+  "settingsGoPremium": "Go Premium",
+  "settingsPrivacy": "Privacy & data",
+  "settingsPremiumActiveToast": "Premium active. 🎉",
+  "manageSubSheetTitle": "Manage subscription",
+  "manageSubStatusActive": "Premium active",
+  "manageSubStatusCancelled": "Cancelled — won't renew",
+  "manageSubRenewsOn": "Renews on {date}",
+  "@manageSubRenewsOn": {
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
+  "manageSubActiveUntil": "Active until {date}",
+  "@manageSubActiveUntil": {
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
+  "manageSubBilledAppStore": "Billed through the App Store",
+  "manageSubBilledPlayStore": "Billed through Google Play",
+  "manageSubBilledWeb": "Billed online",
+  "manageSubNoteAppStore": "Apple handles billing for your subscription. To change your plan or cancel, open Subscriptions in the App Store — you'll keep Premium until the end of the current period.",
+  "manageSubNotePlayStore": "Google handles billing for your subscription. To change your plan or cancel, open Subscriptions in Google Play — you'll keep Premium until the end of the current period.",
+  "manageSubNoteWeb": "Manage or cancel your subscription wherever you purchased it. You'll keep Premium until the end of the current period.",
+  "manageSubButtonAppStore": "Manage in the App Store",
+  "manageSubButtonPlayStore": "Manage in Google Play",
+  "manageSubButtonGeneric": "Manage subscription",
+  "manageSubOpenFailedAppStore": "Couldn't open the App Store. Open Settings › your name › Subscriptions to manage it.",
+  "manageSubOpenFailedPlayStore": "Couldn't open Google Play. Open Play Store › Menu › Subscriptions to manage it.",
+  "manageSubOpenFailedGeneric": "Couldn't open the subscription page. Manage it wherever you purchased Premium.",
+  "signedOut": "Signed out.",
+  "deleteAccountTitle": "Delete account",
+  "deleteAccountBody": "Deleting your account from within the app isn't available yet. We're working on it — soon you'll be able to delete your account and all related data here.",
+  "guestSession": "Guest session",
+  "signInToSaveProgress": "Sign in to save your progress",
+  "yourAccount": "Your account",
+  "signOut": "Sign out",
+  "deleteAccount": "Delete account",
+  "comingSoonNamed": "{label} — coming soon",
+  "@comingSoonNamed": {
+    "placeholders": {
+      "label": { "type": "String" }
+    }
+  },
+  "daysInARow": "DAYS IN A ROW",
+  "rankLabel": "RANK",
+  "rankCardTopRank": "Highest rank",
+  "rankCardPromotionReady": "Promotion ready!",
+  "rankCardDaysToPromotion": "{count, plural, one{{count} day to promotion} other{{count} days to promotion}}",
+  "@rankCardDaysToPromotion": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+
+  "settingsTooltip": "Settings",
+  "swipeHint": "Swipe to see the next question",
+  "dailyShort": "Daily",
+  "loadErrorTitle": "Couldn't load questions",
+  "loadErrorBody": "Check your internet connection and try again.",
+
+  "goDeeper": "GO DEEPER",
+  "dailyBadge": "DAILY",
+
+  "streakTooltip": "Your streak",
+  "freeUnlockTooltip": "Free unlock",
+  "freeUnlockExplain": "You have one free unlock — swipe to the next question and it unlocks automatically.",
+
+  "voteYes": "YES",
+  "voteNo": "NO",
+  "voteFailed": "Could not record your vote.",
+  "votesCount": "{count, plural, one{{count} vote} other{{count} votes}}",
+  "@votesCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+
+  "revealFailed": "Couldn't reveal the question — please try again.",
+  "adLoading": "The ad is still loading — try again in a moment.",
+  "adNoReward": "No reward — watch the whole video to unlock.",
+  "noConnection": "No connection — try again in a moment.",
+  "noMoreTitle": "That's all the questions for now",
+  "noMoreBody": "Come back tomorrow for a new daily question — or go PRO to read without limits.",
+  "backToDailyQuestion": "Back to the daily question",
+  "nextQuestionWaiting": "The next question is waiting",
+  "watchAdToReveal": "Watch an ad to reveal a new question.",
+  "unlockWithAd": "Unlock with an ad",
+
+  "proActiveTitle": "PRO active 🎉",
+  "savePromptBody": "Your PRO is currently tied to a guest account. Create an account (email or Google) so you don't lose access after reinstalling or on another device — your progress will be kept.",
+  "createAccount": "Create account",
+
+  "smaczkiTitle": "Tidbits",
+  "smaczkiSubtitle": "Tips to deepen the conversation around this question.",
+  "smaczkiLoadError": "Couldn't load tidbits.\n{error}",
+  "@smaczkiLoadError": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "smaczkiEmpty": "No tidbits for this question yet.",
+
+  "ranksLoadError": "Could not load ranks.",
+  "rankLadder": "Rank ladder",
+  "yourRankUpper": "YOUR RANK",
+  "topRankRespect": "Top rank — respect.",
+  "streakDays": "Streak: {count, plural, one{{count} day} other{{count} days}}",
+  "@streakDays": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "longestStreakDays": "Longest streak: {count, plural, one{{count} day} other{{count} days}}",
+  "@longestStreakDays": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "daysToRank": "{remaining, plural, one{{remaining} more day to “{rankName}”} other{{remaining} more days to “{rankName}”}}",
+  "@daysToRank": {
+    "placeholders": {
+      "remaining": { "type": "int" },
+      "rankName": { "type": "String" }
+    }
+  },
+  "rankFrom": "{minStreak}+",
+  "@rankFrom": {
+    "placeholders": {
+      "minStreak": { "type": "int" }
+    }
+  },
+
+  "onboardingSkip": "Skip",
+  "onboardingNext": "Next",
+  "onboardingWelcomeTitle": "Welcome to Spark",
+  "onboardingWelcomeBody": "One sharp question a day — and everything around it.",
+  "onboardingDailyTitle": "Daily question",
+  "onboardingDailyBody": "Every day brings a new free question to vote on and sit with.",
+  "onboardingStreakTitle": "Hot streak",
+  "onboardingStreakBody": "Vote each day to keep your flame alive and climb the ranks.",
+  "onboardingUnlockTitle": "Unlocks",
+  "onboardingUnlockBody": "Beyond the daily, reveal more questions with a free credit, an ad, or PRO.",
+  "onboardingDeeperTitle": "Go deeper",
+  "onboardingDeeperBody": "Every question comes with tidbits to spark a real conversation.",
+  "onboardingChoiceTitle": "How do you want to start?",
+  "onboardingChoiceBody": "You can sign in anytime later from settings.",
+  "onboardingSignInCta": "Sign in / Sign up",
+  "onboardingSignInHint": "Save your streak and progress",
+  "onboardingStartAnon": "Start anonymously",
+  "onboardingStartAnonHint": "With some limits"
+}

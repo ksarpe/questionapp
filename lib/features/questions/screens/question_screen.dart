@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/locale/l10n_extension.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../account/providers/session_providers.dart';
 import '../../account/providers/stats_providers.dart';
@@ -59,7 +60,12 @@ class QuestionScreen extends ConsumerWidget {
     // The deck drives the body: it stays empty until today's daily resolves, so
     // every user opens to the daily rather than a flash of the pool. Watching it
     // here also kicks off the daily fetch at launch, alongside the question pool.
-    final questionsError = ref.watch(questionsProvider).error;
+    // Either fetch failing leaves the deck empty; surface BOTH so an offline
+    // launch shows a retry instead of an endless spinner (the daily's error in
+    // particular never reached the UI before, so the deck just stayed empty).
+    final loadError =
+        ref.watch(questionsProvider).error ??
+        ref.watch(todaysDailyQuestionProvider).error;
     final deck = ref.watch(questionDeckProvider);
 
     return Scaffold(
@@ -86,7 +92,7 @@ class QuestionScreen extends ConsumerWidget {
           if (hasAccount)
             IconButton(
               icon: const Icon(Icons.person_outline),
-              tooltip: 'Ustawienia',
+              tooltip: context.l10n.settingsTooltip,
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute<void>(
@@ -107,21 +113,22 @@ class QuestionScreen extends ConsumerWidget {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                child: const Text('Zaloguj'),
+                child: Text(context.l10n.signInShort),
               ),
             ),
         ],
       ),
-      body: questionsError != null
-          ? Center(
-              child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: Text(
-                  'Could not load questions.\n$questionsError',
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(color: AppTheme.subtle),
-                ),
-              ),
+      // Only treat a load error as fatal when there's genuinely nothing to show:
+      // a transient pool error while the daily loaded fine still renders the
+      // daily rather than blocking the whole screen.
+      body: deck.isEmpty && loadError != null
+          ? _LoadError(
+              onRetry: () {
+                ref.invalidate(sessionProvider);
+                ref.invalidate(questionsProvider);
+                ref.invalidate(todaysDailyQuestionProvider);
+                ref.invalidate(userStatsProvider);
+              },
             )
           : deck.isEmpty
           ? const Center(child: CircularProgressIndicator())
@@ -145,6 +152,11 @@ class _QuestionBody extends ConsumerWidget {
     // The daily is where the streak is earned, so its overlay carries the binary
     // vote panel (TAK/NIE → community split). Other readable questions don't.
     final isDaily = ref.watch(isShowingDailyProvider);
+
+    // On the reveal slot the paywall / "no more questions" body carries its own
+    // visible "back to daily" link, so suppress the faint bottom one here to
+    // avoid showing two competing back actions.
+    final atRevealSlot = ref.watch(isAtRevealSlotProvider);
 
     // Folded into the vote panel's key so its local state (the cast result it
     // holds to avoid a refetch) resets when the account changes, not only when
@@ -201,7 +213,7 @@ class _QuestionBody extends ConsumerWidget {
         // readable OR locked — it also offers a borderless "← Daily" return, so
         // a free user who landed on a locked teaser and doesn't want to watch an
         // ad can get back to the free daily in one tap instead of being stuck.
-        if (isReadable && questionId != null || !isDaily)
+        if ((isReadable && questionId != null || !isDaily) && !atRevealSlot)
           SafeArea(
             child: Align(
               alignment: Alignment.bottomCenter,
@@ -212,9 +224,12 @@ class _QuestionBody extends ConsumerWidget {
                   children: [
                     if (isReadable && questionId != null) ...[
                       // Subtle hint that questions are swipeable.
-                      const Text(
-                        'Przesuń, aby zobaczyć następne pytanie',
-                        style: TextStyle(color: AppTheme.subtle, fontSize: 13),
+                      Text(
+                        context.l10n.swipeHint,
+                        style: const TextStyle(
+                          color: AppTheme.subtle,
+                          fontSize: 13,
+                        ),
                       ),
                       const SizedBox(height: 14),
                       // The glowing "go deeper" pill opens the Smaczki panel for
@@ -254,9 +269,9 @@ class _BackToDailyButton extends StatelessWidget {
     return TextButton.icon(
       onPressed: onTap,
       icon: const Icon(Icons.arrow_back, size: 18, color: AppTheme.subtle),
-      label: const Text(
-        'Daily',
-        style: TextStyle(
+      label: Text(
+        context.l10n.dailyShort,
+        style: const TextStyle(
           color: AppTheme.subtle,
           fontSize: 14,
           fontWeight: FontWeight.w600,
@@ -265,6 +280,51 @@ class _BackToDailyButton extends StatelessWidget {
       style: TextButton.styleFrom(
         foregroundColor: AppTheme.subtle,
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      ),
+    );
+  }
+}
+
+/// Shown when the launch fetch fails (typically no network) and there is nothing
+/// to render. Replaces the old endless spinner with a friendly message and a
+/// retry that re-runs sign-in + the question/daily/stats fetches.
+class _LoadError extends StatelessWidget {
+  const _LoadError({required this.onRetry});
+
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.cloud_off, color: AppTheme.subtle, size: 40),
+            const SizedBox(height: 16),
+            Text(
+              context.l10n.loadErrorTitle,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                color: AppTheme.ink,
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              context.l10n.loadErrorBody,
+              textAlign: TextAlign.center,
+              style: const TextStyle(color: AppTheme.subtle, fontSize: 14),
+            ),
+            const SizedBox(height: 24),
+            FilledButton(
+              onPressed: onRetry,
+              child: Text(context.l10n.tryAgain),
+            ),
+          ],
+        ),
       ),
     );
   }

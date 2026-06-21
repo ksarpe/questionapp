@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/locale/l10n_extension.dart';
 import '../../../core/theme/app_theme.dart';
 
 /// The glowing "wejdz glebiej" pill. Tapping it opens the "Smaczki" panel from
@@ -9,14 +10,13 @@ class GoDeeperButton extends StatelessWidget {
 
   final VoidCallback onTap;
 
-  static const label = 'WEJDŹ GŁĘBIEJ';
   static const _radius = BorderRadius.all(Radius.circular(30));
 
   @override
   Widget build(BuildContext context) {
     return Semantics(
       button: true,
-      label: label,
+      label: context.l10n.goDeeper,
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: onTap,
@@ -55,9 +55,9 @@ class _Label extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Text(
-      GoDeeperButton.label,
-      style: TextStyle(
+    return Text(
+      context.l10n.goDeeper,
+      style: const TextStyle(
         color: AppTheme.ink,
         fontSize: 13,
         fontWeight: FontWeight.w700,
