@@ -78,6 +78,10 @@ class _RankSheet extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _Header(rank: current, streak: streak, lang: lang),
+                if (stats.graceDaysLeft != null) ...[
+                  const SizedBox(height: 12),
+                  _FreezeWarning(daysLeft: stats.graceDaysLeft!),
+                ],
                 const SizedBox(height: 20),
                 _Progress(streak: streak, current: current, next: next),
                 const SizedBox(height: 16),
@@ -194,6 +198,42 @@ class _Header extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+/// Shown while the streak "freeze" is counting down: the user has missed a day
+/// but hasn't lost a rank yet — this warns how long until the next tier drop.
+class _FreezeWarning extends StatelessWidget {
+  const _FreezeWarning({required this.daysLeft});
+
+  final int daysLeft;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        color: const Color(0xFF38BDF8).withValues(alpha: 0.12),
+        border: Border.all(color: const Color(0xFF38BDF8).withValues(alpha: 0.4)),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.ac_unit_rounded, color: Color(0xFF38BDF8), size: 18),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              context.l10n.streakFreezeWarning(daysLeft),
+              style: const TextStyle(
+                color: AppTheme.ink,
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

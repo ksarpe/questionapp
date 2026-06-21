@@ -177,6 +177,12 @@
       "minStreak": { "type": "int" }
     }
   },
+  "streakFreezeWarning": "{count, plural, one{Freeze: rank drops in {count} day} other{Freeze: rank drops in {count} days}}",
+  "@streakFreezeWarning": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
 
   "onboardingSkip": "Skip",
   "onboardingNext": "Next",

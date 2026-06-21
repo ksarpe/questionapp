@@ -13,11 +13,14 @@ class UserStats {
     required this.rankTier,
     required this.rankName,
     this.nextRankStreak,
+    this.graceDaysLeft,
     this.isPremium = false,
   });
 
-  /// Consecutive days the user voted on the daily, already "broken" to 0 by the
-  /// server when a day was missed.
+  /// Consecutive days the user voted on the daily. The server applies the streak
+  /// "freeze" decay (one rank per 3 missed days) before returning this, so a
+  /// missed day no longer snaps it to 0 — it only steps down once the grace
+  /// window elapses.
   final int currentStreak;
 
   /// Best streak ever reached — shown as a secondary stat in the rank sheet.
@@ -36,6 +39,11 @@ class UserStats {
   /// Streak needed to reach the next rank, or null when already at the top.
   final int? nextRankStreak;
 
+  /// Days left before the streak "freeze" drops the user one more rank, or null
+  /// when the streak is intact (voted today/yesterday) or already at the bottom.
+  /// Non-null means the user is mid-grace and about to lose a tier.
+  final int? graceDaysLeft;
+
   final bool isPremium;
 
   factory UserStats.fromJson(Map<String, dynamic> json) {
@@ -49,6 +57,9 @@ class UserStats {
       nextRankStreak: json['next_rank_streak'] == null
           ? null
           : asInt(json['next_rank_streak']),
+      graceDaysLeft: json['grace_days_left'] == null
+          ? null
+          : asInt(json['grace_days_left']),
       isPremium: json['is_premium'] as bool? ?? false,
     );
   }

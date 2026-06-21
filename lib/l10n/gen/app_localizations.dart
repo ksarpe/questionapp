@@ -788,6 +788,12 @@ abstract class AppLocalizations {
   /// **'{minStreak}+'**
   String rankFrom(int minStreak);
 
+  /// No description provided for @streakFreezeWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{Freeze: rank drops in {count} day} other{Freeze: rank drops in {count} days}}'**
+  String streakFreezeWarning(int count);
+
   /// No description provided for @onboardingSkip.
   ///
   /// In en, this message translates to:

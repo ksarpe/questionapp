@@ -430,6 +430,19 @@ class AppLocalizationsPl extends AppLocalizations {
   }
 
   @override
+  String streakFreezeWarning(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Zamrożenie: ranga spadnie za $count dnia',
+      many: 'Zamrożenie: ranga spadnie za $count dni',
+      few: 'Zamrożenie: ranga spadnie za $count dni',
+      one: 'Zamrożenie: ranga spadnie za $count dzień',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get onboardingSkip => 'Pomiń';
 
   @override

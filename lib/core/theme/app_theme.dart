@@ -20,6 +20,11 @@ class AppTheme {
   /// Violet "spark" accent — used for the glowing "go deeper" affordance.
   static const Color spark = Color(0xFF8B5CF6);
 
+  /// Semantic vote colours: green for TAK, red for NIE. Used by the daily
+  /// vote panel for the buttons' side hints and the post-vote split.
+  static const Color yes = Color(0xFF22C55E);
+  static const Color no = Color(0xFFEF4444);
+
   static ThemeData get dark {
     final base = ThemeData(
       useMaterial3: true,

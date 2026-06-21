@@ -50,7 +50,22 @@ void main() {
     expect(s.freeUnlockCredits, 1);
     expect(s.rankName, 'Prowokator');
     expect(s.nextRankStreak, 7);
+    expect(s.graceDaysLeft, isNull);
     expect(s.isPremium, false);
+  });
+
+  test('grace_days_left parses when the streak freeze is counting down', () {
+    final s = UserStats.fromJson(const {
+      'current_streak': 7,
+      'longest_streak': 14,
+      'free_unlock_credits': 1,
+      'rank_tier': 2,
+      'rank_name': 'Podżegacz',
+      'next_rank_streak': 14,
+      'grace_days_left': 2,
+      'is_premium': false,
+    });
+    expect(s.graceDaysLeft, 2);
   });
 
   test('null next_rank_streak (top rank) parses to null', () {

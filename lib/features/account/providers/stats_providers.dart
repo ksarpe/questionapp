@@ -35,8 +35,8 @@ final freeUnlockCreditsProvider = Provider<int>((ref) {
   return ref.watch(userStatsValueProvider).freeUnlockCredits;
 });
 
-/// The current streak length (already broken to 0 server-side when a day was
-/// missed).
+/// The current streak length (decayed server-side by the streak "freeze": one
+/// rank per 3 missed days, instead of snapping to 0).
 final currentStreakProvider = Provider<int>(
   (ref) => ref.watch(userStatsValueProvider).currentStreak,
 );

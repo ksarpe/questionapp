@@ -126,6 +126,7 @@
   "longestStreakDays": "Najdłuższa seria: {count, plural, one{{count} dzień} few{{count} dni} many{{count} dni} other{{count} dni}}",
   "daysToRank": "{remaining, plural, one{Jeszcze {remaining} dzień do rangi „{rankName}”} few{Jeszcze {remaining} dni do rangi „{rankName}”} many{Jeszcze {remaining} dni do rangi „{rankName}”} other{Jeszcze {remaining} dni do rangi „{rankName}”}}",
   "rankFrom": "od {minStreak}",
+  "streakFreezeWarning": "{count, plural, one{Zamrożenie: ranga spadnie za {count} dzień} few{Zamrożenie: ranga spadnie za {count} dni} many{Zamrożenie: ranga spadnie za {count} dni} other{Zamrożenie: ranga spadnie za {count} dnia}}",
 
   "onboardingSkip": "Pomiń",
   "onboardingNext": "Dalej",
