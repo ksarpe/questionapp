@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/feedback/app_toast.dart';
 import '../../../core/locale/l10n_extension.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../account/providers/stats_providers.dart';
@@ -28,7 +29,7 @@ class StreakChip extends ConsumerWidget {
         rankTier: stats.rankTier,
       ),
       label: '${stats.currentStreak}',
-      labelColor: active ? kFlame : AppTheme.subtle,
+      labelColor: active ? flameColor(context) : context.colors.subtle,
       tooltip: context.l10n.streakTooltip,
       onTap: () => showRankSheet(context),
     );
@@ -67,9 +68,7 @@ class FreeUnlockChip extends ConsumerWidget {
   }
 
   void _explain(BuildContext context) {
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text(context.l10n.freeUnlockExplain)));
+    AppToast.info(context, context.l10n.freeUnlockExplain);
   }
 }
 

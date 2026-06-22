@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'core/locale/app_locale.dart';
 import 'core/theme/app_theme.dart';
+import 'core/theme/theme_controller.dart';
 import 'features/onboarding/screens/app_entry.dart';
 import 'l10n/gen/app_localizations.dart';
 
@@ -20,10 +21,17 @@ class QuestionApp extends ConsumerWidget {
     // into the new language.
     final locale = ref.watch(localeControllerProvider);
 
+    // The chosen appearance (light / dark / follow-system) drives `themeMode`,
+    // exactly as `locale` drives the language — a single persisted source of
+    // truth, mutated from the settings screen (see `themeControllerProvider`).
+    final themeMode = ref.watch(themeControllerProvider);
+
     return MaterialApp(
       title: 'Spark',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.dark,
+      theme: AppTheme.light,
+      darkTheme: AppTheme.dark,
+      themeMode: themeMode,
       locale: locale,
       localizationsDelegates: const [
         AppLocalizations.delegate,

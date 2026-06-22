@@ -1,6 +1,5 @@
 {
   "@@locale": "en",
-
   "ok": "OK",
   "later": "Later",
   "cancel": "Cancel",
@@ -12,7 +11,6 @@
   "purchaseRestoredCelebrate": "Purchase restored. 🎉",
   "noPreviousPurchase": "No previous purchase found.",
   "goPro": "Go PRO",
-
   "signIn": "Sign in",
   "signInShort": "Sign in",
   "authCreateAccount": "Create account",
@@ -38,20 +36,48 @@
   "authPasswordResetSoon": "Password reset — coming soon.",
   "authMissingSupabaseConfig": "Supabase configuration is missing. Run the app with SUPABASE_URL and SUPABASE_ANON_KEY.",
   "authMissingGoogleConfig": "GOOGLE_SERVER_CLIENT_ID is missing, so Google is temporarily disabled.",
-
   "settingsSectionApp": "APP SETTINGS",
   "settingsSectionAccount": "ACCOUNT",
   "settingsReminders": "Reminders",
   "settingsRemindersSubtitle": "A reminder about the daily question",
   "settingsReminderTime": "Reminder time",
   "remindersPermissionDenied": "Turn on notifications in system settings to get reminders.",
+  "remindersOpenSettings": "Open settings",
   "notificationDailyTitle": "Today's question is waiting 🔥",
   "notificationDailyBody": "Cast your vote and keep your streak alive.",
   "settingsLanguage": "Language",
   "chooseLanguage": "Choose language",
+  "settingsAppearance": "Appearance",
+  "settingsChooseAppearance": "Choose appearance",
+  "settingsAppearanceSystem": "System",
+  "settingsAppearanceLight": "Light",
+  "settingsAppearanceDark": "Dark",
   "settingsPremiumActive": "Premium active",
   "settingsGoPremium": "Go Premium",
   "settingsPrivacy": "Privacy & data",
+  "settingsAbout": "About",
+  "settingsFavorites": "Favorite questions",
+  "favoritesTitle": "Favorites",
+  "favoritesEmptyTitle": "No favorites yet",
+  "favoritesEmptyBody": "Tap the star on a question to save it here.",
+  "favoriteAddTooltip": "Add to favorites",
+  "favoriteRemoveTooltip": "Remove from favorites",
+  "favoriteAdded": "Added to favorites",
+  "favoriteRemoved": "Removed from favorites",
+  "favoritesPremiumOnly": "Favorites are a Premium feature.",
+  "favoriteError": "Couldn't update favorites.",
+  "aboutVersion": "Version {version} ({build})",
+  "@aboutVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      },
+      "build": {
+        "type": "String"
+      }
+    }
+  },
+  "aboutTagline": "Thought-provoking questions to spark real conversation.",
   "privacyDocsSection": "DOCUMENTS",
   "privacyPolicy": "Privacy policy",
   "privacyTerms": "Terms of service",
@@ -74,13 +100,17 @@
   "manageSubRenewsOn": "Renews on {date}",
   "@manageSubRenewsOn": {
     "placeholders": {
-      "date": { "type": "String" }
+      "date": {
+        "type": "String"
+      }
     }
   },
   "manageSubActiveUntil": "Active until {date}",
   "@manageSubActiveUntil": {
     "placeholders": {
-      "date": { "type": "String" }
+      "date": {
+        "type": "String"
+      }
     }
   },
   "manageSubBilledAppStore": "Billed through the App Store",
@@ -108,7 +138,9 @@
   "comingSoonNamed": "{label} — coming soon",
   "@comingSoonNamed": {
     "placeholders": {
-      "label": { "type": "String" }
+      "label": {
+        "type": "String"
+      }
     }
   },
   "daysInARow": "DAYS IN A ROW",
@@ -118,33 +150,47 @@
   "rankCardDaysToPromotion": "{count, plural, one{{count} day to promotion} other{{count} days to promotion}}",
   "@rankCardDaysToPromotion": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
-
   "settingsTooltip": "Settings",
   "swipeHint": "Swipe to see the next question",
   "dailyShort": "Daily",
   "loadErrorTitle": "Couldn't load questions",
   "loadErrorBody": "Check your internet connection and try again.",
-
   "goDeeper": "GO DEEPER",
   "dailyBadge": "DAILY",
-
+  "shareLabel": "Share",
+  "shareTooltip": "Share question",
+  "shareSubject": "A question from Spark",
+  "shareMessage": "{question}\n\nSpark — thought-provoking questions.",
+  "@shareMessage": {
+    "placeholders": {
+      "question": {
+        "type": "String"
+      }
+    }
+  },
+  "shareCardTagline": "One thought-provoking question a day",
+  "@shareCardTagline": {
+    "description": "Brand tagline shown on the shareable question image card, under the question."
+  },
   "streakTooltip": "Your streak",
   "freeUnlockTooltip": "Free unlock",
   "freeUnlockExplain": "You have one free unlock — swipe to the next question and it unlocks automatically.",
-
   "voteYes": "YES",
   "voteNo": "NO",
   "voteFailed": "Could not record your vote.",
   "votesCount": "{count, plural, one{{count} vote} other{{count} votes}}",
   "@votesCount": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
-
   "revealFailed": "Couldn't reveal the question — please try again.",
   "adLoading": "The ad is still loading — try again in a moment.",
   "adNoReward": "No reward — watch the whole video to unlock.",
@@ -155,21 +201,20 @@
   "nextQuestionWaiting": "The next question is waiting",
   "watchAdToReveal": "Watch an ad to reveal a new question.",
   "unlockWithAd": "Unlock with an ad",
-
   "proActiveTitle": "PRO active 🎉",
   "savePromptBody": "Your PRO is currently tied to a guest account. Create an account (email or Google) so you don't lose access after reinstalling or on another device — your progress will be kept.",
   "createAccount": "Create account",
-
-  "smaczkiTitle": "Tidbits",
+  "smaczkiTitle": "Arguments",
   "smaczkiSubtitle": "Tips to deepen the conversation around this question.",
   "smaczkiLoadError": "Couldn't load tidbits.\n{error}",
   "@smaczkiLoadError": {
     "placeholders": {
-      "error": { "type": "String" }
+      "error": {
+        "type": "String"
+      }
     }
   },
   "smaczkiEmpty": "No tidbits for this question yet.",
-
   "ranksLoadError": "Could not load ranks.",
   "rankLadder": "Rank ladder",
   "yourRankUpper": "YOUR RANK",
@@ -177,49 +222,57 @@
   "streakDays": "Streak: {count, plural, one{{count} day} other{{count} days}}",
   "@streakDays": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "longestStreakDays": "Longest streak: {count, plural, one{{count} day} other{{count} days}}",
   "@longestStreakDays": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "daysToRank": "{remaining, plural, one{{remaining} more day to “{rankName}”} other{{remaining} more days to “{rankName}”}}",
   "@daysToRank": {
     "placeholders": {
-      "remaining": { "type": "int" },
-      "rankName": { "type": "String" }
+      "remaining": {
+        "type": "int"
+      },
+      "rankName": {
+        "type": "String"
+      }
     }
   },
   "rankFrom": "{minStreak}+",
   "@rankFrom": {
     "placeholders": {
-      "minStreak": { "type": "int" }
+      "minStreak": {
+        "type": "int"
+      }
     }
   },
   "streakFreezeWarning": "{count, plural, one{Freeze: rank drops in {count} day} other{Freeze: rank drops in {count} days}}",
   "@streakFreezeWarning": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
-
   "onboardingSkip": "Skip",
   "onboardingNext": "Next",
   "onboardingWelcomeTitle": "Welcome to Spark",
   "onboardingWelcomeBody": "One sharp question a day — and everything around it.",
   "onboardingDailyTitle": "Daily question",
   "onboardingDailyBody": "Every day brings a new free question to vote on and sit with.",
-  "onboardingStreakTitle": "Hot streak",
-  "onboardingStreakBody": "Vote each day to keep your flame alive and climb the ranks.",
-  "onboardingFreezeTitle": "Streak freeze",
-  "onboardingFreezeBody": "Miss a day? Your streak won't vanish. A freeze cushions the gap — you've got a few days to come back before your rank starts to slip.",
-  "onboardingUnlockTitle": "Unlocks",
-  "onboardingUnlockBody": "Beyond the daily, reveal more questions with a free credit, an ad, or PRO.",
-  "onboardingDeeperTitle": "Go deeper",
-  "onboardingDeeperBody": "Every question comes with tidbits to spark a real conversation.",
+  "onboardingTasteKicker": "YOUR TURN",
+  "onboardingTasteQuestion": "Is emotional cheating worse than physical cheating?",
+  "onboardingTasteMajority": "You're with the majority. 🙌",
+  "onboardingTasteMinority": "You're in the minority. 👀",
+  "onboardingTasteContinue": "Continue",
   "onboardingChoiceTitle": "How do you want to start?",
   "onboardingChoiceBody": "You can sign in anytime later from settings.",
   "onboardingSignInCta": "Sign in / Sign up",

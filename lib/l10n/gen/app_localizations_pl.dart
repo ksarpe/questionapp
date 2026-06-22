@@ -138,6 +138,9 @@ class AppLocalizationsPl extends AppLocalizations {
       'Włącz powiadomienia w ustawieniach systemu, aby otrzymywać przypomnienia.';
 
   @override
+  String get remindersOpenSettings => 'Otwórz ustawienia';
+
+  @override
   String get notificationDailyTitle => 'Pytanie dnia czeka 🔥';
 
   @override
@@ -150,6 +153,21 @@ class AppLocalizationsPl extends AppLocalizations {
   String get chooseLanguage => 'Wybierz język';
 
   @override
+  String get settingsAppearance => 'Wygląd';
+
+  @override
+  String get settingsChooseAppearance => 'Wybierz wygląd';
+
+  @override
+  String get settingsAppearanceSystem => 'Systemowy';
+
+  @override
+  String get settingsAppearanceLight => 'Jasny';
+
+  @override
+  String get settingsAppearanceDark => 'Ciemny';
+
+  @override
   String get settingsPremiumActive => 'Premium aktywne';
 
   @override
@@ -157,6 +175,49 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get settingsPrivacy => 'Prywatność i dane';
+
+  @override
+  String get settingsAbout => 'O aplikacji';
+
+  @override
+  String get settingsFavorites => 'Ulubione pytania';
+
+  @override
+  String get favoritesTitle => 'Ulubione';
+
+  @override
+  String get favoritesEmptyTitle => 'Brak ulubionych';
+
+  @override
+  String get favoritesEmptyBody =>
+      'Dotknij gwiazdki przy pytaniu, aby je tu zapisać.';
+
+  @override
+  String get favoriteAddTooltip => 'Dodaj do ulubionych';
+
+  @override
+  String get favoriteRemoveTooltip => 'Usuń z ulubionych';
+
+  @override
+  String get favoriteAdded => 'Dodano do ulubionych';
+
+  @override
+  String get favoriteRemoved => 'Usunięto z ulubionych';
+
+  @override
+  String get favoritesPremiumOnly => 'Ulubione to funkcja Premium.';
+
+  @override
+  String get favoriteError => 'Nie udało się zaktualizować ulubionych.';
+
+  @override
+  String aboutVersion(String version, String build) {
+    return 'Wersja $version ($build)';
+  }
+
+  @override
+  String get aboutTagline =>
+      'Jedno przewrotne pytanie dziennie, które rozpala prawdziwą rozmowę.';
 
   @override
   String get privacyDocsSection => 'DOKUMENTY';
@@ -357,6 +418,23 @@ class AppLocalizationsPl extends AppLocalizations {
   String get dailyBadge => 'PYTANIE DNIA';
 
   @override
+  String get shareLabel => 'Udostępnij';
+
+  @override
+  String get shareTooltip => 'Udostępnij pytanie';
+
+  @override
+  String get shareSubject => 'Pytanie ze Spark';
+
+  @override
+  String shareMessage(String question) {
+    return '$question\n\nSpark — jedno przewrotne pytanie dziennie.';
+  }
+
+  @override
+  String get shareCardTagline => 'Jedno przewrotne pytanie dziennie';
+
+  @override
   String get streakTooltip => 'Twoja seria';
 
   @override
@@ -432,7 +510,7 @@ class AppLocalizationsPl extends AppLocalizations {
   String get createAccount => 'Załóż konto';
 
   @override
-  String get smaczkiTitle => 'Smaczki';
+  String get smaczkiTitle => 'Argumenty';
 
   @override
   String get smaczkiSubtitle =>
@@ -536,32 +614,20 @@ class AppLocalizationsPl extends AppLocalizations {
       'Każdego dnia nowe darmowe pytanie — zagłosuj i zatrzymaj się przy nim na chwilę.';
 
   @override
-  String get onboardingStreakTitle => 'Gorąca passa';
+  String get onboardingTasteKicker => 'TWÓJ RUCH';
 
   @override
-  String get onboardingStreakBody =>
-      'Głosuj każdego dnia, by podtrzymać płomień i piąć się w rankingu.';
+  String get onboardingTasteQuestion =>
+      'Czy zdrada emocjonalna jest gorsza niż fizyczna?';
 
   @override
-  String get onboardingFreezeTitle => 'Zamrożenie passy';
+  String get onboardingTasteMajority => 'Jesteś z większością. 🙌';
 
   @override
-  String get onboardingFreezeBody =>
-      'Pominiesz dzień? Passa nie przepadnie. Zamrożenie łagodzi przerwę — masz kilka dni, by wrócić, zanim ranga zacznie spadać.';
+  String get onboardingTasteMinority => 'Jesteś w mniejszości. 👀';
 
   @override
-  String get onboardingUnlockTitle => 'Odblokowania';
-
-  @override
-  String get onboardingUnlockBody =>
-      'Poza pytaniem dnia odkrywaj kolejne — darmowym kredytem, reklamą lub z PRO.';
-
-  @override
-  String get onboardingDeeperTitle => 'Wejdź głębiej';
-
-  @override
-  String get onboardingDeeperBody =>
-      'Do każdego pytania dostajesz smaczki, które rozkręcą prawdziwą rozmowę.';
+  String get onboardingTasteContinue => 'Dalej';
 
   @override
   String get onboardingChoiceTitle => 'Jak chcesz zacząć?';

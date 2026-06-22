@@ -1,59 +1,173 @@
 import 'package:flutter/material.dart';
 
-/// Central place for colours, the global [ThemeData], and the signature
-/// "outlined + shadowed" text styling used for the question.
+/// The semantic, brightness-dependent colours — everything that must flip
+/// between the light and dark themes lives here as a [ThemeExtension], so a
+/// widget reads the *current* value via `context.colors.x` instead of a fixed
+/// constant. The brand accents that stay the same in both themes ([AppTheme.spark],
+/// [AppTheme.yes], [AppTheme.no]) deliberately stay on [AppTheme] as plain
+/// constants.
+///
+/// Read it with the [BuildContextColors] extension: `context.colors.background`.
+@immutable
+class AppColors extends ThemeExtension<AppColors> {
+  const AppColors({
+    required this.background,
+    required this.ink,
+    required this.subtle,
+    required this.accent,
+    required this.cardSurface,
+    required this.hairline,
+  });
+
+  /// App canvas / scaffold background.
+  final Color background;
+
+  /// Primary foreground (text + icons).
+  final Color ink;
+
+  /// Muted secondary text and quiet icons.
+  final Color subtle;
+
+  /// Raised/accent surfaces on the canvas (buttons, dividers, snackbars).
+  final Color accent;
+
+  /// A card surface that reads as a distinct layer above [background]
+  /// (settings cards, bottom sheets, the auth sheet).
+  final Color cardSurface;
+
+  /// Hairline borders/dividers separating rows inside a card.
+  final Color hairline;
+
+  /// Dark theme — the original "pure black canvas", high-contrast and
+  /// distraction-free.
+  static const AppColors dark = AppColors(
+    background: Color(0xFF000000),
+    ink: Color(0xFFFFFFFF),
+    subtle: Color(0xFF8A8A8A),
+    accent: Color(0xFF2A2A2A),
+    cardSurface: Color(0xFF131318),
+    hairline: Color(0xFF26262E),
+  );
+
+  /// Light theme — a soft off-white canvas with white cards floating above it,
+  /// near-black ink and a darker grey for secondary text so small labels keep
+  /// their contrast on a light background.
+  static const AppColors light = AppColors(
+    background: Color(0xFFF6F6F9),
+    ink: Color(0xFF15161A),
+    subtle: Color(0xFF5E5E66),
+    accent: Color(0xFFE7E7EE),
+    cardSurface: Color(0xFFFFFFFF),
+    hairline: Color(0xFFE2E2EA),
+  );
+
+  @override
+  AppColors copyWith({
+    Color? background,
+    Color? ink,
+    Color? subtle,
+    Color? accent,
+    Color? cardSurface,
+    Color? hairline,
+  }) {
+    return AppColors(
+      background: background ?? this.background,
+      ink: ink ?? this.ink,
+      subtle: subtle ?? this.subtle,
+      accent: accent ?? this.accent,
+      cardSurface: cardSurface ?? this.cardSurface,
+      hairline: hairline ?? this.hairline,
+    );
+  }
+
+  @override
+  AppColors lerp(ThemeExtension<AppColors>? other, double t) {
+    if (other is! AppColors) return this;
+    return AppColors(
+      background: Color.lerp(background, other.background, t)!,
+      ink: Color.lerp(ink, other.ink, t)!,
+      subtle: Color.lerp(subtle, other.subtle, t)!,
+      accent: Color.lerp(accent, other.accent, t)!,
+      cardSurface: Color.lerp(cardSurface, other.cardSurface, t)!,
+      hairline: Color.lerp(hairline, other.hairline, t)!,
+    );
+  }
+}
+
+/// `context.colors.background` etc. — the active [AppColors] for the current
+/// theme. Falls back to the dark palette if (somehow) no extension is
+/// registered, so a lookup never throws.
+extension BuildContextColors on BuildContext {
+  AppColors get colors =>
+      Theme.of(this).extension<AppColors>() ?? AppColors.dark;
+}
+
+/// Central place for the brand accents, the global [ThemeData] (light + dark),
+/// and the signature "outlined + shadowed" text styling used for the question.
+///
+/// Brightness-dependent colours live on [AppColors] (read via `context.colors`);
+/// only the theme-independent brand accents stay here.
 class AppTheme {
   AppTheme._();
 
-  /// Pure black canvas — high contrast and distraction-free.
-  static const Color background = Color(0xFF000000);
-
-  /// Primary foreground (text + icons): white.
-  static const Color ink = Color(0xFFFFFFFF);
-
-  /// Muted grey for secondary text and accent surfaces (buttons, dividers).
-  static const Color subtle = Color(0xFF8A8A8A);
-
-  /// Slightly darker grey used for raised/accent surfaces on the black canvas.
-  static const Color accent = Color(0xFF2A2A2A);
-
-  /// Violet "spark" accent — used for the glowing "go deeper" affordance.
+  /// Violet "spark" accent — the glowing "go deeper" affordance. Shared by both
+  /// themes.
   static const Color spark = Color(0xFF8B5CF6);
 
   /// Semantic vote colours: green for TAK, red for NIE. Used by the daily
-  /// vote panel for the buttons' side hints and the post-vote split.
+  /// vote panel for the buttons' side hints and the post-vote split. Shared by
+  /// both themes.
   static const Color yes = Color(0xFF22C55E);
   static const Color no = Color(0xFFEF4444);
 
-  static ThemeData get dark {
+  /// The dark theme — the app's original look.
+  static ThemeData get dark => _build(Brightness.dark, AppColors.dark);
+
+  /// The light theme — same structure, light palette.
+  static ThemeData get light => _build(Brightness.light, AppColors.light);
+
+  /// Builds a [ThemeData] for [brightness] from the matching [AppColors]
+  /// palette, so the two themes stay structurally identical and only the
+  /// colours differ.
+  static ThemeData _build(Brightness brightness, AppColors colors) {
     final base = ThemeData(
       useMaterial3: true,
-      colorSchemeSeed: subtle,
-      scaffoldBackgroundColor: background,
-      brightness: Brightness.dark,
+      colorSchemeSeed: spark,
+      scaffoldBackgroundColor: colors.background,
+      brightness: brightness,
     );
 
     return base.copyWith(
-      scaffoldBackgroundColor: background,
+      scaffoldBackgroundColor: colors.background,
       colorScheme: base.colorScheme.copyWith(
-        surface: background,
-        primary: subtle,
-        secondary: subtle,
+        surface: colors.background,
+        primary: colors.subtle,
+        secondary: colors.subtle,
       ),
-      appBarTheme: const AppBarTheme(
+      appBarTheme: AppBarTheme(
         backgroundColor: Colors.transparent,
         elevation: 0,
         surfaceTintColor: Colors.transparent,
-        foregroundColor: ink,
+        foregroundColor: colors.ink,
       ),
-      iconTheme: const IconThemeData(color: ink),
-      dividerColor: accent,
+      iconTheme: IconThemeData(color: colors.ink),
+      dividerColor: colors.accent,
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: accent,
-          foregroundColor: ink,
+          backgroundColor: colors.accent,
+          foregroundColor: colors.ink,
         ),
       ),
+      // Snackbars carry the app's messages on the [accent] surface; pin the text
+      // to [ink] so it contrasts in BOTH themes. Without this the Material 3
+      // default text colour (onInverseSurface) is dark-on-dark on our overridden
+      // accent background and the message reads as blank.
+      snackBarTheme: SnackBarThemeData(
+        backgroundColor: colors.accent,
+        contentTextStyle: TextStyle(color: colors.ink),
+        actionTextColor: spark,
+      ),
+      extensions: [colors],
     );
   }
 
@@ -74,6 +188,8 @@ class AppTheme {
 ///
 /// Flutter cannot fill *and* stroke a single [Text] in one pass, so the
 /// question is rendered as two stacked [Text] widgets sharing these styles.
+/// The look is deliberately theme-independent — a white "sticker" with a black
+/// outline reads on either a black or a light canvas.
 class QuestionTextStyles {
   QuestionTextStyles._();
 

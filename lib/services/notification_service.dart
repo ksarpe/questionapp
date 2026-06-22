@@ -1,5 +1,6 @@
 import 'dart:io' show Platform;
 
+import 'package:app_settings/app_settings.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
@@ -72,6 +73,46 @@ class NotificationService {
     }
   }
 
+  /// Whether the OS currently permits this app to post notifications.
+  ///
+  /// Unlike [requestPermission] this never prompts — it just reads the current
+  /// grant, so the UI can keep its in-app switch honest (the user may revoke the
+  /// permission in system settings at any time) and decide whether asking is
+  /// even still needed. On Android < 13 there's no runtime gate, so it resolves
+  /// true.
+  static Future<bool> areNotificationsEnabled() async {
+    if (!_initialised) return false;
+    try {
+      if (Platform.isAndroid) {
+        final android = _plugin.resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>();
+        // Null = pre-Android-13: no runtime gate to revoke, so treat as enabled.
+        return (await android?.areNotificationsEnabled()) ?? true;
+      }
+      if (Platform.isIOS || Platform.isMacOS) {
+        final darwin = _plugin.resolvePlatformSpecificImplementation<
+            IOSFlutterLocalNotificationsPlugin>();
+        final options = await darwin?.checkPermissions();
+        return options?.isEnabled ?? false;
+      }
+      return false;
+    } catch (e) {
+      debugPrint('NotificationService: enabled-check failed — $e');
+      return false;
+    }
+  }
+
+  /// Opens this app's notification settings in the OS, so a user who denied the
+  /// permission (or whose system no longer shows the prompt) can grant it in one
+  /// tap instead of hunting through Settings. Best-effort — no-ops on failure.
+  static Future<void> openNotificationSettings() async {
+    try {
+      await AppSettings.openAppSettings(type: AppSettingsType.notification);
+    } catch (e) {
+      debugPrint('NotificationService: open settings failed — $e');
+    }
+  }
+
   /// Requests OS permission to post notifications, returning whether it's
   /// granted. On Android < 13 no runtime permission exists, so this resolves
   /// true. Call right before enabling the reminder.
@@ -105,11 +146,18 @@ class NotificationService {
   /// Schedules (replacing any existing) a daily reminder at [hour]:[minute]
   /// local time. [title]/[body] are baked in at schedule time, so callers pass
   /// the localized strings for the current language.
+  ///
+  /// Set [skipToday] when the user has already done today's thing (voted on the
+  /// daily): the first fire is pushed to tomorrow so they aren't nudged about a
+  /// question they've answered. The schedule still repeats every following day —
+  /// each of those is suppressed in turn by re-scheduling when they vote that
+  /// day (see the daily vote panel) — so a quiet day still gets its reminder.
   static Future<void> scheduleDailyReminder({
     required int hour,
     required int minute,
     required String title,
     required String body,
+    bool skipToday = false,
   }) async {
     if (!_initialised) return;
     try {
@@ -118,7 +166,7 @@ class NotificationService {
         id: _dailyReminderId,
         title: title,
         body: body,
-        scheduledDate: _nextInstanceOf(hour, minute),
+        scheduledDate: _nextInstanceOf(hour, minute, skipToday: skipToday),
         notificationDetails: const NotificationDetails(
           android: AndroidNotificationDetails(
             _channelId,
@@ -152,12 +200,23 @@ class NotificationService {
   }
 
   /// The next [hour]:[minute] in the device's local zone — today if it's still
-  /// ahead, otherwise tomorrow.
-  static tz.TZDateTime _nextInstanceOf(int hour, int minute) {
+  /// ahead, otherwise tomorrow. When [skipToday] is set and the next instance
+  /// would land today, it's bumped one more day so today's fire is skipped.
+  static tz.TZDateTime _nextInstanceOf(
+    int hour,
+    int minute, {
+    bool skipToday = false,
+  }) {
     final now = tz.TZDateTime.now(tz.local);
     var scheduled =
         tz.TZDateTime(tz.local, now.year, now.month, now.day, hour, minute);
     if (!scheduled.isAfter(now)) {
+      scheduled = scheduled.add(const Duration(days: 1));
+    }
+    final isToday = scheduled.year == now.year &&
+        scheduled.month == now.month &&
+        scheduled.day == now.day;
+    if (skipToday && isToday) {
       scheduled = scheduled.add(const Duration(days: 1));
     }
     return scheduled;

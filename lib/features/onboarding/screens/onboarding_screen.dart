@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 
 import '../../../core/locale/l10n_extension.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../data/models/vote_result.dart';
 import '../../account/screens/auth_screen.dart';
-import '../../questions/widgets/animated_flame_icon.dart';
+import '../../questions/widgets/styled_question_text.dart';
+import '../../questions/widgets/vote_visuals.dart';
 import '../widgets/spark_logo.dart';
 
 /// The first-launch tutorial: a swipeable deck that welcomes the user, walks
@@ -67,9 +69,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
 
-    // Welcome + the four feature explainers. Built here so each line of copy
-    // follows the active locale.
-    final introPages = <Widget>[
+    // A deliberately short funnel: a warm welcome, ONE feature card (the daily),
+    // then the real moment — a juicy question to actually vote on. The taste card
+    // is the aha; everything before it is kept brief so the user reaches it fast.
+    final introCards = <Widget>[
       _IntroCard(
         glyph: const SparkLogo(size: 52),
         title: l10n.onboardingWelcomeTitle,
@@ -83,41 +86,21 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         title: l10n.onboardingDailyTitle,
         body: l10n.onboardingDailyBody,
       ),
-      _IntroCard(
-        glyph: const _GlyphBubble.flame(),
-        title: l10n.onboardingStreakTitle,
-        body: l10n.onboardingStreakBody,
-      ),
-      _IntroCard(
-        // Same snowflake + sky-blue the rank sheet's freeze warning uses, so the
-        // tutorial's promise matches what the user later sees in the live UI.
-        glyph: const _GlyphBubble(
-          icon: Icons.ac_unit_rounded,
-          color: kFreeze,
-        ),
-        title: l10n.onboardingFreezeTitle,
-        body: l10n.onboardingFreezeBody,
-      ),
-      _IntroCard(
-        glyph: const _GlyphBubble(
-          icon: Icons.lock_open_rounded,
-          color: AppTheme.spark,
-        ),
-        title: l10n.onboardingUnlockTitle,
-        body: l10n.onboardingUnlockBody,
-      ),
-      _IntroCard(
-        glyph: const _GlyphBubble(icon: Icons.bolt, color: AppTheme.spark),
-        title: l10n.onboardingDeeperTitle,
-        body: l10n.onboardingDeeperBody,
-      ),
     ];
-    _introCount = introPages.length;
+
+    // The interactive "taste" vote sits last among the intro pages, right before
+    // the account choice. The user must vote (or skip) to move on, so the split
+    // reveal — the payoff — isn't missed; voting unveils its own "Continue".
+    final votePage = _TasteVoteCard(onContinue: _next);
+
+    // Account choice comes after the taste vote.
+    _introCount = introCards.length + 1; // intro cards + the taste vote page
+    final votePageIndex = _introCount - 1;
 
     final pageCount = _introCount + 1; // + the account-choice card
 
     return Scaffold(
-      backgroundColor: AppTheme.background,
+      backgroundColor: context.colors.background,
       body: SafeArea(
         child: Column(
           children: [
@@ -133,7 +116,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   child: TextButton(
                     onPressed: _isChoicePage ? null : _skip,
                     style: TextButton.styleFrom(
-                      foregroundColor: AppTheme.subtle,
+                      foregroundColor: context.colors.subtle,
                     ),
                     child: Text(l10n.onboardingSkip),
                   ),
@@ -145,7 +128,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 controller: _controller,
                 onPageChanged: (i) => setState(() => _index = i),
                 children: [
-                  ...introPages,
+                  ...introCards,
+                  votePage,
                   _ChoiceCard(
                     onStartAnonymous: widget.onFinish,
                     onSignIn: _signIn,
@@ -164,7 +148,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   AnimatedSize(
                     duration: const Duration(milliseconds: 220),
                     curve: Curves.easeOut,
-                    child: _isChoicePage
+                    // The taste-vote page carries its own "Continue" (revealed
+                    // after voting) and the choice page its own buttons, so the
+                    // global "Next" only drives the plain intro cards.
+                    child: (_isChoicePage || _index == votePageIndex)
                         ? const SizedBox(width: double.infinity)
                         : _PrimaryButton(
                             label: l10n.onboardingNext,
@@ -206,8 +193,8 @@ class _IntroCard extends StatelessWidget {
           Text(
             title,
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              color: AppTheme.ink,
+            style: TextStyle(
+              color: context.colors.ink,
               fontSize: 26,
               fontWeight: FontWeight.w800,
               height: 1.15,
@@ -217,8 +204,8 @@ class _IntroCard extends StatelessWidget {
           Text(
             body,
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              color: AppTheme.subtle,
+            style: TextStyle(
+              color: context.colors.subtle,
               fontSize: 16,
               height: 1.45,
             ),
@@ -229,17 +216,122 @@ class _IntroCard extends StatelessWidget {
   }
 }
 
+/// The onboarding "aha": a real, juicy question the user actually votes on,
+/// before they've even chosen an account. Tapping a side flips straight to a
+/// believable community split — with a personal "you're with the majority /
+/// minority" line — so the very first interaction proves the app's promise
+/// instead of describing it.
+///
+/// This is a no-stakes TASTE: the split is curated (not a live cast), so it works
+/// instantly, offline and pre-login, and never touches the streak/credit logic.
+/// The real, counting vote happens on the daily right after onboarding. It reuses
+/// the exact [VoteButtonsRow] / [VoteResultsRow] visuals so it looks like the
+/// real thing.
+class _TasteVoteCard extends StatefulWidget {
+  const _TasteVoteCard({required this.onContinue});
+
+  /// Advances to the account-choice page once the user has had their moment.
+  final VoidCallback onContinue;
+
+  @override
+  State<_TasteVoteCard> createState() => _TasteVoteCardState();
+}
+
+class _TasteVoteCardState extends State<_TasteVoteCard> {
+  /// Curated split for the taste question — believable, and lopsided enough that
+  /// landing in the minority feels like a real "huh". TAK is the majority side.
+  static const int _yesPct = 63;
+  static const int _noPct = 37;
+
+  /// The user's pick, or null before they vote.
+  int? _choice;
+
+  void _onVote(int choice) => setState(() => _choice = choice);
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final choice = _choice;
+    final voted = choice != null;
+
+    // Centred, but scrollable so the taller post-vote state (split + line +
+    // Continue) never overflows on short screens or with large text.
+    return Center(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              l10n.onboardingTasteKicker,
+              style: const TextStyle(
+                color: AppTheme.spark,
+                fontSize: 13,
+                fontWeight: FontWeight.w800,
+                letterSpacing: 1.5,
+              ),
+            ),
+            const SizedBox(height: 22),
+            StyledQuestionText(l10n.onboardingTasteQuestion),
+            const SizedBox(height: 34),
+            AnimatedSwitcher(
+              duration: const Duration(milliseconds: 280),
+              child: voted
+                  ? Column(
+                      key: const ValueKey('taste-result'),
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        VoteResultsRow(
+                          result: VoteResult(
+                            yesCount: _yesPct,
+                            noCount: _noPct,
+                            myChoice: choice,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          _isMajority(choice)
+                              ? l10n.onboardingTasteMajority
+                              : l10n.onboardingTasteMinority,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: context.colors.ink,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                        _PrimaryButton(
+                          label: l10n.onboardingTasteContinue,
+                          onPressed: widget.onContinue,
+                        ),
+                      ],
+                    )
+                  : VoteButtonsRow(
+                      key: const ValueKey('taste-buttons'),
+                      busy: false,
+                      onVote: _onVote,
+                    ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// TAK is the majority ([_yesPct] > [_noPct]); the user is "with the majority"
+  /// only when their side is the larger one.
+  bool _isMajority(int choice) =>
+      choice == VoteResult.yes ? _yesPct >= _noPct : _noPct > _yesPct;
+}
+
 /// A round, softly-lit icon container — the visual anchor at the top of each
-/// feature card. The streak card uses the live [AnimatedFlameIcon] instead of a
-/// static glyph (see [_GlyphBubble.flame]).
+/// feature card.
 class _GlyphBubble extends StatelessWidget {
-  const _GlyphBubble({required this.icon, required this.color}) : _flame = false;
+  const _GlyphBubble({required this.icon, required this.color});
 
-  const _GlyphBubble.flame() : icon = null, color = kFlame, _flame = true;
-
-  final IconData? icon;
+  final IconData icon;
   final Color color;
-  final bool _flame;
 
   @override
   Widget build(BuildContext context) {
@@ -259,16 +351,14 @@ class _GlyphBubble extends StatelessWidget {
         ],
       ),
       child: Center(
-        child: _flame
-            ? const AnimatedFlameIcon(streak: 21, rankTier: 3, size: 56)
-            : Icon(
-                icon,
-                size: 52,
-                color: color,
-                shadows: [
-                  Shadow(color: color.withValues(alpha: 0.6), blurRadius: 16),
-                ],
-              ),
+        child: Icon(
+          icon,
+          size: 52,
+          color: color,
+          shadows: [
+            Shadow(color: color.withValues(alpha: 0.6), blurRadius: 16),
+          ],
+        ),
       ),
     );
   }
@@ -277,10 +367,7 @@ class _GlyphBubble extends StatelessWidget {
 /// The final card: the user picks how to start. Sign-in is the highlighted path
 /// (it saves progress); starting anonymously is the quieter secondary option.
 class _ChoiceCard extends StatelessWidget {
-  const _ChoiceCard({
-    required this.onStartAnonymous,
-    required this.onSignIn,
-  });
+  const _ChoiceCard({required this.onStartAnonymous, required this.onSignIn});
 
   final VoidCallback onStartAnonymous;
   final VoidCallback onSignIn;
@@ -296,8 +383,8 @@ class _ChoiceCard extends StatelessWidget {
           Text(
             l10n.onboardingChoiceTitle,
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              color: AppTheme.ink,
+            style: TextStyle(
+              color: context.colors.ink,
               fontSize: 26,
               fontWeight: FontWeight.w800,
               height: 1.15,
@@ -307,8 +394,8 @@ class _ChoiceCard extends StatelessWidget {
           Text(
             l10n.onboardingChoiceBody,
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              color: AppTheme.subtle,
+            style: TextStyle(
+              color: context.colors.subtle,
               fontSize: 15,
               height: 1.45,
             ),
@@ -355,10 +442,10 @@ class _ChoiceButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final labelColor = primary ? Colors.white : AppTheme.ink;
+    final labelColor = primary ? Colors.white : context.colors.ink;
     final hintColor = primary
         ? Colors.white.withValues(alpha: 0.85)
-        : AppTheme.subtle;
+        : context.colors.subtle;
 
     return Material(
       color: Colors.transparent,
@@ -372,11 +459,9 @@ class _ChoiceButton extends StatelessWidget {
                     colors: [Color(0xFF8B5CF6), Color(0xFF7C3AED)],
                   )
                 : null,
-            color: primary ? null : const Color(0xFF161616),
+            color: primary ? null : context.colors.accent,
             borderRadius: BorderRadius.circular(16),
-            border: primary
-                ? null
-                : Border.all(color: const Color(0xFF26262B)),
+            border: primary ? null : Border.all(color: context.colors.hairline),
             boxShadow: primary
                 ? [
                     BoxShadow(
@@ -468,7 +553,11 @@ class _PrimaryButton extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 8),
-                  const Icon(Icons.arrow_forward, color: Colors.white, size: 20),
+                  const Icon(
+                    Icons.arrow_forward,
+                    color: Colors.white,
+                    size: 20,
+                  ),
                 ],
               ),
             ),
@@ -500,7 +589,9 @@ class _Dots extends StatelessWidget {
           width: active ? 22 : 7,
           height: 7,
           decoration: BoxDecoration(
-            color: active ? AppTheme.spark : const Color(0xFF3A3A40),
+            color: active
+                ? AppTheme.spark
+                : context.colors.subtle.withValues(alpha: 0.35),
             borderRadius: BorderRadius.circular(4),
           ),
         );

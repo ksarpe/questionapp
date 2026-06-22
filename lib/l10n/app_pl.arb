@@ -45,13 +45,38 @@
   "settingsRemindersSubtitle": "Przypomnienie o codziennym pytaniu",
   "settingsReminderTime": "Godzina przypomnienia",
   "remindersPermissionDenied": "Włącz powiadomienia w ustawieniach systemu, aby otrzymywać przypomnienia.",
+  "remindersOpenSettings": "Otwórz ustawienia",
   "notificationDailyTitle": "Pytanie dnia czeka 🔥",
   "notificationDailyBody": "Oddaj głos i przedłuż swoją serię.",
   "settingsLanguage": "Język",
   "chooseLanguage": "Wybierz język",
+  "settingsAppearance": "Wygląd",
+  "settingsChooseAppearance": "Wybierz wygląd",
+  "settingsAppearanceSystem": "Systemowy",
+  "settingsAppearanceLight": "Jasny",
+  "settingsAppearanceDark": "Ciemny",
   "settingsPremiumActive": "Premium aktywne",
   "settingsGoPremium": "Przejdź na Premium",
   "settingsPrivacy": "Prywatność i dane",
+  "settingsAbout": "O aplikacji",
+  "settingsFavorites": "Ulubione pytania",
+  "favoritesTitle": "Ulubione",
+  "favoritesEmptyTitle": "Brak ulubionych",
+  "favoritesEmptyBody": "Dotknij gwiazdki przy pytaniu, aby je tu zapisać.",
+  "favoriteAddTooltip": "Dodaj do ulubionych",
+  "favoriteRemoveTooltip": "Usuń z ulubionych",
+  "favoriteAdded": "Dodano do ulubionych",
+  "favoriteRemoved": "Usunięto z ulubionych",
+  "favoritesPremiumOnly": "Ulubione to funkcja Premium.",
+  "favoriteError": "Nie udało się zaktualizować ulubionych.",
+  "aboutVersion": "Wersja {version} ({build})",
+  "@aboutVersion": {
+    "placeholders": {
+      "version": { "type": "String" },
+      "build": { "type": "String" }
+    }
+  },
+  "aboutTagline": "Jedno przewrotne pytanie dziennie, które rozpala prawdziwą rozmowę.",
   "privacyDocsSection": "DOKUMENTY",
   "privacyPolicy": "Polityka prywatności",
   "privacyTerms": "Regulamin",
@@ -111,6 +136,20 @@
   "goDeeper": "WEJDŹ GŁĘBIEJ",
   "dailyBadge": "PYTANIE DNIA",
 
+  "shareLabel": "Udostępnij",
+  "shareTooltip": "Udostępnij pytanie",
+  "shareSubject": "Pytanie ze Spark",
+  "shareMessage": "{question}\n\nSpark — jedno przewrotne pytanie dziennie.",
+  "@shareMessage": {
+    "placeholders": {
+      "question": { "type": "String" }
+    }
+  },
+  "shareCardTagline": "Jedno przewrotne pytanie dziennie",
+  "@shareCardTagline": {
+    "description": "Brand tagline shown on the shareable question image card, under the question."
+  },
+
   "streakTooltip": "Twoja seria",
   "freeUnlockTooltip": "Darmowe odblokowanie",
   "freeUnlockExplain": "Masz jedno darmowe odblokowanie — przesuń na kolejne pytanie, a odblokuje się automatycznie.",
@@ -135,7 +174,7 @@
   "savePromptBody": "Twoje PRO jest na razie przypisane do konta-gościa. Załóż konto (e-mail lub Google), aby nie stracić dostępu po reinstalacji albo na innym urządzeniu — Twój postęp zostanie zachowany.",
   "createAccount": "Załóż konto",
 
-  "smaczkiTitle": "Smaczki",
+  "smaczkiTitle": "Argumenty",
   "smaczkiSubtitle": "Podpowiedzi, jak pogłębić rozmowę wokół tego pytania.",
   "smaczkiLoadError": "Nie udało się wczytać smaczków.\n{error}",
   "smaczkiEmpty": "Do tego pytania nie ma jeszcze smaczków.",
@@ -156,14 +195,11 @@
   "onboardingWelcomeBody": "Jedno mocne pytanie dziennie — i wszystko, co je otacza.",
   "onboardingDailyTitle": "Pytanie dnia",
   "onboardingDailyBody": "Każdego dnia nowe darmowe pytanie — zagłosuj i zatrzymaj się przy nim na chwilę.",
-  "onboardingStreakTitle": "Gorąca passa",
-  "onboardingStreakBody": "Głosuj każdego dnia, by podtrzymać płomień i piąć się w rankingu.",
-  "onboardingFreezeTitle": "Zamrożenie passy",
-  "onboardingFreezeBody": "Pominiesz dzień? Passa nie przepadnie. Zamrożenie łagodzi przerwę — masz kilka dni, by wrócić, zanim ranga zacznie spadać.",
-  "onboardingUnlockTitle": "Odblokowania",
-  "onboardingUnlockBody": "Poza pytaniem dnia odkrywaj kolejne — darmowym kredytem, reklamą lub z PRO.",
-  "onboardingDeeperTitle": "Wejdź głębiej",
-  "onboardingDeeperBody": "Do każdego pytania dostajesz smaczki, które rozkręcą prawdziwą rozmowę.",
+  "onboardingTasteKicker": "TWÓJ RUCH",
+  "onboardingTasteQuestion": "Czy zdrada emocjonalna jest gorsza niż fizyczna?",
+  "onboardingTasteMajority": "Jesteś z większością. 🙌",
+  "onboardingTasteMinority": "Jesteś w mniejszości. 👀",
+  "onboardingTasteContinue": "Dalej",
   "onboardingChoiceTitle": "Jak chcesz zacząć?",
   "onboardingChoiceBody": "Zalogować się możesz w każdej chwili później, w ustawieniach.",
   "onboardingSignInCta": "Zaloguj / Załóż konto",

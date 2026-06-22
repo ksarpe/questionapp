@@ -3,6 +3,7 @@ import 'dart:ui' show ImageFilter;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/feedback/app_toast.dart';
 import '../../../core/locale/l10n_extension.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../data/models/smaczek.dart';
@@ -20,7 +21,7 @@ import '../providers/question_providers.dart';
 Future<void> showSmaczkiSheet(BuildContext context, String questionId) {
   return showModalBottomSheet<void>(
     context: context,
-    backgroundColor: AppTheme.background,
+    backgroundColor: context.colors.background,
     showDragHandle: true,
     isScrollControlled: true,
     shape: const RoundedRectangleBorder(
@@ -61,9 +62,7 @@ class _SmaczkiSheetState extends ConsumerState<_SmaczkiSheet> {
       // a real account. No-ops for a user who already has an account.
       await promptSaveProAccount(context, ref);
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(context.l10n.purchaseNotCompleted)),
-      );
+      AppToast.info(context, context.l10n.purchaseNotCompleted);
       setState(() => _busy = false);
     }
   }
@@ -83,23 +82,17 @@ class _SmaczkiSheetState extends ConsumerState<_SmaczkiSheet> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Row(
-                children: [
-                  const Icon(Icons.bolt, color: AppTheme.spark),
-                  const SizedBox(width: 10),
-                  Text(
-                    context.l10n.smaczkiTitle,
-                    style: Theme.of(context)
-                        .textTheme
-                        .headlineSmall
-                        ?.copyWith(fontWeight: FontWeight.w700),
-                  ),
-                ],
+              Text(
+                context.l10n.smaczkiTitle,
+                style: Theme.of(context)
+                    .textTheme
+                    .headlineSmall
+                    ?.copyWith(fontWeight: FontWeight.w700),
               ),
               const SizedBox(height: 6),
               Text(
                 context.l10n.smaczkiSubtitle,
-                style: const TextStyle(color: AppTheme.subtle, fontSize: 13),
+                style: TextStyle(color: context.colors.subtle, fontSize: 13),
               ),
               const SizedBox(height: 16),
               const Divider(),
@@ -114,7 +107,7 @@ class _SmaczkiSheetState extends ConsumerState<_SmaczkiSheet> {
                     padding: const EdgeInsets.symmetric(vertical: 24),
                     child: Text(
                       context.l10n.smaczkiLoadError(e.toString()),
-                      style: const TextStyle(color: AppTheme.subtle),
+                      style: TextStyle(color: context.colors.subtle),
                     ),
                   ),
                   data: (smaczki) => _SmaczkiList(
@@ -152,7 +145,7 @@ class _SmaczkiList extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 24),
         child: Text(
           context.l10n.smaczkiEmpty,
-          style: const TextStyle(color: AppTheme.subtle),
+          style: TextStyle(color: context.colors.subtle),
         ),
       );
     }
@@ -193,7 +186,7 @@ class _SmaczekCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
-        color: AppTheme.accent,
+        color: context.colors.accent,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
@@ -204,8 +197,8 @@ class _SmaczekCard extends StatelessWidget {
           Expanded(
             child: Text(
               text,
-              style: const TextStyle(
-                color: AppTheme.ink,
+              style: TextStyle(
+                color: context.colors.ink,
                 fontSize: 15,
                 height: 1.4,
               ),
@@ -239,7 +232,7 @@ class _LockedSmaczekCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
-        color: AppTheme.accent,
+        color: context.colors.accent,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
@@ -251,12 +244,12 @@ class _LockedSmaczekCard extends StatelessWidget {
             child: ClipRect(
               child: ImageFiltered(
                 imageFilter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                child: const Text(
+                child: Text(
                   _dummy,
                   maxLines: 2,
                   overflow: TextOverflow.clip,
                   style: TextStyle(
-                    color: AppTheme.subtle,
+                    color: context.colors.subtle,
                     fontSize: 15,
                     height: 1.4,
                   ),
@@ -313,13 +306,13 @@ class _IndexDot extends StatelessWidget {
       height: 26,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: locked ? AppTheme.background : AppTheme.spark,
+        color: locked ? context.colors.background : AppTheme.spark,
         shape: BoxShape.circle,
       ),
       child: Text(
         '$index',
         style: TextStyle(
-          color: locked ? AppTheme.subtle : AppTheme.ink,
+          color: locked ? context.colors.subtle : context.colors.ink,
           fontSize: 13,
           fontWeight: FontWeight.w700,
         ),

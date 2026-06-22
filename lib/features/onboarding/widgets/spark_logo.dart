@@ -97,7 +97,7 @@ class _SparkLogoState extends State<SparkLogo> with TickerProviderStateMixin {
                   style: TextStyle(
                     fontFamily: 'Anton',
                     fontSize: widget.size,
-                    color: AppTheme.ink,
+                    color: context.colors.ink,
                     letterSpacing: 1,
                     height: 1,
                     shadows: [

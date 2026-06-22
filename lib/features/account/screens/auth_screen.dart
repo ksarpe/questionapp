@@ -3,18 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../core/config/app_config.dart';
+import '../../../core/feedback/app_toast.dart';
 import '../../../core/locale/l10n_extension.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../services/supabase_service.dart';
 import '../providers/session_providers.dart';
 
 enum _AuthMode { password, register }
-
-/// Surface colours specific to the auth sheet — a touch lighter than the pure
-/// black canvas so the floating card reads as a distinct layer.
-const Color _kSheetSurface = Color(0xFF0D0D10);
-const Color _kFieldSurface = Color(0xFF161616);
-const Color _kHairline = Color(0xFF26262B);
 
 /// Presents the sign-in / register sheet as a modal that slides in from the
 /// top of the screen and fades the background behind it.
@@ -67,7 +62,7 @@ class AuthScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.background,
+      backgroundColor: context.colors.background,
       body: SafeArea(
         child: Center(child: SingleChildScrollView(child: const _AuthCard())),
       ),
@@ -120,9 +115,9 @@ class _AuthCardState extends ConsumerState<_AuthCard> {
         child: Container(
           margin: const EdgeInsets.symmetric(horizontal: 8),
           decoration: BoxDecoration(
-            color: _kSheetSurface,
+            color: context.colors.cardSurface,
             borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: const Color(0xFF1E1E22)),
+            border: Border.all(color: context.colors.hairline),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(alpha: 0.55),
@@ -170,7 +165,7 @@ class _AuthCardState extends ConsumerState<_AuthCard> {
                       keyboardType: TextInputType.emailAddress,
                       textInputAction: TextInputAction.next,
                       autofillHints: const [AutofillHints.email],
-                      style: const TextStyle(color: AppTheme.ink),
+                      style: TextStyle(color: context.colors.ink),
                       decoration: _fieldDecoration(hint: 'you@example.com'),
                       validator: _validateEmail,
                     ),
@@ -186,7 +181,7 @@ class _AuthCardState extends ConsumerState<_AuthCard> {
                       autofillHints: _isLogin
                           ? const [AutofillHints.password]
                           : const [AutofillHints.newPassword],
-                      style: const TextStyle(color: AppTheme.ink),
+                      style: TextStyle(color: context.colors.ink),
                       decoration: _fieldDecoration(
                         hint: '••••••••',
                         suffixIcon: IconButton(
@@ -197,7 +192,7 @@ class _AuthCardState extends ConsumerState<_AuthCard> {
                             _obscurePassword
                                 ? Icons.visibility_outlined
                                 : Icons.visibility_off_outlined,
-                            color: AppTheme.subtle,
+                            color: context.colors.subtle,
                             size: 20,
                           ),
                           onPressed: () => setState(
@@ -219,7 +214,7 @@ class _AuthCardState extends ConsumerState<_AuthCard> {
                         obscureText: _obscurePassword,
                         textInputAction: TextInputAction.done,
                         autofillHints: const [AutofillHints.newPassword],
-                        style: const TextStyle(color: AppTheme.ink),
+                        style: TextStyle(color: context.colors.ink),
                         decoration: _fieldDecoration(hint: '••••••••'),
                         validator: _validateConfirmPassword,
                         onFieldSubmitted: (_) => _submit(),
@@ -257,10 +252,10 @@ class _AuthCardState extends ConsumerState<_AuthCard> {
                       children: [
                         Expanded(
                           child: _SocialButton(
-                            icon: const Text(
+                            icon: Text(
                               'G',
                               style: TextStyle(
-                                color: AppTheme.ink,
+                                color: context.colors.ink,
                                 fontWeight: FontWeight.w800,
                                 fontSize: 17,
                               ),
@@ -274,9 +269,9 @@ class _AuthCardState extends ConsumerState<_AuthCard> {
                         const SizedBox(width: 12),
                         Expanded(
                           child: _SocialButton(
-                            icon: const Icon(
+                            icon: Icon(
                               Icons.apple,
-                              color: AppTheme.ink,
+                              color: context.colors.ink,
                               size: 22,
                             ),
                             label: 'Apple',
@@ -307,7 +302,7 @@ class _AuthCardState extends ConsumerState<_AuthCard> {
             width: 40,
             height: 4,
             decoration: BoxDecoration(
-              color: const Color(0xFF3A3A40),
+              color: context.colors.subtle.withValues(alpha: 0.4),
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -330,7 +325,7 @@ class _AuthCardState extends ConsumerState<_AuthCard> {
       children: [
         Text(
           _isLogin ? context.l10n.authNoAccount : context.l10n.authHaveAccount,
-          style: const TextStyle(color: AppTheme.subtle, fontSize: 14),
+          style: TextStyle(color: context.colors.subtle, fontSize: 14),
         ),
         GestureDetector(
           onTap: _isSubmitting
@@ -363,8 +358,8 @@ class _AuthCardState extends ConsumerState<_AuthCard> {
     padding: const EdgeInsets.only(bottom: 8, left: 2),
     child: Text(
       text,
-      style: const TextStyle(
-        color: AppTheme.subtle,
+      style: TextStyle(
+        color: context.colors.subtle,
         fontSize: 11.5,
         fontWeight: FontWeight.w700,
         letterSpacing: 1,
@@ -380,16 +375,16 @@ class _AuthCardState extends ConsumerState<_AuthCard> {
         );
     return InputDecoration(
       hintText: hint,
-      hintStyle: const TextStyle(color: Color(0xFF6A6A72)),
+      hintStyle: TextStyle(color: context.colors.subtle),
       filled: true,
-      fillColor: _kFieldSurface,
+      fillColor: context.colors.accent,
       suffixIcon: suffixIcon,
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-      enabledBorder: border(_kHairline),
+      enabledBorder: border(context.colors.hairline),
       focusedBorder: border(AppTheme.spark, 1.5),
       errorBorder: border(const Color(0xFFE5484D)),
       focusedErrorBorder: border(const Color(0xFFE5484D), 1.5),
-      disabledBorder: border(_kHairline),
+      disabledBorder: border(context.colors.hairline),
     );
   }
 
@@ -445,19 +440,19 @@ class _AuthCardState extends ConsumerState<_AuthCard> {
           );
           await ref.read(sessionProvider.notifier).refresh();
           if (!mounted) return;
+          final created = SupabaseService.currentUserHasAccount;
           _showMessage(
-            SupabaseService.currentUserHasAccount
-                ? context.l10n.authAccountCreated
-                : context.l10n.authConfirmEmail,
+            created ? context.l10n.authAccountCreated : context.l10n.authConfirmEmail,
+            type: created ? ToastType.success : ToastType.info,
           );
           if (SupabaseService.currentUserHasAccount) {
             Navigator.of(context).maybePop();
           }
       }
     } on AuthException catch (error) {
-      if (mounted) _showMessage(error.message);
+      if (mounted) _showMessage(error.message, type: ToastType.error);
     } catch (error) {
-      if (mounted) _showMessage(error.toString());
+      if (mounted) _showMessage(error.toString(), type: ToastType.error);
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
     }
@@ -474,9 +469,9 @@ class _AuthCardState extends ConsumerState<_AuthCard> {
       if (!mounted) return;
       Navigator.of(context).maybePop();
     } on AuthException catch (error) {
-      if (mounted) _showMessage(error.message);
+      if (mounted) _showMessage(error.message, type: ToastType.error);
     } catch (error) {
-      if (mounted) _showMessage(error.toString());
+      if (mounted) _showMessage(error.toString(), type: ToastType.error);
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
     }
@@ -490,10 +485,9 @@ class _AuthCardState extends ConsumerState<_AuthCard> {
     _showMessage(context.l10n.authPasswordResetSoon);
   }
 
-  void _showMessage(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: AppTheme.accent),
-    );
+  void _showMessage(String message, {ToastType type = ToastType.info}) {
+    if (!mounted) return;
+    AppToast.show(context, message, type: type);
   }
 }
 
@@ -515,9 +509,9 @@ class _SegmentedTabs extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: _kFieldSurface,
+        color: context.colors.accent,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFF222226)),
+        border: Border.all(color: context.colors.hairline),
       ),
       child: LayoutBuilder(
         builder: (context, constraints) {
@@ -545,8 +539,14 @@ class _SegmentedTabs extends StatelessWidget {
                 ),
                 Row(
                   children: [
-                    _tab(context.l10n.authTabSignIn, _AuthMode.password, isLogin),
                     _tab(
+                      context,
+                      context.l10n.authTabSignIn,
+                      _AuthMode.password,
+                      isLogin,
+                    ),
+                    _tab(
+                      context,
                       context.l10n.authTabSignUp,
                       _AuthMode.register,
                       !isLogin,
@@ -561,7 +561,12 @@ class _SegmentedTabs extends StatelessWidget {
     );
   }
 
-  Widget _tab(String label, _AuthMode tabMode, bool selected) {
+  Widget _tab(
+    BuildContext context,
+    String label,
+    _AuthMode tabMode,
+    bool selected,
+  ) {
     return Expanded(
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
@@ -570,7 +575,7 @@ class _SegmentedTabs extends StatelessWidget {
           child: Text(
             label,
             style: TextStyle(
-              color: selected ? Colors.white : AppTheme.subtle,
+              color: selected ? Colors.white : context.colors.subtle,
               fontWeight: FontWeight.w700,
               fontSize: 12.5,
               letterSpacing: 0.8,
@@ -665,20 +670,20 @@ class _OrDivider extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        const Expanded(child: Divider(color: _kHairline)),
+        Expanded(child: Divider(color: context.colors.hairline)),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12),
           child: Text(
             context.l10n.orDivider,
-            style: const TextStyle(
-              color: AppTheme.subtle,
+            style: TextStyle(
+              color: context.colors.subtle,
               fontSize: 11.5,
               fontWeight: FontWeight.w700,
               letterSpacing: 1.5,
             ),
           ),
         ),
-        const Expanded(child: Divider(color: _kHairline)),
+        Expanded(child: Divider(color: context.colors.hairline)),
       ],
     );
   }
@@ -700,7 +705,7 @@ class _SocialButton extends StatelessWidget {
     return Opacity(
       opacity: onPressed == null ? 0.5 : 1,
       child: Material(
-        color: _kFieldSurface,
+        color: context.colors.accent,
         borderRadius: BorderRadius.circular(12),
         child: InkWell(
           onTap: onPressed,
@@ -710,7 +715,7 @@ class _SocialButton extends StatelessWidget {
             alignment: Alignment.center,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: _kHairline),
+              border: Border.all(color: context.colors.hairline),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -719,8 +724,8 @@ class _SocialButton extends StatelessWidget {
                 const SizedBox(width: 10),
                 Text(
                   label,
-                  style: const TextStyle(
-                    color: AppTheme.ink,
+                  style: TextStyle(
+                    color: context.colors.ink,
                     fontWeight: FontWeight.w600,
                     fontSize: 15,
                   ),
@@ -743,7 +748,7 @@ class _CircleIconButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: _kFieldSurface,
+      color: context.colors.accent,
       shape: const CircleBorder(),
       child: InkWell(
         onTap: onTap,
@@ -751,7 +756,7 @@ class _CircleIconButton extends StatelessWidget {
         child: SizedBox(
           width: 34,
           height: 34,
-          child: Icon(icon, size: 18, color: AppTheme.subtle),
+          child: Icon(icon, size: 18, color: context.colors.subtle),
         ),
       ),
     );
@@ -782,7 +787,7 @@ class _Notice extends StatelessWidget {
             Expanded(
               child: Text(
                 text,
-                style: const TextStyle(color: AppTheme.ink, height: 1.35),
+                style: TextStyle(color: context.colors.ink, height: 1.35),
               ),
             ),
           ],

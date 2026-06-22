@@ -9,10 +9,20 @@ import '../../../core/theme/app_theme.dart';
 /// the violet free-unlock chip next to it.
 const Color kFlame = Color(0xFFF59E0B);
 
+/// Deeper amber for the flame on light themes: the bright [kFlame] and its glow
+/// wash out against the off-white canvas, so the still flame and the streak
+/// count "get lost". On light we drop to this richer amber for legibility.
+const Color kFlameLight = Color(0xFFD97706);
+
+/// The flame base colour for the current theme — bright [kFlame] on dark, the
+/// deeper [kFlameLight] on light. Use for the streak glyph and its count so
+/// both stay readable on either canvas.
+Color flameColor(BuildContext context) =>
+    Theme.of(context).brightness == Brightness.light ? kFlameLight : kFlame;
+
 /// Cool sky-blue for the streak "freeze" — the forgiving grace window that
-/// cushions a missed day. The deliberate cold counterpoint to [kFlame]; shared
-/// by the rank sheet's freeze warning and the onboarding freeze card so the
-/// snowflake reads the same everywhere.
+/// cushions a missed day. The deliberate cold counterpoint to [kFlame], used by
+/// the rank sheet's freeze warning.
 const Color kFreeze = Color(0xFF38BDF8);
 
 /// The streak flame, brought to life.
@@ -120,6 +130,12 @@ class _AnimatedFlameIconState extends State<AnimatedFlameIcon>
     final heat = _heat;
     const twoPi = 2 * math.pi;
 
+    // On a light canvas the flame's near-white tips and white burst wash out, so
+    // the glyph reads as blank. Keep the glowing-on-black palette for dark mode,
+    // but on light themes hold the tips and burst at saturated amber/orange so
+    // the flame stays clearly visible against the off-white background.
+    final isLight = Theme.of(context).brightness == Brightness.light;
+
     return AnimatedBuilder(
       animation: Listenable.merge([_loop, _burst]),
       builder: (context, _) {
@@ -148,13 +164,22 @@ class _AnimatedFlameIconState extends State<AnimatedFlameIcon>
             (0.5 + 0.25 * breath + 0.4 * heat + 0.8 * burst);
 
         // Palette: cooler amber at low streaks; pushes toward a deep-orange core
-        // and near-white tips as it heats. A burst momentarily blows it white.
-        var cool = Color.lerp(kFlame, const Color(0xFFEA580C), heat)!;
-        var hot =
-            Color.lerp(const Color(0xFFFFD27D), const Color(0xFFFFF3C4), heat)!;
+        // and bright tips as it heats. A burst momentarily blows it brighter.
+        // The hot tip and burst target stay saturated on light themes (where
+        // near-white would vanish) and reach toward white on dark themes.
+        final tip = isLight
+            ? Color.lerp(const Color(0xFFFB923C), const Color(0xFFFBBF24), heat)!
+            : Color.lerp(const Color(0xFFFFD27D), const Color(0xFFFFF3C4), heat)!;
+        final flare = isLight ? const Color(0xFFFDE047) : Colors.white;
+        var cool = Color.lerp(
+          isLight ? kFlameLight : kFlame,
+          const Color(0xFFEA580C),
+          heat,
+        )!;
+        var hot = tip;
         if (burst > 0) {
-          cool = Color.lerp(cool, Colors.white, 0.5 * burst)!;
-          hot = Color.lerp(hot, Colors.white, 0.7 * burst)!;
+          cool = Color.lerp(cool, flare, 0.5 * burst)!;
+          hot = Color.lerp(hot, flare, 0.7 * burst)!;
         }
 
         return Transform.scale(
@@ -211,7 +236,7 @@ class _StillFlame extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = active ? kFlame : AppTheme.subtle;
+    final color = active ? flameColor(context) : context.colors.subtle;
     return Icon(
       Icons.local_fire_department_rounded,
       size: size,

@@ -10,8 +10,10 @@ import '../../monetization/providers/monetization_providers.dart';
 import '../../settings/screens/settings_screen.dart';
 import '../providers/question_providers.dart';
 import '../widgets/daily_badge.dart';
+import '../widgets/favorite_star_button.dart';
 import '../widgets/daily_vote_panel.dart';
 import '../widgets/go_deeper_button.dart';
+import '../widgets/share_question_button.dart';
 import '../widgets/smaczki_panel.dart';
 import '../widgets/stat_chips.dart';
 import '../widgets/wind_question_view.dart';
@@ -84,6 +86,12 @@ class QuestionScreen extends ConsumerWidget {
         ref.watch(todaysDailyQuestionProvider).error;
     final deck = ref.watch(questionDeckProvider);
 
+    // The question currently on screen drives the top-left favorite star: it
+    // saves THIS question. Premium fills it; a free user's tap opens the paywall
+    // (favorites are premium). Hidden when there's nothing readable to save (the
+    // free reveal slot).
+    final current = ref.watch(currentQuestionProvider);
+
     return Scaffold(
       // Let the body fill the whole screen so the question centres against the
       // true midpoint; the (transparent) app bar floats over the top.
@@ -93,6 +101,12 @@ class QuestionScreen extends ConsumerWidget {
         // for a real account (a guest's progress isn't saved), so it's hidden for
         // guests; the free-unlock chip self-hides off the daily / for guests.
         automaticallyImplyLeading: false,
+        leading: current != null
+            ? Padding(
+                padding: const EdgeInsets.only(left: 4),
+                child: FavoriteStarButton(questionId: current.id),
+              )
+            : null,
         centerTitle: true,
         title: Row(
           mainAxisSize: MainAxisSize.min,
@@ -123,7 +137,7 @@ class QuestionScreen extends ConsumerWidget {
               child: TextButton(
                 onPressed: () => showAuthSheet(context),
                 style: TextButton.styleFrom(
-                  foregroundColor: AppTheme.subtle,
+                  foregroundColor: context.colors.subtle,
                   textStyle: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
@@ -219,6 +233,14 @@ class _QuestionBody extends ConsumerWidget {
                       questionId: questionId,
                     ),
                   ],
+                  // A visible share pill sitting right under the question (and
+                  // under the vote panel on the daily), so it's an obvious
+                  // action rather than the faint icon it used to be down in the
+                  // bottom overlay. Readable questions only — never a teaser.
+                  if (isReadable && questionId != null) ...[
+                    const SizedBox(height: 24),
+                    ShareQuestionButton(questionText: current.questionText),
+                  ],
                 ],
               ),
             ),
@@ -242,14 +264,14 @@ class _QuestionBody extends ConsumerWidget {
                       // Subtle hint that questions are swipeable.
                       Text(
                         context.l10n.swipeHint,
-                        style: const TextStyle(
-                          color: AppTheme.subtle,
+                        style: TextStyle(
+                          color: context.colors.subtle,
                           fontSize: 13,
                         ),
                       ),
                       const SizedBox(height: 14),
-                      // The glowing "go deeper" pill opens the Smaczki panel for
-                      // the question currently on screen.
+                      // The glowing "go deeper" pill. (Share lives up by the
+                      // question now, not down here.)
                       GoDeeperButton(
                         onTap: () => showSmaczkiSheet(context, questionId),
                       ),
@@ -284,17 +306,17 @@ class _BackToDailyButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextButton.icon(
       onPressed: onTap,
-      icon: const Icon(Icons.arrow_back, size: 18, color: AppTheme.subtle),
+      icon: Icon(Icons.arrow_back, size: 18, color: context.colors.subtle),
       label: Text(
         context.l10n.dailyShort,
-        style: const TextStyle(
-          color: AppTheme.subtle,
+        style: TextStyle(
+          color: context.colors.subtle,
           fontSize: 14,
           fontWeight: FontWeight.w600,
         ),
       ),
       style: TextButton.styleFrom(
-        foregroundColor: AppTheme.subtle,
+        foregroundColor: context.colors.subtle,
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       ),
     );
@@ -317,13 +339,13 @@ class _LoadError extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.cloud_off, color: AppTheme.subtle, size: 40),
+            Icon(Icons.cloud_off, color: context.colors.subtle, size: 40),
             const SizedBox(height: 16),
             Text(
               context.l10n.loadErrorTitle,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: AppTheme.ink,
+              style: TextStyle(
+                color: context.colors.ink,
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
               ),
@@ -332,7 +354,7 @@ class _LoadError extends StatelessWidget {
             Text(
               context.l10n.loadErrorBody,
               textAlign: TextAlign.center,
-              style: const TextStyle(color: AppTheme.subtle, fontSize: 14),
+              style: TextStyle(color: context.colors.subtle, fontSize: 14),
             ),
             const SizedBox(height: 24),
             FilledButton(

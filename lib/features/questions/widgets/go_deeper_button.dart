@@ -23,25 +23,27 @@ class GoDeeperButton extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(10),
           child: DecoratedBox(
+            // Tie the pill to the violet "spark" it's built around — a faint
+            // wash, a soft halo and a violet hairline — so it reads as the lit
+            // "go deeper" affordance in BOTH themes. The old fixed navy outline
+            // looked heavy and out of place on the light off-white canvas.
             decoration: const BoxDecoration(
               borderRadius: _radius,
-
+              color: Color(0x148B5CF6),
               border: Border.fromBorderSide(
-                BorderSide(color: Color.fromARGB(255, 35, 2, 112)),
+                BorderSide(color: Color(0x808B5CF6)),
               ),
+              boxShadow: [
+                BoxShadow(
+                  color: Color(0x338B5CF6),
+                  blurRadius: 16,
+                  spreadRadius: -4,
+                ),
+              ],
             ),
             child: const Padding(
               padding: EdgeInsets.symmetric(horizontal: 22, vertical: 13),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.bolt, color: AppTheme.spark, size: 20),
-                  SizedBox(width: 10),
-                  _Label(),
-                  SizedBox(width: 10),
-                  _SparkDot(),
-                ],
-              ),
+              child: _Label(),
             ),
           ),
         ),
@@ -57,28 +59,12 @@ class _Label extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       context.l10n.goDeeper,
-      style: const TextStyle(
-        color: AppTheme.ink,
+      textAlign: TextAlign.center,
+      style: TextStyle(
+        color: context.colors.ink,
         fontSize: 13,
         fontWeight: FontWeight.w700,
         letterSpacing: 1.1,
-      ),
-    );
-  }
-}
-
-class _SparkDot extends StatelessWidget {
-  const _SparkDot();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 7,
-      height: 7,
-      decoration: const BoxDecoration(
-        color: AppTheme.spark,
-        shape: BoxShape.circle,
-        boxShadow: [BoxShadow(color: Color(0x808B5CF6), blurRadius: 6)],
       ),
     );
   }

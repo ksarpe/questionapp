@@ -25,10 +25,7 @@ class DailyBadge extends ConsumerWidget {
     // away on the gated deck. Fade + slight scale so it slips in/out rather than
     // popping.
     final Widget pill = isDaily
-        ? _Pill(
-            label: context.l10n.dailyBadge,
-            icon: Icons.wb_sunny_rounded,
-          )
+        ? _Pill(label: context.l10n.dailyBadge)
         : const SizedBox.shrink();
 
     return AnimatedSwitcher(
@@ -47,10 +44,9 @@ class DailyBadge extends ConsumerWidget {
 }
 
 class _Pill extends StatelessWidget {
-  const _Pill({required this.label, required this.icon});
+  const _Pill({required this.label});
 
   final String label;
-  final IconData icon;
 
   @override
   Widget build(BuildContext context) {
@@ -67,21 +63,14 @@ class _Pill extends StatelessWidget {
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, color: AppTheme.spark, size: 14),
-            const SizedBox(width: 6),
-            Text(
-              label,
-              style: const TextStyle(
-                color: AppTheme.ink,
-                fontSize: 11,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 1.0,
-              ),
-            ),
-          ],
+        child: Text(
+          label,
+          style: TextStyle(
+            color: context.colors.ink,
+            fontSize: 11,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 1.0,
+          ),
         ),
       ),
     );

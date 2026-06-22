@@ -12,7 +12,7 @@ import 'animated_flame_icon.dart';
 Future<void> showRankSheet(BuildContext context) {
   return showModalBottomSheet<void>(
     context: context,
-    backgroundColor: AppTheme.background,
+    backgroundColor: context.colors.background,
     showDragHandle: true,
     isScrollControlled: true,
     shape: const RoundedRectangleBorder(
@@ -66,7 +66,7 @@ class _RankSheet extends ConsumerWidget {
             padding: const EdgeInsets.all(24),
             child: Text(
               context.l10n.ranksLoadError,
-              style: const TextStyle(color: AppTheme.subtle),
+              style: TextStyle(color: context.colors.subtle),
             ),
           ),
           data: (ranks) {
@@ -88,12 +88,12 @@ class _RankSheet extends ConsumerWidget {
                 const SizedBox(height: 16),
                 _LongestLine(longest: stats.longestStreak),
                 const SizedBox(height: 20),
-                const Divider(color: AppTheme.accent, height: 1),
+                Divider(color: context.colors.accent, height: 1),
                 const SizedBox(height: 16),
                 Text(
                   context.l10n.rankLadder,
-                  style: const TextStyle(
-                    color: AppTheme.subtle,
+                  style: TextStyle(
+                    color: context.colors.subtle,
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 1.2,
@@ -167,8 +167,8 @@ class _Header extends StatelessWidget {
             children: [
               Text(
                 context.l10n.yourRankUpper,
-                style: const TextStyle(
-                  color: AppTheme.subtle,
+                style: TextStyle(
+                  color: context.colors.subtle,
                   fontSize: 11,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 1.4,
@@ -177,8 +177,8 @@ class _Header extends StatelessWidget {
               const SizedBox(height: 2),
               Text(
                 rank.nameFor(lang),
-                style: const TextStyle(
-                  color: AppTheme.ink,
+                style: TextStyle(
+                  color: context.colors.ink,
                   fontSize: 22,
                   fontWeight: FontWeight.w800,
                 ),
@@ -191,7 +191,7 @@ class _Header extends StatelessWidget {
                   const SizedBox(width: 4),
                   Text(
                     context.l10n.streakDays(streak),
-                    style: const TextStyle(color: AppTheme.ink, fontSize: 14),
+                    style: TextStyle(color: context.colors.ink, fontSize: 14),
                   ),
                 ],
               ),
@@ -226,8 +226,8 @@ class _FreezeWarning extends StatelessWidget {
           Expanded(
             child: Text(
               context.l10n.streakFreezeWarning(daysLeft),
-              style: const TextStyle(
-                color: AppTheme.ink,
+              style: TextStyle(
+                color: context.colors.ink,
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
               ),
@@ -274,14 +274,14 @@ class _Progress extends StatelessWidget {
           child: LinearProgressIndicator(
             value: fraction,
             minHeight: 8,
-            backgroundColor: AppTheme.accent,
+            backgroundColor: context.colors.accent,
             valueColor: const AlwaysStoppedAnimation(AppTheme.spark),
           ),
         ),
         const SizedBox(height: 8),
         Text(
           context.l10n.daysToRank(remaining, next!.nameFor(lang)),
-          style: const TextStyle(color: AppTheme.subtle, fontSize: 13),
+          style: TextStyle(color: context.colors.subtle, fontSize: 13),
         ),
       ],
     );
@@ -297,11 +297,11 @@ class _LongestLine extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        const Icon(Icons.emoji_events_outlined, color: AppTheme.subtle, size: 16),
+        Icon(Icons.emoji_events_outlined, color: context.colors.subtle, size: 16),
         const SizedBox(width: 6),
         Text(
           context.l10n.longestStreakDays(longest),
-          style: const TextStyle(color: AppTheme.subtle, fontSize: 13),
+          style: TextStyle(color: context.colors.subtle, fontSize: 13),
         ),
       ],
     );
@@ -323,13 +323,15 @@ class _LadderRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final fg = unlocked ? AppTheme.ink : AppTheme.subtle;
+    final fg = unlocked ? context.colors.ink : context.colors.subtle;
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(14),
-        color: isCurrent ? AppTheme.spark.withValues(alpha: 0.12) : AppTheme.accent,
+        color: isCurrent
+            ? AppTheme.spark.withValues(alpha: 0.12)
+            : context.colors.accent,
         border: isCurrent
             ? Border.all(color: AppTheme.spark.withValues(alpha: 0.5))
             : null,
@@ -337,7 +339,7 @@ class _LadderRow extends StatelessWidget {
       child: Row(
         children: [
           Icon(rankIcon(rank.icon),
-              color: unlocked ? AppTheme.spark : AppTheme.subtle, size: 22),
+              color: unlocked ? AppTheme.spark : context.colors.subtle, size: 22),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
@@ -351,12 +353,12 @@ class _LadderRow extends StatelessWidget {
           ),
           Text(
             context.l10n.rankFrom(rank.minStreak),
-            style: const TextStyle(color: AppTheme.subtle, fontSize: 12),
+            style: TextStyle(color: context.colors.subtle, fontSize: 12),
           ),
           const SizedBox(width: 8),
           Icon(
             unlocked ? Icons.check_circle_rounded : Icons.lock_outline_rounded,
-            color: unlocked ? AppTheme.spark : AppTheme.subtle,
+            color: unlocked ? AppTheme.spark : context.colors.subtle,
             size: 16,
           ),
         ],

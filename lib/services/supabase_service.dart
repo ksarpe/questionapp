@@ -83,6 +83,12 @@ class SupabaseService {
   ///
   /// First sign-in creates the account, so this covers both login and
   /// registration.
+  ///
+  /// Uses the google_sign_in v7 API: a singleton initialised once with the
+  /// "Web" OAuth client id (so Google mints an ID token Supabase will accept),
+  /// then [GoogleSignIn.authenticate] for the native picker. Supabase only needs
+  /// the ID token; the access token is fetched best-effort and passed when
+  /// available.
   static Future<User?> signInWithGoogle() async {
     if (!_initialised) {
       throw StateError('Supabase is not configured.');
@@ -93,26 +99,36 @@ class SupabaseService {
       );
     }
 
-    final googleSignIn = GoogleSignIn(
+    final googleSignIn = GoogleSignIn.instance;
+    // initialize() is idempotent — safe to call on every sign-in attempt.
+    await googleSignIn.initialize(
       serverClientId: AppConfig.googleServerClientId,
     );
-    final account = await googleSignIn.signIn();
-    if (account == null) return null; // user cancelled
 
-    final auth = await account.authentication;
-    final idToken = auth.idToken;
-    final accessToken = auth.accessToken;
-    if (accessToken == null) {
-      throw const AuthException('Google did not return an access token.');
+    final GoogleSignInAccount account;
+    try {
+      account = await googleSignIn.authenticate(scopeHint: const ['email']);
+    } on GoogleSignInException catch (e) {
+      // The user dismissing the picker is not an error to surface.
+      if (e.code == GoogleSignInExceptionCode.canceled) return null;
+      rethrow;
     }
+
+    final idToken = account.authentication.idToken;
     if (idToken == null) {
       throw const AuthException('Google did not return an ID token.');
     }
 
+    // Access tokens now come from the authorization client, separately from
+    // authentication. Supabase treats it as optional, so grab it without
+    // forcing a second consent prompt and fall back to null.
+    final authorization = await account.authorizationClient
+        .authorizationForScopes(const ['email']);
+
     final response = await client.auth.signInWithIdToken(
       provider: OAuthProvider.google,
       idToken: idToken,
-      accessToken: accessToken,
+      accessToken: authorization?.accessToken,
     );
     return response.user;
   }

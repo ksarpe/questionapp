@@ -72,5 +72,7 @@ Future<void> _rescheduleReminderIfEnabled(SharedPreferences prefs) async {
     minute: reminder.minute,
     title: l10n.notificationDailyTitle,
     body: l10n.notificationDailyBody,
+    // Don't re-arm today's nudge if they already voted before this relaunch.
+    skipToday: hasVotedTodayLocal(prefs),
   );
 }

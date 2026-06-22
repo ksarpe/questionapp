@@ -15,16 +15,16 @@ All secrets are read from `--dart-define` (see `lib/core/config/app_config.dart`
 so nothing is committed. Copy `env/example.json` → `env/dev.json` (git-ignored),
 fill it in, and run `flutter run --dart-define-from-file=env/dev.json`.
 
-| Key | Used for | Required |
-|-----|----------|----------|
-| `SUPABASE_URL` 🔑 | Backend / auth | Yes |
-| `SUPABASE_ANON_KEY` 🔑 | Backend / auth | Yes |
-| `GOOGLE_SERVER_CLIENT_ID` 🔑 | Native Google sign-in (Web OAuth client id) | If Google login |
-| `REVENUECAT_API_KEY` 🔑 | Subscriptions / paywall | If Premium |
-| `ADMOB_BANNER_ID` 🔑 | Banner unit | If banner ads |
-| `ADMOB_REWARDED_ID` 🔑 | Rewarded unit (free-tier unlock) | If rewarded ads |
-| `PRIVACY_POLICY_URL` | Privacy & data screen link | Store requirement (deferred) |
-| `TERMS_OF_SERVICE_URL` | Privacy & data screen link | Store requirement (deferred) |
+| Key                          | Used for                                    | Required                     |
+| ---------------------------- | ------------------------------------------- | ---------------------------- |
+| `SUPABASE_URL` 🔑            | Backend / auth                              | Yes                          |
+| `SUPABASE_ANON_KEY` 🔑       | Backend / auth                              | Yes                          |
+| `GOOGLE_SERVER_CLIENT_ID` 🔑 | Native Google sign-in (Web OAuth client id) | If Google login              |
+| `REVENUECAT_API_KEY` 🔑      | Subscriptions / paywall                     | If Premium                   |
+| `ADMOB_BANNER_ID` 🔑         | Banner unit                                 | If banner ads                |
+| `ADMOB_REWARDED_ID` 🔑       | Rewarded unit (free-tier unlock)            | If rewarded ads              |
+| `PRIVACY_POLICY_URL`         | Privacy & data screen link                  | Store requirement (deferred) |
+| `TERMS_OF_SERVICE_URL`       | Privacy & data screen link                  | Store requirement (deferred) |
 
 ---
 
@@ -54,6 +54,17 @@ supabase functions deploy delete-account     # ← account deletion (store requi
 - [ ] Seed real question content into `questions` / `question_translations` and
       fill `daily_questions` (the init migration seeds only 3 demo questions)
 
+### Auth hardening (Dashboard → Authentication → Sign In / Providers)
+
+These two are GoTrue settings, not code — they can't be set by a migration.
+
+- [ ] **Email confirmation ON** (Providers → Email → "Confirm email"). Anti-farm:
+      `is_real_account` now also requires a confirmed email/phone before granting
+      the daily free-unlock credit, so leaving autoconfirm on lets throwaway
+      emails mint credits. (Google sign-in is auto-confirmed, so it's unaffected.)
+- [ ] **Leaked-password protection ON** (Sign In → Passwords) — blocks passwords
+      found in HaveIBeenPwned. Flagged by the Supabase security advisor.
+
 ---
 
 ## 3. RevenueCat ☁️ (Premium)
@@ -73,13 +84,17 @@ supabase functions deploy delete-account     # ← account deletion (store requi
 
 - [ ] Create the AdMob app + the banner & rewarded ad units → put the unit ids
       in `env/dev.json` (see §1).
+- [ ] **SSV callback URL (REQUIRED)** → on the rewarded unit set Server-Side
+      Verification to the deployed `admob-ssv` URL
+      (`https://<project-ref>.functions.supabase.co/admob-ssv`). The reveal gate
+      now requires a verified SSV reward (`reveal_ad_question`), so without this
+      callback no free reveal beyond the small grace buffer ever succeeds. Test
+      ad units fire SSV too, so the loop is verifiable before launch.
 - [ ] **Privacy & messaging** → create a **GDPR consent message** (and, on iOS,
       an ATT pre-prompt message). Without this, the UMP form shows nothing.
       The app gathers consent at launch via `lib/services/consent_service.dart`
-      *before* initialising ads. 🟢
-- [ ] Replace the **test App ID** with your real one in BOTH native files: 📱
-      - `android/app/src/main/AndroidManifest.xml` → `com.google.android.gms.ads.APPLICATION_ID`
-      - `ios/Runner/Info.plist` → `GADApplicationIdentifier`
+      _before_ initialising ads. 🟢
+- [ ] Replace the **test App ID** with your real one in BOTH native files: 📱 - `android/app/src/main/AndroidManifest.xml` → `com.google.android.gms.ads.APPLICATION_ID` - `ios/Runner/Info.plist` → `GADApplicationIdentifier`
 - [ ] iOS: `NSUserTrackingUsageDescription` is set 🟢, but paste Google's **full
       SKAdNetwork list** into `Info.plist` (only one entry is stubbed):
       https://developers.google.com/admob/ios/3p-skadnetworks
@@ -104,7 +119,7 @@ so there is **nothing to configure in any console**. 🟢
 
 - Android: the required receivers + `RECEIVE_BOOT_COMPLETED` /
   `POST_NOTIFICATIONS` permissions are already in `AndroidManifest.xml`. 🟢
-  Uses *inexact* alarms, so no `SCHEDULE_EXACT_ALARM` Play-Store declaration. 🟢
+  Uses _inexact_ alarms, so no `SCHEDULE_EXACT_ALARM` Play-Store declaration. 🟢
 - iOS: permission is requested at runtime; no Info.plist string needed. 🟢
 - [ ] (Optional) Replace the default notification icon with a real monochrome
       `@drawable/ic_notification` for Android.
@@ -123,12 +138,32 @@ so there is **nothing to configure in any console**. 🟢
 
 ---
 
+## 8. In-app review prompt 📱
+
+**Native store-review sheet — no Firebase, no server, no keys.** The app asks for
+a rating at a positive moment (after a daily vote that puts the user at a 3-day
+streak, then at most ~once a week) via `lib/services/review_service.dart`
+(`in_app_review`: iOS `SKStoreReviewController` / Android Play In-App Review). 🟢
+Timing lives in the pure `shouldPromptForReview` (`review_providers.dart`).
+
+- Nothing to configure for the in-app sheet — it carries no app-supplied copy. 🟢
+- ⚠️ **It won't appear in local debug builds.** Android only shows it for an app
+  installed from Play (internal-testing track or later); iOS shows it in
+  production (not reliably in TestFlight). "Nothing happened" on a dev device is
+  expected — verify the wiring with the unit test, not the dev build.
+- [ ] (Optional, future) A "Rate the app" button in Settings would use
+      `openStoreListing`, which needs the real **App Store ID** on iOS — wire that
+      once the app exists in App Store Connect.
+
+---
+
 ## Quick "is it wired?" map
 
-| Concern | Code entry point |
-|---------|------------------|
-| Secrets | `lib/core/config/app_config.dart` |
-| Consent (GDPR + ATT) | `lib/services/consent_service.dart` |
-| Account deletion | `supabase/functions/delete-account/` + `SupabaseService.deleteAccount` |
-| Daily reminder | `lib/services/notification_service.dart` |
-| Premium gate | `sync-entitlement` / `revenuecat-webhook` + `profiles.is_premium` |
+| Concern              | Code entry point                                                       |
+| -------------------- | ---------------------------------------------------------------------- |
+| Secrets              | `lib/core/config/app_config.dart`                                      |
+| Consent (GDPR + ATT) | `lib/services/consent_service.dart`                                    |
+| Account deletion     | `supabase/functions/delete-account/` + `SupabaseService.deleteAccount` |
+| Daily reminder       | `lib/services/notification_service.dart`                               |
+| In-app review        | `lib/services/review_service.dart` + `review_providers.dart`           |
+| Premium gate         | `sync-entitlement` / `revenuecat-webhook` + `profiles.is_premium`      |

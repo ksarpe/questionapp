@@ -138,6 +138,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Turn on notifications in system settings to get reminders.';
 
   @override
+  String get remindersOpenSettings => 'Open settings';
+
+  @override
   String get notificationDailyTitle => 'Today\'s question is waiting 🔥';
 
   @override
@@ -151,6 +154,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get chooseLanguage => 'Choose language';
 
   @override
+  String get settingsAppearance => 'Appearance';
+
+  @override
+  String get settingsChooseAppearance => 'Choose appearance';
+
+  @override
+  String get settingsAppearanceSystem => 'System';
+
+  @override
+  String get settingsAppearanceLight => 'Light';
+
+  @override
+  String get settingsAppearanceDark => 'Dark';
+
+  @override
   String get settingsPremiumActive => 'Premium active';
 
   @override
@@ -158,6 +176,49 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsPrivacy => 'Privacy & data';
+
+  @override
+  String get settingsAbout => 'About';
+
+  @override
+  String get settingsFavorites => 'Favorite questions';
+
+  @override
+  String get favoritesTitle => 'Favorites';
+
+  @override
+  String get favoritesEmptyTitle => 'No favorites yet';
+
+  @override
+  String get favoritesEmptyBody =>
+      'Tap the star on a question to save it here.';
+
+  @override
+  String get favoriteAddTooltip => 'Add to favorites';
+
+  @override
+  String get favoriteRemoveTooltip => 'Remove from favorites';
+
+  @override
+  String get favoriteAdded => 'Added to favorites';
+
+  @override
+  String get favoriteRemoved => 'Removed from favorites';
+
+  @override
+  String get favoritesPremiumOnly => 'Favorites are a Premium feature.';
+
+  @override
+  String get favoriteError => 'Couldn\'t update favorites.';
+
+  @override
+  String aboutVersion(String version, String build) {
+    return 'Version $version ($build)';
+  }
+
+  @override
+  String get aboutTagline =>
+      'Thought-provoking questions to spark real conversation.';
 
   @override
   String get privacyDocsSection => 'DOCUMENTS';
@@ -355,6 +416,23 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dailyBadge => 'DAILY';
 
   @override
+  String get shareLabel => 'Share';
+
+  @override
+  String get shareTooltip => 'Share question';
+
+  @override
+  String get shareSubject => 'A question from Spark';
+
+  @override
+  String shareMessage(String question) {
+    return '$question\n\nSpark — thought-provoking questions.';
+  }
+
+  @override
+  String get shareCardTagline => 'One thought-provoking question a day';
+
+  @override
   String get streakTooltip => 'Your streak';
 
   @override
@@ -427,7 +505,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get createAccount => 'Create account';
 
   @override
-  String get smaczkiTitle => 'Tidbits';
+  String get smaczkiTitle => 'Arguments';
 
   @override
   String get smaczkiSubtitle =>
@@ -523,32 +601,20 @@ class AppLocalizationsEn extends AppLocalizations {
       'Every day brings a new free question to vote on and sit with.';
 
   @override
-  String get onboardingStreakTitle => 'Hot streak';
+  String get onboardingTasteKicker => 'YOUR TURN';
 
   @override
-  String get onboardingStreakBody =>
-      'Vote each day to keep your flame alive and climb the ranks.';
+  String get onboardingTasteQuestion =>
+      'Is emotional cheating worse than physical cheating?';
 
   @override
-  String get onboardingFreezeTitle => 'Streak freeze';
+  String get onboardingTasteMajority => 'You\'re with the majority. 🙌';
 
   @override
-  String get onboardingFreezeBody =>
-      'Miss a day? Your streak won\'t vanish. A freeze cushions the gap — you\'ve got a few days to come back before your rank starts to slip.';
+  String get onboardingTasteMinority => 'You\'re in the minority. 👀';
 
   @override
-  String get onboardingUnlockTitle => 'Unlocks';
-
-  @override
-  String get onboardingUnlockBody =>
-      'Beyond the daily, reveal more questions with a free credit, an ad, or PRO.';
-
-  @override
-  String get onboardingDeeperTitle => 'Go deeper';
-
-  @override
-  String get onboardingDeeperBody =>
-      'Every question comes with tidbits to spark a real conversation.';
+  String get onboardingTasteContinue => 'Continue';
 
   @override
   String get onboardingChoiceTitle => 'How do you want to start?';

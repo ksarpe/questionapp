@@ -350,6 +350,12 @@ abstract class AppLocalizations {
   /// **'Turn on notifications in system settings to get reminders.'**
   String get remindersPermissionDenied;
 
+  /// No description provided for @remindersOpenSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Open settings'**
+  String get remindersOpenSettings;
+
   /// No description provided for @notificationDailyTitle.
   ///
   /// In en, this message translates to:
@@ -374,6 +380,36 @@ abstract class AppLocalizations {
   /// **'Choose language'**
   String get chooseLanguage;
 
+  /// No description provided for @settingsAppearance.
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance'**
+  String get settingsAppearance;
+
+  /// No description provided for @settingsChooseAppearance.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose appearance'**
+  String get settingsChooseAppearance;
+
+  /// No description provided for @settingsAppearanceSystem.
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
+  String get settingsAppearanceSystem;
+
+  /// No description provided for @settingsAppearanceLight.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get settingsAppearanceLight;
+
+  /// No description provided for @settingsAppearanceDark.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get settingsAppearanceDark;
+
   /// No description provided for @settingsPremiumActive.
   ///
   /// In en, this message translates to:
@@ -391,6 +427,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Privacy & data'**
   String get settingsPrivacy;
+
+  /// No description provided for @settingsAbout.
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get settingsAbout;
+
+  /// No description provided for @settingsFavorites.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorite questions'**
+  String get settingsFavorites;
+
+  /// No description provided for @favoritesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorites'**
+  String get favoritesTitle;
+
+  /// No description provided for @favoritesEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No favorites yet'**
+  String get favoritesEmptyTitle;
+
+  /// No description provided for @favoritesEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the star on a question to save it here.'**
+  String get favoritesEmptyBody;
+
+  /// No description provided for @favoriteAddTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to favorites'**
+  String get favoriteAddTooltip;
+
+  /// No description provided for @favoriteRemoveTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from favorites'**
+  String get favoriteRemoveTooltip;
+
+  /// No description provided for @favoriteAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Added to favorites'**
+  String get favoriteAdded;
+
+  /// No description provided for @favoriteRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'Removed from favorites'**
+  String get favoriteRemoved;
+
+  /// No description provided for @favoritesPremiumOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorites are a Premium feature.'**
+  String get favoritesPremiumOnly;
+
+  /// No description provided for @favoriteError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t update favorites.'**
+  String get favoriteError;
+
+  /// No description provided for @aboutVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'Version {version} ({build})'**
+  String aboutVersion(String version, String build);
+
+  /// No description provided for @aboutTagline.
+  ///
+  /// In en, this message translates to:
+  /// **'Thought-provoking questions to spark real conversation.'**
+  String get aboutTagline;
 
   /// No description provided for @privacyDocsSection.
   ///
@@ -728,6 +842,36 @@ abstract class AppLocalizations {
   /// **'DAILY'**
   String get dailyBadge;
 
+  /// No description provided for @shareLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Share'**
+  String get shareLabel;
+
+  /// No description provided for @shareTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Share question'**
+  String get shareTooltip;
+
+  /// No description provided for @shareSubject.
+  ///
+  /// In en, this message translates to:
+  /// **'A question from Spark'**
+  String get shareSubject;
+
+  /// No description provided for @shareMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'{question}\n\nSpark — thought-provoking questions.'**
+  String shareMessage(String question);
+
+  /// Brand tagline shown on the shareable question image card, under the question.
+  ///
+  /// In en, this message translates to:
+  /// **'One thought-provoking question a day'**
+  String get shareCardTagline;
+
   /// No description provided for @streakTooltip.
   ///
   /// In en, this message translates to:
@@ -851,7 +995,7 @@ abstract class AppLocalizations {
   /// No description provided for @smaczkiTitle.
   ///
   /// In en, this message translates to:
-  /// **'Tidbits'**
+  /// **'Arguments'**
   String get smaczkiTitle;
 
   /// No description provided for @smaczkiSubtitle.
@@ -962,53 +1106,35 @@ abstract class AppLocalizations {
   /// **'Every day brings a new free question to vote on and sit with.'**
   String get onboardingDailyBody;
 
-  /// No description provided for @onboardingStreakTitle.
+  /// No description provided for @onboardingTasteKicker.
   ///
   /// In en, this message translates to:
-  /// **'Hot streak'**
-  String get onboardingStreakTitle;
+  /// **'YOUR TURN'**
+  String get onboardingTasteKicker;
 
-  /// No description provided for @onboardingStreakBody.
+  /// No description provided for @onboardingTasteQuestion.
   ///
   /// In en, this message translates to:
-  /// **'Vote each day to keep your flame alive and climb the ranks.'**
-  String get onboardingStreakBody;
+  /// **'Is emotional cheating worse than physical cheating?'**
+  String get onboardingTasteQuestion;
 
-  /// No description provided for @onboardingFreezeTitle.
+  /// No description provided for @onboardingTasteMajority.
   ///
   /// In en, this message translates to:
-  /// **'Streak freeze'**
-  String get onboardingFreezeTitle;
+  /// **'You\'re with the majority. 🙌'**
+  String get onboardingTasteMajority;
 
-  /// No description provided for @onboardingFreezeBody.
+  /// No description provided for @onboardingTasteMinority.
   ///
   /// In en, this message translates to:
-  /// **'Miss a day? Your streak won\'t vanish. A freeze cushions the gap — you\'ve got a few days to come back before your rank starts to slip.'**
-  String get onboardingFreezeBody;
+  /// **'You\'re in the minority. 👀'**
+  String get onboardingTasteMinority;
 
-  /// No description provided for @onboardingUnlockTitle.
+  /// No description provided for @onboardingTasteContinue.
   ///
   /// In en, this message translates to:
-  /// **'Unlocks'**
-  String get onboardingUnlockTitle;
-
-  /// No description provided for @onboardingUnlockBody.
-  ///
-  /// In en, this message translates to:
-  /// **'Beyond the daily, reveal more questions with a free credit, an ad, or PRO.'**
-  String get onboardingUnlockBody;
-
-  /// No description provided for @onboardingDeeperTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Go deeper'**
-  String get onboardingDeeperTitle;
-
-  /// No description provided for @onboardingDeeperBody.
-  ///
-  /// In en, this message translates to:
-  /// **'Every question comes with tidbits to spark a real conversation.'**
-  String get onboardingDeeperBody;
+  /// **'Continue'**
+  String get onboardingTasteContinue;
 
   /// No description provided for @onboardingChoiceTitle.
   ///

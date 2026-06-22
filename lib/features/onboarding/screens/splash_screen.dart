@@ -13,9 +13,9 @@ class SplashView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      backgroundColor: AppTheme.background,
-      body: Center(child: SparkLogo(size: 64)),
+    return Scaffold(
+      backgroundColor: context.colors.background,
+      body: const Center(child: SparkLogo(size: 64)),
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/feedback/app_toast.dart';
 import '../../../core/locale/l10n_extension.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../data/models/question.dart';
@@ -39,8 +40,17 @@ class WindQuestionView extends ConsumerStatefulWidget {
 }
 
 class _WindQuestionViewState extends ConsumerState<WindQuestionView>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late final AnimationController _controller;
+
+  /// Drives the lock-opening flourish played over the canvas right before a
+  /// freely-unlocked question assembles (see [_playLockReveal]). Separate from
+  /// the wind controller so the two never fight over a single timeline.
+  late final AnimationController _lockController;
+
+  /// True while the lock flourish owns the canvas — takes priority over the
+  /// reveal-slot paywall/spinner in [build] so the big lock is what shows.
+  bool _lockRevealing = false;
 
   // Offsets are expressed as a fraction of screen width and converted to pixels
   // at paint time, so the text fully clears the screen regardless of its size.
@@ -97,17 +107,24 @@ class _WindQuestionViewState extends ConsumerState<WindQuestionView>
       vsync: this,
       duration: const Duration(milliseconds: 240),
     );
+    _lockController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 900),
+    );
   }
 
   @override
   void dispose() {
     _controller.dispose();
+    _lockController.dispose();
     super.dispose();
   }
 
   /// [direction] is the sign of the swipe: -1 leftward, +1 rightward.
   Future<void> _advance(int direction) async {
-    if (_animating || _unlocking || _revealing || _peeking) return;
+    if (_animating || _unlocking || _revealing || _peeking || _lockRevealing) {
+      return;
+    }
 
     // PREMIUM: any swipe advances forward through the wrapped catalog.
     if (ref.read(isPremiumProvider)) {
@@ -215,7 +232,7 @@ class _WindQuestionViewState extends ConsumerState<WindQuestionView>
         // and no paywall flash (these setStates coalesce into one rebuild).
         _animating = false;
         _settleIn(null); // snap the transform back to centre
-        _applyRevealResult(
+        await _applyRevealResult(
           _pendingRevealResult,
           _pendingRevealError,
           viaAd: false,
@@ -351,19 +368,34 @@ class _WindQuestionViewState extends ConsumerState<WindQuestionView>
     } catch (e) {
       error = e;
     }
-    _applyRevealResult(q, error, viaAd: viaAd);
+    await _applyRevealResult(q, error, viaAd: viaAd);
+  }
+
+  /// Plays the lock-opening flourish over the canvas: a big padlock fades in,
+  /// its shackle swings open, then it fades out — the moment a freely-unlocked
+  /// question is "released" before it assembles. Awaited on the reveal path so
+  /// the question only starts falling once the lock has opened.
+  Future<void> _playLockReveal() async {
+    if (!mounted) return;
+    setState(() => _lockRevealing = true);
+    await _lockController.forward(from: 0);
   }
 
   /// Paints a resolved reveal: appends the revealed [q] to this session's feed
   /// (which grows the deck and steps the user off the slot onto it), or shows the
-  /// "exhausted" / error state. Synchronous so the credit auto-reveal can apply a
-  /// result that beat the animation in the same frame as [_settleIn] — coalesced
-  /// into one rebuild, so there's no spinner and no paywall flash.
-  void _applyRevealResult(Question? q, Object? error, {required bool viaAd}) {
+  /// "exhausted" / error state. On a free (credit) unlock it first plays the
+  /// lock-opening flourish ([_playLockReveal]) so the padlock visibly opens
+  /// before the question assembles; an ad reveal skips it (the ad was
+  /// interruption enough) and paints straight away.
+  Future<void> _applyRevealResult(
+    Question? q,
+    Object? error, {
+    required bool viaAd,
+  }) async {
     if (!mounted) return;
     if (error != null) {
       debugPrint('reveal failed: $error');
-      _notify(context.l10n.revealFailed);
+      _notify(context.l10n.revealFailed, type: ToastType.error);
       // Re-sync the server's view of the credit. A free reveal can fail because
       // the client thought it had a credit but the server disagreed (already
       // spent on another device, or stale after a UTC-midnight rollover). Without
@@ -384,10 +416,17 @@ class _WindQuestionViewState extends ConsumerState<WindQuestionView>
       return;
     }
 
+    // Free credit unlock: open the padlock before the question appears.
+    if (!viaAd) {
+      await _playLockReveal();
+      if (!mounted) return;
+    }
+
     ref.read(revealedFeedProvider.notifier).append(q);
     if (!viaAd) ref.invalidate(userStatsProvider); // a credit was spent
     setState(() {
       _revealing = false;
+      _lockRevealing = false;
       _peeked = null; // consumed
       _displayed = q;
     });
@@ -424,7 +463,7 @@ class _WindQuestionViewState extends ConsumerState<WindQuestionView>
     if (!mounted) return; // widget torn down while the ad was on screen
 
     if (!earned) {
-      _notify(context.l10n.adNoReward);
+      _notify(context.l10n.adNoReward, type: ToastType.error);
       setState(() => _unlocking = false);
       return;
     }
@@ -438,7 +477,7 @@ class _WindQuestionViewState extends ConsumerState<WindQuestionView>
     final userId = await SupabaseService.ensureSignedIn();
     if (!mounted) return;
     if (SupabaseService.isInitialised && userId == null) {
-      _notify(context.l10n.noConnection);
+      _notify(context.l10n.noConnection, type: ToastType.error);
       setState(() => _unlocking = false);
       return;
     }
@@ -502,15 +541,14 @@ class _WindQuestionViewState extends ConsumerState<WindQuestionView>
       restored
           ? context.l10n.purchaseRestoredCelebrate
           : context.l10n.noPreviousPurchase,
+      type: restored ? ToastType.success : ToastType.info,
     );
     if (mounted) setState(() => _unlocking = false);
   }
 
-  void _notify(String message) {
+  void _notify(String message, {ToastType type = ToastType.info}) {
     if (!mounted) return;
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(message)));
+    AppToast.show(context, message, type: type);
   }
 
   /// Fires as each word of the new question lands. The hook is intentionally
@@ -557,7 +595,10 @@ class _WindQuestionViewState extends ConsumerState<WindQuestionView>
     final displayed = _displayed;
 
     final Widget child;
-    if (atRevealSlot) {
+    if (_lockRevealing) {
+      // The lock flourish owns the canvas until the question is ready to fall.
+      child = _LockReveal(controller: _lockController);
+    } else if (atRevealSlot) {
       if (_revealing || _peeking) {
         child = const _Revealing();
       } else if (_exhausted) {
@@ -602,6 +643,156 @@ class _WindQuestionViewState extends ConsumerState<WindQuestionView>
   }
 }
 
+/// The lock-opening flourish: a big violet padlock fades in, its shackle swings
+/// open around the base of its right leg, then the whole thing fades out — the
+/// "released" beat played over the canvas right before a freely-unlocked
+/// question assembles. Driven by an external controller (0 → 1) so the caller
+/// can await its completion before painting the question.
+class _LockReveal extends StatelessWidget {
+  const _LockReveal({required this.controller});
+
+  final Animation<double> controller;
+
+  @override
+  Widget build(BuildContext context) {
+    final keyholeColor = context.colors.background;
+    return AnimatedBuilder(
+      animation: controller,
+      builder: (context, _) {
+        final t = controller.value;
+        // Pop in with a little overshoot, swing the shackle open mid-way, then
+        // grow + fade out at the end.
+        final appear = Curves.easeOutBack.transform((t / 0.35).clamp(0.0, 1.0));
+        final open = Curves.easeOutCubic.transform(
+          ((t - 0.40) / 0.32).clamp(0.0, 1.0),
+        );
+        final exit = Curves.easeIn.transform(
+          ((t - 0.80) / 0.20).clamp(0.0, 1.0),
+        );
+        final fadeIn = (t / 0.18).clamp(0.0, 1.0);
+        final opacity = (fadeIn * (1 - exit)).clamp(0.0, 1.0);
+        final scale = (0.6 + 0.4 * appear) * (1 + 0.18 * exit);
+        // Glow swells as the lock opens, then fades away with the exit.
+        final glow = (open * (1 - exit)).clamp(0.0, 1.0);
+        return Opacity(
+          opacity: opacity,
+          child: Transform.scale(
+            scale: scale,
+            child: CustomPaint(
+              size: const Size(132, 132),
+              painter: _LockPainter(
+                open: open,
+                glow: glow,
+                color: AppTheme.spark,
+                keyholeColor: keyholeColor,
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+/// Paints the padlock for [_LockReveal]: a rounded body with a punched-out
+/// keyhole and a stroked shackle that rotates open around the base of its right
+/// leg as [open] runs 0 → 1, with a soft [glow] halo behind it.
+class _LockPainter extends CustomPainter {
+  _LockPainter({
+    required this.open,
+    required this.glow,
+    required this.color,
+    required this.keyholeColor,
+  });
+
+  /// 0 = closed, 1 = fully open (shackle swung up and back).
+  final double open;
+
+  /// 0 = no halo, 1 = full halo.
+  final double glow;
+
+  /// The padlock fill + shackle colour.
+  final Color color;
+
+  /// Colour used to punch the keyhole out of the body (the canvas behind it).
+  final Color keyholeColor;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final cx = size.width / 2;
+    final w = size.width;
+
+    // Body: a rounded rectangle filling the lower portion of the box.
+    final bodyW = w * 0.62;
+    final bodyH = size.height * 0.46;
+    final bodyTop = size.height * 0.50;
+    final bodyRect = RRect.fromRectAndRadius(
+      Rect.fromLTWH(cx - bodyW / 2, bodyTop, bodyW, bodyH),
+      Radius.circular(w * 0.10),
+    );
+
+    // Soft halo behind everything, brightest as the lock opens.
+    if (glow > 0) {
+      final glowPaint = Paint()
+        ..color = color.withValues(alpha: 0.45 * glow)
+        ..maskFilter = MaskFilter.blur(BlurStyle.normal, 24 * glow + 6);
+      canvas.drawCircle(Offset(cx, size.height * 0.5), w * 0.42, glowPaint);
+    }
+
+    // Shackle — drawn first so the body overlaps the bottoms of its legs.
+    final shackleR = bodyW * 0.34;
+    final legBottom = bodyTop + 2; // tuck slightly under the body's top edge
+    final shTop = bodyTop - shackleR * 1.15;
+    final shacklePaint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = w * 0.12
+      ..strokeCap = StrokeCap.round
+      ..color = color;
+
+    canvas.save();
+    // Pivot at the base of the RIGHT leg; opening swings the shackle up and back
+    // around it and lifts it clear of the body.
+    final pivot = Offset(cx + shackleR, legBottom);
+    canvas.translate(pivot.dx, pivot.dy);
+    canvas.rotate(-open * 0.55);
+    canvas.translate(0, -open * shackleR * 0.5);
+    canvas.translate(-pivot.dx, -pivot.dy);
+
+    final shackle = Path()
+      ..moveTo(cx - shackleR, legBottom)
+      ..lineTo(cx - shackleR, shTop)
+      ..arcToPoint(
+        Offset(cx + shackleR, shTop),
+        radius: Radius.circular(shackleR),
+      )
+      ..lineTo(cx + shackleR, legBottom);
+    canvas.drawPath(shackle, shacklePaint);
+    canvas.restore();
+
+    // Body fill on top of the legs.
+    canvas.drawRRect(bodyRect, Paint()..color = color);
+
+    // Keyhole punched out of the body: a circle over a tapered slot.
+    final khCenter = Offset(cx, bodyTop + bodyH * 0.40);
+    final khPaint = Paint()..color = keyholeColor;
+    canvas.drawCircle(khCenter, bodyW * 0.12, khPaint);
+    final slot = Path()
+      ..moveTo(khCenter.dx - bodyW * 0.05, khCenter.dy)
+      ..lineTo(khCenter.dx + bodyW * 0.05, khCenter.dy)
+      ..lineTo(khCenter.dx + bodyW * 0.085, khCenter.dy + bodyH * 0.32)
+      ..lineTo(khCenter.dx - bodyW * 0.085, khCenter.dy + bodyH * 0.32)
+      ..close();
+    canvas.drawPath(slot, khPaint);
+  }
+
+  @override
+  bool shouldRepaint(_LockPainter old) =>
+      old.open != open ||
+      old.glow != glow ||
+      old.color != color ||
+      old.keyholeColor != keyholeColor;
+}
+
 /// The brief placeholder shown while a reveal RPC is in flight on the slot.
 class _Revealing extends StatelessWidget {
   const _Revealing();
@@ -638,13 +829,13 @@ class _NoMoreQuestions extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        const Icon(Icons.check_circle_outline, color: AppTheme.subtle, size: 40),
+        Icon(Icons.check_circle_outline, color: context.colors.subtle, size: 40),
         const SizedBox(height: 16),
         Text(
           context.l10n.noMoreTitle,
           textAlign: TextAlign.center,
-          style: const TextStyle(
-            color: AppTheme.ink,
+          style: TextStyle(
+            color: context.colors.ink,
             fontSize: 20,
             fontWeight: FontWeight.w600,
           ),
@@ -653,7 +844,7 @@ class _NoMoreQuestions extends StatelessWidget {
         Text(
           context.l10n.noMoreBody,
           textAlign: TextAlign.center,
-          style: const TextStyle(color: AppTheme.subtle, fontSize: 14),
+          style: TextStyle(color: context.colors.subtle, fontSize: 14),
         ),
         const SizedBox(height: 28),
         _BackToDailyLink(onTap: onBackToDaily),
@@ -676,7 +867,7 @@ class _BackToDailyLink extends StatelessWidget {
     return TextButton.icon(
       onPressed: onTap,
       style: TextButton.styleFrom(
-        foregroundColor: AppTheme.subtle,
+        foregroundColor: context.colors.subtle,
         textStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
       ),
       icon: const Icon(Icons.arrow_back, size: 16),
@@ -720,8 +911,8 @@ class _RevealPaywall extends StatelessWidget {
           Text(
             context.l10n.nextQuestionWaiting,
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              color: AppTheme.ink,
+            style: TextStyle(
+              color: context.colors.ink,
               fontSize: 24,
               fontWeight: FontWeight.w700,
             ),
@@ -730,7 +921,7 @@ class _RevealPaywall extends StatelessWidget {
         Text(
           context.l10n.watchAdToReveal,
           textAlign: TextAlign.center,
-          style: const TextStyle(color: AppTheme.subtle, fontSize: 14),
+          style: TextStyle(color: context.colors.subtle, fontSize: 14),
         ),
         const SizedBox(height: 32),
         ConstrainedBox(
@@ -757,12 +948,12 @@ class _RevealPaywall extends StatelessWidget {
                 height: 30,
                 child: Center(
                   child: busy
-                      ? const SizedBox(
+                      ? SizedBox(
                           height: 18,
                           width: 18,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            color: AppTheme.subtle,
+                            color: context.colors.subtle,
                           ),
                         )
                       : null,
@@ -780,7 +971,7 @@ class _RevealPaywall extends StatelessWidget {
         TextButton(
           onPressed: busy ? null : onRestore,
           style: TextButton.styleFrom(
-            foregroundColor: AppTheme.subtle,
+            foregroundColor: context.colors.subtle,
             textStyle: const TextStyle(fontSize: 13),
           ),
           child: Text(context.l10n.restorePurchase),
@@ -827,7 +1018,7 @@ class _UnlockButton extends StatelessWidget {
               : null,
         ),
         child: Material(
-          color: primary ? AppTheme.spark : AppTheme.accent,
+          color: primary ? AppTheme.spark : context.colors.accent,
           borderRadius: _radius,
           child: InkWell(
             borderRadius: _radius,
@@ -837,14 +1028,14 @@ class _UnlockButton extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(icon, color: AppTheme.ink, size: 20),
+                  Icon(icon, color: context.colors.ink, size: 20),
                   const SizedBox(width: 10),
                   Flexible(
                     child: Text(
                       label.toUpperCase(),
                       textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        color: AppTheme.ink,
+                      style: TextStyle(
+                        color: context.colors.ink,
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
                         letterSpacing: 1.0,

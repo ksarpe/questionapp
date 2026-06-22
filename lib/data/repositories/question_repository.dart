@@ -79,6 +79,29 @@ abstract class QuestionRepository {
   /// caller only invokes this for premium. Never throws to the caller — a failed
   /// marker just means the question may reappear as "new" later, which is benign.
   Future<void> markQuestionSeen(String questionId);
+
+  /// The ids of the questions the caller has favorited.
+  ///
+  /// Drives the star's filled/outline state on the question screen. Small per
+  /// user, so the client loads it once and updates it optimistically on toggle.
+  /// Empty for a user who has never favorited anything (incl. every free user,
+  /// who can't add favorites).
+  Future<Set<String>> fetchFavoriteIds();
+
+  /// Adds or removes [questionId] from the caller's favorites, returning the NEW
+  /// state (true = now favorited, false = now removed).
+  ///
+  /// Adding is premium-only and throws when the caller isn't premium — the
+  /// free-tier star is a paywall hook, not a write. Removing is always allowed
+  /// (curating a list you own), so a lapsed-premium user can still prune theirs.
+  Future<bool> toggleFavorite(String questionId);
+
+  /// The caller's favorited questions WITH text, newest first.
+  ///
+  /// Favorites are readable forever — once saved, the text comes back even after
+  /// premium lapses (the favorite is the grant), so unlike the catalog these are
+  /// never locked placeholders. For the favorites screen in Settings.
+  Future<List<Question>> fetchFavoriteQuestions();
 }
 
 /// Default implementation backed by the in-memory mock list.
@@ -212,7 +235,39 @@ class MockQuestionRepository implements QuestionRepository {
   Future<void> markQuestionSeen(String questionId) async {
     // Offline preview has no real seen-memory; nothing to record.
   }
+
+  @override
+  Future<Set<String>> fetchFavoriteIds() async =>
+      Set<String>.from(_mockFavorites);
+
+  @override
+  Future<bool> toggleFavorite(String questionId) async {
+    await Future.delayed(const Duration(milliseconds: 120));
+    // Dev/offline preview keeps favorites in a process-local set so the star
+    // and the favorites screen behave; the real premium gate lives server-side.
+    if (_mockFavorites.remove(questionId)) return false;
+    _mockFavorites.add(questionId);
+    return true;
+  }
+
+  @override
+  Future<List<Question>> fetchFavoriteQuestions() async {
+    await Future.delayed(const Duration(milliseconds: 200));
+    // Map the saved ids back to readable mock questions, mirroring the RPC's
+    // "favorites are never locked" shape.
+    return [
+      for (final q in kMockQuestions)
+        if (_mockFavorites.contains(q.id)) q.copyWith(isLocked: false),
+    ];
+  }
 }
+
+/// Process-local favorites for the offline/dev mock repository.
+///
+/// The real store is the `question_favorites` table; in mock mode there's no
+/// backend, so a simple mutable set lets the star + favorites screen round-trip
+/// during development without persistence.
+final Set<String> _mockFavorites = <String>{};
 
 /// Supabase-backed implementation used in production builds.
 ///
@@ -398,6 +453,40 @@ class SupabaseQuestionRepository implements QuestionRepository {
     } catch (e) {
       // Non-fatal: the deck still works, just without this view recorded.
     }
+  }
+
+  @override
+  Future<Set<String>> fetchFavoriteIds() async {
+    // SECURITY DEFINER RPC: the caller's favorite ids (own rows only).
+    final data = await SupabaseService.client.rpc('get_favorite_ids');
+    return (data as List).map((e) => e.toString()).toSet();
+  }
+
+  @override
+  Future<bool> toggleFavorite(String questionId) async {
+    // SECURITY DEFINER RPC: pins the row to auth.uid(), enforces the premium
+    // gate on ADD server-side, and returns the new state. Throws on a non-premium
+    // add ('premium required') — the caller surfaces the paywall instead.
+    final data = await SupabaseService.client.rpc(
+      'toggle_question_favorite',
+      params: {'p_question_id': questionId},
+    );
+    return data as bool;
+  }
+
+  @override
+  Future<List<Question>> fetchFavoriteQuestions() async {
+    // SECURITY DEFINER RPC: returns favorites WITH text (readable forever), so —
+    // unlike get_questions — nothing comes back locked. fromJson sees no `locked`
+    // key, defaulting isLocked to false.
+    final data = await SupabaseService.client.rpc(
+      'get_favorite_questions',
+      params: {'p_locale': locale},
+    );
+    return (data as List)
+        .cast<Map<String, dynamic>>()
+        .map(Question.fromJson)
+        .toList();
   }
 
   static String _dateOnly(DateTime date) {

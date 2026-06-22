@@ -3,9 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/config/app_config.dart';
+import '../../../core/feedback/app_toast.dart';
 import '../../../core/locale/app_locale.dart';
 import '../../../core/locale/l10n_extension.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/theme/theme_controller.dart';
+import '../../../data/models/question.dart';
 import '../../../l10n/gen/app_localizations.dart';
 import '../../../services/notification_service.dart';
 import '../../../services/purchases_service.dart';
@@ -13,12 +16,12 @@ import '../../../services/supabase_service.dart';
 import '../../account/providers/session_providers.dart';
 import '../../account/providers/stats_providers.dart';
 import '../../account/screens/auth_screen.dart';
+import '../../onboarding/widgets/spark_logo.dart';
+import '../../questions/providers/favorites_providers.dart';
+import '../../questions/widgets/rank_sheet.dart';
+import '../../questions/widgets/share_question_button.dart';
+import '../providers/app_info_provider.dart';
 import '../providers/reminder_providers.dart';
-
-/// Surfaces specific to the profile screen — a touch lighter than the pure
-/// black canvas so the cards read as a distinct layer (mirrors the auth sheet).
-const Color _kCardSurface = Color(0xFF131318);
-const Color _kHairline = Color(0xFF26262E);
 
 /// Soft lavender used for the user's name.
 const Color _kLavender = Color(0xFFCBBDF7);
@@ -42,7 +45,35 @@ class SettingsScreen extends ConsumerStatefulWidget {
   ConsumerState<SettingsScreen> createState() => _SettingsScreenState();
 }
 
-class _SettingsScreenState extends ConsumerState<SettingsScreen> {
+class _SettingsScreenState extends ConsumerState<SettingsScreen>
+    with WidgetsBindingObserver {
+  /// True while the user turned the reminder on but the OS hadn't granted the
+  /// permission yet and we sent them to system settings. When they return with
+  /// it granted, [_syncReminderToggle] finishes the enable without a second tap.
+  bool _pendingEnable = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    // After the first frame (context + providers ready), reconcile the stored
+    // switch with the real OS permission — it may have been revoked elsewhere.
+    WidgetsBinding.instance.addPostFrameCallback((_) => _syncReminderToggle());
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // Re-check on return to the foreground — typically back from the system
+    // notification settings the "Open settings" action opened.
+    if (state == AppLifecycleState.resumed) _syncReminderToggle();
+  }
+
   @override
   Widget build(BuildContext context) {
     final account = ref.watch(sessionProvider).value;
@@ -50,9 +81,17 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final isPremium = account?.isPremium ?? false;
     final localeCode = ref.watch(localeControllerProvider).languageCode;
     final reminder = ref.watch(reminderControllerProvider);
+    final themeMode = ref.watch(themeControllerProvider);
+    final appInfo = ref.watch(appInfoProvider).value;
+
+    // Favorites entry: shown to premium (the feature is theirs) and to anyone
+    // who still has saved questions — a lapsed-premium user keeps access to the
+    // list they built (favorites are readable forever).
+    final favoriteCount = ref.watch(favoriteIdsProvider).value?.length ?? 0;
+    final showFavorites = isPremium || favoriteCount > 0;
 
     return Scaffold(
-      backgroundColor: AppTheme.background,
+      backgroundColor: context.colors.background,
       body: Stack(
         children: [
           // Faint violet glow bleeding down from the top, behind the header.
@@ -120,6 +159,27 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                             trailingText: _languageName(localeCode),
                             onTap: _openLanguagePicker,
                           ),
+
+                          const _RowDivider(),
+                          _NavRow(
+                            icon: _themeModeIcon(themeMode),
+                            title: context.l10n.settingsAppearance,
+                            trailingText: _themeModeName(context, themeMode),
+                            onTap: _openAppearancePicker,
+                          ),
+
+                          if (showFavorites) ...[
+                            const _RowDivider(),
+                            _NavRow(
+                              icon: Icons.star_rounded,
+                              iconColor: _kGold,
+                              title: context.l10n.settingsFavorites,
+                              trailingText: favoriteCount > 0
+                                  ? '$favoriteCount'
+                                  : null,
+                              onTap: _openFavorites,
+                            ),
+                          ],
                         ],
                       ),
                       const SizedBox(height: 28),
@@ -154,6 +214,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                             title: context.l10n.restorePurchase,
                             onTap: _restorePurchases,
                           ),
+                          const _RowDivider(),
+                          _NavRow(
+                            icon: Icons.info_outline_rounded,
+                            title: context.l10n.settingsAbout,
+                            trailingText: appInfo?.version,
+                            onTap: _openAbout,
+                          ),
                         ],
                       ),
 
@@ -166,6 +233,21 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       ] else ...[
                         const SizedBox(height: 26),
                         _SignInButton(onTap: _openAuth),
+                      ],
+
+                      // Quiet build stamp at the very bottom, the way mature
+                      // apps sign off their settings page.
+                      if (appInfo != null) ...[
+                        const SizedBox(height: 24),
+                        Center(
+                          child: Text(
+                            'Spark · v${appInfo.version} (${appInfo.build})',
+                            style: TextStyle(
+                              color: context.colors.subtle,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ),
                       ],
                     ],
                   ),
@@ -188,7 +270,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     if (purchased) {
       await ref.read(sessionProvider.notifier).refresh();
       if (!mounted) return;
-      _showMessage(context.l10n.settingsPremiumActiveToast);
+      _showMessage(
+        context.l10n.settingsPremiumActiveToast,
+        type: ToastType.success,
+      );
     }
   }
 
@@ -199,7 +284,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final localeCode = ref.read(localeControllerProvider).languageCode;
     await showModalBottomSheet<void>(
       context: context,
-      backgroundColor: _kCardSurface,
+      backgroundColor: context.colors.cardSurface,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
@@ -216,9 +301,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     }
     if (!mounted) return;
     _showMessage(
-      restored
-          ? context.l10n.purchaseRestored
-          : context.l10n.noPreviousPurchase,
+      restored ? context.l10n.purchaseRestored : context.l10n.noPreviousPurchase,
+      type: restored ? ToastType.success : ToastType.info,
     );
   }
 
@@ -238,7 +322,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        backgroundColor: _kCardSurface,
+        backgroundColor: context.colors.cardSurface,
         title: Text(context.l10n.deleteAccountTitle),
         content: Text(context.l10n.deleteAccountBody),
         actions: [
@@ -261,8 +345,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   Future<void> _performDeleteAccount() async {
     // Capture everything that needs `context` BEFORE the await, so we never
     // touch a possibly-unmounted context afterwards (the screen pops on success).
+    // The toast rides the *root* overlay, so it survives leaving Settings.
     final navigator = Navigator.of(context);
-    final messenger = ScaffoldMessenger.of(context);
+    final overlay = AppToast.capture(context);
     final successMsg = context.l10n.deleteAccountSuccess;
     final errorMsg = context.l10n.deleteAccountError;
 
@@ -283,42 +368,95 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       ref.invalidate(sessionProvider);
       navigator.pop(); // dismiss the progress overlay
       navigator.maybePop(); // leave Settings, back to the question screen
-      messenger.showSnackBar(
-        SnackBar(content: Text(successMsg), backgroundColor: AppTheme.accent),
-      );
+      AppToast.showOn(overlay, successMsg, type: ToastType.success);
     } catch (e) {
       navigator.pop(); // dismiss the progress overlay
-      messenger.showSnackBar(SnackBar(content: Text(errorMsg)));
+      AppToast.showOn(overlay, errorMsg, type: ToastType.error);
     }
   }
 
   void _openAuth() => showAuthSheet(context);
 
-  /// Turns the daily reminder on/off. Enabling first asks the OS for permission
-  /// and only schedules + persists when it's granted — denial reverts the switch
-  /// and points the user to system settings. Disabling cancels the schedule.
+  /// Turns the daily reminder on/off. Enabling reuses an existing grant or asks
+  /// for one, scheduling + persisting only when granted. A denial (or a system
+  /// that no longer prompts) leaves the switch off and shows a message with a
+  /// one-tap "Open settings" action; we remember the intent so returning with
+  /// permission granted finishes the job. Disabling cancels the schedule.
   Future<void> _onReminderToggled(bool enabled) async {
     if (!enabled) {
+      _pendingEnable = false;
       await NotificationService.cancelDailyReminder();
       await ref.read(reminderControllerProvider.notifier).setEnabled(false);
       return;
     }
 
-    final granted = await NotificationService.requestPermission();
+    // Already granted? Don't prompt again — just schedule. Otherwise ask.
+    var granted = await NotificationService.areNotificationsEnabled();
+    if (!granted) granted = await NotificationService.requestPermission();
     if (!mounted) return;
     if (!granted) {
-      _showMessage(context.l10n.remindersPermissionDenied);
-      return; // leave the switch off — nothing persisted
+      // Remember the intent and route the user to settings; the lifecycle
+      // re-check completes the enable when they come back with it granted.
+      _pendingEnable = true;
+      _showPermissionDeniedMessage();
+      return; // leave the switch off — nothing persisted yet
     }
 
+    await _scheduleAndEnable();
+  }
+
+  /// Schedules the daily reminder for the stored time and flips the switch on.
+  /// Skips today's fire when the user already voted (no nudge for a done daily).
+  Future<void> _scheduleAndEnable() async {
     final prefs = ref.read(reminderControllerProvider);
     await NotificationService.scheduleDailyReminder(
       hour: prefs.hour,
       minute: prefs.minute,
       title: context.l10n.notificationDailyTitle,
       body: context.l10n.notificationDailyBody,
+      skipToday: hasVotedTodayLocal(ref.read(sharedPreferencesProvider)),
     );
     await ref.read(reminderControllerProvider.notifier).setEnabled(true);
+    _pendingEnable = false;
+  }
+
+  /// Reconciles the in-app reminder switch with the real OS permission, on entry
+  /// and on every return to the foreground. Two cases it heals:
+  ///   * permission revoked while the switch was on → turn it off + cancel, so
+  ///     the UI never claims reminders are running when the OS blocks them;
+  ///   * the user enabled, got sent to settings, granted, and came back
+  ///     ([_pendingEnable]) → finish enabling without a second tap.
+  /// No-ops where the plugin isn't live (desktop/web dev, tests).
+  Future<void> _syncReminderToggle() async {
+    if (!NotificationService.isInitialised) return;
+    final enabledOs = await NotificationService.areNotificationsEnabled();
+    if (!mounted) return;
+    final pref = ref.read(reminderControllerProvider);
+    if (_pendingEnable && enabledOs) {
+      await _scheduleAndEnable();
+      return;
+    }
+    if (pref.enabled && !enabledOs) {
+      await NotificationService.cancelDailyReminder();
+      await ref.read(reminderControllerProvider.notifier).setEnabled(false);
+    }
+  }
+
+  /// Tells the user reminders need the OS permission and offers a one-tap jump to
+  /// this app's notification settings — the actionable fix for the "nothing
+  /// happened" case where the system no longer shows the permission prompt.
+  void _showPermissionDeniedMessage() {
+    if (!mounted) return;
+    AppToast.show(
+      context,
+      context.l10n.remindersPermissionDenied,
+      type: ToastType.error,
+      duration: const Duration(seconds: 6),
+      action: (
+        label: context.l10n.remindersOpenSettings,
+        onPressed: NotificationService.openNotificationSettings,
+      ),
+    );
   }
 
   /// Opens a time picker and reschedules the reminder for the chosen time.
@@ -333,12 +471,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     // after an async gap is unsafe.
     final title = context.l10n.notificationDailyTitle;
     final body = context.l10n.notificationDailyBody;
+    final skipToday = hasVotedTodayLocal(ref.read(sharedPreferencesProvider));
     await ref.read(reminderControllerProvider.notifier).setTime(picked);
     await NotificationService.scheduleDailyReminder(
       hour: picked.hour,
       minute: picked.minute,
       title: title,
       body: body,
+      skipToday: skipToday,
     );
   }
 
@@ -370,7 +510,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final current = ref.read(localeControllerProvider);
     final picked = await showModalBottomSheet<Locale>(
       context: context,
-      backgroundColor: _kCardSurface,
+      backgroundColor: context.colors.cardSurface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -383,8 +523,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               padding: const EdgeInsets.fromLTRB(20, 18, 20, 8),
               child: Text(
                 context.l10n.chooseLanguage,
-                style: const TextStyle(
-                  color: AppTheme.ink,
+                style: TextStyle(
+                  color: context.colors.ink,
                   fontSize: 17,
                   fontWeight: FontWeight.w700,
                 ),
@@ -394,7 +534,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               ListTile(
                 title: Text(
                   _languageName(locale.languageCode),
-                  style: const TextStyle(color: AppTheme.ink, fontSize: 15),
+                  style: TextStyle(color: context.colors.ink, fontSize: 15),
                 ),
                 trailing: locale.languageCode == current.languageCode
                     ? const Icon(Icons.check_rounded, color: AppTheme.spark)
@@ -421,8 +561,79 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           minute: reminder.minute,
           title: l10n.notificationDailyTitle,
           body: l10n.notificationDailyBody,
+          skipToday: hasVotedTodayLocal(ref.read(sharedPreferencesProvider)),
         );
       }
+    }
+  }
+
+  /// Icon mirroring the chosen appearance, shown as the row's leading glyph.
+  static IconData _themeModeIcon(ThemeMode mode) => switch (mode) {
+    ThemeMode.system => Icons.brightness_auto_rounded,
+    ThemeMode.light => Icons.light_mode_rounded,
+    ThemeMode.dark => Icons.dark_mode_rounded,
+  };
+
+  /// Localized name for an appearance mode — the row's trailing label and the
+  /// picker options.
+  static String _themeModeName(BuildContext context, ThemeMode mode) =>
+      switch (mode) {
+        ThemeMode.system => context.l10n.settingsAppearanceSystem,
+        ThemeMode.light => context.l10n.settingsAppearanceLight,
+        ThemeMode.dark => context.l10n.settingsAppearanceDark,
+      };
+
+  /// Opens the appearance picker (System / Light / Dark) and applies the choice.
+  ///
+  /// Switching the mode rebuilds `MaterialApp`, which re-resolves `themeMode`
+  /// and animates the whole UI to the new palette (see [themeControllerProvider]).
+  Future<void> _openAppearancePicker() async {
+    final current = ref.read(themeControllerProvider);
+    final picked = await showModalBottomSheet<ThemeMode>(
+      context: context,
+      backgroundColor: context.colors.cardSurface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (sheetContext) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 18, 20, 8),
+              child: Text(
+                context.l10n.settingsChooseAppearance,
+                style: TextStyle(
+                  color: context.colors.ink,
+                  fontSize: 17,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+            for (final mode in ThemeMode.values)
+              ListTile(
+                leading: Icon(
+                  _themeModeIcon(mode),
+                  color: context.colors.subtle,
+                ),
+                title: Text(
+                  _themeModeName(context, mode),
+                  style: TextStyle(color: context.colors.ink, fontSize: 15),
+                ),
+                trailing: mode == current
+                    ? const Icon(Icons.check_rounded, color: AppTheme.spark)
+                    : null,
+                onTap: () => Navigator.of(sheetContext).pop(mode),
+              ),
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
+    );
+
+    if (picked != null) {
+      await ref.read(themeControllerProvider.notifier).setMode(picked);
     }
   }
 
@@ -434,11 +645,23 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     );
   }
 
-  void _showMessage(String message) {
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: AppTheme.accent),
+  /// Pushes the About screen — brand mark, version and a one-line summary.
+  void _openAbout() {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(builder: (_) => const AboutScreen()),
     );
+  }
+
+  /// Pushes the Favorites screen — the user's saved questions as cards.
+  void _openFavorites() {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(builder: (_) => const FavoritesScreen()),
+    );
+  }
+
+  void _showMessage(String message, {ToastType type = ToastType.info}) {
+    if (!mounted) return;
+    AppToast.show(context, message, type: type);
   }
 }
 
@@ -524,7 +747,7 @@ class _ProfileHeader extends StatelessWidget {
                   textAlign: TextAlign.left,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(color: AppTheme.subtle, fontSize: 14),
+                  style: TextStyle(color: context.colors.subtle, fontSize: 14),
                 ),
               ],
             ],
@@ -561,15 +784,15 @@ class _CloseButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: _kCardSurface,
-      shape: const CircleBorder(side: BorderSide(color: _kHairline)),
+      color: context.colors.cardSurface,
+      shape: CircleBorder(side: BorderSide(color: context.colors.hairline)),
       child: InkWell(
         onTap: onTap,
         customBorder: const CircleBorder(),
-        child: const SizedBox(
+        child: SizedBox(
           width: 38,
           height: 38,
-          child: Icon(Icons.close, size: 20, color: AppTheme.subtle),
+          child: Icon(Icons.close, size: 20, color: context.colors.subtle),
         ),
       ),
     );
@@ -592,8 +815,8 @@ class _StreakCard extends ConsumerWidget {
           const SizedBox(height: 8),
           Text(
             '$streak',
-            style: const TextStyle(
-              color: AppTheme.ink,
+            style: TextStyle(
+              color: context.colors.ink,
               fontSize: 32,
               fontWeight: FontWeight.w800,
               height: 1,
@@ -602,8 +825,8 @@ class _StreakCard extends ConsumerWidget {
           const SizedBox(height: 6),
           Text(
             context.l10n.daysInARow,
-            style: const TextStyle(
-              color: AppTheme.subtle,
+            style: TextStyle(
+              color: context.colors.subtle,
               fontSize: 11,
               fontWeight: FontWeight.w700,
               letterSpacing: 1,
@@ -637,6 +860,9 @@ class _RankCard extends ConsumerWidget {
               : context.l10n.rankCardPromotionReady);
 
     return _StatCardShell(
+      // Tapping the rank card opens the same rank sheet as tapping the streak
+      // flame on the main screen — the full ladder, progress and freeze state.
+      onTap: () => showRankSheet(context),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -659,8 +885,8 @@ class _RankCard extends ConsumerWidget {
           const SizedBox(height: 4),
           Text(
             context.l10n.rankLabel,
-            style: const TextStyle(
-              color: AppTheme.subtle,
+            style: TextStyle(
+              color: context.colors.subtle,
               fontSize: 11,
               fontWeight: FontWeight.w700,
               letterSpacing: 1,
@@ -672,14 +898,14 @@ class _RankCard extends ConsumerWidget {
             child: LinearProgressIndicator(
               value: progress,
               minHeight: 5,
-              backgroundColor: _kHairline,
+              backgroundColor: context.colors.hairline,
               valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.spark),
             ),
           ),
           const SizedBox(height: 8),
           Text(
             subtitle,
-            style: const TextStyle(color: AppTheme.subtle, fontSize: 11),
+            style: TextStyle(color: context.colors.subtle, fontSize: 11),
           ),
         ],
       ),
@@ -688,20 +914,33 @@ class _RankCard extends ConsumerWidget {
 }
 
 class _StatCardShell extends StatelessWidget {
-  const _StatCardShell({required this.child});
+  const _StatCardShell({required this.child, this.onTap});
 
   final Widget child;
 
+  /// When provided, the card becomes tappable (with a matching ripple).
+  final VoidCallback? onTap;
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
-      decoration: BoxDecoration(
-        color: _kCardSurface,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: _kHairline),
+    final radius = BorderRadius.circular(18);
+    return Material(
+      color: context.colors.cardSurface,
+      borderRadius: radius,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: radius,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            borderRadius: radius,
+            border: Border.all(color: context.colors.hairline),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+            child: child,
+          ),
+        ),
       ),
-      child: child,
     );
   }
 }
@@ -742,13 +981,13 @@ class _Card extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: _kCardSurface,
+      color: context.colors.cardSurface,
       borderRadius: BorderRadius.circular(18),
       clipBehavior: Clip.antiAlias,
       child: DecoratedBox(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: _kHairline),
+          border: Border.all(color: context.colors.hairline),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -765,10 +1004,10 @@ class _RowDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Divider(
+    return Divider(
       height: 1,
       thickness: 1,
-      color: _kHairline,
+      color: context.colors.hairline,
       indent: 56,
     );
   }
@@ -795,7 +1034,7 @@ class _ToggleRow extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(16, 12, 12, 12),
       child: Row(
         children: [
-          Icon(icon, color: AppTheme.subtle, size: 22),
+          Icon(icon, color: context.colors.subtle, size: 22),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
@@ -803,8 +1042,8 @@ class _ToggleRow extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
-                    color: AppTheme.ink,
+                  style: TextStyle(
+                    color: context.colors.ink,
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
                   ),
@@ -812,7 +1051,7 @@ class _ToggleRow extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   subtitle,
-                  style: const TextStyle(color: AppTheme.subtle, fontSize: 13),
+                  style: TextStyle(color: context.colors.subtle, fontSize: 13),
                 ),
               ],
             ),
@@ -866,7 +1105,7 @@ class _NavRow extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
         child: Row(
           children: [
-            Icon(icon, color: iconColor ?? AppTheme.subtle, size: 22),
+            Icon(icon, color: iconColor ?? context.colors.subtle, size: 22),
             const SizedBox(width: 16),
             Expanded(
               child: Column(
@@ -875,7 +1114,7 @@ class _NavRow extends StatelessWidget {
                   Text(
                     title,
                     style: TextStyle(
-                      color: titleColor ?? AppTheme.ink,
+                      color: titleColor ?? context.colors.ink,
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
                     ),
@@ -884,8 +1123,8 @@ class _NavRow extends StatelessWidget {
                     const SizedBox(height: 2),
                     Text(
                       subtitle!,
-                      style: const TextStyle(
-                        color: AppTheme.subtle,
+                      style: TextStyle(
+                        color: context.colors.subtle,
                         fontSize: 13,
                       ),
                     ),
@@ -898,10 +1137,10 @@ class _NavRow extends StatelessWidget {
                 padding: const EdgeInsets.only(right: 6),
                 child: Text(
                   trailingText!,
-                  style: const TextStyle(color: AppTheme.subtle, fontSize: 14),
+                  style: TextStyle(color: context.colors.subtle, fontSize: 14),
                 ),
               ),
-            const Icon(Icons.chevron_right, color: AppTheme.subtle, size: 22),
+            Icon(Icons.chevron_right, color: context.colors.subtle, size: 22),
           ],
         ),
       ),
@@ -988,7 +1227,7 @@ class _ManageSubscriptionSheetState
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: _kHairline,
+                  color: context.colors.hairline,
                   borderRadius: BorderRadius.circular(999),
                 ),
               ),
@@ -1004,8 +1243,8 @@ class _ManageSubscriptionSheetState
                 const SizedBox(width: 10),
                 Text(
                   l10n.manageSubSheetTitle,
-                  style: const TextStyle(
-                    color: AppTheme.ink,
+                  style: TextStyle(
+                    color: context.colors.ink,
                     fontSize: 18,
                     fontWeight: FontWeight.w800,
                   ),
@@ -1035,8 +1274,8 @@ class _ManageSubscriptionSheetState
             const SizedBox(height: 14),
             Text(
               _storeNote(l10n, store),
-              style: const TextStyle(
-                color: AppTheme.subtle,
+              style: TextStyle(
+                color: context.colors.subtle,
                 fontSize: 13.5,
                 height: 1.4,
               ),
@@ -1063,7 +1302,7 @@ class _ManageSubscriptionSheetState
             Center(
               child: TextButton(
                 onPressed: () => Navigator.of(context).maybePop(),
-                style: TextButton.styleFrom(foregroundColor: AppTheme.subtle),
+                style: TextButton.styleFrom(foregroundColor: context.colors.subtle),
                 child: Text(l10n.later),
               ),
             ),
@@ -1120,9 +1359,9 @@ class _StatusCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppTheme.background,
+        color: context.colors.background,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: _kHairline),
+        border: Border.all(color: context.colors.hairline),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1151,14 +1390,14 @@ class _StatusCard extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               dateLine,
-              style: const TextStyle(color: AppTheme.ink, fontSize: 14),
+              style: TextStyle(color: context.colors.ink, fontSize: 14),
             ),
           ],
           if (status != null) ...[
             const SizedBox(height: 4),
             Text(
               _storeBilledLabel(l10n, status!.store),
-              style: const TextStyle(color: AppTheme.subtle, fontSize: 13),
+              style: TextStyle(color: context.colors.subtle, fontSize: 13),
             ),
           ],
         ],
@@ -1325,7 +1564,7 @@ class _SignOutButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: _kCardSurface,
+      color: context.colors.cardSurface,
       borderRadius: BorderRadius.circular(16),
       child: InkWell(
         onTap: onTap,
@@ -1335,17 +1574,17 @@ class _SignOutButton extends StatelessWidget {
           alignment: Alignment.center,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: _kHairline),
+            border: Border.all(color: context.colors.hairline),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.logout_rounded, color: AppTheme.ink, size: 20),
+              Icon(Icons.logout_rounded, color: context.colors.ink, size: 20),
               const SizedBox(width: 10),
               Text(
                 context.l10n.signOut,
-                style: const TextStyle(
-                  color: AppTheme.ink,
+                style: TextStyle(
+                  color: context.colors.ink,
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                 ),
@@ -1419,6 +1658,283 @@ class _DeleteAccountButton extends StatelessWidget {
   }
 }
 
+// ---- About -----------------------------------------------------------------
+
+/// Reached from the "About" account row: the brand mark, the running version /
+/// build (from [appInfoProvider]) and a one-line summary of what the app is.
+class AboutScreen extends ConsumerWidget {
+  const AboutScreen({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
+    final info = ref.watch(appInfoProvider).value;
+
+    return Scaffold(
+      backgroundColor: context.colors.background,
+      body: Stack(
+        children: [
+          const _TopGlow(),
+          SafeArea(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.fromLTRB(
+                20,
+                8,
+                20,
+                32 + MediaQuery.paddingOf(context).bottom,
+              ),
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 520),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      _SubScreenHeader(
+                        title: l10n.settingsAbout,
+                        onClose: () => Navigator.of(context).maybePop(),
+                      ),
+                      const SizedBox(height: 56),
+                      const Center(child: SparkLogo(size: 46)),
+                      const SizedBox(height: 22),
+                      if (info != null)
+                        Center(
+                          child: Text(
+                            l10n.aboutVersion(info.version, info.build),
+                            style: TextStyle(
+                              color: context.colors.subtle,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      const SizedBox(height: 28),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Text(
+                          l10n.aboutTagline,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: context.colors.subtle,
+                            fontSize: 15,
+                            height: 1.5,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 40),
+                      Center(
+                        child: Text(
+                          '© 2026 Spark',
+                          style: TextStyle(color: context.colors.subtle, fontSize: 12),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ---- Favorites -------------------------------------------------------------
+
+/// Reached from the premium "Favorite questions" row: the user's saved questions
+/// as readable cards, each with a share action and a star to remove it.
+///
+/// The list text comes from [favoriteQuestionsProvider] (favorites are readable
+/// forever, so nothing here is ever locked); membership is read live from
+/// [favoriteIdsProvider] so removing a card drops it instantly without a refetch.
+class FavoritesScreen extends ConsumerWidget {
+  const FavoritesScreen({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
+    final favoritesAsync = ref.watch(favoriteQuestionsProvider);
+    final liveIds = ref.watch(
+      favoriteIdsProvider.select((s) => s.value ?? const <String>{}),
+    );
+
+    return Scaffold(
+      backgroundColor: context.colors.background,
+      body: Stack(
+        children: [
+          const _TopGlow(),
+          SafeArea(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.fromLTRB(
+                20,
+                8,
+                20,
+                32 + MediaQuery.paddingOf(context).bottom,
+              ),
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 520),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      _SubScreenHeader(
+                        title: l10n.favoritesTitle,
+                        onClose: () => Navigator.of(context).maybePop(),
+                      ),
+                      const SizedBox(height: 24),
+                      favoritesAsync.when(
+                        loading: () => const Padding(
+                          padding: EdgeInsets.only(top: 80),
+                          child: Center(child: CircularProgressIndicator()),
+                        ),
+                        error: (_, _) => _FavoritesEmpty(
+                          title: l10n.favoritesEmptyTitle,
+                          body: l10n.favoritesEmptyBody,
+                        ),
+                        data: (questions) {
+                          // Honour live membership: a just-removed card is gone
+                          // before the provider re-fetches.
+                          final visible = questions
+                              .where((q) => liveIds.contains(q.id))
+                              .toList();
+                          if (visible.isEmpty) {
+                            return _FavoritesEmpty(
+                              title: l10n.favoritesEmptyTitle,
+                              body: l10n.favoritesEmptyBody,
+                            );
+                          }
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              for (final q in visible) ...[
+                                _FavoriteCard(question: q),
+                                const SizedBox(height: 14),
+                              ],
+                            ],
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// One saved question: its full text, a share pill and a filled star that
+/// removes it from favorites. Removal is always allowed (curating a list you
+/// own), so this never routes through the paywall the way the home star does.
+class _FavoriteCard extends ConsumerWidget {
+  const _FavoriteCard({required this.question});
+
+  final Question question;
+
+  Future<void> _remove(BuildContext context, WidgetRef ref) async {
+    final overlay = AppToast.capture(context);
+    final removedMsg = context.l10n.favoriteRemoved;
+    final errorMsg = context.l10n.favoriteError;
+    try {
+      await ref.read(favoriteIdsProvider.notifier).toggle(question.id);
+      AppToast.showOn(
+        overlay,
+        removedMsg,
+        type: ToastType.info,
+        icon: Icons.star_border_rounded,
+      );
+    } catch (_) {
+      AppToast.showOn(overlay, errorMsg, type: ToastType.error);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(18, 18, 18, 14),
+      decoration: BoxDecoration(
+        color: context.colors.cardSurface,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: context.colors.hairline),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            question.questionText,
+            style: TextStyle(
+              color: context.colors.ink,
+              fontSize: 16,
+              height: 1.35,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 14),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              ShareQuestionButton(questionText: question.questionText),
+              IconButton(
+                onPressed: () => _remove(context, ref),
+                tooltip: context.l10n.favoriteRemoveTooltip,
+                icon: const Icon(Icons.star_rounded, color: _kGold, size: 26),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Empty/error state for the favorites screen: a muted star and a one-line
+/// nudge toward the home-screen star.
+class _FavoritesEmpty extends StatelessWidget {
+  const _FavoritesEmpty({required this.title, required this.body});
+
+  final String title;
+  final String body;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 64),
+      child: Column(
+        children: [
+          Icon(
+            Icons.star_border_rounded,
+            size: 48,
+            color: context.colors.subtle,
+          ),
+          const SizedBox(height: 16),
+          Text(
+            title,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: context.colors.ink,
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            body,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: context.colors.subtle,
+              fontSize: 14,
+              height: 1.4,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 // ---- Privacy & data --------------------------------------------------------
 
 /// Reached from the "Privacy & data" account row. Two parts:
@@ -1442,7 +1958,7 @@ class PrivacyDataScreen extends StatelessWidget {
     final hasDocs = hasPolicy || hasTerms;
 
     return Scaffold(
-      backgroundColor: AppTheme.background,
+      backgroundColor: context.colors.background,
       body: Stack(
         children: [
           const _TopGlow(),
@@ -1505,8 +2021,8 @@ class PrivacyDataScreen extends StatelessWidget {
                         padding: const EdgeInsets.fromLTRB(4, 0, 4, 14),
                         child: Text(
                           l10n.privacyDataIntro,
-                          style: const TextStyle(
-                            color: AppTheme.subtle,
+                          style: TextStyle(
+                            color: context.colors.subtle,
                             fontSize: 13.5,
                             height: 1.4,
                           ),
@@ -1554,7 +2070,7 @@ class PrivacyDataScreen extends StatelessWidget {
   /// launched (mirrors [_ManageSubscriptionSheet]'s deep-link handling).
   Future<void> _openUrl(BuildContext context, String url) async {
     final uri = Uri.tryParse(url);
-    final messenger = ScaffoldMessenger.of(context);
+    final overlay = AppToast.capture(context);
     final failed = context.l10n.privacyLinkFailed;
     var opened = false;
     if (uri != null) {
@@ -1565,9 +2081,7 @@ class PrivacyDataScreen extends StatelessWidget {
       }
     }
     if (!opened) {
-      messenger.showSnackBar(
-        SnackBar(content: Text(failed), backgroundColor: AppTheme.accent),
-      );
+      AppToast.showOn(overlay, failed, type: ToastType.error);
     }
   }
 }
@@ -1629,7 +2143,7 @@ class _PrivacyDataRow extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, color: AppTheme.subtle, size: 22),
+          Icon(icon, color: context.colors.subtle, size: 22),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
@@ -1637,8 +2151,8 @@ class _PrivacyDataRow extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
-                    color: AppTheme.ink,
+                  style: TextStyle(
+                    color: context.colors.ink,
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
                   ),
@@ -1646,8 +2160,8 @@ class _PrivacyDataRow extends StatelessWidget {
                 const SizedBox(height: 3),
                 Text(
                   body,
-                  style: const TextStyle(
-                    color: AppTheme.subtle,
+                  style: TextStyle(
+                    color: context.colors.subtle,
                     fontSize: 13,
                     height: 1.4,
                   ),

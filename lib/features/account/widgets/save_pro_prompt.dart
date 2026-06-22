@@ -6,9 +6,6 @@ import '../../../core/theme/app_theme.dart';
 import '../providers/session_providers.dart';
 import '../screens/auth_screen.dart';
 
-/// Card surface mirroring the settings / auth sheets.
-const Color _kCardSurface = Color(0xFF131318);
-
 /// Gold accent shared with the "go Premium" upsell + auth notices.
 const Color _kGold = Color(0xFFFFC857);
 
@@ -30,7 +27,7 @@ Future<void> promptSaveProAccount(BuildContext context, WidgetRef ref) async {
     context: context,
     barrierColor: Colors.black.withValues(alpha: 0.62),
     builder: (dialogContext) => AlertDialog(
-      backgroundColor: _kCardSurface,
+      backgroundColor: context.colors.cardSurface,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       titlePadding: const EdgeInsets.fromLTRB(24, 24, 24, 10),
       title: Row(
@@ -52,8 +49,8 @@ Future<void> promptSaveProAccount(BuildContext context, WidgetRef ref) async {
           Expanded(
             child: Text(
               context.l10n.proActiveTitle,
-              style: const TextStyle(
-                color: AppTheme.ink,
+              style: TextStyle(
+                color: context.colors.ink,
                 fontSize: 19,
                 fontWeight: FontWeight.w700,
               ),
@@ -63,8 +60,8 @@ Future<void> promptSaveProAccount(BuildContext context, WidgetRef ref) async {
       ),
       content: Text(
         context.l10n.savePromptBody,
-        style: const TextStyle(
-          color: AppTheme.subtle,
+        style: TextStyle(
+          color: context.colors.subtle,
           height: 1.4,
           fontSize: 14.5,
         ),
@@ -73,7 +70,7 @@ Future<void> promptSaveProAccount(BuildContext context, WidgetRef ref) async {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(dialogContext).pop(false),
-          style: TextButton.styleFrom(foregroundColor: AppTheme.subtle),
+          style: TextButton.styleFrom(foregroundColor: context.colors.subtle),
           child: Text(context.l10n.later),
         ),
         TextButton(

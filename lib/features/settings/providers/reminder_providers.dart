@@ -8,6 +8,27 @@ const String _kEnabledKey = 'reminders_enabled';
 const String _kHourKey = 'reminder_hour';
 const String _kMinuteKey = 'reminder_minute';
 
+/// Local date (`yyyy-mm-dd`) of the user's most recent daily vote. Stamped at
+/// vote time so the reminder can skip the nudge on a day already answered —
+/// including across a same-day relaunch, before any network sync.
+const String _kLastVoteDateKey = 'reminder_last_vote_date';
+
+/// The device-local date as `yyyy-mm-dd`. The reminder runs on wall-clock local
+/// time, and the daily question is fetched for the local date too, so "today" is
+/// measured locally here as well (not UTC).
+String _todayStamp() {
+  final now = DateTime.now();
+  final month = now.month.toString().padLeft(2, '0');
+  final day = now.day.toString().padLeft(2, '0');
+  return '${now.year}-$month-$day';
+}
+
+/// Whether the user has already cast today's daily vote, per the locally-cached
+/// stamp. Read directly from [prefs] in `main()` (before the provider graph
+/// exists) to decide whether to skip tonight's reminder when re-arming it.
+bool hasVotedTodayLocal(SharedPreferences prefs) =>
+    prefs.getString(_kLastVoteDateKey) == _todayStamp();
+
 /// Default daily-reminder time: 20:00 — a quiet evening slot with good open
 /// rates, used until the user picks their own.
 const int kDefaultReminderHour = 20;
@@ -64,6 +85,15 @@ class ReminderController extends Notifier<ReminderPrefs> {
     final prefs = ref.read(sharedPreferencesProvider);
     await prefs.setInt(_kHourKey, time.hour);
     await prefs.setInt(_kMinuteKey, time.minute);
+  }
+
+  /// Stamps today's local date as "voted", so the reminder can skip tonight's
+  /// nudge. Local-only — rescheduling the OS notification is the caller's job
+  /// (it holds the localized strings); see the daily vote panel.
+  Future<void> markVotedToday() async {
+    await ref
+        .read(sharedPreferencesProvider)
+        .setString(_kLastVoteDateKey, _todayStamp());
   }
 }
 
