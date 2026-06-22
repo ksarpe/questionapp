@@ -1,13 +1,15 @@
 # Supabase Edge Functions
 
-Two server-side functions that hold the monetization logic. Clients never write
-to `profiles` / `subscriptions` directly — only these functions (running with the
-`service_role` key) do.
+Server-side functions that hold privileged logic. Clients never write to
+`profiles` / `subscriptions` directly, nor delete their own `auth.users` row —
+only these functions (running with the `service_role` key) do.
 
 | Function | Trigger | Writes |
 |----------|---------|--------|
 | `revenuecat-webhook` | RevenueCat webhook (POST) | `billing_events`, `subscriptions`, `profiles.is_premium` |
 | `admob-ssv` | AdMob SSV callback (GET) | `ad_reward_events` (audit only) |
+| `sync-entitlement` | App, on launch / after purchase (POST, JWT) | `profiles.is_premium` / `premium_until` |
+| `delete-account` | App, Settings → Delete account (POST, JWT) | deletes `auth.users` (cascades to all user data) |
 
 ## Deploy
 
@@ -23,6 +25,10 @@ supabase secrets set REVENUECAT_WEBHOOK_SECRET="<long-random-secret>"
 # Functions — public (Google / RevenueCat call them, not a logged-in user)
 supabase functions deploy revenuecat-webhook --no-verify-jwt
 supabase functions deploy admob-ssv          --no-verify-jwt
+
+# Functions — JWT verified (the logged-in user/guest calls them)
+supabase functions deploy sync-entitlement
+supabase functions deploy delete-account
 ```
 
 ## Wiring on the client (Flutter)

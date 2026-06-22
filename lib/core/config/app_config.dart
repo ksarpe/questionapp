@@ -44,8 +44,23 @@ class AppConfig {
     defaultValue: 'ca-app-pub-3940256099942544/5224354917',
   );
 
+  /// Public URL of the privacy policy, opened from the Privacy & data screen.
+  /// Empty by default — the row is hidden until a real URL is supplied via
+  /// `--dart-define=PRIVACY_POLICY_URL=...`.
+  static const String privacyPolicyUrl =
+      String.fromEnvironment('PRIVACY_POLICY_URL', defaultValue: '');
+
+  /// Public URL of the terms of service, opened from the Privacy & data screen.
+  /// Empty by default — see [privacyPolicyUrl].
+  static const String termsOfServiceUrl =
+      String.fromEnvironment('TERMS_OF_SERVICE_URL', defaultValue: '');
+
   static bool get hasSupabaseCredentials =>
       supabaseUrl.isNotEmpty && supabaseAnonKey.isNotEmpty;
 
   static bool get hasGoogleSignIn => googleServerClientId.isNotEmpty;
+
+  static bool get hasPrivacyPolicy => privacyPolicyUrl.isNotEmpty;
+
+  static bool get hasTermsOfService => termsOfServiceUrl.isNotEmpty;
 }

@@ -44,13 +44,23 @@ void main() {
   });
 
   test('setLocale updates state and persists the choice', () async {
-    final c = await containerWith({});
+    // Start from a supported locale that differs from the target. Seeding an
+    // empty store would resolve the initial state from the test host's device
+    // language; on an English host that is already `en`, so `setLocale(en)`
+    // would hit the no-op guard and persist nothing — a false failure that
+    // depends on where the suite runs. Starting from `pl` makes the switch real
+    // and deterministic everywhere.
+    final c = await containerWith({kLocalePrefKey: 'pl'});
     await c
         .read(localeControllerProvider.notifier)
         .setLocale(const Locale('en'));
 
     expect(c.read(localeControllerProvider), const Locale('en'));
-    final sp = await SharedPreferences.getInstance();
+    // Assert against the SAME injected instance the controller wrote through —
+    // the one production also shares via the provider. A second
+    // `SharedPreferences.getInstance()` returns an independent handle whose
+    // snapshot doesn't reflect this write (a shared_preferences 2.5.5 quirk).
+    final sp = c.read(sharedPreferencesProvider);
     expect(sp.getString(kLocalePrefKey), 'en',
         reason: 'the choice must survive a restart');
   });

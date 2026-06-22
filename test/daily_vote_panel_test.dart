@@ -68,7 +68,8 @@ void main() {
     await tester.tap(find.text('TAK'));
     await tester.pumpAndSettle(); // run the sign-in sheet transition
 
-    expect(find.byType(AuthScreen), findsOneWidget,
+    // The sign-in card opened (its email/password fields), not a vote.
+    expect(find.byType(TextField), findsWidgets,
         reason: 'a guest tap is a login prompt, not a vote');
     expect(repo.castCalls, 0, reason: 'no vote is recorded for a guest');
     expect(find.textContaining('%'), findsNothing);

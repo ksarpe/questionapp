@@ -60,9 +60,28 @@ Deno.serve(async (req) => {
   const { data: { user }, error: userErr } = await userClient.auth.getUser();
   if (userErr || !user) return json(401, { error: "unauthorized" });
 
+  // The STORE key being absent must NOT break premium. We can't reconcile the
+  // store source without it, but promotional grants and store users already
+  // reflected by the webhook are still valid — so return the current EFFECTIVE
+  // flag straight from the DB instead of failing the whole entitlement read.
   if (!RC_API_KEY) {
-    console.error("REVENUECAT_REST_API_KEY not set — cannot reconcile.");
-    return json(500, { error: "not_configured" });
+    console.warn(
+      "REVENUECAT_REST_API_KEY not set — returning DB truth without store reconciliation.",
+    );
+    const { data, error } = await admin
+      .from("profiles")
+      .select("is_premium, premium_until")
+      .eq("id", user.id)
+      .maybeSingle();
+    if (error) {
+      console.error("profiles read failed:", error);
+      return json(500, { error: "db_error" });
+    }
+    return json(200, {
+      is_premium: data?.is_premium ?? false,
+      premium_until: data?.premium_until ?? null,
+      reconciled: false,
+    });
   }
 
   // --- Ask RevenueCat for THIS identity's entitlements ---
@@ -96,15 +115,22 @@ Deno.serve(async (req) => {
     return json(502, { error: "revenuecat_unreachable" });
   }
 
-  // --- Reflect onto the fast flag the RLS gate / RPCs read ---
-  const { error: updErr } = await admin
-    .from("profiles")
-    .update({ is_premium: isActive, premium_until: isActive ? expiresAt : null })
-    .eq("id", user.id);
-  if (updErr) {
-    console.error("profiles update failed:", updErr);
+  // --- Fold the STORE result into the DB via the source-aware reconciler. It
+  //     writes ONLY the store source (leaving promotional/comp grants intact) and
+  //     returns the resulting EFFECTIVE premium the gate enforces — which is what
+  //     we hand back to the client, not the raw store value. ---
+  const { data: effective, error: rpcErr } = await admin.rpc(
+    "apply_store_entitlement",
+    { p_uid: user.id, p_active: isActive, p_until: isActive ? expiresAt : null },
+  );
+  if (rpcErr) {
+    console.error("apply_store_entitlement failed:", rpcErr);
     return json(500, { error: "db_error" });
   }
 
-  return json(200, { is_premium: isActive, premium_until: expiresAt });
+  return json(200, {
+    is_premium: effective === true,
+    premium_until: isActive ? expiresAt : null,
+    reconciled: true,
+  });
 });

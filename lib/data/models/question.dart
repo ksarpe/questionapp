@@ -25,6 +25,15 @@ class Question {
   /// to tease (the UI then falls back to the plain locked message).
   final String? teaser;
 
+  /// Whether the current user has already seen this question.
+  ///
+  /// Returned by `get_questions` from the per-user `question_seen` log (daily
+  /// views, reveals and premium catalog views all record there). Only meaningful
+  /// for the premium deck, which puts UNSEEN questions first so fresh content
+  /// surfaces before the archive. Absent from the daily / reveal shapes, where it
+  /// defaults to false.
+  final bool seen;
+
   const Question({
     required this.id,
     required this.category,
@@ -32,6 +41,7 @@ class Question {
     this.isPremium = false,
     this.isLocked = false,
     this.teaser,
+    this.seen = false,
   });
 
   /// Builds a [Question] from a Supabase/JSON row.
@@ -48,6 +58,7 @@ class Question {
       isPremium: json['is_premium'] as bool? ?? false,
       isLocked: json['locked'] as bool? ?? false,
       teaser: json['teaser'] as String?,
+      seen: json['seen'] as bool? ?? false,
     );
   }
 
@@ -58,6 +69,7 @@ class Question {
     bool? isPremium,
     bool? isLocked,
     String? teaser,
+    bool? seen,
   }) => Question(
     id: id ?? this.id,
     category: category ?? this.category,
@@ -65,6 +77,7 @@ class Question {
     isPremium: isPremium ?? this.isPremium,
     isLocked: isLocked ?? this.isLocked,
     teaser: teaser ?? this.teaser,
+    seen: seen ?? this.seen,
   );
 
   Map<String, dynamic> toJson() => {
@@ -74,6 +87,7 @@ class Question {
     'is_premium': isPremium,
     'locked': isLocked,
     'teaser': teaser,
+    'seen': seen,
   };
 
   // Value equality across ALL rendered fields, not just id. The SAME question
@@ -92,9 +106,10 @@ class Question {
           questionText == other.questionText &&
           isPremium == other.isPremium &&
           isLocked == other.isLocked &&
-          teaser == other.teaser;
+          teaser == other.teaser &&
+          seen == other.seen;
 
   @override
   int get hashCode =>
-      Object.hash(id, category, questionText, isPremium, isLocked, teaser);
+      Object.hash(id, category, questionText, isPremium, isLocked, teaser, seen);
 }

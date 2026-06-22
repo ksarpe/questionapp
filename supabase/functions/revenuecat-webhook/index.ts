@@ -142,11 +142,16 @@ Deno.serve(async (req) => {
     if (subErr) throw new Error(`subscriptions upsert: ${subErr.message}`);
 
     if (touchesPremium) {
-      const { error: profErr } = await supabase
-        .from("profiles")
-        .update({ is_premium: isActive, premium_until: isActive ? expiresAt : null })
-        .eq("id", uid);
-      if (profErr) throw new Error(`profiles update: ${profErr.message}`);
+      // Write the STORE source only — `apply_store_entitlement` recomputes the
+      // effective `profiles.is_premium` from the store + promotional sources, so
+      // a store expiry/billing-issue can never revoke a support comp or lifetime
+      // grant (and vice versa).
+      const { error: rpcErr } = await supabase.rpc("apply_store_entitlement", {
+        p_uid: uid,
+        p_active: isActive,
+        p_until: isActive ? expiresAt : null,
+      });
+      if (rpcErr) throw new Error(`apply_store_entitlement: ${rpcErr.message}`);
     }
   };
 

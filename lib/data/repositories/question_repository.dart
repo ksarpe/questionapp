@@ -70,6 +70,15 @@ abstract class QuestionRepository {
 
   /// The full rank ladder (ordered by tier), for the rank sheet.
   Future<List<Rank>> fetchRanks();
+
+  /// Records that the caller has viewed [questionId] (premium catalog browsing).
+  ///
+  /// Best-effort and idempotent: it appends to the per-user seen-memory so the
+  /// next launch surfaces UNSEEN questions first. A free user never reaches the
+  /// arbitrary catalog (their daily + reveals are recorded elsewhere), so the
+  /// caller only invokes this for premium. Never throws to the caller — a failed
+  /// marker just means the question may reappear as "new" later, which is benign.
+  Future<void> markQuestionSeen(String questionId);
 }
 
 /// Default implementation backed by the in-memory mock list.
@@ -198,6 +207,11 @@ class MockQuestionRepository implements QuestionRepository {
 
   @override
   Future<List<Rank>> fetchRanks() async => kDefaultRanks;
+
+  @override
+  Future<void> markQuestionSeen(String questionId) async {
+    // Offline preview has no real seen-memory; nothing to record.
+  }
 }
 
 /// Supabase-backed implementation used in production builds.
@@ -368,6 +382,22 @@ class SupabaseQuestionRepository implements QuestionRepository {
         .cast<Map<String, dynamic>>()
         .map(Rank.fromJson)
         .toList();
+  }
+
+  @override
+  Future<void> markQuestionSeen(String questionId) async {
+    // SECURITY DEFINER RPC: appends a `source='view'` row to question_seen for
+    // the caller (idempotent). Best-effort — a failed marker only means the
+    // question might be surfaced as "new" again, so swallow errors rather than
+    // bubbling them into a fire-and-forget call site.
+    try {
+      await SupabaseService.client.rpc(
+        'mark_question_seen',
+        params: {'p_question_id': questionId},
+      );
+    } catch (e) {
+      // Non-fatal: the deck still works, just without this view recorded.
+    }
   }
 
   static String _dateOnly(DateTime date) {

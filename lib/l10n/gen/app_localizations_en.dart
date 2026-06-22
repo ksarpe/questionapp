@@ -15,6 +15,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get later => 'Later';
 
   @override
+  String get cancel => 'Cancel';
+
+  @override
   String get tryAgain => 'Try again';
 
   @override
@@ -128,6 +131,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsRemindersSubtitle => 'A reminder about the daily question';
 
   @override
+  String get settingsReminderTime => 'Reminder time';
+
+  @override
+  String get remindersPermissionDenied =>
+      'Turn on notifications in system settings to get reminders.';
+
+  @override
+  String get notificationDailyTitle => 'Today\'s question is waiting 🔥';
+
+  @override
+  String get notificationDailyBody =>
+      'Cast your vote and keep your streak alive.';
+
+  @override
   String get settingsLanguage => 'Language';
 
   @override
@@ -141,6 +158,56 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsPrivacy => 'Privacy & data';
+
+  @override
+  String get privacyDocsSection => 'DOCUMENTS';
+
+  @override
+  String get privacyPolicy => 'Privacy policy';
+
+  @override
+  String get privacyTerms => 'Terms of service';
+
+  @override
+  String get privacyOpenInBrowser => 'Opens in your browser';
+
+  @override
+  String get privacyLinkFailed => 'Couldn\'t open the link.';
+
+  @override
+  String get privacyDataSection => 'WHAT WE STORE';
+
+  @override
+  String get privacyDataIntro =>
+      'A quick overview of the data Spark keeps and why.';
+
+  @override
+  String get privacyDataAccountTitle => 'Account & sign-in';
+
+  @override
+  String get privacyDataAccountBody =>
+      'Your email or sign-in identity — or an anonymous ID for guests — so your progress follows you across devices.';
+
+  @override
+  String get privacyDataActivityTitle => 'Activity';
+
+  @override
+  String get privacyDataActivityBody =>
+      'Your daily votes, streak and rank, used to power the daily question and your progress.';
+
+  @override
+  String get privacyDataPurchasesTitle => 'Purchases';
+
+  @override
+  String get privacyDataPurchasesBody =>
+      'Your Premium status, handled through the App Store or Google Play. We never see your card details.';
+
+  @override
+  String get privacyDataAdsTitle => 'Ads';
+
+  @override
+  String get privacyDataAdsBody =>
+      'Free users see ads via Google AdMob, which may use device identifiers. Premium removes ads entirely.';
 
   @override
   String get settingsPremiumActiveToast => 'Premium active. 🎉';
@@ -210,11 +277,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get signedOut => 'Signed out.';
 
   @override
-  String get deleteAccountTitle => 'Delete account';
+  String get deleteAccountTitle => 'Delete account?';
 
   @override
   String get deleteAccountBody =>
-      'Deleting your account from within the app isn\'t available yet. We\'re working on it — soon you\'ll be able to delete your account and all related data here.';
+      'This permanently deletes your account and all related data — your streak, votes and unlocks. This can\'t be undone. If you have an active Premium subscription, cancel it separately in the App Store or Google Play.';
+
+  @override
+  String get deleteAccountSuccess => 'Your account has been deleted.';
+
+  @override
+  String get deleteAccountError =>
+      'Couldn\'t delete your account. Please check your connection and try again.';
 
   @override
   String get guestSession => 'Guest session';
@@ -454,6 +528,13 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get onboardingStreakBody =>
       'Vote each day to keep your flame alive and climb the ranks.';
+
+  @override
+  String get onboardingFreezeTitle => 'Streak freeze';
+
+  @override
+  String get onboardingFreezeBody =>
+      'Miss a day? Your streak won\'t vanish. A freeze cushions the gap — you\'ve got a few days to come back before your rank starts to slip.';
 
   @override
   String get onboardingUnlockTitle => 'Unlocks';

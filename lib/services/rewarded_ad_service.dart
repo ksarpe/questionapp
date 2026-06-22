@@ -5,6 +5,7 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import '../core/config/app_config.dart';
 import 'ads_service.dart';
+import 'consent_service.dart';
 
 /// Manages the lifecycle of a single Google AdMob *rewarded* ad: pre-loading one
 /// in the background, showing it on demand, surfacing the
@@ -28,6 +29,10 @@ class RewardedAdService {
   /// callers can preload freely without guarding.
   void preload() {
     if (!AdsService.isInitialised) return;
+    // Respect the UMP decision: when consent is still outstanding (EEA user who
+    // hasn't answered) don't request an ad yet. Defaults to permissive, so this
+    // only blocks the genuine "no consent" case.
+    if (!ConsentService.canRequestAds) return;
     if (_ad != null || _isLoading) return;
 
     _isLoading = true;

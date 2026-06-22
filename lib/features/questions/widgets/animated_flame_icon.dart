@@ -9,6 +9,12 @@ import '../../../core/theme/app_theme.dart';
 /// the violet free-unlock chip next to it.
 const Color kFlame = Color(0xFFF59E0B);
 
+/// Cool sky-blue for the streak "freeze" — the forgiving grace window that
+/// cushions a missed day. The deliberate cold counterpoint to [kFlame]; shared
+/// by the rank sheet's freeze warning and the onboarding freeze card so the
+/// snowflake reads the same everywhere.
+const Color kFreeze = Color(0xFF38BDF8);
+
 /// The streak flame, brought to life.
 ///
 /// On a live streak it layers four cheap effects, all intensifying with the

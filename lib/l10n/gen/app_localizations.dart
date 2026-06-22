@@ -110,6 +110,12 @@ abstract class AppLocalizations {
   /// **'Later'**
   String get later;
 
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
   /// No description provided for @tryAgain.
   ///
   /// In en, this message translates to:
@@ -332,6 +338,30 @@ abstract class AppLocalizations {
   /// **'A reminder about the daily question'**
   String get settingsRemindersSubtitle;
 
+  /// No description provided for @settingsReminderTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder time'**
+  String get settingsReminderTime;
+
+  /// No description provided for @remindersPermissionDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on notifications in system settings to get reminders.'**
+  String get remindersPermissionDenied;
+
+  /// No description provided for @notificationDailyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s question is waiting 🔥'**
+  String get notificationDailyTitle;
+
+  /// No description provided for @notificationDailyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Cast your vote and keep your streak alive.'**
+  String get notificationDailyBody;
+
   /// No description provided for @settingsLanguage.
   ///
   /// In en, this message translates to:
@@ -361,6 +391,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Privacy & data'**
   String get settingsPrivacy;
+
+  /// No description provided for @privacyDocsSection.
+  ///
+  /// In en, this message translates to:
+  /// **'DOCUMENTS'**
+  String get privacyDocsSection;
+
+  /// No description provided for @privacyPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy policy'**
+  String get privacyPolicy;
+
+  /// No description provided for @privacyTerms.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of service'**
+  String get privacyTerms;
+
+  /// No description provided for @privacyOpenInBrowser.
+  ///
+  /// In en, this message translates to:
+  /// **'Opens in your browser'**
+  String get privacyOpenInBrowser;
+
+  /// No description provided for @privacyLinkFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t open the link.'**
+  String get privacyLinkFailed;
+
+  /// No description provided for @privacyDataSection.
+  ///
+  /// In en, this message translates to:
+  /// **'WHAT WE STORE'**
+  String get privacyDataSection;
+
+  /// No description provided for @privacyDataIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'A quick overview of the data Spark keeps and why.'**
+  String get privacyDataIntro;
+
+  /// No description provided for @privacyDataAccountTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Account & sign-in'**
+  String get privacyDataAccountTitle;
+
+  /// No description provided for @privacyDataAccountBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your email or sign-in identity — or an anonymous ID for guests — so your progress follows you across devices.'**
+  String get privacyDataAccountBody;
+
+  /// No description provided for @privacyDataActivityTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Activity'**
+  String get privacyDataActivityTitle;
+
+  /// No description provided for @privacyDataActivityBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your daily votes, streak and rank, used to power the daily question and your progress.'**
+  String get privacyDataActivityBody;
+
+  /// No description provided for @privacyDataPurchasesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchases'**
+  String get privacyDataPurchasesTitle;
+
+  /// No description provided for @privacyDataPurchasesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Premium status, handled through the App Store or Google Play. We never see your card details.'**
+  String get privacyDataPurchasesBody;
+
+  /// No description provided for @privacyDataAdsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ads'**
+  String get privacyDataAdsTitle;
+
+  /// No description provided for @privacyDataAdsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Free users see ads via Google AdMob, which may use device identifiers. Premium removes ads entirely.'**
+  String get privacyDataAdsBody;
 
   /// No description provided for @settingsPremiumActiveToast.
   ///
@@ -479,14 +599,26 @@ abstract class AppLocalizations {
   /// No description provided for @deleteAccountTitle.
   ///
   /// In en, this message translates to:
-  /// **'Delete account'**
+  /// **'Delete account?'**
   String get deleteAccountTitle;
 
   /// No description provided for @deleteAccountBody.
   ///
   /// In en, this message translates to:
-  /// **'Deleting your account from within the app isn\'t available yet. We\'re working on it — soon you\'ll be able to delete your account and all related data here.'**
+  /// **'This permanently deletes your account and all related data — your streak, votes and unlocks. This can\'t be undone. If you have an active Premium subscription, cancel it separately in the App Store or Google Play.'**
   String get deleteAccountBody;
+
+  /// No description provided for @deleteAccountSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Your account has been deleted.'**
+  String get deleteAccountSuccess;
+
+  /// No description provided for @deleteAccountError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t delete your account. Please check your connection and try again.'**
+  String get deleteAccountError;
 
   /// No description provided for @guestSession.
   ///
@@ -841,6 +973,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Vote each day to keep your flame alive and climb the ranks.'**
   String get onboardingStreakBody;
+
+  /// No description provided for @onboardingFreezeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Streak freeze'**
+  String get onboardingFreezeTitle;
+
+  /// No description provided for @onboardingFreezeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Miss a day? Your streak won\'t vanish. A freeze cushions the gap — you\'ve got a few days to come back before your rank starts to slip.'**
+  String get onboardingFreezeBody;
 
   /// No description provided for @onboardingUnlockTitle.
   ///

@@ -8,6 +8,21 @@
 	     replace with your real id from the AdMob console before release. -->
 	<key>GADApplicationIdentifier</key>
 	<string>ca-app-pub-3940256099942544~1458002511</string>
+	<!-- App Tracking Transparency. Required by Apple before the app accesses the
+	     IDFA (which AdMob uses); shown verbatim in the system ATT prompt. The
+	     app requests this at launch via ConsentService (app_tracking_transparency). -->
+	<key>NSUserTrackingUsageDescription</key>
+	<string>Your data will be used to deliver and measure more relevant ads. You can keep using the app either way.</string>
+	<!-- SKAdNetwork: lets ad networks attribute installs without tracking. Add
+	     Google's full, current list before release:
+	     https://developers.google.com/admob/ios/3p-skadnetworks -->
+	<key>SKAdNetworkItems</key>
+	<array>
+		<dict>
+			<key>SKAdNetworkIdentifier</key>
+			<string>cstr6suwn9.skadnetwork</string>
+		</dict>
+	</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>

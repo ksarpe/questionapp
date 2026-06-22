@@ -113,17 +113,19 @@ class SessionNotifier extends AsyncNotifier<SessionState> {
       await PurchasesService.identify(userId);
     }
 
-    // 3. Resolve the current premium entitlement. The RevenueCat SDK is the
-    // device's local truth; reconcile it into the backend (sets
-    // `profiles.is_premium`, which the server-side question/smaczki gate reads)
-    // so the SERVER agrees before any RPC fetches catalog text. Without this the
-    // device shows PRO while every RPC keeps returning locked content until the
-    // async webhook lands — exactly the "bought PRO but see nothing" gap. The
-    // edge function re-derives premium from RevenueCat's REST API, so its result
-    // is authoritative; fall back to the local SDK value when it can't run.
-    var isPremium = await PurchasesService.isPremium();
-    final synced = await SupabaseService.syncEntitlement();
-    if (synced != null) isPremium = synced;
+    // 3. Resolve the EFFECTIVE premium entitlement. The DATABASE is the source
+    // of truth — it merges store subscriptions with promotional/admin grants and
+    // the server-side question/smaczki gate enforces that same flag. We first
+    // reconcile the STORE side against RevenueCat (sync-entitlement pulls this
+    // identity's store entitlement and folds it in) and use the effective flag it
+    // returns; this also closes the "bought PRO but see nothing" race before any
+    // RPC fetches catalog text. If that call can't run we read the flag straight
+    // from the profile, so a promotional grant with no purchase behind it still
+    // unlocks the app. Only with no backend at all do we fall back to the
+    // on-device RevenueCat cache.
+    final isPremium = await SupabaseService.syncEntitlement() ??
+        await SupabaseService.fetchIsPremium() ??
+        await PurchasesService.isPremium();
 
     // 4. Pull the display name (social logins only) and the account's creation
     // date for the profile header.

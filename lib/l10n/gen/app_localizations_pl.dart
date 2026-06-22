@@ -15,6 +15,9 @@ class AppLocalizationsPl extends AppLocalizations {
   String get later => 'Później';
 
   @override
+  String get cancel => 'Anuluj';
+
+  @override
   String get tryAgain => 'Spróbuj ponownie';
 
   @override
@@ -128,6 +131,19 @@ class AppLocalizationsPl extends AppLocalizations {
   String get settingsRemindersSubtitle => 'Przypomnienie o codziennym pytaniu';
 
   @override
+  String get settingsReminderTime => 'Godzina przypomnienia';
+
+  @override
+  String get remindersPermissionDenied =>
+      'Włącz powiadomienia w ustawieniach systemu, aby otrzymywać przypomnienia.';
+
+  @override
+  String get notificationDailyTitle => 'Pytanie dnia czeka 🔥';
+
+  @override
+  String get notificationDailyBody => 'Oddaj głos i przedłuż swoją serię.';
+
+  @override
   String get settingsLanguage => 'Język';
 
   @override
@@ -141,6 +157,56 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get settingsPrivacy => 'Prywatność i dane';
+
+  @override
+  String get privacyDocsSection => 'DOKUMENTY';
+
+  @override
+  String get privacyPolicy => 'Polityka prywatności';
+
+  @override
+  String get privacyTerms => 'Regulamin';
+
+  @override
+  String get privacyOpenInBrowser => 'Otwiera się w przeglądarce';
+
+  @override
+  String get privacyLinkFailed => 'Nie udało się otworzyć linku.';
+
+  @override
+  String get privacyDataSection => 'CO PRZECHOWUJEMY';
+
+  @override
+  String get privacyDataIntro =>
+      'Krótki przegląd danych, które przechowuje Spark, i po co.';
+
+  @override
+  String get privacyDataAccountTitle => 'Konto i logowanie';
+
+  @override
+  String get privacyDataAccountBody =>
+      'Twój e-mail lub tożsamość logowania — albo anonimowy identyfikator dla gości — aby Twoje postępy były z Tobą na różnych urządzeniach.';
+
+  @override
+  String get privacyDataActivityTitle => 'Aktywność';
+
+  @override
+  String get privacyDataActivityBody =>
+      'Twoje codzienne głosy, passa i ranga — napędzają pytanie dnia i Twoje postępy.';
+
+  @override
+  String get privacyDataPurchasesTitle => 'Zakupy';
+
+  @override
+  String get privacyDataPurchasesBody =>
+      'Twój status Premium, obsługiwany przez App Store lub Google Play. Nigdy nie widzimy danych Twojej karty.';
+
+  @override
+  String get privacyDataAdsTitle => 'Reklamy';
+
+  @override
+  String get privacyDataAdsBody =>
+      'Użytkownicy darmowi widzą reklamy przez Google AdMob, które mogą używać identyfikatorów urządzenia. Premium całkowicie usuwa reklamy.';
 
   @override
   String get settingsPremiumActiveToast => 'Premium aktywne. 🎉';
@@ -210,11 +276,18 @@ class AppLocalizationsPl extends AppLocalizations {
   String get signedOut => 'Wylogowano.';
 
   @override
-  String get deleteAccountTitle => 'Usuwanie konta';
+  String get deleteAccountTitle => 'Usunąć konto?';
 
   @override
   String get deleteAccountBody =>
-      'Usuwanie konta z poziomu aplikacji nie jest jeszcze dostępne. Pracujemy nad tym — wkrótce będzie można usunąć konto i wszystkie powiązane dane tutaj.';
+      'To trwale usunie Twoje konto i wszystkie powiązane dane — serię, głosy i odblokowania. Tej operacji nie można cofnąć. Jeśli masz aktywną subskrypcję Premium, anuluj ją osobno w App Store lub Google Play.';
+
+  @override
+  String get deleteAccountSuccess => 'Twoje konto zostało usunięte.';
+
+  @override
+  String get deleteAccountError =>
+      'Nie udało się usunąć konta. Sprawdź połączenie i spróbuj ponownie.';
 
   @override
   String get guestSession => 'Sesja gościa';
@@ -468,6 +541,13 @@ class AppLocalizationsPl extends AppLocalizations {
   @override
   String get onboardingStreakBody =>
       'Głosuj każdego dnia, by podtrzymać płomień i piąć się w rankingu.';
+
+  @override
+  String get onboardingFreezeTitle => 'Zamrożenie passy';
+
+  @override
+  String get onboardingFreezeBody =>
+      'Pominiesz dzień? Passa nie przepadnie. Zamrożenie łagodzi przerwę — masz kilka dni, by wrócić, zanim ranga zacznie spadać.';
 
   @override
   String get onboardingUnlockTitle => 'Odblokowania';

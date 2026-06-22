@@ -4,6 +4,10 @@ A minimalist, modern mobile app designed to spark conversation. It shows a
 single thought-provoking question as styled text, with a fast "wind" animation
 when swiping to the next one.
 
+> **Shipping to the stores?** [RELEASE_CHECKLIST.md](RELEASE_CHECKLIST.md) is the
+> single source of truth for every manual step left to do (Supabase function
+> deploys, AdMob/consent console setup, keys, native config).
+
 ## Tech stack
 
 | Concern            | Choice                                  |
@@ -100,6 +104,15 @@ released app.
 - **AdMob app id** is set to Google's public *test* id in
   `android/app/src/main/AndroidManifest.xml` and `ios/Runner/Info.plist`.
   Replace both with your real id before release.
+- **Ad consent.** `ConsentService` ([consent_service.dart](lib/services/consent_service.dart))
+  runs before `AdsService.initialise` in `main()`: it gathers GDPR consent via
+  Google's UMP (configure the message in the AdMob console → *Privacy & messaging*)
+  and, on iOS, requests App Tracking Transparency (`NSUserTrackingUsageDescription`
+  is set in `Info.plist`). Before release, add Google's full SKAdNetwork list to
+  `Info.plist` ([3p-skadnetworks](https://developers.google.com/admob/ios/3p-skadnetworks)).
+- **Account deletion** is required by both stores. Settings → *Delete account*
+  calls the `delete-account` edge function, which deletes the Supabase user
+  (cascading to all their data). Deploy it before release.
 - Android `minSdk` is raised to 23 (required by `google_mobile_ads`).
 - Android `compileSdk` is raised to 36 (required by `package_info_plus`), and
   `android/build.gradle.kts` forces every subproject to compileSdk 36 — some

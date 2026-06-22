@@ -57,6 +57,22 @@ class QuestionScreen extends ConsumerWidget {
       }
     });
 
+    // Premium walks the whole catalog, so record each question it lands on in the
+    // seen-memory — that's what lets the next launch surface UNSEEN questions
+    // first instead of looping the same ones forever. Free users only ever reach
+    // the daily + their reveals (both recorded server-side already), so this is
+    // premium-only; the daily is also skipped here (get_daily_question records
+    // it). Fire-and-forget: the repo swallows errors, and we deliberately do NOT
+    // refetch the pool, so the current session's deck order stays put.
+    ref.listen(currentQuestionProvider, (prev, next) {
+      if (next == null || next.isLocked == true) return;
+      if (prev?.id == next.id) return;
+      if (!ref.read(isPremiumProvider)) return;
+      final daily = ref.read(todaysDailyQuestionProvider).asData?.value;
+      if (daily != null && next.id == daily.id) return;
+      ref.read(questionRepositoryProvider).markQuestionSeen(next.id);
+    });
+
     // The deck drives the body: it stays empty until today's daily resolves, so
     // every user opens to the daily rather than a flash of the pool. Watching it
     // here also kicks off the daily fetch at launch, alongside the question pool.

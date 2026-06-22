@@ -34,6 +34,15 @@ void main() {
       expect(q.category, 'general'); // fallback when absent
       expect(q.teaser, isNull);
     });
+
+    test('`seen` is read from get_questions and defaults false when absent', () {
+      // Only get_questions returns `seen`; the daily / reveal shapes omit it.
+      expect(
+        Question.fromJson(const {'id': 'q1', 'seen': true}).seen,
+        isTrue,
+      );
+      expect(Question.fromJson(const {'id': 'q2'}).seen, isFalse);
+    });
   });
 
   group('Smaczek.fromJson', () {

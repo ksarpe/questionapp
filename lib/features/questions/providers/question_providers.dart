@@ -177,11 +177,12 @@ final revealedFeedProvider =
 
 /// The ordered deck the home screen walks through.
 ///
-/// Position 0 is always today's daily. PREMIUM gets the whole catalog after it
-/// (random, seeded order) and reads everything. A FREE user instead gets a
-/// forward "feed": the daily plus the questions they've revealed this session
-/// (one ad / credit at a time), and nothing else — the locked catalog is never
-/// shipped to them.
+/// Position 0 is always today's daily. PREMIUM gets the whole catalog after it,
+/// ordered UNSEEN-FIRST so fresh questions surface before the archive (each is
+/// recorded as seen the moment they land on it — see `markQuestionSeen`). A FREE
+/// user instead gets a forward "feed": the daily plus the questions they've
+/// revealed this session (one ad / credit at a time), and nothing else — the
+/// locked catalog is never shipped to them.
 ///
 /// While the daily is still loading the deck stays empty on purpose, so the
 /// screen shows its spinner rather than flashing a non-daily question first.
@@ -194,15 +195,23 @@ final questionDeckProvider = Provider<List<Question>>((ref) {
     final pool =
         ref.watch(questionsProvider).asData?.value ?? const <Question>[];
     final seed = ref.watch(deckShuffleSeedProvider);
-    // Shuffle with the per-launch seed: random each open, STABLE across refetches
-    // within the session so the user doesn't get jumped around. Done even when
-    // the daily fails to resolve — otherwise the deck would fall back to the raw
-    // catalog order (get_questions returns it by created_at), which is exactly
+    // Order unseen-before-seen, shuffling each group with the per-launch seed:
+    // random each open, STABLE across refetches within the session so the user
+    // isn't jumped around. The `seen` flags are read once at fetch time and we do
+    // NOT refetch the pool when marking a question seen mid-session, so walking
+    // forward keeps the unseen run intact (newly-marked questions only move to the
+    // archive on the NEXT launch). Done even when the daily fails to resolve —
+    // otherwise the deck would fall back to the raw catalog order (created_at),
     // the "questions feel sequential" symptom.
-    if (daily == null) return pool.toList()..shuffle(Random(seed));
-    final rest = pool.where((q) => q.id != daily.id).toList()
-      ..shuffle(Random(seed));
-    return [daily, ...rest];
+    List<Question> orderedUnseenFirst(Iterable<Question> qs) {
+      final list = qs.toList();
+      final unseen = list.where((q) => !q.seen).toList()..shuffle(Random(seed));
+      final seen = list.where((q) => q.seen).toList()..shuffle(Random(seed));
+      return [...unseen, ...seen];
+    }
+
+    if (daily == null) return orderedUnseenFirst(pool);
+    return [daily, ...orderedUnseenFirst(pool.where((q) => q.id != daily.id))];
   }
 
   final revealed = ref.watch(revealedFeedProvider);

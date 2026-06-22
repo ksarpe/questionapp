@@ -84,6 +84,24 @@ void main() {
     expect(secondOrder, firstOrder);
   });
 
+  test('premium deck puts UNSEEN questions before the seen archive', () async {
+    final daily = q('daily');
+    Question seen(String id) =>
+        Question(id: id, category: id, questionText: 'Q $id?', seen: true);
+
+    // Catalog mixes seen and unseen; the deck must front-load the unseen ones.
+    final pool = [daily, seen('s1'), q('u1'), seen('s2'), q('u2'), q('u3')];
+
+    final container = await deckContainer(daily: daily, pool: pool, premium: true);
+    final deck = container.read(questionDeckProvider).map((e) => e.id).toList();
+
+    expect(deck.first, 'daily');
+    // The three unseen questions come first (in some shuffled order), then the
+    // two seen ones — never a seen question ahead of an unseen one.
+    expect(deck.sublist(1, 4).toSet(), {'u1', 'u2', 'u3'});
+    expect(deck.sublist(4).toSet(), {'s1', 's2'});
+  });
+
   test('the current index survives a pool refetch (premium)', () async {
     final daily = q('daily');
     final pool = [daily, for (var i = 0; i < 8; i++) q('q$i')];

@@ -145,15 +145,18 @@ class SupabaseService {
     return response.user;
   }
 
-  /// Reconciles the backend's premium flag with RevenueCat's REST truth for the
-  /// current identity, returning the authoritative `is_premium` (or null when it
-  /// couldn't run — no backend, no session, or the function isn't configured).
+  /// Reconciles the STORE side of premium against RevenueCat for the current
+  /// identity and returns the resulting EFFECTIVE `is_premium` — the same flag
+  /// the server gate enforces, merging store subscriptions with promotional /
+  /// admin grants. Returns null only when the call couldn't run (no backend, no
+  /// session, network error); the function itself no longer fails when the store
+  /// key is unset — it then returns the DB truth without reconciling.
   ///
   /// This is the PULL counterpart to the inbound `revenue-cat-webhook`: the app
-  /// calls it right after a purchase/restore and on launch so the server-side
-  /// gate (`profiles.is_premium`, read by every question/smaczki RPC) matches
-  /// what the device already knows, without waiting on — or depending on — the
-  /// async webhook ever landing. Best-effort: a failure leaves the flag as-is.
+  /// calls it on launch and right after a purchase/restore so the gate
+  /// (`profiles.is_premium`, read by every question/smaczki RPC) matches what the
+  /// device knows, without waiting on — or depending on — the async webhook ever
+  /// landing.
   static Future<bool?> syncEntitlement() async {
     if (!_initialised || client.auth.currentUser == null) return null;
     try {
@@ -166,6 +169,74 @@ class SupabaseService {
     } catch (e) {
       debugPrint('SupabaseService.syncEntitlement failed: $e');
       return null;
+    }
+  }
+
+  /// Reads the current identity's EFFECTIVE premium straight from `profiles`
+  /// (the very flag the server gate enforces, via the `read own profile` RLS
+  /// policy). Used as the source of truth for the UI when [syncEntitlement]
+  /// can't run, so a promotional / admin grant — which has no RevenueCat
+  /// purchase behind it — still unlocks the app. Honours `premium_until` so an
+  /// expired grant reads as non-premium. Returns null only with no backend /
+  /// session or on a read error (the caller then falls back to the on-device
+  /// store cache).
+  static Future<bool?> fetchIsPremium() async {
+    if (!_initialised) return null;
+    final user = client.auth.currentUser;
+    if (user == null) return null;
+    try {
+      final row = await client
+          .from('profiles')
+          .select('is_premium, premium_until')
+          .eq('id', user.id)
+          .maybeSingle();
+      if (row == null) return null;
+      if (row['is_premium'] != true) return false;
+      final until = row['premium_until'];
+      if (until == null) return true; // lifetime / non-expiring
+      final expiry = DateTime.tryParse(until as String);
+      // isAfter compares absolute instants, so a UTC expiry vs local now is fine.
+      return expiry == null || expiry.isAfter(DateTime.now());
+    } catch (e) {
+      debugPrint('SupabaseService.fetchIsPremium failed: $e');
+      return null;
+    }
+  }
+
+  /// Permanently deletes the current account and all associated data via the
+  /// `delete-account` edge function (service-role; a client can't delete its own
+  /// `auth.users` row). Deleting the auth user cascades across every user-owned
+  /// table, so this removes/anonymizes all personal data server-side.
+  ///
+  /// On success the local session is torn down so the app falls back to a fresh
+  /// anonymous guest on the next [ensureSignedIn]. Throws when there is no
+  /// backend / no signed-in user, or the function fails, so the caller can
+  /// surface an error instead of a silent no-op.
+  ///
+  /// Note: this does NOT cancel an active store subscription — the UI tells the
+  /// user to do that in the App Store / Play Store.
+  static Future<void> deleteAccount() async {
+    if (!_initialised) {
+      throw StateError('Supabase is not configured.');
+    }
+    if (client.auth.currentUser == null) {
+      throw StateError('No signed-in user to delete.');
+    }
+
+    // Throws FunctionException on a non-2xx response; let it propagate.
+    final res = await client.functions.invoke('delete-account');
+    final data = res.data;
+    if (!(data is Map && data['deleted'] == true)) {
+      throw Exception('Account deletion did not complete.');
+    }
+
+    // The server-side user is gone, so its JWT is now invalid — a global
+    // sign-out would try to revoke it and fail. Clear the session locally only.
+    try {
+      await client.auth.signOut(scope: SignOutScope.local);
+    } catch (_) {
+      // Best-effort: the account is already deleted; a stale local token is
+      // harmless and gets replaced by a fresh guest on next launch.
     }
   }
 

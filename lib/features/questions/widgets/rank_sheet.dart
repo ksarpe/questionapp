@@ -5,6 +5,7 @@ import '../../../core/locale/l10n_extension.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../data/models/rank.dart';
 import '../../account/providers/stats_providers.dart';
+import 'animated_flame_icon.dart';
 
 /// Opens the rank sheet: the user's current rank, streak, progress to the next
 /// rank, and the full controversy ladder. Styled to match [showSmaczkiSheet].
@@ -215,12 +216,12 @@ class _FreezeWarning extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        color: const Color(0xFF38BDF8).withValues(alpha: 0.12),
-        border: Border.all(color: const Color(0xFF38BDF8).withValues(alpha: 0.4)),
+        color: kFreeze.withValues(alpha: 0.12),
+        border: Border.all(color: kFreeze.withValues(alpha: 0.4)),
       ),
       child: Row(
         children: [
-          const Icon(Icons.ac_unit_rounded, color: Color(0xFF38BDF8), size: 18),
+          const Icon(Icons.ac_unit_rounded, color: kFreeze, size: 18),
           const SizedBox(width: 8),
           Expanded(
             child: Text(

@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
 
+import '../../../core/config/app_config.dart';
 import '../../../core/locale/app_locale.dart';
 import '../../../core/locale/l10n_extension.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../l10n/gen/app_localizations.dart';
+import '../../../services/notification_service.dart';
 import '../../../services/purchases_service.dart';
 import '../../../services/supabase_service.dart';
 import '../../account/providers/session_providers.dart';
 import '../../account/providers/stats_providers.dart';
 import '../../account/screens/auth_screen.dart';
+import '../providers/reminder_providers.dart';
 
 /// Surfaces specific to the profile screen — a touch lighter than the pure
 /// black canvas so the cards read as a distinct layer (mirrors the auth sheet).
@@ -39,16 +43,13 @@ class SettingsScreen extends ConsumerStatefulWidget {
 }
 
 class _SettingsScreenState extends ConsumerState<SettingsScreen> {
-  // Local-only preference state for now — these flip the switches visually but
-  // are not yet persisted or wired to behaviour.
-  bool _dailyReminders = true;
-
   @override
   Widget build(BuildContext context) {
     final account = ref.watch(sessionProvider).value;
     final hasAccount = account?.hasAccount ?? false;
     final isPremium = account?.isPremium ?? false;
     final localeCode = ref.watch(localeControllerProvider).languageCode;
+    final reminder = ref.watch(reminderControllerProvider);
 
     return Scaffold(
       backgroundColor: AppTheme.background,
@@ -99,10 +100,18 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                             icon: Icons.notifications_none_rounded,
                             title: context.l10n.settingsReminders,
                             subtitle: context.l10n.settingsRemindersSubtitle,
-                            value: _dailyReminders,
-                            onChanged: (v) =>
-                                setState(() => _dailyReminders = v),
+                            value: reminder.enabled,
+                            onChanged: _onReminderToggled,
                           ),
+                          if (reminder.enabled) ...[
+                            const _RowDivider(),
+                            _NavRow(
+                              icon: Icons.schedule_rounded,
+                              title: context.l10n.settingsReminderTime,
+                              trailingText: _formatTime(reminder.time),
+                              onTap: _openReminderTimePicker,
+                            ),
+                          ],
 
                           const _RowDivider(),
                           _NavRow(
@@ -137,7 +146,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           _NavRow(
                             icon: Icons.shield_outlined,
                             title: context.l10n.settingsPrivacy,
-                            onTap: () => _todo(context.l10n.settingsPrivacy),
+                            onTap: _openPrivacyData,
                           ),
                           const _RowDivider(),
                           _NavRow(
@@ -221,11 +230,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     _showMessage(context.l10n.signedOut);
   }
 
+  /// Confirms then permanently deletes the account. The destructive action is
+  /// behind an explicit two-button dialog; on confirm it runs the deletion under
+  /// a blocking spinner, resets the session (so a fresh guest is minted) and
+  /// leaves Settings.
   Future<void> _confirmDeleteAccount() async {
-    // Account deletion needs a service-role server action (clients can't delete
-    // their own auth user), which isn't built yet. Be honest about that rather
-    // than showing a destructive "confirm" that silently does nothing.
-    await showDialog<void>(
+    final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
         backgroundColor: _kCardSurface,
@@ -233,15 +243,110 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         content: Text(context.l10n.deleteAccountBody),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(),
-            child: Text(context.l10n.ok),
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: Text(context.l10n.cancel),
+          ),
+          TextButton(
+            style: TextButton.styleFrom(foregroundColor: _kDanger),
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: Text(context.l10n.deleteAccount),
           ),
         ],
       ),
     );
+    if (confirmed != true) return;
+    await _performDeleteAccount();
+  }
+
+  Future<void> _performDeleteAccount() async {
+    // Capture everything that needs `context` BEFORE the await, so we never
+    // touch a possibly-unmounted context afterwards (the screen pops on success).
+    final navigator = Navigator.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    final successMsg = context.l10n.deleteAccountSuccess;
+    final errorMsg = context.l10n.deleteAccountError;
+
+    // Blocking, non-dismissible progress overlay while the server works.
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const PopScope(
+        canPop: false,
+        child: Center(child: CircularProgressIndicator()),
+      ),
+    );
+
+    try {
+      await SupabaseService.deleteAccount();
+      // Drop the resolved session so the gate re-runs ensureSignedIn → fresh
+      // guest, and every per-user cache is rebuilt from the new identity.
+      ref.invalidate(sessionProvider);
+      navigator.pop(); // dismiss the progress overlay
+      navigator.maybePop(); // leave Settings, back to the question screen
+      messenger.showSnackBar(
+        SnackBar(content: Text(successMsg), backgroundColor: AppTheme.accent),
+      );
+    } catch (e) {
+      navigator.pop(); // dismiss the progress overlay
+      messenger.showSnackBar(SnackBar(content: Text(errorMsg)));
+    }
   }
 
   void _openAuth() => showAuthSheet(context);
+
+  /// Turns the daily reminder on/off. Enabling first asks the OS for permission
+  /// and only schedules + persists when it's granted — denial reverts the switch
+  /// and points the user to system settings. Disabling cancels the schedule.
+  Future<void> _onReminderToggled(bool enabled) async {
+    if (!enabled) {
+      await NotificationService.cancelDailyReminder();
+      await ref.read(reminderControllerProvider.notifier).setEnabled(false);
+      return;
+    }
+
+    final granted = await NotificationService.requestPermission();
+    if (!mounted) return;
+    if (!granted) {
+      _showMessage(context.l10n.remindersPermissionDenied);
+      return; // leave the switch off — nothing persisted
+    }
+
+    final prefs = ref.read(reminderControllerProvider);
+    await NotificationService.scheduleDailyReminder(
+      hour: prefs.hour,
+      minute: prefs.minute,
+      title: context.l10n.notificationDailyTitle,
+      body: context.l10n.notificationDailyBody,
+    );
+    await ref.read(reminderControllerProvider.notifier).setEnabled(true);
+  }
+
+  /// Opens a time picker and reschedules the reminder for the chosen time.
+  Future<void> _openReminderTimePicker() async {
+    final current = ref.read(reminderControllerProvider);
+    final picked = await showTimePicker(
+      context: context,
+      initialTime: current.time,
+    );
+    if (picked == null || !mounted) return;
+    // Capture the localized strings before the next await — using `context`
+    // after an async gap is unsafe.
+    final title = context.l10n.notificationDailyTitle;
+    final body = context.l10n.notificationDailyBody;
+    await ref.read(reminderControllerProvider.notifier).setTime(picked);
+    await NotificationService.scheduleDailyReminder(
+      hour: picked.hour,
+      minute: picked.minute,
+      title: title,
+      body: body,
+    );
+  }
+
+  /// 24-hour `HH:MM` for the reminder-time row — matches the app's clean numeric
+  /// style and reads the same in both languages.
+  static String _formatTime(TimeOfDay time) =>
+      '${time.hour.toString().padLeft(2, '0')}:'
+      '${time.minute.toString().padLeft(2, '0')}';
 
   /// Human-readable name for a language code, shown as the row's trailing label
   /// and the picker options. Each language is named in itself, the convention
@@ -304,10 +409,30 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
     if (picked != null) {
       await ref.read(localeControllerProvider.notifier).setLocale(picked);
+
+      // Keep the scheduled reminder's text in the newly chosen language. Load
+      // the strings for `picked` directly rather than via `context.l10n`, which
+      // won't reflect the switch until the next frame.
+      final reminder = ref.read(reminderControllerProvider);
+      if (reminder.enabled) {
+        final l10n = await AppLocalizations.delegate.load(picked);
+        await NotificationService.scheduleDailyReminder(
+          hour: reminder.hour,
+          minute: reminder.minute,
+          title: l10n.notificationDailyTitle,
+          body: l10n.notificationDailyBody,
+        );
+      }
     }
   }
 
-  void _todo(String label) => _showMessage(context.l10n.comingSoonNamed(label));
+  /// Pushes the Privacy & data screen — document links plus a plain-language
+  /// summary of what the app stores.
+  void _openPrivacyData() {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(builder: (_) => const PrivacyDataScreen()),
+    );
+  }
 
   void _showMessage(String message) {
     if (!mounted) return;
@@ -1289,6 +1414,248 @@ class _DeleteAccountButton extends StatelessWidget {
           context.l10n.deleteAccount,
           style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
         ),
+      ),
+    );
+  }
+}
+
+// ---- Privacy & data --------------------------------------------------------
+
+/// Reached from the "Privacy & data" account row. Two parts:
+///
+/// 1. **Documents** — outbound links to the privacy policy and terms, opened in
+///    the system browser. Each row only appears once a real URL is configured
+///    via `--dart-define` ([AppConfig.privacyPolicyUrl] /
+///    [AppConfig.termsOfServiceUrl]), so the section is simply absent until the
+///    legal pages exist rather than showing dead links.
+/// 2. **What we store** — a plain-language summary of the data the app keeps and
+///    why, mirroring the categories actually collected (account, activity,
+///    purchases, ads).
+class PrivacyDataScreen extends StatelessWidget {
+  const PrivacyDataScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final hasPolicy = AppConfig.hasPrivacyPolicy;
+    final hasTerms = AppConfig.hasTermsOfService;
+    final hasDocs = hasPolicy || hasTerms;
+
+    return Scaffold(
+      backgroundColor: AppTheme.background,
+      body: Stack(
+        children: [
+          const _TopGlow(),
+          SafeArea(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.fromLTRB(
+                20,
+                8,
+                20,
+                32 + MediaQuery.paddingOf(context).bottom,
+              ),
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 520),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      _SubScreenHeader(
+                        title: l10n.settingsPrivacy,
+                        onClose: () => Navigator.of(context).maybePop(),
+                      ),
+                      const SizedBox(height: 24),
+
+                      // ---- Documents (only when URLs are configured) --------
+                      if (hasDocs) ...[
+                        _SectionLabel(l10n.privacyDocsSection),
+                        const SizedBox(height: 12),
+                        _Card(
+                          children: [
+                            if (hasPolicy)
+                              _NavRow(
+                                icon: Icons.description_outlined,
+                                title: l10n.privacyPolicy,
+                                subtitle: l10n.privacyOpenInBrowser,
+                                onTap: () => _openUrl(
+                                  context,
+                                  AppConfig.privacyPolicyUrl,
+                                ),
+                              ),
+                            if (hasPolicy && hasTerms) const _RowDivider(),
+                            if (hasTerms)
+                              _NavRow(
+                                icon: Icons.gavel_rounded,
+                                title: l10n.privacyTerms,
+                                subtitle: l10n.privacyOpenInBrowser,
+                                onTap: () => _openUrl(
+                                  context,
+                                  AppConfig.termsOfServiceUrl,
+                                ),
+                              ),
+                          ],
+                        ),
+                        const SizedBox(height: 28),
+                      ],
+
+                      // ---- What we store ------------------------------------
+                      _SectionLabel(l10n.privacyDataSection),
+                      const SizedBox(height: 12),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(4, 0, 4, 14),
+                        child: Text(
+                          l10n.privacyDataIntro,
+                          style: const TextStyle(
+                            color: AppTheme.subtle,
+                            fontSize: 13.5,
+                            height: 1.4,
+                          ),
+                        ),
+                      ),
+                      _Card(
+                        children: [
+                          _PrivacyDataRow(
+                            icon: Icons.person_outline_rounded,
+                            title: l10n.privacyDataAccountTitle,
+                            body: l10n.privacyDataAccountBody,
+                          ),
+                          const _RowDivider(),
+                          _PrivacyDataRow(
+                            icon: Icons.insights_rounded,
+                            title: l10n.privacyDataActivityTitle,
+                            body: l10n.privacyDataActivityBody,
+                          ),
+                          const _RowDivider(),
+                          _PrivacyDataRow(
+                            icon: Icons.workspace_premium_outlined,
+                            title: l10n.privacyDataPurchasesTitle,
+                            body: l10n.privacyDataPurchasesBody,
+                          ),
+                          const _RowDivider(),
+                          _PrivacyDataRow(
+                            icon: Icons.campaign_outlined,
+                            title: l10n.privacyDataAdsTitle,
+                            body: l10n.privacyDataAdsBody,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Opens [url] in the system browser, surfacing a snackbar if it can't be
+  /// launched (mirrors [_ManageSubscriptionSheet]'s deep-link handling).
+  Future<void> _openUrl(BuildContext context, String url) async {
+    final uri = Uri.tryParse(url);
+    final messenger = ScaffoldMessenger.of(context);
+    final failed = context.l10n.privacyLinkFailed;
+    var opened = false;
+    if (uri != null) {
+      try {
+        opened = await launchUrl(uri, mode: LaunchMode.externalApplication);
+      } catch (_) {
+        opened = false;
+      }
+    }
+    if (!opened) {
+      messenger.showSnackBar(
+        SnackBar(content: Text(failed), backgroundColor: AppTheme.accent),
+      );
+    }
+  }
+}
+
+/// Left-aligned screen title with a floating close button, matching the
+/// profile header but for pushed sub-screens.
+class _SubScreenHeader extends StatelessWidget {
+  const _SubScreenHeader({required this.title, required this.onClose});
+
+  final String title;
+  final VoidCallback onClose;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      alignment: Alignment.topLeft,
+      clipBehavior: Clip.none,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(right: 44, top: 4),
+          child: Text(
+            title,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              color: _kLavender,
+              fontSize: 23,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 0.2,
+            ),
+          ),
+        ),
+        Align(
+          alignment: Alignment.topRight,
+          child: _CloseButton(onTap: onClose),
+        ),
+      ],
+    );
+  }
+}
+
+/// Non-interactive informational row: icon, title and a wrapping body. Used by
+/// the "What we store" summary, so it deliberately has no chevron.
+class _PrivacyDataRow extends StatelessWidget {
+  const _PrivacyDataRow({
+    required this.icon,
+    required this.title,
+    required this.body,
+  });
+
+  final IconData icon;
+  final String title;
+  final String body;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, color: AppTheme.subtle, size: 22),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    color: AppTheme.ink,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  body,
+                  style: const TextStyle(
+                    color: AppTheme.subtle,
+                    fontSize: 13,
+                    height: 1.4,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -89,6 +89,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         body: l10n.onboardingStreakBody,
       ),
       _IntroCard(
+        // Same snowflake + sky-blue the rank sheet's freeze warning uses, so the
+        // tutorial's promise matches what the user later sees in the live UI.
+        glyph: const _GlyphBubble(
+          icon: Icons.ac_unit_rounded,
+          color: kFreeze,
+        ),
+        title: l10n.onboardingFreezeTitle,
+        body: l10n.onboardingFreezeBody,
+      ),
+      _IntroCard(
         glyph: const _GlyphBubble(
           icon: Icons.lock_open_rounded,
           color: AppTheme.spark,
