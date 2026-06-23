@@ -10,6 +10,7 @@ import 'services/ads_service.dart';
 import 'services/consent_service.dart';
 import 'services/notification_service.dart';
 import 'services/purchases_service.dart';
+import 'services/reminder_scheduler.dart';
 import 'services/supabase_service.dart';
 import 'services/widget_sync_service.dart';
 
@@ -73,12 +74,5 @@ Future<void> _rescheduleReminderIfEnabled(SharedPreferences prefs) async {
   );
 
   final l10n = await AppLocalizations.delegate.load(locale);
-  await NotificationService.scheduleDailyReminder(
-    hour: reminder.hour,
-    minute: reminder.minute,
-    title: l10n.notificationDailyTitle,
-    body: l10n.notificationDailyBody,
-    // Don't re-arm today's nudge if they already voted before this relaunch.
-    skipToday: hasVotedTodayLocal(prefs),
-  );
+  await rescheduleReminderLoop(prefs: prefs, l10n: l10n);
 }

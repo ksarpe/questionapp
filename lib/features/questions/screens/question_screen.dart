@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/locale/l10n_extension.dart';
 import '../../../core/network/connectivity_providers.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../services/question_cache.dart';
 import '../../account/providers/session_providers.dart';
 import '../../account/providers/stats_providers.dart';
 import '../../account/screens/auth_screen.dart';
@@ -23,6 +24,7 @@ import '../widgets/rank_up_sheet.dart';
 import '../widgets/share_question_button.dart';
 import '../widgets/smaczki_panel.dart';
 import '../widgets/stat_chips.dart';
+import '../widgets/streak_up_celebration.dart';
 import '../widgets/swipe_hand_hint.dart';
 import '../widgets/wind_question_view.dart';
 
@@ -94,10 +96,23 @@ class QuestionScreen extends ConsumerWidget {
     // the deck if an entitlement changed while offline.
     ref.listen(isOnlineValueProvider, (wasOnline, isOnline) {
       if (wasOnline == false && isOnline == true) {
-        ref.invalidate(sessionProvider);
+        // refresh() (not invalidate) so the session reload doesn't flash to
+        // loading — that would null userId and trip the identity listener above,
+        // wiping the revealed feed and snapping back to the daily.
+        ref.read(sessionProvider.notifier).refresh();
         ref.invalidate(questionsProvider);
         ref.invalidate(todaysDailyQuestionProvider);
         ref.invalidate(userStatsProvider);
+      }
+    });
+
+    // Clear the cached content the moment premium lapses (true→false) so a former
+    // subscriber can't keep reading the full catalog offline. Belt-and-suspenders
+    // on top of the caching repo's read-time premium guard and the next online
+    // refetch (which overwrites the cache with the now-locked free shape).
+    ref.listen(isPremiumProvider, (wasPremium, isPremium) {
+      if (wasPremium == true && isPremium == false) {
+        ref.read(questionCacheProvider).clearContent();
       }
     });
 
@@ -220,6 +235,9 @@ class QuestionScreen extends ConsumerWidget {
           // synced stats cross a tier — caught on launch and after a daily vote.
           // Zero-size; mounts here so it lives for the whole session.
           const RankCelebrationListener(),
+          // The everyday "+1": flies a flame up into the streak chip whenever the
+          // streak grows (and it isn't a promotion day, which the rank-up owns).
+          const StreakCelebrationListener(),
         ],
       ),
     );

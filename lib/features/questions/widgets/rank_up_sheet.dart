@@ -177,9 +177,11 @@ class _RankUpViewState extends State<_RankUpView>
       type: MaterialType.transparency,
       child: Stack(
         children: [
-          // A faint spark glow pooled behind the card, over the dark barrier, so
-          // the takeover has depth rather than reading as a flat scrim.
-          const Positioned.fill(child: _SparkBackdrop()),
+          // An OPAQUE branded dark backdrop (same palette as the share card), so
+          // the celebration is a true takeover — the app content behind is fully
+          // hidden instead of bleeding through a translucent scrim and drowning
+          // out the animation.
+          const Positioned.fill(child: _RankUpBackdrop()),
 
           if (!reduceMotion) const Positioned.fill(child: ConfettiOverlay()),
 
@@ -386,20 +388,47 @@ class _ShareButton extends StatelessWidget {
   }
 }
 
-/// A soft radial spark glow over the dark barrier, giving the takeover depth.
-class _SparkBackdrop extends StatelessWidget {
-  const _SparkBackdrop();
+/// The full-screen, OPAQUE takeover background: the same dark orange-tinted
+/// gradient as [RankShareCard], with a soft spark halo bleeding in from the top.
+///
+/// Opaque on purpose — it completely covers the app behind the celebration so
+/// the badge, confetti and copy read against a clean dark canvas (the old
+/// translucent scrim let the app content show through, swamping the animation),
+/// and the in-app moment matches the poster the user shares.
+class _RankUpBackdrop extends StatelessWidget {
+  const _RankUpBackdrop();
+
+  // Mirrors RankShareCard's fixed palette so the takeover and the shared image
+  // look like one thing.
+  static const Color _bgTop = Color(0xFF0C0A14);
+  static const Color _bgBottom = Color(0xFF171124);
 
   @override
   Widget build(BuildContext context) {
     return DecoratedBox(
-      decoration: BoxDecoration(
-        gradient: RadialGradient(
-          radius: 0.9,
-          colors: [
-            AppTheme.spark.withValues(alpha: 0.22),
-            Colors.transparent,
-          ],
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [_bgTop, _bgBottom],
+        ),
+      ),
+      child: Align(
+        alignment: const Alignment(0, -0.65),
+        child: FractionallySizedBox(
+          widthFactor: 1.15,
+          heightFactor: 0.6,
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: RadialGradient(
+                colors: [
+                  AppTheme.spark.withValues(alpha: 0.30),
+                  AppTheme.spark.withValues(alpha: 0.0),
+                ],
+              ),
+            ),
+          ),
         ),
       ),
     );

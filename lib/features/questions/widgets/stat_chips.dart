@@ -13,6 +13,11 @@ import 'rank_sheet.dart';
 /// and the free-unlock count. Kept deliberately light (icon + number, a soft
 /// glow when active) so they sit quietly on the black canvas.
 
+/// Marks the streak flame glyph in the top bar so the streak-up celebration
+/// (see `streak_up_celebration.dart`) knows where to fly its big flame TO. A
+/// single chip is ever mounted, so a plain shared [GlobalKey] is safe here.
+final streakChipKeyProvider = Provider<GlobalKey>((ref) => GlobalKey());
+
 /// 🔥 Streak — consecutive days the user voted on the daily. Muted at 0; a
 /// living, shimmering flame once it is running (see [AnimatedFlameIcon]).
 /// Tapping it opens the rank sheet.
@@ -24,9 +29,14 @@ class StreakChip extends ConsumerWidget {
     final stats = ref.watch(userStatsValueProvider);
     final active = stats.currentStreak > 0;
     return _StatChip(
-      icon: AnimatedFlameIcon(
-        streak: stats.currentStreak,
-        rankTier: stats.rankTier,
+      // Tag the flame with the shared key so the streak-up flourish can read its
+      // on-screen position and land the flying flame exactly on it.
+      icon: KeyedSubtree(
+        key: ref.read(streakChipKeyProvider),
+        child: AnimatedFlameIcon(
+          streak: stats.currentStreak,
+          rankTier: stats.rankTier,
+        ),
       ),
       label: '${stats.currentStreak}',
       labelColor: active ? flameColor(context) : context.colors.subtle,

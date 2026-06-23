@@ -192,7 +192,9 @@ class _AuthCardState extends ConsumerState<_AuthCard> {
                         Align(
                           alignment: Alignment.centerRight,
                           child: GestureDetector(
-                            onTap: _isSubmitting ? null : _forgotPassword,
+                            onTap: (_isSubmitting || !isConfigured)
+                                ? null
+                                : _forgotPassword,
                             child: Text(
                               context.l10n.authForgotPassword,
                               style: const TextStyle(
@@ -407,8 +409,30 @@ class _AuthCardState extends ConsumerState<_AuthCard> {
     _showMessage(context.l10n.authAppleSoon);
   }
 
-  void _forgotPassword() {
-    _showMessage(context.l10n.authPasswordResetSoon);
+  /// Sends a Supabase password-reset email. Only the email field needs to be
+  /// valid here — the password can be blank — so we validate it on its own
+  /// rather than the whole form.
+  Future<void> _forgotPassword() async {
+    if (_isSubmitting) return;
+
+    final emailError = _validateEmail(_emailController.text);
+    if (emailError != null) {
+      _showMessage(emailError, type: ToastType.error);
+      return;
+    }
+
+    setState(() => _isSubmitting = true);
+    try {
+      await SupabaseService.resetPasswordForEmail(_emailController.text.trim());
+      if (!mounted) return;
+      _showMessage(context.l10n.authPasswordResetSent, type: ToastType.success);
+    } on AuthException catch (error) {
+      if (mounted) _showMessage(error.message, type: ToastType.error);
+    } catch (error) {
+      if (mounted) _showMessage(error.toString(), type: ToastType.error);
+    } finally {
+      if (mounted) setState(() => _isSubmitting = false);
+    }
   }
 
   void _showMessage(String message, {ToastType type = ToastType.info}) {
@@ -456,8 +480,10 @@ class _SegmentedTabs extends StatelessWidget {
                     width: pillWidth,
                     height: 44,
                     decoration: BoxDecoration(
+                      // The brand orange (same gradient as the primary CTA) so the
+                      // selected tab matches the app accent instead of a stray violet.
                       gradient: const LinearGradient(
-                        colors: [Color(0xFF6D5BC0), Color(0xFF4C3D86)],
+                        colors: [AppTheme.spark, Color(0xFFEA580C)],
                       ),
                       borderRadius: BorderRadius.circular(12),
                     ),

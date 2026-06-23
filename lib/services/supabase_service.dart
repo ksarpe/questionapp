@@ -133,6 +133,20 @@ class SupabaseService {
     return response.user;
   }
 
+  /// Sends a password-reset email so a user who forgot their password can set a
+  /// new one. Supabase emails a recovery link out of the box; the link's target
+  /// is the project's configured Site URL (no client-side deep link required).
+  ///
+  /// Note: Supabase deliberately returns success even for an unknown email so
+  /// the endpoint can't be used to probe which addresses have accounts, so the
+  /// caller should phrase the confirmation as "if an account exists…".
+  static Future<void> resetPasswordForEmail(String email) async {
+    if (!_initialised) {
+      throw StateError('Supabase is not configured.');
+    }
+    await client.auth.resetPasswordForEmail(email.trim());
+  }
+
   /// Creates a permanent email/password account.
   ///
   /// When the current user is anonymous we update that same Supabase user

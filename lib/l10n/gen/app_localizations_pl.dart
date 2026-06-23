@@ -108,7 +108,8 @@ class AppLocalizationsPl extends AppLocalizations {
   String get authAppleSoon => 'Logowanie przez Apple — wkrótce.';
 
   @override
-  String get authPasswordResetSoon => 'Reset hasła — wkrótce.';
+  String get authPasswordResetSent =>
+      'Jeśli istnieje konto dla tego adresu, wysłaliśmy link do resetu hasła.';
 
   @override
   String get authMissingSupabaseConfig =>
@@ -145,6 +146,72 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get notificationDailyBody => 'Oddaj głos i przedłuż swoją serię.';
+
+  @override
+  String get notifNudgeTitle1 => 'Wybierz stronę 🔥';
+
+  @override
+  String get notifNudgeBody1 =>
+      'Dzisiejsze pytanie dzieli ludzi. Po której jesteś stronie?';
+
+  @override
+  String get notifNudgeTitle2 => 'Pytanie dnia 🤔';
+
+  @override
+  String get notifNudgeBody2 => 'Wiele osób się dziś nie zgadza. A Ty?';
+
+  @override
+  String get notifNudgeTitle3 => 'Tak czy nie?';
+
+  @override
+  String get notifNudgeBody3 =>
+      'Zagłosuj w dzisiejszym pytaniu, zanim zrobią to inni.';
+
+  @override
+  String get notifStreakTitle => 'Nie zgaś jej 🔥';
+
+  @override
+  String notifStreakBody(int streak) {
+    return 'Dzień $streak Twojej serii. Zagłosuj dziś, żeby jej nie przerwać.';
+  }
+
+  @override
+  String get notifGraceTitle => 'Twoja ranga się chwieje ⚠️';
+
+  @override
+  String get notifGraceBodyTomorrow =>
+      'Spadnie jutro, jeśli dziś nie zagłosujesz.';
+
+  @override
+  String notifGraceBodyDays(int days) {
+    return 'Spadnie za $days dni. Zagłosuj, żeby ją utrzymać.';
+  }
+
+  @override
+  String get notifMinorityTitle => 'Wciąż w mniejszości? 🤔';
+
+  @override
+  String notifMinorityBody(int pct) {
+    return '$pct% nie zgodziło się dziś z Tobą. Zobacz, jak to się kończy.';
+  }
+
+  @override
+  String get notifResultTitle => 'Dzisiejszy wynik jest już znany';
+
+  @override
+  String get notifResultBody => 'Sprawdź, co naprawdę wybrała większość.';
+
+  @override
+  String get notifNextTitle => 'Jutrzejsze pytanie 🔮';
+
+  @override
+  String get notifNextBody => 'Jutro nowe. Znów będziesz w mniejszości?';
+
+  @override
+  String get notifSafeTitle => 'Seria zabezpieczona 🔥';
+
+  @override
+  String get notifSafeBody => 'Dobra robota. Wróć jutro, żeby ją podtrzymać.';
 
   @override
   String get widgetDailyLabel => 'Pytanie dnia';

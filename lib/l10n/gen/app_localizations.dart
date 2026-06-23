@@ -296,11 +296,11 @@ abstract class AppLocalizations {
   /// **'Sign in with Apple — coming soon.'**
   String get authAppleSoon;
 
-  /// No description provided for @authPasswordResetSoon.
+  /// No description provided for @authPasswordResetSent.
   ///
   /// In en, this message translates to:
-  /// **'Password reset — coming soon.'**
-  String get authPasswordResetSoon;
+  /// **'If an account exists for that email, we\'ve sent a reset link.'**
+  String get authPasswordResetSent;
 
   /// No description provided for @authMissingSupabaseConfig.
   ///
@@ -367,6 +367,120 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Cast your vote and keep your streak alive.'**
   String get notificationDailyBody;
+
+  /// No description provided for @notifNudgeTitle1.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a side 🔥'**
+  String get notifNudgeTitle1;
+
+  /// No description provided for @notifNudgeBody1.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s question splits the room. Which side are you on?'**
+  String get notifNudgeBody1;
+
+  /// No description provided for @notifNudgeTitle2.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s question 🤔'**
+  String get notifNudgeTitle2;
+
+  /// No description provided for @notifNudgeBody2.
+  ///
+  /// In en, this message translates to:
+  /// **'Plenty of people disagree today. Do you?'**
+  String get notifNudgeBody2;
+
+  /// No description provided for @notifNudgeTitle3.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes or no?'**
+  String get notifNudgeTitle3;
+
+  /// No description provided for @notifNudgeBody3.
+  ///
+  /// In en, this message translates to:
+  /// **'Cast today\'s vote before everyone else does.'**
+  String get notifNudgeBody3;
+
+  /// No description provided for @notifStreakTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t let it die 🔥'**
+  String get notifStreakTitle;
+
+  /// No description provided for @notifStreakBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Day {streak} of your streak. Vote today to keep it alive.'**
+  String notifStreakBody(int streak);
+
+  /// No description provided for @notifGraceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your rank is slipping ⚠️'**
+  String get notifGraceTitle;
+
+  /// No description provided for @notifGraceBodyTomorrow.
+  ///
+  /// In en, this message translates to:
+  /// **'It drops tomorrow unless you vote today.'**
+  String get notifGraceBodyTomorrow;
+
+  /// No description provided for @notifGraceBodyDays.
+  ///
+  /// In en, this message translates to:
+  /// **'It drops in {days} days. Vote to hold on to it.'**
+  String notifGraceBodyDays(int days);
+
+  /// No description provided for @notifMinorityTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Still in the minority? 🤔'**
+  String get notifMinorityTitle;
+
+  /// No description provided for @notifMinorityBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{pct}% disagreed with you today. See how it\'s ending.'**
+  String notifMinorityBody(int pct);
+
+  /// No description provided for @notifResultTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s split is in'**
+  String get notifResultTitle;
+
+  /// No description provided for @notifResultBody.
+  ///
+  /// In en, this message translates to:
+  /// **'See what the majority actually picked.'**
+  String get notifResultBody;
+
+  /// No description provided for @notifNextTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tomorrow\'s question 🔮'**
+  String get notifNextTitle;
+
+  /// No description provided for @notifNextBody.
+  ///
+  /// In en, this message translates to:
+  /// **'A fresh one drops tomorrow. Will you be in the minority again?'**
+  String get notifNextBody;
+
+  /// No description provided for @notifSafeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Streak secured 🔥'**
+  String get notifSafeTitle;
+
+  /// No description provided for @notifSafeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Nice one. Come back tomorrow to keep it going.'**
+  String get notifSafeBody;
 
   /// No description provided for @widgetDailyLabel.
   ///

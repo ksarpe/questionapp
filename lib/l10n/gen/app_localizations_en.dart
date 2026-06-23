@@ -108,7 +108,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authAppleSoon => 'Sign in with Apple — coming soon.';
 
   @override
-  String get authPasswordResetSoon => 'Password reset — coming soon.';
+  String get authPasswordResetSent =>
+      'If an account exists for that email, we\'ve sent a reset link.';
 
   @override
   String get authMissingSupabaseConfig =>
@@ -146,6 +147,72 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get notificationDailyBody =>
       'Cast your vote and keep your streak alive.';
+
+  @override
+  String get notifNudgeTitle1 => 'Pick a side 🔥';
+
+  @override
+  String get notifNudgeBody1 =>
+      'Today\'s question splits the room. Which side are you on?';
+
+  @override
+  String get notifNudgeTitle2 => 'Today\'s question 🤔';
+
+  @override
+  String get notifNudgeBody2 => 'Plenty of people disagree today. Do you?';
+
+  @override
+  String get notifNudgeTitle3 => 'Yes or no?';
+
+  @override
+  String get notifNudgeBody3 => 'Cast today\'s vote before everyone else does.';
+
+  @override
+  String get notifStreakTitle => 'Don\'t let it die 🔥';
+
+  @override
+  String notifStreakBody(int streak) {
+    return 'Day $streak of your streak. Vote today to keep it alive.';
+  }
+
+  @override
+  String get notifGraceTitle => 'Your rank is slipping ⚠️';
+
+  @override
+  String get notifGraceBodyTomorrow =>
+      'It drops tomorrow unless you vote today.';
+
+  @override
+  String notifGraceBodyDays(int days) {
+    return 'It drops in $days days. Vote to hold on to it.';
+  }
+
+  @override
+  String get notifMinorityTitle => 'Still in the minority? 🤔';
+
+  @override
+  String notifMinorityBody(int pct) {
+    return '$pct% disagreed with you today. See how it\'s ending.';
+  }
+
+  @override
+  String get notifResultTitle => 'Today\'s split is in';
+
+  @override
+  String get notifResultBody => 'See what the majority actually picked.';
+
+  @override
+  String get notifNextTitle => 'Tomorrow\'s question 🔮';
+
+  @override
+  String get notifNextBody =>
+      'A fresh one drops tomorrow. Will you be in the minority again?';
+
+  @override
+  String get notifSafeTitle => 'Streak secured 🔥';
+
+  @override
+  String get notifSafeBody => 'Nice one. Come back tomorrow to keep it going.';
 
   @override
   String get widgetDailyLabel => 'Daily question';

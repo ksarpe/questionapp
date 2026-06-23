@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/feedback/app_toast.dart';
+import '../../../core/locale/app_locale.dart' show sharedPreferencesProvider;
 import '../../../core/locale/l10n_extension.dart';
 import '../../../core/network/network_error.dart';
 import '../../../data/models/rank.dart';
 import '../../../data/models/vote_result.dart';
-import '../../../services/notification_service.dart';
+import '../../../l10n/gen/app_localizations.dart';
+import '../../../services/reminder_scheduler.dart';
 import '../../account/providers/session_providers.dart';
 import '../../account/providers/stats_providers.dart';
 import '../../account/screens/auth_screen.dart';
@@ -43,8 +45,7 @@ class _DailyVotePanelState extends ConsumerState<DailyVotePanel> {
     if (_busy) return;
     setState(() => _busy = true);
     // Captured before the await so we never read context across an async gap.
-    final notifTitle = context.l10n.notificationDailyTitle;
-    final notifBody = context.l10n.notificationDailyBody;
+    final l10n = context.l10n;
     try {
       final result = await ref
           .read(questionRepositoryProvider)
@@ -53,7 +54,7 @@ class _DailyVotePanelState extends ConsumerState<DailyVotePanel> {
       // The vote may have moved the streak — refresh the top chip.
       ref.invalidate(userStatsProvider);
       setState(() => _local = result);
-      await _suppressTonightsReminder(notifTitle, notifBody);
+      await _refreshReminderAfterVote(result, l10n);
       await _maybeAskForReview();
     } catch (e) {
       if (!mounted) return;
@@ -68,26 +69,28 @@ class _DailyVotePanelState extends ConsumerState<DailyVotePanel> {
     }
   }
 
-  /// Now that today's daily is answered, skip tonight's reminder (this panel only
-  /// renders under the daily, so a vote here is always today's daily). Stamps the
-  /// local vote date — which also keeps the nudge skipped across a same-day
-  /// relaunch — and re-arms the schedule to fire from tomorrow.
+  /// Now that today's daily is answered, refresh the reminder loop (this panel
+  /// only renders under the daily, so a vote here is always today's daily).
+  /// Stamps the local vote date — plus the share who disagreed with this vote,
+  /// for the "X% disagreed with you today" nudge — then re-arms the loop, which
+  /// now picks a post-vote message for today's slot instead of a "go vote" one.
   ///
-  /// Best-effort: reminder suppression must never break the vote, so a missing
+  /// Best-effort: reminder upkeep must never break the vote, so a missing
   /// prefs/notification setup (dev/tests) is swallowed.
-  Future<void> _suppressTonightsReminder(String title, String body) async {
+  Future<void> _refreshReminderAfterVote(
+    VoteResult result,
+    AppLocalizations l10n,
+  ) async {
     try {
-      await ref.read(reminderControllerProvider.notifier).markVotedToday();
-      final reminder = ref.read(reminderControllerProvider);
-      if (reminder.enabled) {
-        await NotificationService.scheduleDailyReminder(
-          hour: reminder.hour,
-          minute: reminder.minute,
-          title: title,
-          body: body,
-          skipToday: true,
-        );
-      }
+      final disagreePct =
+          result.myChoice == VoteResult.yes ? result.noPct : result.yesPct;
+      await ref
+          .read(reminderControllerProvider.notifier)
+          .markVotedToday(disagreePct: disagreePct);
+      await rescheduleReminderLoop(
+        prefs: ref.read(sharedPreferencesProvider),
+        l10n: l10n,
+      );
     } catch (_) {
       // Non-critical: the vote already counted; the reminder will self-correct
       // on the next launch / vote.

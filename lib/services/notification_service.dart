@@ -26,9 +26,17 @@ class NotificationService {
   static bool _initialised = false;
   static bool get isInitialised => _initialised;
 
-  /// Stable id for the single daily reminder, so re-scheduling replaces it
-  /// rather than stacking duplicates.
-  static const int _dailyReminderId = 1001;
+  /// Legacy id of the old single repeating reminder. Kept only so we can cancel
+  /// any lingering schedule left by a previous app version when we re-arm.
+  static const int _legacyDailyReminderId = 1001;
+
+  /// The daily-reminder loop is a run of one-shot notifications, one per upcoming
+  /// day, scheduled at [_loopBaseId], [_loopBaseId] + 1, … Each carries its own
+  /// freshly-picked message (see [scheduleReminderLoop]) instead of one repeating
+  /// line. We cancel a generous range on every re-arm so shrinking the loop never
+  /// strands an old day's notification.
+  static const int _loopBaseId = 2001;
+  static const int _maxLoopDays = 14;
 
   static const String _channelId = 'daily_reminder';
   static const String _channelName = 'Daily question';
@@ -143,82 +151,86 @@ class NotificationService {
     }
   }
 
-  /// Schedules (replacing any existing) a daily reminder at [hour]:[minute]
-  /// local time. [title]/[body] are baked in at schedule time, so callers pass
-  /// the localized strings for the current language.
+  /// (Re)schedules the daily-reminder loop: one one-shot notification per upcoming
+  /// day at [hour]:[minute] local time, for the next [days] days. The text for
+  /// each day is produced on demand by [build] — given the day's offset (0 =
+  /// today) and whether it's today's slot — so every day carries its own,
+  /// independently-picked message instead of one repeating line.
   ///
-  /// Set [skipToday] when the user has already done today's thing (voted on the
-  /// daily): the first fire is pushed to tomorrow so they aren't nudged about a
-  /// question they've answered. The schedule still repeats every following day —
-  /// each of those is suppressed in turn by re-scheduling when they vote that
-  /// day (see the daily vote panel) — so a quiet day still gets its reminder.
-  static Future<void> scheduleDailyReminder({
+  /// Today's slot is only scheduled when [hour]:[minute] is still ahead of now;
+  /// an already-passed time simply isn't scheduled for today. The whole managed
+  /// range (plus the legacy single reminder) is cancelled first, so re-arming is
+  /// idempotent and never stacks duplicates.
+  static Future<void> scheduleReminderLoop({
     required int hour,
     required int minute,
-    required String title,
-    required String body,
-    bool skipToday = false,
+    required int days,
+    required ({String title, String body}) Function(int dayOffset, bool isToday)
+        build,
   }) async {
     if (!_initialised) return;
     try {
-      await _plugin.cancel(id: _dailyReminderId);
-      await _plugin.zonedSchedule(
-        id: _dailyReminderId,
-        title: title,
-        body: body,
-        scheduledDate: _nextInstanceOf(hour, minute, skipToday: skipToday),
-        notificationDetails: const NotificationDetails(
-          android: AndroidNotificationDetails(
-            _channelId,
-            _channelName,
-            channelDescription: _channelDescription,
-            importance: Importance.high,
-            priority: Priority.high,
+      await _cancelManaged();
+      final now = tz.TZDateTime.now(tz.local);
+      final count = days.clamp(1, _maxLoopDays);
+      for (var offset = 0; offset < count; offset++) {
+        // Constructing the date with `now.day + offset` lets TZDateTime normalise
+        // month/year rollover and land on the right wall-clock time even across a
+        // DST change (unlike adding a fixed 24h Duration).
+        final when = tz.TZDateTime(
+          tz.local,
+          now.year,
+          now.month,
+          now.day + offset,
+          hour,
+          minute,
+        );
+        if (!when.isAfter(now)) continue; // today's slot already passed
+        final message = build(offset, offset == 0);
+        await _plugin.zonedSchedule(
+          id: _loopBaseId + offset,
+          title: message.title,
+          body: message.body,
+          scheduledDate: when,
+          notificationDetails: const NotificationDetails(
+            android: AndroidNotificationDetails(
+              _channelId,
+              _channelName,
+              channelDescription: _channelDescription,
+              importance: Importance.high,
+              priority: Priority.high,
+            ),
+            iOS: DarwinNotificationDetails(),
+            macOS: DarwinNotificationDetails(),
           ),
-          iOS: DarwinNotificationDetails(),
-          macOS: DarwinNotificationDetails(),
-        ),
-        // Inexact alarms avoid the SCHEDULE_EXACT_ALARM permission and its Play
-        // Store declaration — a daily reminder doesn't need to-the-second timing.
-        androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
-        // Repeat every day at the same time.
-        matchDateTimeComponents: DateTimeComponents.time,
-      );
+          // Inexact alarms avoid the SCHEDULE_EXACT_ALARM permission and its Play
+          // Store declaration — a daily reminder doesn't need to-the-second
+          // timing. No matchDateTimeComponents: each entry is a one-shot, so the
+          // day's freshly-picked text isn't frozen into a repeating notification.
+          androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+        );
+      }
     } catch (e) {
-      debugPrint('NotificationService: schedule failed — $e');
+      debugPrint('NotificationService: loop schedule failed — $e');
     }
   }
 
   /// Cancels the daily reminder, e.g. when the user turns it off.
   static Future<void> cancelDailyReminder() async {
     if (!_initialised) return;
+    await _cancelManaged();
+  }
+
+  /// Clears every notification this service owns: the legacy single reminder and
+  /// the whole one-shot loop range. Best-effort.
+  static Future<void> _cancelManaged() async {
     try {
-      await _plugin.cancel(id: _dailyReminderId);
+      await _plugin.cancel(id: _legacyDailyReminderId);
+      for (var i = 0; i < _maxLoopDays; i++) {
+        await _plugin.cancel(id: _loopBaseId + i);
+      }
     } catch (e) {
       debugPrint('NotificationService: cancel failed — $e');
     }
-  }
-
-  /// The next [hour]:[minute] in the device's local zone — today if it's still
-  /// ahead, otherwise tomorrow. When [skipToday] is set and the next instance
-  /// would land today, it's bumped one more day so today's fire is skipped.
-  static tz.TZDateTime _nextInstanceOf(
-    int hour,
-    int minute, {
-    bool skipToday = false,
-  }) {
-    final now = tz.TZDateTime.now(tz.local);
-    var scheduled =
-        tz.TZDateTime(tz.local, now.year, now.month, now.day, hour, minute);
-    if (!scheduled.isAfter(now)) {
-      scheduled = scheduled.add(const Duration(days: 1));
-    }
-    final isToday = scheduled.year == now.year &&
-        scheduled.month == now.month &&
-        scheduled.day == now.day;
-    if (skipToday && isToday) {
-      scheduled = scheduled.add(const Duration(days: 1));
-    }
-    return scheduled;
   }
 }

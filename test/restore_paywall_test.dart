@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:questionapp/core/locale/app_locale.dart';
 import 'package:questionapp/data/models/question.dart';
 import 'package:questionapp/data/repositories/question_repository.dart';
 import 'package:questionapp/features/account/providers/session_providers.dart';
@@ -11,6 +12,7 @@ import 'package:questionapp/features/questions/providers/question_providers.dart
 import 'package:questionapp/features/questions/widgets/wind_question_view.dart';
 
 import 'support/localized_test_app.dart';
+import 'support/test_prefs.dart';
 
 /// The "Przywróć zakup" affordance on the reveal-slot paywall. It exists there
 /// precisely because a guest can't reach Settings (the gear is account-only), so
@@ -28,6 +30,7 @@ void main() {
   Future<void> pumpGuestPaywall(WidgetTester tester) async {
     final container = ProviderContainer(
       overrides: [
+        sharedPreferencesProvider.overrideWithValue(await mockSharedPreferences()),
         questionsProvider.overrideWith((ref) async => const <Question>[]),
         todaysDailyQuestionProvider.overrideWith((ref) async => q('daily')),
         isPremiumProvider.overrideWithValue(false),

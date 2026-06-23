@@ -11,6 +11,7 @@ import '../../../core/theme/theme_controller.dart';
 import '../../../data/models/question.dart';
 import '../../../l10n/gen/app_localizations.dart';
 import '../../../services/notification_service.dart';
+import '../../../services/reminder_scheduler.dart';
 import '../../../services/purchases_service.dart';
 import '../../../services/supabase_service.dart';
 import '../../account/providers/session_providers.dart';
@@ -22,10 +23,8 @@ import '../../questions/widgets/history_sheet.dart';
 import '../../questions/widgets/rank_sheet.dart';
 import '../../questions/widgets/share_question_button.dart';
 import '../providers/app_info_provider.dart';
+import '../providers/offline_download_providers.dart';
 import '../providers/reminder_providers.dart';
-
-/// Soft lavender used for the user's name.
-const Color _kLavender = Color(0xFFCBBDF7);
 
 /// Warm flame colour for the (placeholder) streak card.
 const Color _kFlame = Color(0xFFFF7A29);
@@ -168,6 +167,15 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
                             trailingText: _themeModeName(context, themeMode),
                             onTap: _openAppearancePicker,
                           ),
+
+                          // Premium-only: pull the whole (legitimately-readable)
+                          // catalog + smaczki onto the device so it stays
+                          // readable offline. Free users only get the daily +
+                          // their reveals, so the action is meaningless for them.
+                          if (isPremium) ...[
+                            const _RowDivider(),
+                            _OfflineDownloadRow(localeCode: localeCode),
+                          ],
 
                           if (showFavorites) ...[
                             const _RowDivider(),
@@ -416,18 +424,16 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
     await _scheduleAndEnable();
   }
 
-  /// Schedules the daily reminder for the stored time and flips the switch on.
-  /// Skips today's fire when the user already voted (no nudge for a done daily).
+  /// Flips the switch on and arms the reminder loop for the stored time. The loop
+  /// builder reads the local state itself, so a day the user already voted on
+  /// gets a post-vote nudge rather than a "go vote" one.
   Future<void> _scheduleAndEnable() async {
-    final prefs = ref.read(reminderControllerProvider);
-    await NotificationService.scheduleDailyReminder(
-      hour: prefs.hour,
-      minute: prefs.minute,
-      title: context.l10n.notificationDailyTitle,
-      body: context.l10n.notificationDailyBody,
-      skipToday: hasVotedTodayLocal(ref.read(sharedPreferencesProvider)),
-    );
+    final l10n = context.l10n;
     await ref.read(reminderControllerProvider.notifier).setEnabled(true);
+    await rescheduleReminderLoop(
+      prefs: ref.read(sharedPreferencesProvider),
+      l10n: l10n,
+    );
     _pendingEnable = false;
   }
 
@@ -478,18 +484,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
       initialTime: current.time,
     );
     if (picked == null || !mounted) return;
-    // Capture the localized strings before the next await — using `context`
-    // after an async gap is unsafe.
-    final title = context.l10n.notificationDailyTitle;
-    final body = context.l10n.notificationDailyBody;
-    final skipToday = hasVotedTodayLocal(ref.read(sharedPreferencesProvider));
+    // Capture the localizations before the next await — using `context` after an
+    // async gap is unsafe.
+    final l10n = context.l10n;
     await ref.read(reminderControllerProvider.notifier).setTime(picked);
-    await NotificationService.scheduleDailyReminder(
-      hour: picked.hour,
-      minute: picked.minute,
-      title: title,
-      body: body,
-      skipToday: skipToday,
+    await rescheduleReminderLoop(
+      prefs: ref.read(sharedPreferencesProvider),
+      l10n: l10n,
     );
   }
 
@@ -561,20 +562,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
     if (picked != null) {
       await ref.read(localeControllerProvider.notifier).setLocale(picked);
 
-      // Keep the scheduled reminder's text in the newly chosen language. Load
+      // Keep the scheduled reminders' text in the newly chosen language. Load
       // the strings for `picked` directly rather than via `context.l10n`, which
       // won't reflect the switch until the next frame.
-      final reminder = ref.read(reminderControllerProvider);
-      if (reminder.enabled) {
-        final l10n = await AppLocalizations.delegate.load(picked);
-        await NotificationService.scheduleDailyReminder(
-          hour: reminder.hour,
-          minute: reminder.minute,
-          title: l10n.notificationDailyTitle,
-          body: l10n.notificationDailyBody,
-          skipToday: hasVotedTodayLocal(ref.read(sharedPreferencesProvider)),
-        );
-      }
+      final l10n = await AppLocalizations.delegate.load(picked);
+      await rescheduleReminderLoop(
+        prefs: ref.read(sharedPreferencesProvider),
+        l10n: l10n,
+      );
     }
   }
 
@@ -745,7 +740,7 @@ class _ProfileHeader extends StatelessWidget {
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
-                  color: _kLavender,
+                  color: AppTheme.spark,
                   fontSize: 23,
                   fontWeight: FontWeight.w800,
                   letterSpacing: 0.2,
@@ -1156,6 +1151,106 @@ class _NavRow extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+/// Premium-only "download everything for offline" row.
+///
+/// Drives [offlineDownloadControllerProvider], which walks the catalog + every
+/// question's smaczki through the caching repository so the whole
+/// premium-readable set lands on device. The subtitle reflects state — ready /
+/// in-progress (done/total) / last-downloaded date — and the trailing glyph
+/// flips between a download arrow, a spinner and a green check.
+class _OfflineDownloadRow extends ConsumerWidget {
+  const _OfflineDownloadRow({required this.localeCode});
+
+  final String localeCode;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final state = ref.watch(offlineDownloadControllerProvider);
+    final l10n = context.l10n;
+
+    final subtitle = switch (state.status) {
+      OfflineDownloadStatus.running =>
+        l10n.offlineDownloadProgress(state.done, state.total),
+      _ when state.lastSyncAt != null =>
+        l10n.offlineDownloadSynced(_formatLongDate(state.lastSyncAt!, localeCode)),
+      _ => l10n.offlineDownloadReady,
+    };
+
+    return InkWell(
+      onTap: state.isRunning ? null : () => _download(context, ref),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+        child: Row(
+          children: [
+            Icon(
+              Icons.cloud_download_outlined,
+              color: context.colors.subtle,
+              size: 22,
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    l10n.settingsOfflineQuestions,
+                    style: TextStyle(
+                      color: context.colors.ink,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style: TextStyle(color: context.colors.subtle, fontSize: 13),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            _trailing(state),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _trailing(OfflineDownloadState state) {
+    if (state.isRunning) {
+      return const SizedBox(
+        width: 20,
+        height: 20,
+        child: CircularProgressIndicator(strokeWidth: 2.2),
+      );
+    }
+    if (state.status != OfflineDownloadStatus.error && state.lastSyncAt != null) {
+      return const Icon(Icons.check_circle_rounded, color: _kPremiumGreen, size: 22);
+    }
+    return const Icon(Icons.download_rounded, color: AppTheme.spark, size: 22);
+  }
+
+  Future<void> _download(BuildContext context, WidgetRef ref) async {
+    // Capture the overlay + strings before the (long) await so the completion
+    // toast survives even if the user leaves Settings mid-download.
+    final overlay = AppToast.capture(context);
+    final completeMsg = context.l10n.offlineDownloadComplete;
+    final failMsg = context.l10n.offlineDownloadFailed;
+
+    await ref.read(offlineDownloadControllerProvider.notifier).download();
+
+    switch (ref.read(offlineDownloadControllerProvider).status) {
+      case OfflineDownloadStatus.done:
+        AppToast.showOn(overlay, completeMsg, type: ToastType.success);
+      case OfflineDownloadStatus.error:
+        AppToast.showOn(overlay, failMsg, type: ToastType.error);
+      case OfflineDownloadStatus.idle:
+      case OfflineDownloadStatus.running:
+        break;
+    }
   }
 }
 
@@ -2118,7 +2213,7 @@ class _SubScreenHeader extends StatelessWidget {
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(
-              color: _kLavender,
+              color: AppTheme.spark,
               fontSize: 23,
               fontWeight: FontWeight.w800,
               letterSpacing: 0.2,

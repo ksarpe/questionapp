@@ -33,7 +33,7 @@
   "authAccountCreated": "Account created.",
   "authConfirmEmail": "Check your email and confirm your account.",
   "authAppleSoon": "Sign in with Apple — coming soon.",
-  "authPasswordResetSoon": "Password reset — coming soon.",
+  "authPasswordResetSent": "If an account exists for that email, we've sent a reset link.",
   "authMissingSupabaseConfig": "Supabase configuration is missing. Run the app with SUPABASE_URL and SUPABASE_ANON_KEY.",
   "authMissingGoogleConfig": "GOOGLE_SERVER_CLIENT_ID is missing, so Google is temporarily disabled.",
   "settingsSectionApp": "APP SETTINGS",
@@ -45,6 +45,36 @@
   "remindersOpenSettings": "Open settings",
   "notificationDailyTitle": "Today's question is waiting 🔥",
   "notificationDailyBody": "Cast your vote and keep your streak alive.",
+
+  "notifNudgeTitle1": "Pick a side 🔥",
+  "notifNudgeBody1": "Today's question splits the room. Which side are you on?",
+  "notifNudgeTitle2": "Today's question 🤔",
+  "notifNudgeBody2": "Plenty of people disagree today. Do you?",
+  "notifNudgeTitle3": "Yes or no?",
+  "notifNudgeBody3": "Cast today's vote before everyone else does.",
+  "notifStreakTitle": "Don't let it die 🔥",
+  "notifStreakBody": "Day {streak} of your streak. Vote today to keep it alive.",
+  "@notifStreakBody": {
+    "placeholders": { "streak": { "type": "int" } }
+  },
+  "notifGraceTitle": "Your rank is slipping ⚠️",
+  "notifGraceBodyTomorrow": "It drops tomorrow unless you vote today.",
+  "notifGraceBodyDays": "It drops in {days} days. Vote to hold on to it.",
+  "@notifGraceBodyDays": {
+    "placeholders": { "days": { "type": "int" } }
+  },
+  "notifMinorityTitle": "Still in the minority? 🤔",
+  "notifMinorityBody": "{pct}% disagreed with you today. See how it's ending.",
+  "@notifMinorityBody": {
+    "placeholders": { "pct": { "type": "int" } }
+  },
+  "notifResultTitle": "Today's split is in",
+  "notifResultBody": "See what the majority actually picked.",
+  "notifNextTitle": "Tomorrow's question 🔮",
+  "notifNextBody": "A fresh one drops tomorrow. Will you be in the minority again?",
+  "notifSafeTitle": "Streak secured 🔥",
+  "notifSafeBody": "Nice one. Come back tomorrow to keep it going.",
+
   "widgetDailyLabel": "Daily question",
   "settingsLanguage": "Language",
   "chooseLanguage": "Choose language",
