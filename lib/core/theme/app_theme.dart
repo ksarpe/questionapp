@@ -110,9 +110,9 @@ extension BuildContextColors on BuildContext {
 class AppTheme {
   AppTheme._();
 
-  /// Violet "spark" accent — the glowing "go deeper" affordance. Shared by both
+  /// Orange "spark" accent — the glowing "go deeper" affordance. Shared by both
   /// themes.
-  static const Color spark = Color(0xFF8B5CF6);
+  static const Color spark = Color(0xFFF97316);
 
   /// Semantic vote colours: green for TAK, red for NIE. Used by the daily
   /// vote panel for the buttons' side hints and the post-vote split. Shared by

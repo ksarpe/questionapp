@@ -102,6 +102,66 @@ void main() {
     expect(deck.sublist(4).toSet(), {'s1', 's2'});
   });
 
+  test('premium category filter narrows the deck but keeps the daily', () async {
+    final daily = Question(
+      id: 'daily',
+      category: 'Society',
+      questionText: 'Daily?',
+    );
+    Question cat(String id, String category) =>
+        Question(id: id, category: category, questionText: 'Q $id?');
+
+    final pool = [
+      daily,
+      cat('e1', 'Ethics'),
+      cat('s1', 'Society'),
+      cat('e2', 'Ethics'),
+      cat('m1', 'Money'),
+    ];
+
+    final container = await deckContainer(daily: daily, pool: pool, premium: true);
+
+    // No filter: the whole catalog (daily first).
+    expect(
+      container.read(questionDeckProvider).map((e) => e.id).toSet(),
+      {'daily', 'e1', 's1', 'e2', 'm1'},
+    );
+
+    // Filtering to Ethics keeps only the Ethics questions — plus the daily, which
+    // is exempt and stays at index 0 even though it's a Society question.
+    container.read(selectedCategoryProvider.notifier).select('Ethics');
+    final ethics = container.read(questionDeckProvider).map((e) => e.id).toList();
+    expect(ethics.first, 'daily');
+    expect(ethics.sublist(1).toSet(), {'e1', 'e2'});
+
+    // Clearing restores the full catalog.
+    container.read(selectedCategoryProvider.notifier).clear();
+    expect(container.read(questionDeckProvider), hasLength(5));
+  });
+
+  test('availableCategories lists the distinct catalog categories, sorted',
+      () async {
+    final daily = Question(
+      id: 'daily',
+      category: 'Society',
+      questionText: 'Daily?',
+    );
+    Question cat(String id, String category) =>
+        Question(id: id, category: category, questionText: 'Q $id?');
+    final pool = [
+      daily,
+      cat('e1', 'Ethics'),
+      cat('s1', 'Society'),
+      cat('m1', 'Money'),
+    ];
+
+    final container = await deckContainer(daily: daily, pool: pool, premium: true);
+    expect(
+      container.read(availableCategoriesProvider),
+      ['Ethics', 'Money', 'Society'],
+    );
+  });
+
   test('the current index survives a pool refetch (premium)', () async {
     final daily = q('daily');
     final pool = [daily, for (var i = 0; i < 8; i++) q('q$i')];

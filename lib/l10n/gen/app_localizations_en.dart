@@ -148,6 +148,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Cast your vote and keep your streak alive.';
 
   @override
+  String get widgetDailyLabel => 'Daily question';
+
+  @override
   String get settingsLanguage => 'Language';
 
   @override
@@ -173,6 +176,30 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsGoPremium => 'Go Premium';
+
+  @override
+  String get settingsOfflineQuestions => 'Offline questions';
+
+  @override
+  String get offlineDownloadReady =>
+      'Download all questions to read without internet';
+
+  @override
+  String offlineDownloadSynced(String date) {
+    return 'Downloaded · $date';
+  }
+
+  @override
+  String offlineDownloadProgress(int done, int total) {
+    return 'Downloading… $done/$total';
+  }
+
+  @override
+  String get offlineDownloadComplete => 'Questions saved for offline.';
+
+  @override
+  String get offlineDownloadFailed =>
+      'Download failed. Check your connection and try again.';
 
   @override
   String get settingsPrivacy => 'Privacy & data';
@@ -212,6 +239,81 @@ class AppLocalizationsEn extends AppLocalizations {
   String get favoriteError => 'Couldn\'t update favorites.';
 
   @override
+  String get historyTitle => 'Question history';
+
+  @override
+  String get historySubtitle =>
+      'See how people voted on previous daily questions.';
+
+  @override
+  String get historyLabel => 'History';
+
+  @override
+  String get historyTooltip => 'Question history';
+
+  @override
+  String get historyEmptyTitle => 'Nothing here yet';
+
+  @override
+  String get historyEmptyBody => 'Previous daily questions will show up here.';
+
+  @override
+  String get historyLoadError => 'Couldn\'t load the history.';
+
+  @override
+  String get historyPremiumTitle => 'History is a PRO feature';
+
+  @override
+  String get historyPremiumBody =>
+      'Go PRO to browse every past daily question and see how others voted.';
+
+  @override
+  String get historyNoVotes => 'No votes';
+
+  @override
+  String get categoryFilterTooltip => 'Filter by category';
+
+  @override
+  String get categoryFilterTitle => 'Categories';
+
+  @override
+  String get categoryFilterSubtitle =>
+      'Show questions from one category only. The daily question stays as is.';
+
+  @override
+  String get categoryAll => 'All';
+
+  @override
+  String get categorySociety => 'Society';
+
+  @override
+  String get categoryEthics => 'Ethics';
+
+  @override
+  String get categoryJustice => 'Justice';
+
+  @override
+  String get categoryTechnology => 'Technology';
+
+  @override
+  String get categoryMoney => 'Money';
+
+  @override
+  String get categoryConnection => 'Connection';
+
+  @override
+  String get categoryDreams => 'Dreams';
+
+  @override
+  String get categoryEnvironment => 'Environment';
+
+  @override
+  String get categoryFamily => 'Family';
+
+  @override
+  String get categoryReflection => 'Reflection';
+
+  @override
   String aboutVersion(String version, String build) {
     return 'Version $version ($build)';
   }
@@ -240,7 +342,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get privacyDataIntro =>
-      'A quick overview of the data Spark keeps and why.';
+      'A quick overview of the data Debatly keeps and why.';
 
   @override
   String get privacyDataAccountTitle => 'Account & sign-in';
@@ -410,6 +512,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loadErrorBody => 'Check your internet connection and try again.';
 
   @override
+  String get offlineBannerLabel => 'You\'re offline';
+
+  @override
   String get goDeeper => 'GO DEEPER';
 
   @override
@@ -422,11 +527,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get shareTooltip => 'Share question';
 
   @override
-  String get shareSubject => 'A question from Spark';
+  String get shareSubject => 'A question from Debatly';
 
   @override
   String shareMessage(String question) {
-    return '$question\n\nSpark — thought-provoking questions.';
+    return '$question\n\nDebatly — thought-provoking questions.';
   }
 
   @override
@@ -612,11 +717,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get rankShareSubject => 'My rank in Spark';
+  String get rankShareSubject => 'My rank in Debatly';
 
   @override
   String rankShareMessage(String rank) {
-    return 'My new rank in Spark: $rank 🔥\n\nSpark — thought-provoking questions.';
+    return 'My new rank in Debatly: $rank 🔥\n\nDebatly — thought-provoking questions.';
   }
 
   @override
@@ -626,7 +731,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get onboardingNext => 'Next';
 
   @override
-  String get onboardingWelcomeTitle => 'Welcome to Spark';
+  String get onboardingWelcomeTitle => 'Welcome to Debatly';
 
   @override
   String get onboardingWelcomeBody =>

@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_theme.dart';
 
-/// Warm amber base for the streak flame — the one place the app steps off its
-/// violet/mono palette, so the "fire" reads as fire and is clearly distinct from
-/// the violet free-unlock chip next to it.
+/// Warm amber base for the streak flame — a golden, yellow-leaning warm that
+/// reads as "fire" and stays distinct from the more saturated, red-leaning
+/// orange "spark" accent (and the free-unlock chip) next to it.
 const Color kFlame = Color(0xFFF59E0B);
 
 /// Deeper amber for the flame on light themes: the bright [kFlame] and its glow

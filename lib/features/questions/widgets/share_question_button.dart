@@ -12,10 +12,10 @@ import 'share_question_card.dart';
 /// A visible "share" pill shown beneath the question (under the vote panel on
 /// the daily). Tapping it renders the question as a branded [QuestionShareCard]
 /// image and opens the platform share sheet (WhatsApp, Messenger, SMS, email,
-/// Stories…) with that image plus a short Spark signoff as the accompanying
+/// Stories…) with that image plus a short Debatly signoff as the accompanying
 /// text.
 ///
-/// The image makes the share feel intentional (and recognisably "Spark") rather
+/// The image makes the share feel intentional (and recognisably "Debatly") rather
 /// than a bare line of text; the same poster render doubles as store-screenshot
 /// art. If rendering the card fails for any reason we fall back to sharing the
 /// question as plain text, so the button never dead-ends.

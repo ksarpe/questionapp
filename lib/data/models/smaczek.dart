@@ -26,4 +26,13 @@ class Smaczek {
         isLocked: json['is_locked'] as bool? ?? true,
         text: json['text'] as String?,
       );
+
+  /// Mirrors the `get_question_smaczki` row shape so a cached smaczek round-trips
+  /// back through [Smaczek.fromJson] (used by the offline cache). A locked
+  /// smaczek serialises its null [text] — no hidden content is ever stored.
+  Map<String, dynamic> toJson() => {
+        'position': position,
+        'is_locked': isLocked,
+        'text': text,
+      };
 }

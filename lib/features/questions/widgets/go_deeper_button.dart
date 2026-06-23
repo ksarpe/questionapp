@@ -23,19 +23,19 @@ class GoDeeperButton extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(10),
           child: DecoratedBox(
-            // Tie the pill to the violet "spark" it's built around — a faint
-            // wash, a soft halo and a violet hairline — so it reads as the lit
+            // Tie the pill to the orange "spark" it's built around — a faint
+            // wash, a soft halo and an orange hairline — so it reads as the lit
             // "go deeper" affordance in BOTH themes. The old fixed navy outline
             // looked heavy and out of place on the light off-white canvas.
             decoration: const BoxDecoration(
               borderRadius: _radius,
-              color: Color(0x148B5CF6),
+              color: Color(0x14F97316),
               border: Border.fromBorderSide(
-                BorderSide(color: Color(0x808B5CF6)),
+                BorderSide(color: Color(0x80F97316)),
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Color(0x338B5CF6),
+                  color: Color(0x33F97316),
                   blurRadius: 16,
                   spreadRadius: -4,
                 ),

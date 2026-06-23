@@ -162,6 +162,26 @@ Timing lives in the pure `shouldPromptForReview` (`review_providers.dart`).
 
 ---
 
+## 9. Home-screen widget 📱 ("Pytanie dnia")
+
+The app pushes today's free daily question to a native home-screen widget via
+`lib/services/widget_sync_service.dart` (`home_widget`); the widget renders the
+last pushed value (no background network). Daily content is always free, so
+nothing premium is exposed. 🟢
+
+- **Android** — fully wired (provider, layout, manifest receiver). Nothing to
+  configure; appears in the launcher's widget picker as "Debatly". 🟢
+- **iOS** — needs a one-time **Xcode** step (Widget Extension target + App Group
+  `group.com.aknsoftware.questionapp` on both Runner and the widget). 🟠
+  - [ ] Follow `ios/DailyQuestionWidget/SETUP.md` step by step (target, App Group,
+        `INFOPLIST_FILE`, font membership).
+  - [ ] Register the App Group on the Apple Developer account if automatic signing
+        doesn't create it.
+- ⚠️ Verify by **opening the app once** (writes the data) then adding the widget;
+  switching app language flips the label PL/EN after the app is reopened.
+
+---
+
 ## Quick "is it wired?" map
 
 | Concern              | Code entry point                                                       |
@@ -172,3 +192,4 @@ Timing lives in the pure `shouldPromptForReview` (`review_providers.dart`).
 | Daily reminder       | `lib/services/notification_service.dart`                               |
 | In-app review        | `lib/services/review_service.dart` + `review_providers.dart`           |
 | Premium gate         | `sync-entitlement` / `revenuecat-webhook` + `profiles.is_premium`      |
+| Home-screen widget   | `lib/services/widget_sync_service.dart` + `ios/DailyQuestionWidget/`   |

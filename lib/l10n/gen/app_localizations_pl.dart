@@ -147,6 +147,9 @@ class AppLocalizationsPl extends AppLocalizations {
   String get notificationDailyBody => 'Oddaj głos i przedłuż swoją serię.';
 
   @override
+  String get widgetDailyLabel => 'Pytanie dnia';
+
+  @override
   String get settingsLanguage => 'Język';
 
   @override
@@ -172,6 +175,30 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get settingsGoPremium => 'Przejdź na Premium';
+
+  @override
+  String get settingsOfflineQuestions => 'Pytania offline';
+
+  @override
+  String get offlineDownloadReady =>
+      'Pobierz wszystkie pytania, by czytać bez internetu';
+
+  @override
+  String offlineDownloadSynced(String date) {
+    return 'Pobrano · $date';
+  }
+
+  @override
+  String offlineDownloadProgress(int done, int total) {
+    return 'Pobieranie… $done/$total';
+  }
+
+  @override
+  String get offlineDownloadComplete => 'Pytania zapisane na offline.';
+
+  @override
+  String get offlineDownloadFailed =>
+      'Nie udało się pobrać. Sprawdź połączenie i spróbuj ponownie.';
 
   @override
   String get settingsPrivacy => 'Prywatność i dane';
@@ -211,6 +238,81 @@ class AppLocalizationsPl extends AppLocalizations {
   String get favoriteError => 'Nie udało się zaktualizować ulubionych.';
 
   @override
+  String get historyTitle => 'Historia pytań';
+
+  @override
+  String get historySubtitle =>
+      'Zobacz, jak głosowano w poprzednich pytaniach dnia.';
+
+  @override
+  String get historyLabel => 'Historia';
+
+  @override
+  String get historyTooltip => 'Historia pytań';
+
+  @override
+  String get historyEmptyTitle => 'Brak historii';
+
+  @override
+  String get historyEmptyBody => 'Poprzednie pytania dnia pojawią się tutaj.';
+
+  @override
+  String get historyLoadError => 'Nie udało się wczytać historii.';
+
+  @override
+  String get historyPremiumTitle => 'Historia to funkcja PRO';
+
+  @override
+  String get historyPremiumBody =>
+      'Przejdź na PRO, aby przeglądać wszystkie poprzednie pytania dnia i zobaczyć, jak głosowali inni.';
+
+  @override
+  String get historyNoVotes => 'Brak głosów';
+
+  @override
+  String get categoryFilterTooltip => 'Filtruj według kategorii';
+
+  @override
+  String get categoryFilterTitle => 'Kategorie';
+
+  @override
+  String get categoryFilterSubtitle =>
+      'Pokazuj pytania tylko z wybranej kategorii. Pytanie dnia zostaje bez zmian.';
+
+  @override
+  String get categoryAll => 'Wszystkie';
+
+  @override
+  String get categorySociety => 'Społeczeństwo';
+
+  @override
+  String get categoryEthics => 'Etyka';
+
+  @override
+  String get categoryJustice => 'Sprawiedliwość';
+
+  @override
+  String get categoryTechnology => 'Technologia';
+
+  @override
+  String get categoryMoney => 'Pieniądze';
+
+  @override
+  String get categoryConnection => 'Relacje';
+
+  @override
+  String get categoryDreams => 'Marzenia';
+
+  @override
+  String get categoryEnvironment => 'Środowisko';
+
+  @override
+  String get categoryFamily => 'Rodzina';
+
+  @override
+  String get categoryReflection => 'Refleksja';
+
+  @override
   String aboutVersion(String version, String build) {
     return 'Wersja $version ($build)';
   }
@@ -239,7 +341,7 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get privacyDataIntro =>
-      'Krótki przegląd danych, które przechowuje Spark, i po co.';
+      'Krótki przegląd danych, które przechowuje Debatly, i po co.';
 
   @override
   String get privacyDataAccountTitle => 'Konto i logowanie';
@@ -412,6 +514,9 @@ class AppLocalizationsPl extends AppLocalizations {
       'Sprawdź połączenie z internetem i spróbuj ponownie.';
 
   @override
+  String get offlineBannerLabel => 'Jesteś offline';
+
+  @override
   String get goDeeper => 'WEJDŹ GŁĘBIEJ';
 
   @override
@@ -424,11 +529,11 @@ class AppLocalizationsPl extends AppLocalizations {
   String get shareTooltip => 'Udostępnij pytanie';
 
   @override
-  String get shareSubject => 'Pytanie ze Spark';
+  String get shareSubject => 'Pytanie z Debatly';
 
   @override
   String shareMessage(String question) {
-    return '$question\n\nSpark — jedno przewrotne pytanie dziennie.';
+    return '$question\n\nDebatly — jedno przewrotne pytanie dziennie.';
   }
 
   @override
@@ -629,11 +734,11 @@ class AppLocalizationsPl extends AppLocalizations {
   }
 
   @override
-  String get rankShareSubject => 'Moja ranga w Spark';
+  String get rankShareSubject => 'Moja ranga w Debatly';
 
   @override
   String rankShareMessage(String rank) {
-    return 'Moja nowa ranga w Spark: $rank 🔥\n\nSpark — jedno przewrotne pytanie dziennie.';
+    return 'Moja nowa ranga w Debatly: $rank 🔥\n\nDebatly — jedno przewrotne pytanie dziennie.';
   }
 
   @override
@@ -643,7 +748,7 @@ class AppLocalizationsPl extends AppLocalizations {
   String get onboardingNext => 'Dalej';
 
   @override
-  String get onboardingWelcomeTitle => 'Witaj w Spark';
+  String get onboardingWelcomeTitle => 'Witaj w Debatly';
 
   @override
   String get onboardingWelcomeBody =>

@@ -423,7 +423,7 @@ class _ChoiceCard extends StatelessWidget {
 }
 
 /// A full-width option on the choice card: an icon, a bold label and a small
-/// hint underneath. [primary] gives it the violet gradient; otherwise it's a
+/// hint underneath. [primary] gives it the orange gradient; otherwise it's a
 /// hairline-outlined surface.
 class _ChoiceButton extends StatelessWidget {
   const _ChoiceButton({
@@ -456,7 +456,7 @@ class _ChoiceButton extends StatelessWidget {
           decoration: BoxDecoration(
             gradient: primary
                 ? const LinearGradient(
-                    colors: [Color(0xFF8B5CF6), Color(0xFF7C3AED)],
+                    colors: [Color(0xFFF97316), Color(0xFFEA580C)],
                   )
                 : null,
             color: primary ? null : context.colors.accent,
@@ -508,7 +508,7 @@ class _ChoiceButton extends StatelessWidget {
   }
 }
 
-/// The violet gradient "Next" call-to-action, matching the auth sheet's primary
+/// The orange gradient "Next" call-to-action, matching the auth sheet's primary
 /// button so onboarding and sign-in feel like one family.
 class _PrimaryButton extends StatelessWidget {
   const _PrimaryButton({required this.label, required this.onPressed});
@@ -521,7 +521,7 @@ class _PrimaryButton extends StatelessWidget {
     return DecoratedBox(
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [Color(0xFF8B5CF6), Color(0xFF7C3AED)],
+          colors: [Color(0xFFF97316), Color(0xFFEA580C)],
         ),
         borderRadius: BorderRadius.circular(14),
         boxShadow: [
@@ -569,7 +569,7 @@ class _PrimaryButton extends StatelessWidget {
 }
 
 /// The page-progress dots beneath the deck: the active one stretches into a
-/// violet pill, the rest stay small and grey.
+/// orange pill, the rest stay small and grey.
 class _Dots extends StatelessWidget {
   const _Dots({required this.count, required this.index});
 

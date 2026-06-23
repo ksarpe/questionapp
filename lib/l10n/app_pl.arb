@@ -48,6 +48,7 @@
   "remindersOpenSettings": "Otwórz ustawienia",
   "notificationDailyTitle": "Pytanie dnia czeka 🔥",
   "notificationDailyBody": "Oddaj głos i przedłuż swoją serię.",
+  "widgetDailyLabel": "Pytanie dnia",
   "settingsLanguage": "Język",
   "chooseLanguage": "Wybierz język",
   "settingsAppearance": "Wygląd",
@@ -57,6 +58,23 @@
   "settingsAppearanceDark": "Ciemny",
   "settingsPremiumActive": "Premium aktywne",
   "settingsGoPremium": "Przejdź na Premium",
+  "settingsOfflineQuestions": "Pytania offline",
+  "offlineDownloadReady": "Pobierz wszystkie pytania, by czytać bez internetu",
+  "offlineDownloadSynced": "Pobrano · {date}",
+  "@offlineDownloadSynced": {
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
+  "offlineDownloadProgress": "Pobieranie… {done}/{total}",
+  "@offlineDownloadProgress": {
+    "placeholders": {
+      "done": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "offlineDownloadComplete": "Pytania zapisane na offline.",
+  "offlineDownloadFailed": "Nie udało się pobrać. Sprawdź połączenie i spróbuj ponownie.",
   "settingsPrivacy": "Prywatność i dane",
   "settingsAbout": "O aplikacji",
   "settingsFavorites": "Ulubione pytania",
@@ -69,6 +87,31 @@
   "favoriteRemoved": "Usunięto z ulubionych",
   "favoritesPremiumOnly": "Ulubione to funkcja Premium.",
   "favoriteError": "Nie udało się zaktualizować ulubionych.",
+
+  "historyTitle": "Historia pytań",
+  "historySubtitle": "Zobacz, jak głosowano w poprzednich pytaniach dnia.",
+  "historyLabel": "Historia",
+  "historyTooltip": "Historia pytań",
+  "historyEmptyTitle": "Brak historii",
+  "historyEmptyBody": "Poprzednie pytania dnia pojawią się tutaj.",
+  "historyLoadError": "Nie udało się wczytać historii.",
+  "historyPremiumTitle": "Historia to funkcja PRO",
+  "historyPremiumBody": "Przejdź na PRO, aby przeglądać wszystkie poprzednie pytania dnia i zobaczyć, jak głosowali inni.",
+  "historyNoVotes": "Brak głosów",
+  "categoryFilterTooltip": "Filtruj według kategorii",
+  "categoryFilterTitle": "Kategorie",
+  "categoryFilterSubtitle": "Pokazuj pytania tylko z wybranej kategorii. Pytanie dnia zostaje bez zmian.",
+  "categoryAll": "Wszystkie",
+  "categorySociety": "Społeczeństwo",
+  "categoryEthics": "Etyka",
+  "categoryJustice": "Sprawiedliwość",
+  "categoryTechnology": "Technologia",
+  "categoryMoney": "Pieniądze",
+  "categoryConnection": "Relacje",
+  "categoryDreams": "Marzenia",
+  "categoryEnvironment": "Środowisko",
+  "categoryFamily": "Rodzina",
+  "categoryReflection": "Refleksja",
   "aboutVersion": "Wersja {version} ({build})",
   "@aboutVersion": {
     "placeholders": {
@@ -83,7 +126,7 @@
   "privacyOpenInBrowser": "Otwiera się w przeglądarce",
   "privacyLinkFailed": "Nie udało się otworzyć linku.",
   "privacyDataSection": "CO PRZECHOWUJEMY",
-  "privacyDataIntro": "Krótki przegląd danych, które przechowuje Spark, i po co.",
+  "privacyDataIntro": "Krótki przegląd danych, które przechowuje Debatly, i po co.",
   "privacyDataAccountTitle": "Konto i logowanie",
   "privacyDataAccountBody": "Twój e-mail lub tożsamość logowania — albo anonimowy identyfikator dla gości — aby Twoje postępy były z Tobą na różnych urządzeniach.",
   "privacyDataActivityTitle": "Aktywność",
@@ -132,14 +175,15 @@
   "dailyShort": "Daily",
   "loadErrorTitle": "Nie udało się załadować pytań",
   "loadErrorBody": "Sprawdź połączenie z internetem i spróbuj ponownie.",
+  "offlineBannerLabel": "Jesteś offline",
 
   "goDeeper": "WEJDŹ GŁĘBIEJ",
   "dailyBadge": "PYTANIE DNIA",
 
   "shareLabel": "Udostępnij",
   "shareTooltip": "Udostępnij pytanie",
-  "shareSubject": "Pytanie ze Spark",
-  "shareMessage": "{question}\n\nSpark — jedno przewrotne pytanie dziennie.",
+  "shareSubject": "Pytanie z Debatly",
+  "shareMessage": "{question}\n\nDebatly — jedno przewrotne pytanie dziennie.",
   "@shareMessage": {
     "placeholders": {
       "question": { "type": "String" }
@@ -208,8 +252,8 @@
       }
     }
   },
-  "rankShareSubject": "Moja ranga w Spark",
-  "rankShareMessage": "Moja nowa ranga w Spark: {rank} 🔥\n\nSpark — jedno przewrotne pytanie dziennie.",
+  "rankShareSubject": "Moja ranga w Debatly",
+  "rankShareMessage": "Moja nowa ranga w Debatly: {rank} 🔥\n\nDebatly — jedno przewrotne pytanie dziennie.",
   "@rankShareMessage": {
     "placeholders": {
       "rank": {
@@ -220,7 +264,7 @@
 
   "onboardingSkip": "Pomiń",
   "onboardingNext": "Dalej",
-  "onboardingWelcomeTitle": "Witaj w Spark",
+  "onboardingWelcomeTitle": "Witaj w Debatly",
   "onboardingWelcomeBody": "Jedno mocne pytanie dziennie — i wszystko, co je otacza.",
   "onboardingDailyTitle": "Pytanie dnia",
   "onboardingDailyBody": "Każdego dnia nowe darmowe pytanie — zagłosuj i zatrzymaj się przy nim na chwilę.",

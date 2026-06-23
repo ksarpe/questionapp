@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/feedback/app_toast.dart';
 import '../../../core/locale/l10n_extension.dart';
+import '../../../core/network/network_error.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../services/purchases_service.dart';
 import '../../account/providers/session_providers.dart';
@@ -95,12 +96,18 @@ class _FavoriteStarButtonState extends ConsumerState<FavoriteStarButton>
     } catch (e) {
       if (!mounted) return;
       // A premium gate the client didn't expect (e.g. lapsed mid-session) comes
-      // back from the RPC as 'premium required' — route that to the paywall;
-      // anything else is a transient error.
+      // back from the RPC as 'premium required' — route that to the paywall.
+      // Offline gets the calmer "no connection" line; anything else is the
+      // generic favorites error.
       if (e.toString().contains('premium')) {
         await _openPaywall();
       } else {
-        AppToast.error(context, context.l10n.favoriteError);
+        AppToast.error(
+          context,
+          isOfflineError(e)
+              ? context.l10n.noConnection
+              : context.l10n.favoriteError,
+        );
       }
     }
   }

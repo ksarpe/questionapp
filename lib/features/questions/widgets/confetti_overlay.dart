@@ -38,7 +38,7 @@ class _ConfettiOverlayState extends State<ConfettiOverlay>
   late final AnimationController _controller;
   late final List<_Piece> _pieces;
 
-  // The festive palette: the brand violet plus the warm/cool streak accents and
+  // The festive palette: the brand orange plus the warm/cool streak accents and
   // the vote colours, so the burst feels like "the app" celebrating.
   static const List<Color> _palette = [
     AppTheme.spark,

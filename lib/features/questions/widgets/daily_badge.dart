@@ -9,7 +9,7 @@ import '../providers/question_providers.dart';
 ///
 /// It only appears while the question on screen is today's scheduled daily (see
 /// [isShowingDailyProvider]); swiping on to the gated deck fades it away. The
-/// violet "spark" wash and glow match the "go deeper" affordance so the free
+/// orange "spark" wash and glow match the "go deeper" affordance so the free
 /// daily reads as the highlighted, no-paywall question.
 ///
 /// Label follows the active locale — Polish shows "PYTANIE DNIA", everything
@@ -53,12 +53,12 @@ class _Pill extends StatelessWidget {
     return DecoratedBox(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
-        // Faint violet wash + hairline so the pill sits softly on the black
+        // Faint orange wash + hairline so the pill sits softly on the black
         // canvas, with a small halo to make it feel "lit".
-        color: const Color(0x148B5CF6),
-        border: Border.all(color: const Color(0x408B5CF6)),
+        color: const Color(0x14F97316),
+        border: Border.all(color: const Color(0x40F97316)),
         boxShadow: const [
-          BoxShadow(color: Color(0x338B5CF6), blurRadius: 14, spreadRadius: -4),
+          BoxShadow(color: Color(0x33F97316), blurRadius: 14, spreadRadius: -4),
         ],
       ),
       child: Padding(

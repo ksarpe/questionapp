@@ -368,6 +368,12 @@ abstract class AppLocalizations {
   /// **'Cast your vote and keep your streak alive.'**
   String get notificationDailyBody;
 
+  /// No description provided for @widgetDailyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily question'**
+  String get widgetDailyLabel;
+
   /// No description provided for @settingsLanguage.
   ///
   /// In en, this message translates to:
@@ -421,6 +427,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Go Premium'**
   String get settingsGoPremium;
+
+  /// No description provided for @settingsOfflineQuestions.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline questions'**
+  String get settingsOfflineQuestions;
+
+  /// No description provided for @offlineDownloadReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Download all questions to read without internet'**
+  String get offlineDownloadReady;
+
+  /// No description provided for @offlineDownloadSynced.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloaded · {date}'**
+  String offlineDownloadSynced(String date);
+
+  /// No description provided for @offlineDownloadProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloading… {done}/{total}'**
+  String offlineDownloadProgress(int done, int total);
+
+  /// No description provided for @offlineDownloadComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Questions saved for offline.'**
+  String get offlineDownloadComplete;
+
+  /// No description provided for @offlineDownloadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Download failed. Check your connection and try again.'**
+  String get offlineDownloadFailed;
 
   /// No description provided for @settingsPrivacy.
   ///
@@ -494,6 +536,150 @@ abstract class AppLocalizations {
   /// **'Couldn\'t update favorites.'**
   String get favoriteError;
 
+  /// No description provided for @historyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Question history'**
+  String get historyTitle;
+
+  /// No description provided for @historySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'See how people voted on previous daily questions.'**
+  String get historySubtitle;
+
+  /// No description provided for @historyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'History'**
+  String get historyLabel;
+
+  /// No description provided for @historyTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Question history'**
+  String get historyTooltip;
+
+  /// No description provided for @historyEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing here yet'**
+  String get historyEmptyTitle;
+
+  /// No description provided for @historyEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous daily questions will show up here.'**
+  String get historyEmptyBody;
+
+  /// No description provided for @historyLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load the history.'**
+  String get historyLoadError;
+
+  /// No description provided for @historyPremiumTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'History is a PRO feature'**
+  String get historyPremiumTitle;
+
+  /// No description provided for @historyPremiumBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Go PRO to browse every past daily question and see how others voted.'**
+  String get historyPremiumBody;
+
+  /// No description provided for @historyNoVotes.
+  ///
+  /// In en, this message translates to:
+  /// **'No votes'**
+  String get historyNoVotes;
+
+  /// No description provided for @categoryFilterTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter by category'**
+  String get categoryFilterTooltip;
+
+  /// No description provided for @categoryFilterTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Categories'**
+  String get categoryFilterTitle;
+
+  /// No description provided for @categoryFilterSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Show questions from one category only. The daily question stays as is.'**
+  String get categoryFilterSubtitle;
+
+  /// No description provided for @categoryAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get categoryAll;
+
+  /// No description provided for @categorySociety.
+  ///
+  /// In en, this message translates to:
+  /// **'Society'**
+  String get categorySociety;
+
+  /// No description provided for @categoryEthics.
+  ///
+  /// In en, this message translates to:
+  /// **'Ethics'**
+  String get categoryEthics;
+
+  /// No description provided for @categoryJustice.
+  ///
+  /// In en, this message translates to:
+  /// **'Justice'**
+  String get categoryJustice;
+
+  /// No description provided for @categoryTechnology.
+  ///
+  /// In en, this message translates to:
+  /// **'Technology'**
+  String get categoryTechnology;
+
+  /// No description provided for @categoryMoney.
+  ///
+  /// In en, this message translates to:
+  /// **'Money'**
+  String get categoryMoney;
+
+  /// No description provided for @categoryConnection.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection'**
+  String get categoryConnection;
+
+  /// No description provided for @categoryDreams.
+  ///
+  /// In en, this message translates to:
+  /// **'Dreams'**
+  String get categoryDreams;
+
+  /// No description provided for @categoryEnvironment.
+  ///
+  /// In en, this message translates to:
+  /// **'Environment'**
+  String get categoryEnvironment;
+
+  /// No description provided for @categoryFamily.
+  ///
+  /// In en, this message translates to:
+  /// **'Family'**
+  String get categoryFamily;
+
+  /// No description provided for @categoryReflection.
+  ///
+  /// In en, this message translates to:
+  /// **'Reflection'**
+  String get categoryReflection;
+
   /// No description provided for @aboutVersion.
   ///
   /// In en, this message translates to:
@@ -545,7 +731,7 @@ abstract class AppLocalizations {
   /// No description provided for @privacyDataIntro.
   ///
   /// In en, this message translates to:
-  /// **'A quick overview of the data Spark keeps and why.'**
+  /// **'A quick overview of the data Debatly keeps and why.'**
   String get privacyDataIntro;
 
   /// No description provided for @privacyDataAccountTitle.
@@ -830,6 +1016,12 @@ abstract class AppLocalizations {
   /// **'Check your internet connection and try again.'**
   String get loadErrorBody;
 
+  /// No description provided for @offlineBannerLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re offline'**
+  String get offlineBannerLabel;
+
   /// No description provided for @goDeeper.
   ///
   /// In en, this message translates to:
@@ -857,13 +1049,13 @@ abstract class AppLocalizations {
   /// No description provided for @shareSubject.
   ///
   /// In en, this message translates to:
-  /// **'A question from Spark'**
+  /// **'A question from Debatly'**
   String get shareSubject;
 
   /// No description provided for @shareMessage.
   ///
   /// In en, this message translates to:
-  /// **'{question}\n\nSpark — thought-provoking questions.'**
+  /// **'{question}\n\nDebatly — thought-provoking questions.'**
   String shareMessage(String question);
 
   /// Brand tagline shown on the shareable question image card, under the question.
@@ -1103,13 +1295,13 @@ abstract class AppLocalizations {
   /// Subject line when sharing the rank poster (email etc.).
   ///
   /// In en, this message translates to:
-  /// **'My rank in Spark'**
+  /// **'My rank in Debatly'**
   String get rankShareSubject;
 
   /// Accompanying text shared alongside the rank poster image.
   ///
   /// In en, this message translates to:
-  /// **'My new rank in Spark: {rank} 🔥\n\nSpark — thought-provoking questions.'**
+  /// **'My new rank in Debatly: {rank} 🔥\n\nDebatly — thought-provoking questions.'**
   String rankShareMessage(String rank);
 
   /// No description provided for @onboardingSkip.
@@ -1127,7 +1319,7 @@ abstract class AppLocalizations {
   /// No description provided for @onboardingWelcomeTitle.
   ///
   /// In en, this message translates to:
-  /// **'Welcome to Spark'**
+  /// **'Welcome to Debatly'**
   String get onboardingWelcomeTitle;
 
   /// No description provided for @onboardingWelcomeBody.

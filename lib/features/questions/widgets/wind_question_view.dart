@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/feedback/app_toast.dart';
 import '../../../core/locale/l10n_extension.dart';
+import '../../../core/network/network_error.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../data/models/question.dart';
 import '../../../services/purchases_service.dart';
@@ -408,7 +409,15 @@ class _WindQuestionViewState extends ConsumerState<WindQuestionView>
     if (!mounted) return;
     if (error != null) {
       debugPrint('reveal failed: $error');
-      _notify(context.l10n.revealFailed, type: ToastType.error);
+      // Offline: a reveal needs the server (and, for ads, the ad network), so it
+      // simply can't happen now — say "no connection" rather than the generic
+      // "try again", which implies a retry would help.
+      _notify(
+        isOfflineError(error)
+            ? context.l10n.noConnection
+            : context.l10n.revealFailed,
+        type: ToastType.error,
+      );
       // Re-sync the server's view of the credit. A free reveal can fail because
       // the client thought it had a credit but the server disagreed (already
       // spent on another device, or stale after a UTC-midnight rollover). Without
@@ -656,7 +665,7 @@ class _WindQuestionViewState extends ConsumerState<WindQuestionView>
   }
 }
 
-/// The lock-opening flourish: a big violet padlock fades in, its shackle swings
+/// The lock-opening flourish: a big orange padlock fades in, its shackle swings
 /// open around the base of its right leg, then the whole thing fades out — the
 /// "released" beat played over the canvas right before a freely-unlocked
 /// question assembles. Driven by an external controller (0 → 1) so the caller
@@ -999,7 +1008,7 @@ class _RevealPaywall extends StatelessWidget {
 }
 
 /// One of the two paywall CTAs, styled to the app's language: a rounded pill
-/// with an icon + uppercase label. [primary] paints it in the signature violet
+/// with an icon + uppercase label. [primary] paints it in the signature orange
 /// "spark" with a soft glow (the recommended PRO path); otherwise it sits on the
 /// muted accent surface. A null [onTap] dims it.
 class _UnlockButton extends StatelessWidget {
@@ -1027,7 +1036,7 @@ class _UnlockButton extends StatelessWidget {
           boxShadow: primary
               ? const [
                   BoxShadow(
-                    color: Color(0x558B5CF6),
+                    color: Color(0x55F97316),
                     blurRadius: 20,
                     spreadRadius: 1,
                   ),

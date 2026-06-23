@@ -172,7 +172,7 @@ class _SmaczkiList extends StatelessWidget {
   }
 }
 
-/// A readable smaczek: a numbered violet dot and the prompt text.
+/// A readable smaczek: a numbered orange dot and the prompt text.
 class _SmaczekCard extends StatelessWidget {
   const _SmaczekCard({required this.index, required this.text});
 

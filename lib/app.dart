@@ -27,7 +27,7 @@ class QuestionApp extends ConsumerWidget {
     final themeMode = ref.watch(themeControllerProvider);
 
     return MaterialApp(
-      title: 'Spark',
+      title: 'Debatly',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,

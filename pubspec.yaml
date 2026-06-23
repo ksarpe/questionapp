@@ -53,6 +53,14 @@ dependencies:
   share_plus: ^13.1.0
   app_settings: ^7.0.0
   in_app_review: ^2.0.12
+  # Bridges today's daily question to the native home-screen widgets
+  # (Android AppWidget / iOS WidgetKit) via shared storage. See
+  # lib/services/widget_sync_service.dart.
+  home_widget: ^0.7.0
+  # Detects online/offline transitions for the offline banner + auto-refresh on
+  # reconnect. A hint only — a failed request is the authoritative offline signal
+  # (see lib/core/network/network_error.dart).
+  connectivity_plus: ^6.1.0
 
 dev_dependencies:
   flutter_test:

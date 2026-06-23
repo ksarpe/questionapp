@@ -11,47 +11,21 @@ import '../providers/session_providers.dart';
 
 enum _AuthMode { password, register }
 
-/// Presents the sign-in / register sheet as a modal that slides in from the
-/// top of the screen and fades the background behind it.
+/// Presents the sign-in / register form as a modal bottom sheet that slides up
+/// from the bottom of the screen.
 Future<void> showAuthSheet(BuildContext context) {
-  return showGeneralDialog<void>(
+  return showModalBottomSheet<void>(
     context: context,
-    barrierDismissible: true,
-    barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
+    backgroundColor: context.colors.cardSurface,
+    isScrollControlled: true,
+    showDragHandle: true,
+    useSafeArea: true,
     barrierColor: Colors.black.withValues(alpha: 0.62),
-    transitionDuration: const Duration(milliseconds: 340),
-    pageBuilder: (_, _, _) => const _AuthSheet(),
-    transitionBuilder: (context, animation, _, child) {
-      final curved = CurvedAnimation(
-        parent: animation,
-        curve: Curves.easeOutCubic,
-        reverseCurve: Curves.easeInCubic,
-      );
-      return SlideTransition(
-        position: Tween<Offset>(
-          begin: const Offset(0, -1),
-          end: Offset.zero,
-        ).animate(curved),
-        child: FadeTransition(opacity: curved, child: child),
-      );
-    },
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+    ),
+    builder: (_) => const _AuthCard(),
   );
-}
-
-/// Top-anchored wrapper used by [showAuthSheet].
-class _AuthSheet extends StatelessWidget {
-  const _AuthSheet();
-
-  @override
-  Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.topCenter,
-      child: Padding(
-        padding: EdgeInsets.only(top: MediaQuery.paddingOf(context).top + 8),
-        child: const _AuthCard(),
-      ),
-    );
-  }
 }
 
 /// Full-screen fallback so the auth flow can still be pushed as a route (and
@@ -63,9 +37,7 @@ class AuthScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: context.colors.background,
-      body: SafeArea(
-        child: Center(child: SingleChildScrollView(child: const _AuthCard())),
-      ),
+      body: SafeArea(child: Center(child: const _AuthCard())),
     );
   }
 }
@@ -103,246 +75,198 @@ class _AuthCardState extends ConsumerState<_AuthCard> {
     final isConfigured = SupabaseService.isInitialised;
     final canUseGoogle = isConfigured && AppConfig.hasGoogleSignIn;
 
-    // Leave room for the status bar and (when open) the keyboard, then let the
-    // body scroll inside whatever height is left.
+    // Let the sheet grow to fit its content — short forms stay compact, longer
+    // ones make it taller. We only cap at the visible area (screen minus the
+    // status bar and keyboard) so it never overflows; scrolling is a fallback,
+    // not the default.
     final maxHeight =
-        (media.size.height - media.padding.top - media.viewInsets.bottom - 24)
-            .clamp(320.0, double.infinity);
+        media.size.height - media.padding.top - media.viewInsets.bottom - 24;
 
-    return Center(
-      child: ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: 480, maxHeight: maxHeight),
-        child: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 8),
-          decoration: BoxDecoration(
-            color: context.colors.cardSurface,
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: context.colors.hairline),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.55),
-                blurRadius: 32,
-                offset: const Offset(0, 14),
-              ),
-            ],
-          ),
-          child: Material(
-            type: MaterialType.transparency,
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    _buildHandleRow(context),
-                    const SizedBox(height: 8),
-                    _SegmentedTabs(
-                      mode: _mode,
-                      enabled: !_isSubmitting,
-                      onChanged: _changeMode,
-                    ),
+    return ConstrainedBox(
+      constraints: BoxConstraints(maxWidth: 480, maxHeight: maxHeight),
+      child: Material(
+        type: MaterialType.transparency,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Flexible(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.fromLTRB(
+                  20,
+                  4,
+                  20,
+                  24 + media.viewInsets.bottom,
+                ),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      _buildCloseRow(context),
+                      const SizedBox(height: 4),
+                      _SegmentedTabs(
+                        mode: _mode,
+                        enabled: !_isSubmitting,
+                        onChanged: _changeMode,
+                      ),
 
-                    const SizedBox(height: 22),
-                    if (!isConfigured) ...[
-                      _Notice(
-                        icon: Icons.info_outline,
-                        text: context.l10n.authMissingSupabaseConfig,
-                      ),
-                      const SizedBox(height: 18),
-                    ] else if (!AppConfig.hasGoogleSignIn) ...[
-                      _Notice(
-                        icon: Icons.info_outline,
-                        text: context.l10n.authMissingGoogleConfig,
-                      ),
-                      const SizedBox(height: 18),
-                    ],
-                    _fieldLabel(context.l10n.authEmailLabel),
-                    TextFormField(
-                      controller: _emailController,
-                      enabled: !_isSubmitting,
-                      keyboardType: TextInputType.emailAddress,
-                      textInputAction: TextInputAction.next,
-                      autofillHints: const [AutofillHints.email],
-                      style: TextStyle(color: context.colors.ink),
-                      decoration: _fieldDecoration(hint: 'you@example.com'),
-                      validator: _validateEmail,
-                    ),
-                    const SizedBox(height: 18),
-                    _fieldLabel(context.l10n.authPasswordLabel),
-                    TextFormField(
-                      controller: _passwordController,
-                      enabled: !_isSubmitting,
-                      obscureText: _obscurePassword,
-                      textInputAction: _isLogin
-                          ? TextInputAction.done
-                          : TextInputAction.next,
-                      autofillHints: _isLogin
-                          ? const [AutofillHints.password]
-                          : const [AutofillHints.newPassword],
-                      style: TextStyle(color: context.colors.ink),
-                      decoration: _fieldDecoration(
-                        hint: '••••••••',
-                        suffixIcon: IconButton(
-                          tooltip: _obscurePassword
-                              ? context.l10n.authShowPassword
-                              : context.l10n.authHidePassword,
-                          icon: Icon(
-                            _obscurePassword
-                                ? Icons.visibility_outlined
-                                : Icons.visibility_off_outlined,
-                            color: context.colors.subtle,
-                            size: 20,
-                          ),
-                          onPressed: () => setState(
-                            () => _obscurePassword = !_obscurePassword,
-                          ),
+                      const SizedBox(height: 14),
+                      if (!isConfigured) ...[
+                        _Notice(
+                          icon: Icons.info_outline,
+                          text: context.l10n.authMissingSupabaseConfig,
                         ),
-                      ),
-                      validator: _validatePassword,
-                      onFieldSubmitted: (_) {
-                        if (_isLogin) _submit();
-                      },
-                    ),
-                    if (!_isLogin) ...[
-                      const SizedBox(height: 18),
-                      _fieldLabel(context.l10n.authConfirmPasswordLabel),
+                        const SizedBox(height: 14),
+                      ] else if (!AppConfig.hasGoogleSignIn) ...[
+                        _Notice(
+                          icon: Icons.info_outline,
+                          text: context.l10n.authMissingGoogleConfig,
+                        ),
+                        const SizedBox(height: 14),
+                      ],
+                      _fieldLabel(context.l10n.authEmailLabel),
                       TextFormField(
-                        controller: _confirmPasswordController,
+                        controller: _emailController,
+                        enabled: !_isSubmitting,
+                        keyboardType: TextInputType.emailAddress,
+                        textInputAction: TextInputAction.next,
+                        autofillHints: const [AutofillHints.email],
+                        style: TextStyle(color: context.colors.ink),
+                        decoration: _fieldDecoration(hint: 'you@example.com'),
+                        validator: _validateEmail,
+                      ),
+                      const SizedBox(height: 14),
+                      _fieldLabel(context.l10n.authPasswordLabel),
+                      TextFormField(
+                        controller: _passwordController,
                         enabled: !_isSubmitting,
                         obscureText: _obscurePassword,
-                        textInputAction: TextInputAction.done,
-                        autofillHints: const [AutofillHints.newPassword],
+                        textInputAction: _isLogin
+                            ? TextInputAction.done
+                            : TextInputAction.next,
+                        autofillHints: _isLogin
+                            ? const [AutofillHints.password]
+                            : const [AutofillHints.newPassword],
                         style: TextStyle(color: context.colors.ink),
-                        decoration: _fieldDecoration(hint: '••••••••'),
-                        validator: _validateConfirmPassword,
-                        onFieldSubmitted: (_) => _submit(),
-                      ),
-                    ],
-                    if (_isLogin) ...[
-                      const SizedBox(height: 10),
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: GestureDetector(
-                          onTap: _isSubmitting ? null : _forgotPassword,
-                          child: Text(
-                            context.l10n.authForgotPassword,
-                            style: const TextStyle(
-                              color: AppTheme.spark,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 13,
+                        decoration: _fieldDecoration(
+                          hint: '••••••••',
+                          suffixIcon: IconButton(
+                            tooltip: _obscurePassword
+                                ? context.l10n.authShowPassword
+                                : context.l10n.authHidePassword,
+                            icon: Icon(
+                              _obscurePassword
+                                  ? Icons.visibility_outlined
+                                  : Icons.visibility_off_outlined,
+                              color: context.colors.subtle,
+                              size: 20,
+                            ),
+                            onPressed: () => setState(
+                              () => _obscurePassword = !_obscurePassword,
                             ),
                           ),
                         ),
+                        validator: _validatePassword,
+                        onFieldSubmitted: (_) {
+                          if (_isLogin) _submit();
+                        },
                       ),
-                    ],
-                    const SizedBox(height: 22),
-                    _PrimaryButton(
-                      label: _isLogin
-                          ? context.l10n.signIn
-                          : context.l10n.authCreateAccount,
-                      loading: _isSubmitting,
-                      onPressed: isConfigured ? _submit : null,
-                    ),
-                    const SizedBox(height: 22),
-                    const _OrDivider(),
-                    const SizedBox(height: 18),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _SocialButton(
-                            icon: Text(
-                              'G',
-                              style: TextStyle(
-                                color: context.colors.ink,
-                                fontWeight: FontWeight.w800,
-                                fontSize: 17,
+                      if (!_isLogin) ...[
+                        const SizedBox(height: 14),
+                        _fieldLabel(context.l10n.authConfirmPasswordLabel),
+                        TextFormField(
+                          controller: _confirmPasswordController,
+                          enabled: !_isSubmitting,
+                          obscureText: _obscurePassword,
+                          textInputAction: TextInputAction.done,
+                          autofillHints: const [AutofillHints.newPassword],
+                          style: TextStyle(color: context.colors.ink),
+                          decoration: _fieldDecoration(hint: '••••••••'),
+                          validator: _validateConfirmPassword,
+                          onFieldSubmitted: (_) => _submit(),
+                        ),
+                      ],
+                      if (_isLogin) ...[
+                        const SizedBox(height: 10),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: GestureDetector(
+                            onTap: _isSubmitting ? null : _forgotPassword,
+                            child: Text(
+                              context.l10n.authForgotPassword,
+                              style: const TextStyle(
+                                color: AppTheme.spark,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 13,
                               ),
                             ),
-                            label: 'Google',
-                            onPressed: canUseGoogle && !_isSubmitting
-                                ? _signInWithGoogle
-                                : null,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: _SocialButton(
-                            icon: Icon(
-                              Icons.apple,
-                              color: context.colors.ink,
-                              size: 22,
-                            ),
-                            label: 'Apple',
-                            onPressed: _isSubmitting ? null : _signInWithApple,
                           ),
                         ),
                       ],
-                    ),
-                    const SizedBox(height: 22),
-                    _buildFooter(),
-                  ],
+                      const SizedBox(height: 14),
+                      _PrimaryButton(
+                        label: _isLogin
+                            ? context.l10n.signIn
+                            : context.l10n.authCreateAccount,
+                        loading: _isSubmitting,
+                        onPressed: isConfigured ? _submit : null,
+                      ),
+                      const SizedBox(height: 16),
+                      const _OrDivider(),
+                      const SizedBox(height: 14),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _SocialButton(
+                              icon: Text(
+                                'G',
+                                style: TextStyle(
+                                  color: context.colors.ink,
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 17,
+                                ),
+                              ),
+                              label: 'Google',
+                              onPressed: canUseGoogle && !_isSubmitting
+                                  ? _signInWithGoogle
+                                  : null,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: _SocialButton(
+                              icon: Icon(
+                                Icons.apple,
+                                color: context.colors.ink,
+                                size: 22,
+                              ),
+                              label: 'Apple',
+                              onPressed: _isSubmitting
+                                  ? null
+                                  : _signInWithApple,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildHandleRow(BuildContext context) {
-    return SizedBox(
-      height: 32,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          Container(
-            width: 40,
-            height: 4,
-            decoration: BoxDecoration(
-              color: context.colors.subtle.withValues(alpha: 0.4),
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
-          Align(
-            alignment: Alignment.centerRight,
-            child: _CircleIconButton(
-              icon: Icons.close,
-              onTap: () => Navigator.of(context).maybePop(),
-            ),
-          ),
-        ],
+  Widget _buildCloseRow(BuildContext context) {
+    return Align(
+      alignment: Alignment.centerRight,
+      child: _CircleIconButton(
+        icon: Icons.close,
+        onTap: () => Navigator.of(context).maybePop(),
       ),
-    );
-  }
-
-  Widget _buildFooter() {
-    return Wrap(
-      alignment: WrapAlignment.center,
-      crossAxisAlignment: WrapCrossAlignment.center,
-      children: [
-        Text(
-          _isLogin ? context.l10n.authNoAccount : context.l10n.authHaveAccount,
-          style: TextStyle(color: context.colors.subtle, fontSize: 14),
-        ),
-        GestureDetector(
-          onTap: _isSubmitting
-              ? null
-              : () => _changeMode(
-                  _isLogin ? _AuthMode.register : _AuthMode.password,
-                ),
-          child: Text(
-            _isLogin ? context.l10n.authSignUpFree : context.l10n.signIn,
-            style: const TextStyle(
-              color: AppTheme.spark,
-              fontWeight: FontWeight.w700,
-              fontSize: 14,
-            ),
-          ),
-        ),
-      ],
     );
   }
 
@@ -442,7 +366,9 @@ class _AuthCardState extends ConsumerState<_AuthCard> {
           if (!mounted) return;
           final created = SupabaseService.currentUserHasAccount;
           _showMessage(
-            created ? context.l10n.authAccountCreated : context.l10n.authConfirmEmail,
+            created
+                ? context.l10n.authAccountCreated
+                : context.l10n.authConfirmEmail,
             type: created ? ToastType.success : ToastType.info,
           );
           if (SupabaseService.currentUserHasAccount) {
@@ -607,7 +533,7 @@ class _PrimaryButton extends StatelessWidget {
       child: DecoratedBox(
         decoration: BoxDecoration(
           gradient: const LinearGradient(
-            colors: [Color(0xFF8B5CF6), Color(0xFF7C3AED)],
+            colors: [Color(0xFFF97316), Color(0xFFEA580C)],
           ),
           borderRadius: BorderRadius.circular(14),
           boxShadow: [

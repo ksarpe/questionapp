@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Rounded black canvas behind the daily-question widget: matches the app's
+     signature high-contrast "sticker" look, theme-independent on purpose. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="#000000" />
+    <corners android:radius="24dp" />
+</shape>

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_theme.dart';
 
-/// The app's wordmark: a glowing violet bolt beside "Spark" set in the display
+/// The app's wordmark: a glowing orange bolt beside "Debatly" set in the display
 /// font. It plays a soft fade + scale entrance on mount and a slow breathing
 /// glow, so the same widget serves as the launch splash and the onboarding's
 /// welcome mark.
@@ -93,7 +93,7 @@ class _SparkLogoState extends State<SparkLogo> with TickerProviderStateMixin {
                 ),
                 SizedBox(width: widget.size * 0.06),
                 Text(
-                  'Spark',
+                  'Debatly',
                   style: TextStyle(
                     fontFamily: 'Anton',
                     fontSize: widget.size,

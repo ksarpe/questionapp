@@ -26,7 +26,7 @@ void main() {
       ),
     );
 
-    expect(find.text('Spark'), findsOneWidget);
+    expect(find.text('Debatly'), findsOneWidget);
     // The question is rendered uppercased, in two stacked Text layers
     // (stroke + fill), so it appears twice.
     expect(

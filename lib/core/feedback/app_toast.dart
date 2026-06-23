@@ -53,7 +53,7 @@ class AppToast {
   static void error(BuildContext context, String message, {IconData? icon}) =>
       show(context, message, type: ToastType.error, icon: icon);
 
-  /// A neutral, informational note (violet).
+  /// A neutral, informational note (orange).
   static void info(BuildContext context, String message, {IconData? icon}) =>
       show(context, message, type: ToastType.info, icon: icon);
 

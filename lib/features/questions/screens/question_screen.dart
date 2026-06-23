@@ -1,7 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/locale/l10n_extension.dart';
+import '../../../core/network/connectivity_providers.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../account/providers/session_providers.dart';
 import '../../account/providers/stats_providers.dart';
@@ -10,15 +12,18 @@ import '../../monetization/providers/monetization_providers.dart';
 import '../../settings/screens/settings_screen.dart';
 import '../providers/question_providers.dart';
 import '../providers/swipe_hint_providers.dart';
+import '../widgets/history_sheet.dart';
+import '../widgets/category_filter_button.dart';
 import '../widgets/daily_badge.dart';
 import '../widgets/favorite_star_button.dart';
 import '../widgets/daily_vote_panel.dart';
 import '../widgets/go_deeper_button.dart';
+import '../widgets/offline_banner.dart';
 import '../widgets/rank_up_sheet.dart';
 import '../widgets/share_question_button.dart';
 import '../widgets/smaczki_panel.dart';
 import '../widgets/stat_chips.dart';
-import '../widgets/swipe_affordance.dart';
+import '../widgets/swipe_hand_hint.dart';
 import '../widgets/wind_question_view.dart';
 
 /// The home screen: a single styled question centred on a clean canvas, with a
@@ -59,6 +64,9 @@ class QuestionScreen extends ConsumerWidget {
         // user's feed.
         ref.read(revealedFeedProvider.notifier).clear();
         ref.read(questionIndexProvider.notifier).toDaily();
+        // The premium category filter is per-session and per-identity — drop it
+        // so a new user (who may not even be premium) never inherits a filter.
+        ref.read(selectedCategoryProvider.notifier).clear();
       }
     });
 
@@ -78,6 +86,25 @@ class QuestionScreen extends ConsumerWidget {
       ref.read(questionRepositoryProvider).markQuestionSeen(next.id);
     });
 
+    // When connectivity returns after an outage, re-run the launch fetches so a
+    // user who opened on cached content (or hit the offline error screen)
+    // converges on fresh data without needing to tap "retry" or relaunch. Only
+    // fires on the offline→online edge, so a normal online session never
+    // refetches. The session refresh also re-reconciles premium, which reshapes
+    // the deck if an entitlement changed while offline.
+    ref.listen(isOnlineValueProvider, (wasOnline, isOnline) {
+      if (wasOnline == false && isOnline == true) {
+        ref.invalidate(sessionProvider);
+        ref.invalidate(questionsProvider);
+        ref.invalidate(todaysDailyQuestionProvider);
+        ref.invalidate(userStatsProvider);
+      }
+    });
+
+    // Drives the offline strip under the app bar. A hint only — the cached
+    // content still renders; a failed request is the real offline signal.
+    final isOnline = ref.watch(isOnlineValueProvider);
+
     // The deck drives the body: it stays empty until today's daily resolves, so
     // every user opens to the daily rather than a flash of the pool. Watching it
     // here also kicks off the daily fetch at launch, alongside the question pool.
@@ -95,6 +122,12 @@ class QuestionScreen extends ConsumerWidget {
     // free reveal slot).
     final current = ref.watch(currentQuestionProvider);
 
+    // Premium gets a category-filter icon right next to the star, narrowing the
+    // browseable catalog to one theme. Free users never browse the catalog, so
+    // it's premium-only (premium never sits on the reveal slot, so `current` is
+    // non-null whenever this matters).
+    final isPremium = ref.watch(isPremiumProvider);
+
     return Scaffold(
       // Let the body fill the whole screen so the question centres against the
       // true midpoint; the (transparent) app bar floats over the top.
@@ -104,10 +137,22 @@ class QuestionScreen extends ConsumerWidget {
         // for a real account (a guest's progress isn't saved), so it's hidden for
         // guests; the free-unlock chip self-hides off the daily / for guests.
         automaticallyImplyLeading: false,
+        // The offline strip rides in the app bar's `bottom` slot so it grows the
+        // bar when offline and reserves no space when connected (rather than
+        // overlaying the status chips).
+        bottom: isOnline ? null : const OfflineBanner(),
+        // Widen the leading slot when the category button rides alongside the star.
+        leadingWidth: isPremium ? 104 : 56,
         leading: current != null
             ? Padding(
                 padding: const EdgeInsets.only(left: 4),
-                child: FavoriteStarButton(questionId: current.id),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    FavoriteStarButton(questionId: current.id),
+                    if (isPremium) const CategoryFilterButton(),
+                  ],
+                ),
               )
             : null,
         centerTitle: true,
@@ -256,10 +301,24 @@ class _QuestionBody extends ConsumerWidget {
                   // A visible share pill sitting right under the question (and
                   // under the vote panel on the daily), so it's an obvious
                   // action rather than the faint icon it used to be down in the
-                  // bottom overlay. Readable questions only — never a teaser.
+                  // bottom overlay. Readable questions only — never a teaser. On
+                  // the daily it's paired with the "Historia" pill, the quick way
+                  // into the PRO history of past dailies + how people voted.
                   if (isReadable && questionId != null) ...[
                     const SizedBox(height: 24),
-                    ShareQuestionButton(questionText: current.questionText),
+                    if (isDaily)
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          ShareQuestionButton(
+                            questionText: current.questionText,
+                          ),
+                          const SizedBox(width: 12),
+                          const HistoryButton(),
+                        ],
+                      )
+                    else
+                      ShareQuestionButton(questionText: current.questionText),
                   ],
                 ],
               ),
@@ -309,16 +368,18 @@ class _QuestionBody extends ConsumerWidget {
               ),
             ),
           ),
-        // A gentle, animated arrow on the right edge teaching that a leftward
-        // swipe reveals the next question — shown only on a readable question
-        // (never the paywall slot) and only until the user has swiped forward
-        // once, after which the canvas stays clean. Decorative (IgnorePointer),
-        // so the swipe underneath passes straight through.
+        // A finger that demonstrates the leftward "swipe for more" gesture if
+        // the user lingers ~10s on a readable question without swiping. Shown
+        // only on a readable, non-slot question, and — in release — only until
+        // the first forward swipe sets `swipeDiscovered`, so it teaches once per
+        // install. In debug builds the gate is relaxed so the animation can be
+        // eyeballed without clearing app data. Decorative (IgnorePointer), so
+        // the real swipe underneath passes straight through.
         if (isReadable &&
             questionId != null &&
             !atRevealSlot &&
-            !swipeDiscovered)
-          const Positioned.fill(child: SwipeAffordance()),
+            (!swipeDiscovered || kDebugMode))
+          const Positioned.fill(child: SwipeHandHint()),
       ],
     );
   }

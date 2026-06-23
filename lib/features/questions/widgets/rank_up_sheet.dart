@@ -21,7 +21,7 @@ import 'rank_sheet.dart' show rankIcon;
 /// prominent **share** action that renders the moment as a [RankShareCard]
 /// poster, plus a dismiss.
 ///
-/// Presented as a branded dark takeover (the same dark-violet palette as the
+/// Presented as a branded dark takeover (the same dark, orange-tinted palette as the
 /// share card) regardless of the app theme, so the in-app moment and the image
 /// the user shares look like one thing. Not dismissible by tapping outside — the
 /// user taps a button, so the share CTA is always seen.

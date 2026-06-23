@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/app_theme.dart';
 import 'styled_question_text.dart';
 
-/// A self-contained, share-ready poster of a single question: the Spark
+/// A self-contained, share-ready poster of a single question: the Debatly
 /// wordmark, the question rendered in the app's signature white-fill /
-/// black-outline "sticker" style, and a tagline, on a dark violet-tinted
+/// black-outline "sticker" style, and a tagline, on a dark orange-tinted
 /// gradient.
 ///
 /// Deliberately **theme-independent** — it reads no `context.colors`, so it
@@ -54,7 +54,7 @@ class QuestionShareCard extends StatelessWidget {
         ),
         child: Stack(
           children: [
-            // Soft violet halo bleeding in from the top, echoing the splash glow.
+            // Soft orange halo bleeding in from the top, echoing the splash glow.
             Positioned(
               top: -size.height * 0.16,
               left: -size.width * 0.10,
@@ -113,7 +113,7 @@ class QuestionShareCard extends StatelessWidget {
   }
 }
 
-/// The static Spark wordmark: a glowing violet bolt beside "Spark" set in the
+/// The static Debatly wordmark: a glowing orange bolt beside "Debatly" set in the
 /// display font. A non-animated sibling of the splash/onboarding [SparkLogo],
 /// safe to paint in a one-shot off-screen render.
 class _Wordmark extends StatelessWidget {
@@ -140,7 +140,7 @@ class _Wordmark extends StatelessWidget {
         ),
         SizedBox(width: fontSize * 0.06),
         Text(
-          'Spark',
+          'Debatly',
           style: TextStyle(
             fontFamily: 'Anton',
             fontSize: fontSize,

@@ -1,4 +1,5 @@
 import '../mock/mock_questions.dart';
+import '../models/daily_history_entry.dart';
 import '../models/question.dart';
 import '../models/rank.dart';
 import '../models/smaczek.dart';
@@ -102,6 +103,15 @@ abstract class QuestionRepository {
   /// premium lapses (the favorite is the grant), so unlike the catalog these are
   /// never locked placeholders. For the favorites screen in Settings.
   Future<List<Question>> fetchFavoriteQuestions();
+
+  /// Every PAST daily question with its community TAK/NIE split, newest first —
+  /// the PRO "question history".
+  ///
+  /// Premium-only: a free user / guest gets an EMPTY list (the server returns no
+  /// rows; the client shows a PRO upsell instead of an error). Past days only —
+  /// today's still-votable daily and the pre-filled future calendar are excluded
+  /// server-side. See the `get_daily_history` RPC.
+  Future<List<DailyHistoryEntry>> fetchDailyHistory();
 }
 
 /// Default implementation backed by the in-memory mock list.
@@ -258,6 +268,32 @@ class MockQuestionRepository implements QuestionRepository {
     return [
       for (final q in kMockQuestions)
         if (_mockFavorites.contains(q.id)) q.copyWith(isLocked: false),
+    ];
+  }
+
+  @override
+  Future<List<DailyHistoryEntry>> fetchDailyHistory() async {
+    await Future.delayed(const Duration(milliseconds: 250));
+    // Offline preview: fabricate a handful of past dailies from the pool so the
+    // history sheet renders with plausible splits. The real premium gate +
+    // tallies live server-side; mock mode always shows the "has data" view.
+    final today = DateTime.now();
+    final source = kMockQuestions.length > 6
+        ? kMockQuestions.sublist(1, 7)
+        : kMockQuestions;
+    return [
+      for (var i = 0; i < source.length; i++)
+        DailyHistoryEntry(
+          questionId: source[i].id,
+          category: source[i].category,
+          questionText: source[i].questionText,
+          publishDate: DateTime(today.year, today.month, today.day - i - 1),
+          votes: VoteResult(
+            yesCount: 40 + (i * 13) % 55,
+            noCount: 20 + (i * 7) % 45,
+            myChoice: i.isEven ? VoteResult.yes : VoteResult.no,
+          ),
+        ),
     ];
   }
 }
@@ -486,6 +522,22 @@ class SupabaseQuestionRepository implements QuestionRepository {
     return (data as List)
         .cast<Map<String, dynamic>>()
         .map(Question.fromJson)
+        .toList();
+  }
+
+  @override
+  Future<List<DailyHistoryEntry>> fetchDailyHistory() async {
+    // SECURITY DEFINER RPC: returns past dailies (newest first) with the
+    // community vote split, gating on premium server-side — a non-premium caller
+    // simply gets zero rows. Pass the device's local date so "past" honours the
+    // user's timezone (clamped to the UTC clock server-side).
+    final data = await SupabaseService.client.rpc(
+      'get_daily_history',
+      params: {'p_locale': locale, 'p_date': _dateOnly(DateTime.now())},
+    );
+    return (data as List)
+        .cast<Map<String, dynamic>>()
+        .map(DailyHistoryEntry.fromJson)
         .toList();
   }
 

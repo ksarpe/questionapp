@@ -37,6 +37,16 @@ class Rank {
       icon: json['icon'] as String?,
     );
   }
+
+  /// Mirrors the `ranks` row shape so a cached rank round-trips back through
+  /// [Rank.fromJson] (used by the offline cache).
+  Map<String, dynamic> toJson() => {
+        'tier': tier,
+        'min_streak': minStreak,
+        'name_pl': namePl,
+        'name_en': nameEn,
+        'icon': icon,
+      };
 }
 
 /// The default ladder, mirroring the `ranks` table seed. Used as the offline /

@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/app_theme.dart';
 import 'rank_sheet.dart' show rankIcon;
 
-/// A self-contained, share-ready poster announcing a rank promotion: the Spark
+/// A self-contained, share-ready poster announcing a rank promotion: the Debatly
 /// wordmark, the new rank's badge in a glowing ring, an eyebrow, the rank name,
-/// and the streak that earned it — on the same dark violet-tinted gradient as
+/// and the streak that earned it — on the same dark orange-tinted gradient as
 /// [QuestionShareCard], so the in-app moment and the shared image read as one.
 ///
 /// Deliberately **theme-independent** and string-injected: like
@@ -64,7 +64,7 @@ class RankShareCard extends StatelessWidget {
         ),
         child: Stack(
           children: [
-            // Soft violet halo bleeding in from the top, echoing the splash glow.
+            // Soft orange halo bleeding in from the top, echoing the splash glow.
             Positioned(
               top: -size.height * 0.16,
               left: -size.width * 0.10,
@@ -220,7 +220,7 @@ class _StreakLine extends StatelessWidget {
   }
 }
 
-/// The static Spark wordmark — a glowing violet bolt beside "Spark" in the
+/// The static Debatly wordmark — a glowing orange bolt beside "Debatly" in the
 /// display font. Mirrors [QuestionShareCard]'s wordmark so both posters match.
 class _Wordmark extends StatelessWidget {
   const _Wordmark({required this.fontSize});
@@ -246,7 +246,7 @@ class _Wordmark extends StatelessWidget {
         ),
         SizedBox(width: fontSize * 0.06),
         Text(
-          'Spark',
+          'Debatly',
           style: TextStyle(
             fontFamily: 'Anton',
             fontSize: fontSize,

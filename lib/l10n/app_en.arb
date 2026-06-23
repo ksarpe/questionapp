@@ -45,6 +45,7 @@
   "remindersOpenSettings": "Open settings",
   "notificationDailyTitle": "Today's question is waiting 🔥",
   "notificationDailyBody": "Cast your vote and keep your streak alive.",
+  "widgetDailyLabel": "Daily question",
   "settingsLanguage": "Language",
   "chooseLanguage": "Choose language",
   "settingsAppearance": "Appearance",
@@ -54,6 +55,23 @@
   "settingsAppearanceDark": "Dark",
   "settingsPremiumActive": "Premium active",
   "settingsGoPremium": "Go Premium",
+  "settingsOfflineQuestions": "Offline questions",
+  "offlineDownloadReady": "Download all questions to read without internet",
+  "offlineDownloadSynced": "Downloaded · {date}",
+  "@offlineDownloadSynced": {
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
+  "offlineDownloadProgress": "Downloading… {done}/{total}",
+  "@offlineDownloadProgress": {
+    "placeholders": {
+      "done": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "offlineDownloadComplete": "Questions saved for offline.",
+  "offlineDownloadFailed": "Download failed. Check your connection and try again.",
   "settingsPrivacy": "Privacy & data",
   "settingsAbout": "About",
   "settingsFavorites": "Favorite questions",
@@ -66,6 +84,30 @@
   "favoriteRemoved": "Removed from favorites",
   "favoritesPremiumOnly": "Favorites are a Premium feature.",
   "favoriteError": "Couldn't update favorites.",
+  "historyTitle": "Question history",
+  "historySubtitle": "See how people voted on previous daily questions.",
+  "historyLabel": "History",
+  "historyTooltip": "Question history",
+  "historyEmptyTitle": "Nothing here yet",
+  "historyEmptyBody": "Previous daily questions will show up here.",
+  "historyLoadError": "Couldn't load the history.",
+  "historyPremiumTitle": "History is a PRO feature",
+  "historyPremiumBody": "Go PRO to browse every past daily question and see how others voted.",
+  "historyNoVotes": "No votes",
+  "categoryFilterTooltip": "Filter by category",
+  "categoryFilterTitle": "Categories",
+  "categoryFilterSubtitle": "Show questions from one category only. The daily question stays as is.",
+  "categoryAll": "All",
+  "categorySociety": "Society",
+  "categoryEthics": "Ethics",
+  "categoryJustice": "Justice",
+  "categoryTechnology": "Technology",
+  "categoryMoney": "Money",
+  "categoryConnection": "Connection",
+  "categoryDreams": "Dreams",
+  "categoryEnvironment": "Environment",
+  "categoryFamily": "Family",
+  "categoryReflection": "Reflection",
   "aboutVersion": "Version {version} ({build})",
   "@aboutVersion": {
     "placeholders": {
@@ -84,7 +126,7 @@
   "privacyOpenInBrowser": "Opens in your browser",
   "privacyLinkFailed": "Couldn't open the link.",
   "privacyDataSection": "WHAT WE STORE",
-  "privacyDataIntro": "A quick overview of the data Spark keeps and why.",
+  "privacyDataIntro": "A quick overview of the data Debatly keeps and why.",
   "privacyDataAccountTitle": "Account & sign-in",
   "privacyDataAccountBody": "Your email or sign-in identity — or an anonymous ID for guests — so your progress follows you across devices.",
   "privacyDataActivityTitle": "Activity",
@@ -160,12 +202,13 @@
   "dailyShort": "Daily",
   "loadErrorTitle": "Couldn't load questions",
   "loadErrorBody": "Check your internet connection and try again.",
+  "offlineBannerLabel": "You're offline",
   "goDeeper": "GO DEEPER",
   "dailyBadge": "DAILY",
   "shareLabel": "Share",
   "shareTooltip": "Share question",
-  "shareSubject": "A question from Spark",
-  "shareMessage": "{question}\n\nSpark — thought-provoking questions.",
+  "shareSubject": "A question from Debatly",
+  "shareMessage": "{question}\n\nDebatly — thought-provoking questions.",
   "@shareMessage": {
     "placeholders": {
       "question": {
@@ -292,11 +335,11 @@
       }
     }
   },
-  "rankShareSubject": "My rank in Spark",
+  "rankShareSubject": "My rank in Debatly",
   "@rankShareSubject": {
     "description": "Subject line when sharing the rank poster (email etc.)."
   },
-  "rankShareMessage": "My new rank in Spark: {rank} 🔥\n\nSpark — thought-provoking questions.",
+  "rankShareMessage": "My new rank in Debatly: {rank} 🔥\n\nDebatly — thought-provoking questions.",
   "@rankShareMessage": {
     "description": "Accompanying text shared alongside the rank poster image.",
     "placeholders": {
@@ -307,7 +350,7 @@
   },
   "onboardingSkip": "Skip",
   "onboardingNext": "Next",
-  "onboardingWelcomeTitle": "Welcome to Spark",
+  "onboardingWelcomeTitle": "Welcome to Debatly",
   "onboardingWelcomeBody": "One sharp question a day — and everything around it.",
   "onboardingDailyTitle": "Daily question",
   "onboardingDailyBody": "Every day brings a new free question to vote on and sit with.",

@@ -18,6 +18,7 @@ import '../../account/providers/stats_providers.dart';
 import '../../account/screens/auth_screen.dart';
 import '../../onboarding/widgets/spark_logo.dart';
 import '../../questions/providers/favorites_providers.dart';
+import '../../questions/widgets/history_sheet.dart';
 import '../../questions/widgets/rank_sheet.dart';
 import '../../questions/widgets/share_question_button.dart';
 import '../providers/app_info_provider.dart';
@@ -94,7 +95,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
       backgroundColor: context.colors.background,
       body: Stack(
         children: [
-          // Faint violet glow bleeding down from the top, behind the header.
+          // Faint orange glow bleeding down from the top, behind the header.
           const _TopGlow(),
           SafeArea(
             child: SingleChildScrollView(
@@ -180,6 +181,16 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
                               onTap: _openFavorites,
                             ),
                           ],
+
+                          // The PRO history of past dailies + how people voted.
+                          // Shown to everyone; the sheet gates premium itself, so
+                          // a free user lands on the PRO upsell inside it.
+                          const _RowDivider(),
+                          _NavRow(
+                            icon: Icons.history_rounded,
+                            title: context.l10n.historyTitle,
+                            onTap: () => showHistorySheet(context),
+                          ),
                         ],
                       ),
                       const SizedBox(height: 28),
@@ -241,7 +252,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
                         const SizedBox(height: 24),
                         Center(
                           child: Text(
-                            'Spark · v${appInfo.version} (${appInfo.build})',
+                            'Debatly · v${appInfo.version} (${appInfo.build})',
                             style: TextStyle(
                               color: context.colors.subtle,
                               fontSize: 12,
@@ -665,7 +676,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
   }
 }
 
-/// Soft violet radial glow anchored to the top of the screen.
+/// Soft orange radial glow anchored to the top of the screen.
 class _TopGlow extends StatelessWidget {
   const _TopGlow();
 
@@ -1608,7 +1619,7 @@ class _SignInButton extends StatelessWidget {
     return DecoratedBox(
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [Color(0xFF8B5CF6), Color(0xFF7C3AED)],
+          colors: [Color(0xFFF97316), Color(0xFFEA580C)],
         ),
         borderRadius: BorderRadius.circular(16),
       ),
@@ -1723,7 +1734,7 @@ class AboutScreen extends ConsumerWidget {
                       const SizedBox(height: 40),
                       Center(
                         child: Text(
-                          '© 2026 Spark',
+                          '© 2026 Debatly',
                           style: TextStyle(color: context.colors.subtle, fontSize: 12),
                         ),
                       ),

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/feedback/app_toast.dart';
 import '../../../core/locale/l10n_extension.dart';
+import '../../../core/network/network_error.dart';
 import '../../../data/models/rank.dart';
 import '../../../data/models/vote_result.dart';
 import '../../../services/notification_service.dart';
@@ -56,7 +57,12 @@ class _DailyVotePanelState extends ConsumerState<DailyVotePanel> {
       await _maybeAskForReview();
     } catch (e) {
       if (!mounted) return;
-      AppToast.error(context, context.l10n.voteFailed);
+      // Offline gets the calmer "no connection" line — the vote isn't lost, it
+      // just needs a connection; any other failure is the generic vote error.
+      AppToast.error(
+        context,
+        isOfflineError(e) ? context.l10n.noConnection : context.l10n.voteFailed,
+      );
     } finally {
       if (mounted) setState(() => _busy = false);
     }
