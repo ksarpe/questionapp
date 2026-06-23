@@ -180,6 +180,7 @@ class _TaglineFooter extends StatelessWidget {
           text.toUpperCase(),
           textAlign: TextAlign.center,
           style: const TextStyle(
+            fontFamily: 'Roboto',
             color: QuestionShareCard._taglineInk,
             fontSize: 13,
             fontWeight: FontWeight.w600,

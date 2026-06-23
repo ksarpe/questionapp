@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/feedback/app_toast.dart';
 import '../../../core/locale/l10n_extension.dart';
+import '../../../data/models/rank.dart';
 import '../../../data/models/vote_result.dart';
 import '../../../services/notification_service.dart';
 import '../../account/providers/session_providers.dart';
@@ -98,9 +99,22 @@ class _DailyVotePanelState extends ConsumerState<DailyVotePanel> {
   Future<void> _maybeAskForReview() async {
     try {
       final stats = await ref.read(userStatsProvider.future);
+      final streak = stats?.currentStreak ?? 0;
+
+      // On the day the streak crosses into a new rank, the rank-up celebration
+      // (confetti + share card) owns the moment — don't stack the OS review
+      // sheet on top of it. The very first review milestone (streak 3) lines up
+      // exactly with the first promotion, so this collision is the common case,
+      // not an edge one. The review ask comes around again on the next eligible
+      // day per its own cooldown.
+      final ladder = ref.read(ranksProvider).value ?? kDefaultRanks;
+      final isPromotionDay =
+          ladder.any((r) => r.tier > 0 && r.minStreak == streak);
+      if (isPromotionDay) return;
+
       await ref
           .read(reviewPromptControllerProvider.notifier)
-          .maybePromptForStreak(stats?.currentStreak ?? 0);
+          .maybePromptForStreak(streak);
     } catch (_) {
       // Non-critical: skipping the ask is always an acceptable outcome.
     }

@@ -189,6 +189,35 @@
   "rankFrom": "od {minStreak}",
   "streakFreezeWarning": "{count, plural, one{Zamrożenie: ranga spadnie za {count} dzień} few{Zamrożenie: ranga spadnie za {count} dni} many{Zamrożenie: ranga spadnie za {count} dni} other{Zamrożenie: ranga spadnie za {count} dnia}}",
 
+  "rankUpEyebrow": "NOWA RANGA",
+  "rankUpStreakLine": "{count, plural, one{{count} dzień z rzędu 🔥} few{{count} dni z rzędu 🔥} many{{count} dni z rzędu 🔥} other{{count} dnia z rzędu 🔥}}",
+  "@rankUpStreakLine": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "rankUpDismiss": "Świetnie!",
+  "rankShareHeadline": "MOJA NOWA RANGA",
+  "rankShareStreakLine": "{count, plural, one{{count} dzień z rzędu} few{{count} dni z rzędu} many{{count} dni z rzędu} other{{count} dnia z rzędu}}",
+  "@rankShareStreakLine": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "rankShareSubject": "Moja ranga w Spark",
+  "rankShareMessage": "Moja nowa ranga w Spark: {rank} 🔥\n\nSpark — jedno przewrotne pytanie dziennie.",
+  "@rankShareMessage": {
+    "placeholders": {
+      "rank": {
+        "type": "String"
+      }
+    }
+  },
+
   "onboardingSkip": "Pomiń",
   "onboardingNext": "Dalej",
   "onboardingWelcomeTitle": "Witaj w Spark",

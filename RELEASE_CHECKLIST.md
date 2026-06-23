@@ -135,6 +135,11 @@ so there is **nothing to configure in any console**. 🟢
       (ATT + local-notifications were added).
 - [ ] Legal pages live + URLs wired (see §1) — **deferred**.
 - [ ] Store listings (screenshots, descriptions, data-safety / privacy forms).
+      For **screenshots**, the in-app share already renders a branded 1080×1920
+      poster of a question (`QuestionShareCard` via `renderWidgetToPng`) — the
+      same render doubles as store-screenshot source art. To export a batch,
+      render `QuestionShareCard` for a few questions and save the PNGs (see the
+      `renderWidgetToPng` test for the pattern), then drop them into the console.
 
 ---
 

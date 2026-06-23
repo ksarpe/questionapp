@@ -1070,6 +1070,48 @@ abstract class AppLocalizations {
   /// **'{count, plural, one{Freeze: rank drops in {count} day} other{Freeze: rank drops in {count} days}}'**
   String streakFreezeWarning(int count);
 
+  /// Eyebrow above the rank name on the rank-up celebration.
+  ///
+  /// In en, this message translates to:
+  /// **'NEW RANK'**
+  String get rankUpEyebrow;
+
+  /// Streak that earned the new rank, shown in the in-app celebration.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count}-day streak 🔥} other{{count}-day streak 🔥}}'**
+  String rankUpStreakLine(int count);
+
+  /// Dismiss button on the rank-up celebration.
+  ///
+  /// In en, this message translates to:
+  /// **'Awesome!'**
+  String get rankUpDismiss;
+
+  /// Eyebrow on the shareable rank poster, above the rank name.
+  ///
+  /// In en, this message translates to:
+  /// **'MY NEW RANK'**
+  String get rankShareHeadline;
+
+  /// Streak line on the shareable rank poster.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count}-day streak} other{{count}-day streak}}'**
+  String rankShareStreakLine(int count);
+
+  /// Subject line when sharing the rank poster (email etc.).
+  ///
+  /// In en, this message translates to:
+  /// **'My rank in Spark'**
+  String get rankShareSubject;
+
+  /// Accompanying text shared alongside the rank poster image.
+  ///
+  /// In en, this message translates to:
+  /// **'My new rank in Spark: {rank} 🔥\n\nSpark — thought-provoking questions.'**
+  String rankShareMessage(String rank);
+
   /// No description provided for @onboardingSkip.
   ///
   /// In en, this message translates to:

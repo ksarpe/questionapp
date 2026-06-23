@@ -581,6 +581,45 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get rankUpEyebrow => 'NEW RANK';
+
+  @override
+  String rankUpStreakLine(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count-day streak 🔥',
+      one: '$count-day streak 🔥',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get rankUpDismiss => 'Awesome!';
+
+  @override
+  String get rankShareHeadline => 'MY NEW RANK';
+
+  @override
+  String rankShareStreakLine(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count-day streak',
+      one: '$count-day streak',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get rankShareSubject => 'My rank in Spark';
+
+  @override
+  String rankShareMessage(String rank) {
+    return 'My new rank in Spark: $rank 🔥\n\nSpark — thought-provoking questions.';
+  }
+
+  @override
   String get onboardingSkip => 'Skip';
 
   @override

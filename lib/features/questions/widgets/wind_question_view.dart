@@ -12,6 +12,7 @@ import '../../account/providers/stats_providers.dart';
 import '../../account/widgets/save_pro_prompt.dart';
 import '../../monetization/providers/monetization_providers.dart';
 import '../providers/question_providers.dart';
+import '../providers/swipe_hint_providers.dart';
 import 'falling_words_text.dart';
 import 'styled_question_text.dart';
 
@@ -126,6 +127,13 @@ class _WindQuestionViewState extends ConsumerState<WindQuestionView>
       return;
     }
 
+    // A leftward (forward) swipe is the gesture we teach: the moment the user
+    // makes one — committed or not — they've discovered the feed extends past
+    // the daily, so retire the right-edge swipe affordance (persisted once).
+    if (direction < 0) {
+      ref.read(swipeDiscoveredControllerProvider.notifier).markDiscovered();
+    }
+
     // PREMIUM: any swipe advances forward through the wrapped catalog.
     if (ref.read(isPremiumProvider)) {
       _animating = true;
@@ -191,7 +199,9 @@ class _WindQuestionViewState extends ConsumerState<WindQuestionView>
         _pendingRevealResult = null;
         _pendingRevealError = null;
         _pendingRevealDone = false;
-        final reveal = ref.read(questionRepositoryProvider).revealFreeQuestion();
+        final reveal = ref
+            .read(questionRepositoryProvider)
+            .revealFreeQuestion();
         _pendingReveal = reveal;
         // Record the outcome as it arrives so the post-animation step can skip
         // the spinner when the reveal already won the race against the animation.
@@ -262,11 +272,14 @@ class _WindQuestionViewState extends ConsumerState<WindQuestionView>
   /// in-flight peek is kept and reused. Called from [build].
   void _maybePrefetchPeek() {
     if (_animating || ref.read(isPremiumProvider)) return;
-    if (_peeked != null || _peekFuture != null) return; // already have / getting it
+    if (_peeked != null || _peekFuture != null)
+      return; // already have / getting it
     final deck = ref.read(questionDeckProvider);
     if (deck.isEmpty) return;
-    if (ref.read(questionIndexProvider) != deck.length - 1) return; // not the last item
-    if (ref.read(freeUnlockCreditsProvider) >= 1) return; // a credit reveals, not peeks
+    if (ref.read(questionIndexProvider) != deck.length - 1)
+      return; // not the last item
+    if (ref.read(freeUnlockCreditsProvider) >= 1)
+      return; // a credit reveals, not peeks
     _startPeek();
   }
 
@@ -829,7 +842,11 @@ class _NoMoreQuestions extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(Icons.check_circle_outline, color: context.colors.subtle, size: 40),
+        Icon(
+          Icons.check_circle_outline,
+          color: context.colors.subtle,
+          size: 40,
+        ),
         const SizedBox(height: 16),
         Text(
           context.l10n.noMoreTitle,

@@ -262,6 +262,49 @@
       }
     }
   },
+  "rankUpEyebrow": "NEW RANK",
+  "@rankUpEyebrow": {
+    "description": "Eyebrow above the rank name on the rank-up celebration."
+  },
+  "rankUpStreakLine": "{count, plural, one{{count}-day streak 🔥} other{{count}-day streak 🔥}}",
+  "@rankUpStreakLine": {
+    "description": "Streak that earned the new rank, shown in the in-app celebration.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "rankUpDismiss": "Awesome!",
+  "@rankUpDismiss": {
+    "description": "Dismiss button on the rank-up celebration."
+  },
+  "rankShareHeadline": "MY NEW RANK",
+  "@rankShareHeadline": {
+    "description": "Eyebrow on the shareable rank poster, above the rank name."
+  },
+  "rankShareStreakLine": "{count, plural, one{{count}-day streak} other{{count}-day streak}}",
+  "@rankShareStreakLine": {
+    "description": "Streak line on the shareable rank poster.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "rankShareSubject": "My rank in Spark",
+  "@rankShareSubject": {
+    "description": "Subject line when sharing the rank poster (email etc.)."
+  },
+  "rankShareMessage": "My new rank in Spark: {rank} 🔥\n\nSpark — thought-provoking questions.",
+  "@rankShareMessage": {
+    "description": "Accompanying text shared alongside the rank poster image.",
+    "placeholders": {
+      "rank": {
+        "type": "String"
+      }
+    }
+  },
   "onboardingSkip": "Skip",
   "onboardingNext": "Next",
   "onboardingWelcomeTitle": "Welcome to Spark",

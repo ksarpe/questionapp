@@ -9,13 +9,16 @@ import '../../account/screens/auth_screen.dart';
 import '../../monetization/providers/monetization_providers.dart';
 import '../../settings/screens/settings_screen.dart';
 import '../providers/question_providers.dart';
+import '../providers/swipe_hint_providers.dart';
 import '../widgets/daily_badge.dart';
 import '../widgets/favorite_star_button.dart';
 import '../widgets/daily_vote_panel.dart';
 import '../widgets/go_deeper_button.dart';
+import '../widgets/rank_up_sheet.dart';
 import '../widgets/share_question_button.dart';
 import '../widgets/smaczki_panel.dart';
 import '../widgets/stat_chips.dart';
+import '../widgets/swipe_affordance.dart';
 import '../widgets/wind_question_view.dart';
 
 /// The home screen: a single styled question centred on a clean canvas, with a
@@ -151,18 +154,28 @@ class QuestionScreen extends ConsumerWidget {
       // Only treat a load error as fatal when there's genuinely nothing to show:
       // a transient pool error while the daily loaded fine still renders the
       // daily rather than blocking the whole screen.
-      body: deck.isEmpty && loadError != null
-          ? _LoadError(
-              onRetry: () {
-                ref.invalidate(sessionProvider);
-                ref.invalidate(questionsProvider);
-                ref.invalidate(todaysDailyQuestionProvider);
-                ref.invalidate(userStatsProvider);
-              },
-            )
-          : deck.isEmpty
-          ? const Center(child: CircularProgressIndicator())
-          : const _QuestionBody(),
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: deck.isEmpty && loadError != null
+                ? _LoadError(
+                    onRetry: () {
+                      ref.invalidate(sessionProvider);
+                      ref.invalidate(questionsProvider);
+                      ref.invalidate(todaysDailyQuestionProvider);
+                      ref.invalidate(userStatsProvider);
+                    },
+                  )
+                : deck.isEmpty
+                ? const Center(child: CircularProgressIndicator())
+                : const _QuestionBody(),
+          ),
+          // Celebrates a rank climb (confetti + shareable card) the moment the
+          // synced stats cross a tier — caught on launch and after a daily vote.
+          // Zero-size; mounts here so it lives for the whole session.
+          const RankCelebrationListener(),
+        ],
+      ),
     );
   }
 }
@@ -179,6 +192,21 @@ class _QuestionBody extends ConsumerWidget {
     final questionId = current?.id;
     final isReadable = current != null && current.isLocked != true;
 
+    // ignore: avoid_print
+    debugPrint(
+      'DIAG body: isPremium=${ref.watch(isPremiumProvider)} '
+      'deckLen=${ref.watch(questionDeckProvider).length} '
+      'index=${ref.watch(questionIndexProvider)} '
+      'curId=${current?.id} locked=${current?.isLocked} '
+      'textLen=${current?.questionText.length} '
+      'isDaily=${ref.watch(isShowingDailyProvider)} '
+      'atRevealSlot=${ref.watch(isAtRevealSlotProvider)} '
+      'dailyLoading=${ref.watch(todaysDailyQuestionProvider).isLoading} '
+      'dailyErr=${ref.watch(todaysDailyQuestionProvider).hasError} '
+      'dailyId=${ref.watch(todaysDailyQuestionProvider).asData?.value?.id} '
+      'sessionLoading=${ref.watch(sessionProvider).isLoading}',
+    );
+
     // The daily is where the streak is earned, so its overlay carries the binary
     // vote panel (TAK/NIE → community split). Other readable questions don't.
     final isDaily = ref.watch(isShowingDailyProvider);
@@ -187,6 +215,12 @@ class _QuestionBody extends ConsumerWidget {
     // visible "back to daily" link, so suppress the faint bottom one here to
     // avoid showing two competing back actions.
     final atRevealSlot = ref.watch(isAtRevealSlotProvider);
+
+    // Whether the user has ever swiped forward. Until they have, a gentle
+    // right-edge arrow nudges them to discover that the feed continues past the
+    // daily — the swipe gesture isn't obvious from the faint text hint alone.
+    // Flipped (and persisted) by the first forward swipe in WindQuestionView.
+    final swipeDiscovered = ref.watch(swipeDiscoveredControllerProvider);
 
     // Folded into the vote panel's key so its local state (the cast result it
     // holds to avoid a refetch) resets when the account changes, not only when
@@ -208,6 +242,18 @@ class _QuestionBody extends ConsumerWidget {
     // stay in the bottom overlay (readable questions only).
     return Stack(
       children: [
+        // DIAG PROBE: bright background + fixed marker to test if the body region
+        // paints at all and whether children have size.
+        const Positioned.fill(child: ColoredBox(color: Color(0xFF003322))),
+        const Positioned(
+          top: 120,
+          left: 20,
+          child: Text(
+            'PROBE MARKER',
+            textDirection: TextDirection.ltr,
+            style: TextStyle(color: Color(0xFFFF0000), fontSize: 28),
+          ),
+        ),
         Positioned.fill(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -289,6 +335,16 @@ class _QuestionBody extends ConsumerWidget {
               ),
             ),
           ),
+        // A gentle, animated arrow on the right edge teaching that a leftward
+        // swipe reveals the next question — shown only on a readable question
+        // (never the paywall slot) and only until the user has swiped forward
+        // once, after which the canvas stays clean. Decorative (IgnorePointer),
+        // so the swipe underneath passes straight through.
+        if (isReadable &&
+            questionId != null &&
+            !atRevealSlot &&
+            !swipeDiscovered)
+          const Positioned.fill(child: SwipeAffordance()),
       ],
     );
   }
