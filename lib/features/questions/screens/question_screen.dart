@@ -155,6 +155,7 @@ class QuestionScreen extends ConsumerWidget {
       // a transient pool error while the daily loaded fine still renders the
       // daily rather than blocking the whole screen.
       body: Stack(
+        fit: StackFit.expand,
         children: [
           Positioned.fill(
             child: deck.isEmpty && loadError != null
@@ -192,21 +193,6 @@ class _QuestionBody extends ConsumerWidget {
     final questionId = current?.id;
     final isReadable = current != null && current.isLocked != true;
 
-    // ignore: avoid_print
-    debugPrint(
-      'DIAG body: isPremium=${ref.watch(isPremiumProvider)} '
-      'deckLen=${ref.watch(questionDeckProvider).length} '
-      'index=${ref.watch(questionIndexProvider)} '
-      'curId=${current?.id} locked=${current?.isLocked} '
-      'textLen=${current?.questionText.length} '
-      'isDaily=${ref.watch(isShowingDailyProvider)} '
-      'atRevealSlot=${ref.watch(isAtRevealSlotProvider)} '
-      'dailyLoading=${ref.watch(todaysDailyQuestionProvider).isLoading} '
-      'dailyErr=${ref.watch(todaysDailyQuestionProvider).hasError} '
-      'dailyId=${ref.watch(todaysDailyQuestionProvider).asData?.value?.id} '
-      'sessionLoading=${ref.watch(sessionProvider).isLoading}',
-    );
-
     // The daily is where the streak is earned, so its overlay carries the binary
     // vote panel (TAK/NIE → community split). Other readable questions don't.
     final isDaily = ref.watch(isShowingDailyProvider);
@@ -242,18 +228,6 @@ class _QuestionBody extends ConsumerWidget {
     // stay in the bottom overlay (readable questions only).
     return Stack(
       children: [
-        // DIAG PROBE: bright background + fixed marker to test if the body region
-        // paints at all and whether children have size.
-        const Positioned.fill(child: ColoredBox(color: Color(0xFF003322))),
-        const Positioned(
-          top: 120,
-          left: 20,
-          child: Text(
-            'PROBE MARKER',
-            textDirection: TextDirection.ltr,
-            style: TextStyle(color: Color(0xFFFF0000), fontSize: 28),
-          ),
-        ),
         Positioned.fill(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
