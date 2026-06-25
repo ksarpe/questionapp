@@ -1,3 +1,5 @@
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -31,14 +33,26 @@ IconData rankIcon(String? key) {
       return Icons.auto_awesome_rounded;
     case 'flame':
       return Icons.local_fire_department_rounded;
+    case 'megaphone':
+      return Icons.campaign_rounded;
     case 'mask':
       return Icons.theater_comedy_rounded;
     case 'storm':
       return Icons.cyclone_rounded;
     case 'bolt':
       return Icons.bolt_rounded;
+    case 'whatshot':
+      return Icons.whatshot_rounded;
+    case 'shield':
+      return Icons.shield_rounded;
+    case 'star':
+      return Icons.stars_rounded;
+    case 'diamond':
+      return Icons.diamond_rounded;
     case 'crown':
       return Icons.workspace_premium_rounded;
+    case 'rocket':
+      return Icons.rocket_launch_rounded;
     default:
       return Icons.military_tech_rounded;
   }
@@ -110,6 +124,14 @@ class _RankSheet extends ConsumerWidget {
                             lang: lang,
                             unlocked: streak >= r.minStreak,
                             isCurrent: r.tier == current.tier,
+                            // Locked ranks past the immediate next one are kept a
+                            // blurred mystery, so the ladder teases what's ahead
+                            // without spoiling it. The current rank and the next
+                            // target (already named in the progress line above)
+                            // stay sharp. Purely a local visual effect — the row
+                            // data is still loaded, just obscured client-side.
+                            obscured: streak < r.minStreak &&
+                                r.tier != next?.tier,
                           ),
                       ],
                     ),
@@ -314,12 +336,17 @@ class _LadderRow extends StatelessWidget {
     required this.lang,
     required this.unlocked,
     required this.isCurrent,
+    this.obscured = false,
   });
 
   final Rank rank;
   final String lang;
   final bool unlocked;
   final bool isCurrent;
+
+  /// Blur this row's icon + name to keep a far-off rank a teaser (see the call
+  /// site). The unlock threshold and lock badge stay sharp so the goal is clear.
+  final bool obscured;
 
   @override
   Widget build(BuildContext context) {
@@ -338,16 +365,21 @@ class _LadderRow extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(rankIcon(rank.icon),
-              color: unlocked ? AppTheme.spark : context.colors.subtle, size: 22),
+          _blur(
+            Icon(rankIcon(rank.icon),
+                color: unlocked ? AppTheme.spark : context.colors.subtle,
+                size: 22),
+          ),
           const SizedBox(width: 12),
           Expanded(
-            child: Text(
-              rank.nameFor(lang),
-              style: TextStyle(
-                color: fg,
-                fontSize: 15,
-                fontWeight: isCurrent ? FontWeight.w800 : FontWeight.w600,
+            child: _blur(
+              Text(
+                rank.nameFor(lang),
+                style: TextStyle(
+                  color: fg,
+                  fontSize: 15,
+                  fontWeight: isCurrent ? FontWeight.w800 : FontWeight.w600,
+                ),
               ),
             ),
           ),
@@ -363,6 +395,16 @@ class _LadderRow extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  /// Wraps [child] in a blur when this row is [obscured]; otherwise passes it
+  /// through untouched.
+  Widget _blur(Widget child) {
+    if (!obscured) return child;
+    return ImageFiltered(
+      imageFilter: ui.ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+      child: child,
     );
   }
 }

@@ -23,8 +23,14 @@ fill it in, and run `flutter run --dart-define-from-file=env/dev.json`.
 | `REVENUECAT_API_KEY` 🔑      | Subscriptions / paywall                     | If Premium                   |
 | `ADMOB_BANNER_ID` 🔑         | Banner unit                                 | If banner ads                |
 | `ADMOB_REWARDED_ID` 🔑       | Rewarded unit (free-tier unlock)            | If rewarded ads              |
-| `PRIVACY_POLICY_URL`         | Privacy & data screen link                  | Store requirement (deferred) |
-| `TERMS_OF_SERVICE_URL`       | Privacy & data screen link                  | Store requirement (deferred) |
+| `PRIVACY_POLICY_URL`         | Privacy & data screen link                  | Defaults to debatly.app 🟢   |
+| `TERMS_OF_SERVICE_URL`       | Privacy & data screen link                  | Defaults to debatly.app 🟢   |
+| `DELETE_ACCOUNT_URL`         | Privacy & data screen + Play data-safety    | Defaults to debatly.app 🟢   |
+
+> The three legal URLs are **baked into `AppConfig`** (public, non-secret) so the
+> links always work; the `--dart-define` keys above only override them. They
+> point at `https://debatly.app/{privacy,terms,delete-account}` — make sure
+> those pages are actually live before submitting.
 
 ---
 
@@ -50,7 +56,7 @@ supabase functions deploy delete-account     # ← account deletion (store requi
 
 - [ ] Migrations pushed
 - [ ] Secrets set
-- [ ] All four functions deployed
+- [x] All four functions deployed
 - [ ] Seed real question content into `questions` / `question_translations` and
       fill `daily_questions` (the init migration seeds only 3 demo questions)
 
@@ -101,13 +107,37 @@ These two are GoTrue settings, not code — they can't be set by a migration.
 
 ---
 
-## 5. Google Sign-In ☁️ + 📱
+## 5. Social sign-in ☁️ + 📱
+
+The auth sheet shows **Google on Android** and **Sign in with Apple on iOS**
+only (one per platform — `defaultTargetPlatform` branch in `auth_screen.dart`);
+email/password is on both. 🟢
+
+### Google (Android)
 
 - [ ] Create OAuth clients: **Web** (its id → `GOOGLE_SERVER_CLIENT_ID`), **iOS**,
       **Android** (needs the app's SHA-1).
-- [ ] Enable Google as a provider in Supabase Auth.
+- [ ] Enable Google as a provider in Supabase Auth (add the **Web** client id to
+      "Authorized Client IDs" — the ID token's `aud` is the Web client id).
 - [ ] iOS: the reversed-client-id URL scheme is in `Info.plist`
-      (`CFBundleURLSchemes`) — make sure it matches your real iOS client. 📱
+      (`CFBundleURLSchemes`) — only needed if you ever re-enable Google on iOS. 📱
+
+### Apple (iOS) — required by App Store guideline 4.8
+
+Implemented natively via `sign_in_with_apple` + Supabase `signInWithIdToken`
+(SHA-256 nonce); see `SupabaseService.signInWithApple`. 🟢 Manual setup:
+
+- [ ] **Apple Developer** → enable the *Sign in with Apple* capability on the App
+      ID for `com.aknsoftware.questionapp`.
+- [ ] **Xcode** → Runner target → Signing & Capabilities → **+ Sign in with
+      Apple**. This wires `ios/Runner/Runner.entitlements` (the
+      `com.apple.developer.applesignin` key is already in the file 🟢) — make sure
+      `CODE_SIGN_ENTITLEMENTS` points at it. 📱
+- [ ] **Supabase** → Auth → Providers → **Apple** ON; add the app **bundle id**
+      `com.aknsoftware.questionapp` to the provider's authorized client ids
+      (native iOS sends a token whose `aud` is the bundle id — no client
+      secret/Service ID needed for the native flow).
+- [ ] iOS only: nothing else in `Info.plist`; `pod install` after the plugin add.
 
 ---
 
@@ -133,7 +163,12 @@ so there is **nothing to configure in any console**. 🟢
 - [ ] App icons + splash.
 - [ ] iOS: `pod install` on a Mac after every native-plugin change
       (ATT + local-notifications were added).
-- [ ] Legal pages live + URLs wired (see §1) — **deferred**.
+- [ ] Legal pages **live** at `https://debatly.app/{privacy,terms,delete-account}`.
+      The in-app links are already wired (default URLs in `AppConfig`, surfaced on
+      the Privacy & data screen 🟢) — this box is just "publish the actual pages".
+- [ ] Paste the **account-deletion URL** (`https://debatly.app/delete-account`)
+      into the Google Play **Data safety** form's deletion field (the in-app
+      Settings → delete flow covers the on-device path).
 - [ ] Store listings (screenshots, descriptions, data-safety / privacy forms).
       For **screenshots**, the in-app share already renders a branded 1080×1920
       poster of a question (`QuestionShareCard` via `renderWidgetToPng`) — the

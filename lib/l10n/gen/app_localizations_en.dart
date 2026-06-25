@@ -105,7 +105,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authConfirmEmail => 'Check your email and confirm your account.';
 
   @override
-  String get authAppleSoon => 'Sign in with Apple — coming soon.';
+  String get authContinueWithApple => 'Continue with Apple';
+
+  @override
+  String get authContinueWithGoogle => 'Continue with Google';
+
+  @override
+  String authLegalConsent(String terms, String privacy) {
+    return 'By continuing, you agree to our $terms and $privacy.';
+  }
+
+  @override
+  String get authLegalTermsLink => 'Terms of Service';
+
+  @override
+  String get authLegalPrivacyLink => 'Privacy Policy';
 
   @override
   String get authPasswordResetSent =>
@@ -399,6 +413,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get privacyTerms => 'Terms of service';
 
   @override
+  String get privacyDeleteAccount => 'Delete account and data';
+
+  @override
   String get privacyOpenInBrowser => 'Opens in your browser';
 
   @override
@@ -507,6 +524,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get signedOut => 'Signed out.';
 
   @override
+  String get signOutError =>
+      'Couldn\'t sign out. Please check your connection and try again.';
+
+  @override
   String get deleteAccountTitle => 'Delete account?';
 
   @override
@@ -542,6 +563,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get daysInARow => 'DAYS IN A ROW';
+
+  @override
+  String streakRecord(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Record: $count days',
+      one: 'Record: $count day',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get rankLabel => 'RANK';

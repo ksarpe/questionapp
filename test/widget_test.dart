@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show debugDefaultTargetPlatformOverride;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -126,7 +127,49 @@ void main() {
       findsOneWidget,
     );
     expect(find.text('Zaloguj się'), findsOneWidget);
-    expect(find.text('Google'), findsOneWidget);
+    // Tests report as Android, so the sheet offers Google (Apple is iOS-only).
+    expect(find.text('Kontynuuj z Google'), findsOneWidget);
+  });
+
+  testWidgets('Auth sheet offers Apple (not Google) on iOS', (
+    WidgetTester tester,
+  ) async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+    try {
+      await tester.pumpWidget(
+        const ProviderScope(child: LocalizedTestApp(home: AuthScreen())),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Kontynuuj z Apple'), findsOneWidget);
+      expect(find.text('Kontynuuj z Google'), findsNothing);
+    } finally {
+      debugDefaultTargetPlatformOverride = null;
+    }
+  });
+
+  testWidgets('Register tab shows the terms/privacy consent line', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      const ProviderScope(child: LocalizedTestApp(home: AuthScreen())),
+    );
+    await tester.pumpAndSettle();
+
+    // Sign-in tab: no consent line (existing user, not creating an account).
+    expect(
+      find.text('Kontynuując, akceptujesz Regulamin oraz Politykę prywatności.'),
+      findsNothing,
+    );
+
+    // Switch to the register tab — the consent line (one Text.rich with the
+    // Terms + Privacy links) now renders.
+    await tester.tap(find.text('ZAŁÓŻ KONTO'));
+    await tester.pumpAndSettle();
+    expect(
+      find.text('Kontynuując, akceptujesz Regulamin oraz Politykę prywatności.'),
+      findsOneWidget,
+    );
   });
 
   testWidgets('Settings screen renders the profile hub', (

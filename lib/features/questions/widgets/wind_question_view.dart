@@ -273,14 +273,17 @@ class _WindQuestionViewState extends ConsumerState<WindQuestionView>
   /// in-flight peek is kept and reused. Called from [build].
   void _maybePrefetchPeek() {
     if (_animating || ref.read(isPremiumProvider)) return;
-    if (_peeked != null || _peekFuture != null)
+    if (_peeked != null || _peekFuture != null) {
       return; // already have / getting it
+    }
     final deck = ref.read(questionDeckProvider);
     if (deck.isEmpty) return;
-    if (ref.read(questionIndexProvider) != deck.length - 1)
+    if (ref.read(questionIndexProvider) != deck.length - 1) {
       return; // not the last item
-    if (ref.read(freeUnlockCreditsProvider) >= 1)
+    }
+    if (ref.read(freeUnlockCreditsProvider) >= 1) {
       return; // a credit reveals, not peeks
+    }
     _startPeek();
   }
 

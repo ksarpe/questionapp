@@ -13,12 +13,12 @@
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
 
-        <!-- Google AdMob application id. This is Google's public TEST app id —
-             replace with your real id from the AdMob console before release.
+        <!-- Google AdMob application id (real, from the AdMob console — the
+             Android app's own id, distinct from the iOS one in Info.plist).
              https://developers.google.com/admob/flutter/quick-start -->
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-3940256099942544~3347511713"/>
+            android:value="ca-app-pub-7626099438648527~5813725144"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"

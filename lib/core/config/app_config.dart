@@ -44,16 +44,47 @@ class AppConfig {
     defaultValue: 'ca-app-pub-3940256099942544/5224354917',
   );
 
+  /// Comma-separated AdMob **test-device** ids. When set, AdMob serves *test*
+  /// ads to these devices even on the real ad unit id — so you can exercise the
+  /// real rewarded unit (and its SSV callback) during development WITHOUT
+  /// generating invalid traffic on live ads, which risks an AdMob ban.
+  ///
+  /// Grab the id from the device log the first time an ad loads, e.g.:
+  /// `Use RequestConfiguration.Builder.setTestDeviceIds(["33BE2250…"])`.
+  /// Leave empty for store builds. Wired in [AdsService.initialise].
+  static const String _admobTestDeviceIdsRaw =
+      String.fromEnvironment('ADMOB_TEST_DEVICE_IDS', defaultValue: '');
+
+  static List<String> get admobTestDeviceIds => _admobTestDeviceIdsRaw
+      .split(',')
+      .map((s) => s.trim())
+      .where((s) => s.isNotEmpty)
+      .toList();
+
   /// Public URL of the privacy policy, opened from the Privacy & data screen.
-  /// Empty by default — the row is hidden until a real URL is supplied via
-  /// `--dart-define=PRIVACY_POLICY_URL=...`.
-  static const String privacyPolicyUrl =
-      String.fromEnvironment('PRIVACY_POLICY_URL', defaultValue: '');
+  /// Defaults to the live page on the marketing site (a public, non-secret URL,
+  /// so it's baked in to guarantee the legal link works in every build); still
+  /// overridable via `--dart-define=PRIVACY_POLICY_URL=...`.
+  static const String privacyPolicyUrl = String.fromEnvironment(
+    'PRIVACY_POLICY_URL',
+    defaultValue: 'https://debatly.app/privacy',
+  );
 
   /// Public URL of the terms of service, opened from the Privacy & data screen.
-  /// Empty by default — see [privacyPolicyUrl].
-  static const String termsOfServiceUrl =
-      String.fromEnvironment('TERMS_OF_SERVICE_URL', defaultValue: '');
+  /// See [privacyPolicyUrl] for the baked-in/overridable rationale.
+  static const String termsOfServiceUrl = String.fromEnvironment(
+    'TERMS_OF_SERVICE_URL',
+    defaultValue: 'https://debatly.app/terms',
+  );
+
+  /// Public URL where users can request account + data deletion from the web,
+  /// without the app. Required by the Google Play Data safety form (the in-app
+  /// deletion in Settings covers the on-device path). Surfaced on the Privacy &
+  /// data screen as a fallback to the in-app flow.
+  static const String deleteAccountUrl = String.fromEnvironment(
+    'DELETE_ACCOUNT_URL',
+    defaultValue: 'https://debatly.app/delete-account',
+  );
 
   static bool get hasSupabaseCredentials =>
       supabaseUrl.isNotEmpty && supabaseAnonKey.isNotEmpty;
@@ -63,4 +94,6 @@ class AppConfig {
   static bool get hasPrivacyPolicy => privacyPolicyUrl.isNotEmpty;
 
   static bool get hasTermsOfService => termsOfServiceUrl.isNotEmpty;
+
+  static bool get hasDeleteAccountUrl => deleteAccountUrl.isNotEmpty;
 }

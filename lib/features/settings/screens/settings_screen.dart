@@ -8,6 +8,7 @@ import '../../../core/locale/app_locale.dart';
 import '../../../core/locale/l10n_extension.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/theme_controller.dart';
+import '../../../core/widgets/sub_screen_chrome.dart';
 import '../../../data/models/question.dart';
 import '../../../l10n/gen/app_localizations.dart';
 import '../../../services/notification_service.dart';
@@ -19,7 +20,7 @@ import '../../account/providers/stats_providers.dart';
 import '../../account/screens/auth_screen.dart';
 import '../../onboarding/widgets/spark_logo.dart';
 import '../../questions/providers/favorites_providers.dart';
-import '../../questions/widgets/history_sheet.dart';
+import '../../questions/widgets/history_screen.dart';
 import '../../questions/widgets/rank_sheet.dart';
 import '../../questions/widgets/share_question_button.dart';
 import '../providers/app_info_provider.dart';
@@ -51,6 +52,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
   /// permission yet and we sent them to system settings. When they return with
   /// it granted, [_syncReminderToggle] finishes the enable without a second tap.
   bool _pendingEnable = false;
+
+  /// True while a sign-out is in flight, so the button shows a spinner and
+  /// can't be tapped twice (a slow global token revoke can take a moment).
+  bool _signingOut = false;
 
   @override
   void initState() {
@@ -95,7 +100,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
       body: Stack(
         children: [
           // Faint orange glow bleeding down from the top, behind the header.
-          const _TopGlow(),
+          const TopGlow(),
           SafeArea(
             child: SingleChildScrollView(
               padding: EdgeInsets.fromLTRB(
@@ -191,13 +196,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
                           ],
 
                           // The PRO history of past dailies + how people voted.
-                          // Shown to everyone; the sheet gates premium itself, so
-                          // a free user lands on the PRO upsell inside it.
+                          // Shown to everyone; the screen gates premium itself,
+                          // so a free user lands on the PRO upsell inside it.
                           const _RowDivider(),
                           _NavRow(
                             icon: Icons.history_rounded,
                             title: context.l10n.historyTitle,
-                            onTap: () => showHistorySheet(context),
+                            onTap: () => openHistory(context),
                           ),
                         ],
                       ),
@@ -246,7 +251,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
                       // ---- Session actions --------------------------------
                       if (hasAccount) ...[
                         const SizedBox(height: 26),
-                        _SignOutButton(onTap: _signOut),
+                        _SignOutButton(onTap: _signOut, loading: _signingOut),
                         const SizedBox(height: 8),
                         _DeleteAccountButton(onTap: _confirmDeleteAccount),
                       ] else ...[
@@ -326,9 +331,31 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
   }
 
   Future<void> _signOut() async {
-    await SupabaseService.signOut();
-    ref.invalidate(sessionProvider);
+    if (_signingOut) return;
+    setState(() => _signingOut = true);
+
+    // signOut() fires Supabase's `signedOut` event, which the session's auth
+    // listener turns into a single flash-free refresh() — re-running
+    // ensureSignedIn to mint a fresh guest. We deliberately do NOT also
+    // `invalidate(sessionProvider)` here: invalidate flips the session to
+    // AsyncValue.loading() (nulling userId mid-reload), so the QuestionScreen
+    // identity listener fires on account→null→guest instead of a clean
+    // account→guest — wiping the feed and flashing the spinner several times
+    // before it settles. Letting the listener own the reload gives one smooth
+    // transition with a single loader.
+    try {
+      await SupabaseService.signOut();
+    } catch (e) {
+      // signOut() already falls back to a local sign-out, so getting here means
+      // even that failed — surface it instead of leaving a dead button.
+      if (!mounted) return;
+      setState(() => _signingOut = false);
+      _showMessage(context.l10n.signOutError, type: ToastType.error);
+      return;
+    }
+
     if (!mounted) return;
+    setState(() => _signingOut = false);
     Navigator.of(context).maybePop();
     _showMessage(context.l10n.signedOut);
   }
@@ -382,9 +409,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
 
     try {
       await SupabaseService.deleteAccount();
-      // Drop the resolved session so the gate re-runs ensureSignedIn → fresh
-      // guest, and every per-user cache is rebuilt from the new identity.
-      ref.invalidate(sessionProvider);
+      // deleteAccount() ends with a local signOut, whose `signedOut` event the
+      // session's auth listener turns into a single flash-free refresh() —
+      // re-running ensureSignedIn to mint a fresh guest and rebuild every
+      // per-user cache from the new identity. We deliberately do NOT
+      // `invalidate(sessionProvider)` here: that flips the session to loading
+      // (null userId mid-reload) and trips the identity listener on
+      // account→null→guest, flashing the feed instead of a clean transition.
       navigator.pop(); // dismiss the progress overlay
       navigator.maybePop(); // leave Settings, back to the question screen
       AppToast.showOn(overlay, successMsg, type: ToastType.success);
@@ -672,34 +703,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
 }
 
 /// Soft orange radial glow anchored to the top of the screen.
-class _TopGlow extends StatelessWidget {
-  const _TopGlow();
-
-  @override
-  Widget build(BuildContext context) {
-    return Positioned(
-      top: -80,
-      left: 0,
-      right: 0,
-      child: IgnorePointer(
-        child: Container(
-          height: 360,
-          decoration: BoxDecoration(
-            gradient: RadialGradient(
-              center: Alignment.topCenter,
-              radius: 0.85,
-              colors: [
-                AppTheme.spark.withValues(alpha: 0.20),
-                Colors.transparent,
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 /// Left-aligned identity block (name, email) with a close button
 /// floating in the top-right corner.
 class _ProfileHeader extends StatelessWidget {
@@ -761,7 +764,7 @@ class _ProfileHeader extends StatelessWidget {
         ),
         Align(
           alignment: Alignment.topRight,
-          child: _CloseButton(onTap: onClose),
+          child: SubScreenCloseButton(onTap: onClose),
         ),
       ],
     );
@@ -782,29 +785,6 @@ class _ProfileHeader extends StatelessWidget {
   }
 }
 
-class _CloseButton extends StatelessWidget {
-  const _CloseButton({required this.onTap});
-
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: context.colors.cardSurface,
-      shape: CircleBorder(side: BorderSide(color: context.colors.hairline)),
-      child: InkWell(
-        onTap: onTap,
-        customBorder: const CircleBorder(),
-        child: SizedBox(
-          width: 38,
-          height: 38,
-          child: Icon(Icons.close, size: 20, color: context.colors.subtle),
-        ),
-      ),
-    );
-  }
-}
-
 // ---- Stat cards (live from sync_user_state) --------------------------------
 
 class _StreakCard extends ConsumerWidget {
@@ -813,6 +793,9 @@ class _StreakCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final streak = ref.watch(currentStreakProvider);
+    final record = ref.watch(
+      userStatsValueProvider.select((s) => s.longestStreak),
+    );
     return _StatCardShell(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -838,6 +821,18 @@ class _StreakCard extends ConsumerWidget {
               letterSpacing: 1,
             ),
           ),
+          // Personal best, kept deliberately quiet beneath the headline streak.
+          if (record > 0) ...[
+            const SizedBox(height: 4),
+            Text(
+              context.l10n.streakRecord(record),
+              style: TextStyle(
+                color: context.colors.subtle.withValues(alpha: 0.7),
+                fontSize: 10,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
         ],
       ),
     );
@@ -1661,11 +1656,14 @@ String _formatLongDate(DateTime date, String localeCode) {
   return '${local.day} ${months[local.month - 1]} ${local.year}';
 }
 
-/// Full-width bordered "Sign out" action.
+/// Full-width bordered "Sign out" action. Shows a spinner and ignores taps
+/// while a sign-out is in flight, so a slow token revoke never looks like a
+/// dead button or fires twice.
 class _SignOutButton extends StatelessWidget {
-  const _SignOutButton({required this.onTap});
+  const _SignOutButton({required this.onTap, this.loading = false});
 
   final VoidCallback onTap;
+  final bool loading;
 
   @override
   Widget build(BuildContext context) {
@@ -1673,7 +1671,7 @@ class _SignOutButton extends StatelessWidget {
       color: context.colors.cardSurface,
       borderRadius: BorderRadius.circular(16),
       child: InkWell(
-        onTap: onTap,
+        onTap: loading ? null : onTap,
         borderRadius: BorderRadius.circular(16),
         child: Container(
           height: 54,
@@ -1682,21 +1680,34 @@ class _SignOutButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(16),
             border: Border.all(color: context.colors.hairline),
           ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.logout_rounded, color: context.colors.ink, size: 20),
-              const SizedBox(width: 10),
-              Text(
-                context.l10n.signOut,
-                style: TextStyle(
-                  color: context.colors.ink,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
+          child: loading
+              ? SizedBox(
+                  width: 22,
+                  height: 22,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2.4,
+                    color: context.colors.ink,
+                  ),
+                )
+              : Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.logout_rounded,
+                      color: context.colors.ink,
+                      size: 20,
+                    ),
+                    const SizedBox(width: 10),
+                    Text(
+                      context.l10n.signOut,
+                      style: TextStyle(
+                        color: context.colors.ink,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ],
-          ),
         ),
       ),
     );
@@ -1780,7 +1791,7 @@ class AboutScreen extends ConsumerWidget {
       backgroundColor: context.colors.background,
       body: Stack(
         children: [
-          const _TopGlow(),
+          const TopGlow(),
           SafeArea(
             child: SingleChildScrollView(
               padding: EdgeInsets.fromLTRB(
@@ -1795,7 +1806,7 @@ class AboutScreen extends ConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      _SubScreenHeader(
+                      SubScreenHeader(
                         title: l10n.settingsAbout,
                         onClose: () => Navigator.of(context).maybePop(),
                       ),
@@ -1868,7 +1879,7 @@ class FavoritesScreen extends ConsumerWidget {
       backgroundColor: context.colors.background,
       body: Stack(
         children: [
-          const _TopGlow(),
+          const TopGlow(),
           SafeArea(
             child: SingleChildScrollView(
               padding: EdgeInsets.fromLTRB(
@@ -1883,7 +1894,7 @@ class FavoritesScreen extends ConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      _SubScreenHeader(
+                      SubScreenHeader(
                         title: l10n.favoritesTitle,
                         onClose: () => Navigator.of(context).maybePop(),
                       ),
@@ -2045,11 +2056,12 @@ class _FavoritesEmpty extends StatelessWidget {
 
 /// Reached from the "Privacy & data" account row. Two parts:
 ///
-/// 1. **Documents** — outbound links to the privacy policy and terms, opened in
-///    the system browser. Each row only appears once a real URL is configured
-///    via `--dart-define` ([AppConfig.privacyPolicyUrl] /
-///    [AppConfig.termsOfServiceUrl]), so the section is simply absent until the
-///    legal pages exist rather than showing dead links.
+/// 1. **Documents** — outbound links to the privacy policy, terms, and the web
+///    account-deletion page, opened in the system browser. The URLs default to
+///    the live marketing site ([AppConfig.privacyPolicyUrl] /
+///    [AppConfig.termsOfServiceUrl] / [AppConfig.deleteAccountUrl]) but each row
+///    is still guarded on a non-empty URL, so blanking one via `--dart-define`
+///    hides that row rather than showing a dead link.
 /// 2. **What we store** — a plain-language summary of the data the app keeps and
 ///    why, mirroring the categories actually collected (account, activity,
 ///    purchases, ads).
@@ -2061,13 +2073,14 @@ class PrivacyDataScreen extends StatelessWidget {
     final l10n = context.l10n;
     final hasPolicy = AppConfig.hasPrivacyPolicy;
     final hasTerms = AppConfig.hasTermsOfService;
-    final hasDocs = hasPolicy || hasTerms;
+    final hasDeleteUrl = AppConfig.hasDeleteAccountUrl;
+    final hasDocs = hasPolicy || hasTerms || hasDeleteUrl;
 
     return Scaffold(
       backgroundColor: context.colors.background,
       body: Stack(
         children: [
-          const _TopGlow(),
+          const TopGlow(),
           SafeArea(
             child: SingleChildScrollView(
               padding: EdgeInsets.fromLTRB(
@@ -2082,7 +2095,7 @@ class PrivacyDataScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      _SubScreenHeader(
+                      SubScreenHeader(
                         title: l10n.settingsPrivacy,
                         onClose: () => Navigator.of(context).maybePop(),
                       ),
@@ -2113,6 +2126,18 @@ class PrivacyDataScreen extends StatelessWidget {
                                 onTap: () => _openUrl(
                                   context,
                                   AppConfig.termsOfServiceUrl,
+                                ),
+                              ),
+                            if ((hasPolicy || hasTerms) && hasDeleteUrl)
+                              const _RowDivider(),
+                            if (hasDeleteUrl)
+                              _NavRow(
+                                icon: Icons.person_remove_outlined,
+                                title: l10n.privacyDeleteAccount,
+                                subtitle: l10n.privacyOpenInBrowser,
+                                onTap: () => _openUrl(
+                                  context,
+                                  AppConfig.deleteAccountUrl,
                                 ),
                               ),
                           ],
@@ -2194,41 +2219,6 @@ class PrivacyDataScreen extends StatelessWidget {
 
 /// Left-aligned screen title with a floating close button, matching the
 /// profile header but for pushed sub-screens.
-class _SubScreenHeader extends StatelessWidget {
-  const _SubScreenHeader({required this.title, required this.onClose});
-
-  final String title;
-  final VoidCallback onClose;
-
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      alignment: Alignment.topLeft,
-      clipBehavior: Clip.none,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(right: 44, top: 4),
-          child: Text(
-            title,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              color: AppTheme.spark,
-              fontSize: 23,
-              fontWeight: FontWeight.w800,
-              letterSpacing: 0.2,
-            ),
-          ),
-        ),
-        Align(
-          alignment: Alignment.topRight,
-          child: _CloseButton(onTap: onClose),
-        ),
-      ],
-    );
-  }
-}
-
 /// Non-interactive informational row: icon, title and a wrapping body. Used by
 /// the "What we store" summary, so it deliberately has no chevron.
 class _PrivacyDataRow extends StatelessWidget {

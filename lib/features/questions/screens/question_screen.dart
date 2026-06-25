@@ -13,7 +13,7 @@ import '../../monetization/providers/monetization_providers.dart';
 import '../../settings/screens/settings_screen.dart';
 import '../providers/question_providers.dart';
 import '../providers/swipe_hint_providers.dart';
-import '../widgets/history_sheet.dart';
+import '../widgets/history_screen.dart';
 import '../widgets/category_filter_button.dart';
 import '../widgets/daily_badge.dart';
 import '../widgets/favorite_star_button.dart';

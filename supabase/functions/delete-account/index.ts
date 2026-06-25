@@ -8,7 +8,7 @@
 //
 //   Deleting the auth user CASCADES across the whole schema (see the migrations):
 //     profiles (+ streak/credit columns), subscriptions, question_seen,
-//     question_votes, daily_free_grants   -> ON DELETE CASCADE  (rows removed)
+//     question_votes, question_favorites   -> ON DELETE CASCADE  (rows removed)
 //     billing_events, ad_reward_events     -> ON DELETE SET NULL (kept as an
 //                                             anonymized audit, user_id nulled)
 //   so this single call removes or anonymizes every piece of personal data.

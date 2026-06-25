@@ -4,14 +4,14 @@ import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_theme.dart';
 
-/// The app's wordmark: a glowing orange bolt beside "Debatly" set in the display
-/// font. It plays a soft fade + scale entrance on mount and a slow breathing
-/// glow, so the same widget serves as the launch splash and the onboarding's
-/// welcome mark.
+/// The app's logo, shown on the launch splash and the onboarding welcome. It
+/// plays a soft fade + scale entrance on mount.
 ///
-/// The app ships no logo image asset, so the mark is built from type + an icon.
-/// To swap in real brand art later, replace the [Row] in [build] with an
-/// `Image.asset(...)` — nothing outside this file reaches into its internals.
+/// Prefers real brand art at `assets/images/logo.png`. Until that file exists
+/// it falls back to a code-drawn wordmark — a glowing orange bolt beside
+/// "Debatly" in the display font, with a slow breathing glow — so the splash
+/// never shows a broken image. Swapping in the real art is just dropping the
+/// PNG; nothing outside this file reaches into its internals.
 class SparkLogo extends StatefulWidget {
   const SparkLogo({super.key, this.size = 56});
 
@@ -76,43 +76,58 @@ class _SparkLogoState extends State<SparkLogo> with TickerProviderStateMixin {
           opacity: t,
           child: Transform.scale(
             scale: scale,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.bolt,
-                  size: widget.size * 1.12,
-                  color: AppTheme.spark,
-                  shadows: [
-                    Shadow(
-                      color: AppTheme.spark.withValues(alpha: glowAlpha),
-                      blurRadius: glowBlur,
-                    ),
-                  ],
-                ),
-                SizedBox(width: widget.size * 0.06),
-                Text(
-                  'Debatly',
-                  style: TextStyle(
-                    fontFamily: 'Anton',
-                    fontSize: widget.size,
-                    color: context.colors.ink,
-                    letterSpacing: 1,
-                    height: 1,
-                    shadows: [
-                      Shadow(
-                        color: AppTheme.spark.withValues(alpha: glowAlpha * 0.7),
-                        blurRadius: glowBlur,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+            child: Image.asset(
+              'assets/images/logo.png',
+              height: widget.size * 1.5,
+              fit: BoxFit.contain,
+              // No real logo dropped in yet → show the code-drawn wordmark so
+              // the splash/onboarding never render a broken-image box.
+              errorBuilder: (context, error, stackTrace) =>
+                  _wordmark(context, glowAlpha, glowBlur),
             ),
           ),
         );
       },
+    );
+  }
+
+  /// The fallback brand mark: a glowing bolt beside "Debatly". Used until a real
+  /// `assets/images/logo.png` exists. [glowAlpha]/[glowBlur] drive the breathing
+  /// halo, handed down from the animation frame in [build].
+  Widget _wordmark(BuildContext context, double glowAlpha, double glowBlur) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Icon(
+          Icons.bolt,
+          size: widget.size * 1.12,
+          color: AppTheme.spark,
+          shadows: [
+            Shadow(
+              color: AppTheme.spark.withValues(alpha: glowAlpha),
+              blurRadius: glowBlur,
+            ),
+          ],
+        ),
+        SizedBox(width: widget.size * 0.06),
+        Text(
+          'Debatly',
+          style: TextStyle(
+            fontFamily: 'Anton',
+            fontSize: widget.size,
+            color: context.colors.ink,
+            letterSpacing: 1,
+            height: 1,
+            shadows: [
+              Shadow(
+                color: AppTheme.spark.withValues(alpha: glowAlpha * 0.7),
+                blurRadius: glowBlur,
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

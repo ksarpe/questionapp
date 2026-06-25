@@ -65,19 +65,42 @@ class PurchasesService {
   static bool _configured = false;
 
   static Future<void> initialise() async {
-    if (AppConfig.revenueCatApiKey.isEmpty) {
+    if (!_isUsableKey(AppConfig.revenueCatApiKey)) {
       debugPrint(
-        'PurchasesService: no API key — skipping RevenueCat configure. '
-        'Pass --dart-define=REVENUECAT_API_KEY to enable.',
+        'PurchasesService: no usable API key — skipping RevenueCat configure. '
+        'Pass --dart-define=REVENUECAT_API_KEY with a real public SDK key '
+        '(goog_… on Android, appl_… on iOS) to enable premium.',
       );
       return;
     }
 
-    await Purchases.setLogLevel(LogLevel.debug);
-    await Purchases.configure(
-      PurchasesConfiguration(AppConfig.revenueCatApiKey),
-    );
-    _configured = true;
+    // Degrade gracefully like SupabaseService / AdsService: a bad key must not
+    // abort app launch. RevenueCat's native SDK ABORTS THE PROCESS on an invalid
+    // key ("app will close now to protect the security"), so we both pre-screen
+    // obvious placeholders in [_isUsableKey] and guard the configure call here.
+    try {
+      await Purchases.setLogLevel(LogLevel.debug);
+      await Purchases.configure(
+        PurchasesConfiguration(AppConfig.revenueCatApiKey),
+      );
+      _configured = true;
+    } catch (e) {
+      debugPrint(
+        'PurchasesService: RevenueCat configure failed — premium disabled. $e',
+      );
+    }
+  }
+
+  /// Whether [key] looks like a real RevenueCat public SDK key worth handing to
+  /// the native SDK. Empty values, the env-file placeholders (which carry
+  /// `REPLACE`) and the legacy `test_` sample are treated as "not configured",
+  /// so an un-filled key degrades to "premium unavailable" instead of crashing
+  /// the app on launch. Real keys are platform-prefixed (`goog_` / `appl_`).
+  static bool _isUsableKey(String key) {
+    if (key.isEmpty) return false;
+    if (key.contains('REPLACE')) return false;
+    if (key.startsWith('test_')) return false;
+    return true;
   }
 
   /// Links the RevenueCat customer to a stable app user id (the Supabase

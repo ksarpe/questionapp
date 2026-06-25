@@ -1,6 +1,9 @@
+import 'package:flutter/foundation.dart' show defaultTargetPlatform, TargetPlatform;
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/config/app_config.dart';
 import '../../../core/feedback/app_toast.dart';
@@ -74,13 +77,17 @@ class _AuthCardState extends ConsumerState<_AuthCard> {
     final media = MediaQuery.of(context);
     final isConfigured = SupabaseService.isInitialised;
     final canUseGoogle = isConfigured && AppConfig.hasGoogleSignIn;
+    // Sign in with Apple is offered on Apple platforms only (where it's an App
+    // Store requirement); everywhere else we show Google. Both never share the
+    // sheet — a user on Android has no use for an Apple button, and vice versa.
+    final isApplePlatform = defaultTargetPlatform == TargetPlatform.iOS ||
+        defaultTargetPlatform == TargetPlatform.macOS;
 
     // Let the sheet grow to fit its content — short forms stay compact, longer
-    // ones make it taller. We only cap at the visible area (screen minus the
-    // status bar and keyboard) so it never overflows; scrolling is a fallback,
-    // not the default.
-    final maxHeight =
-        media.size.height - media.padding.top - media.viewInsets.bottom - 24;
+    // ones make it taller — but never past the screen (minus the status bar) so
+    // it can't overflow; scrolling is the fallback. The keyboard inset is
+    // handled by the spacer below the scroll view, not here.
+    final maxHeight = media.size.height - media.padding.top - 24;
 
     return ConstrainedBox(
       constraints: BoxConstraints(maxWidth: 480, maxHeight: maxHeight),
@@ -91,11 +98,18 @@ class _AuthCardState extends ConsumerState<_AuthCard> {
           children: [
             Flexible(
               child: SingleChildScrollView(
+                // `useSafeArea: true` on the sheet is `SafeArea(bottom: false)`
+                // — Flutter lets the sheet background reach the bottom edge and
+                // leaves the bottom system inset to us. `media.padding.bottom`
+                // (the gesture nav-bar height) keeps the last controls (Continue
+                // with Google, legal consent) off the navigation bar on
+                // edge-to-edge devices. It collapses to 0 while the keyboard is
+                // up, where the spacer below the scroll view takes over.
                 padding: EdgeInsets.fromLTRB(
                   20,
                   4,
                   20,
-                  24 + media.viewInsets.bottom,
+                  24 + media.padding.bottom,
                 ),
                 child: Form(
                   key: _formKey,
@@ -118,7 +132,8 @@ class _AuthCardState extends ConsumerState<_AuthCard> {
                           text: context.l10n.authMissingSupabaseConfig,
                         ),
                         const SizedBox(height: 14),
-                      ] else if (!AppConfig.hasGoogleSignIn) ...[
+                      ] else if (!isApplePlatform &&
+                          !AppConfig.hasGoogleSignIn) ...[
                         _Notice(
                           icon: Icons.info_outline,
                           text: context.l10n.authMissingGoogleConfig,
@@ -217,45 +232,56 @@ class _AuthCardState extends ConsumerState<_AuthCard> {
                       const SizedBox(height: 16),
                       const _OrDivider(),
                       const SizedBox(height: 14),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: _SocialButton(
-                              icon: Text(
-                                'G',
-                                style: TextStyle(
-                                  color: context.colors.ink,
-                                  fontWeight: FontWeight.w800,
-                                  fontSize: 17,
-                                ),
-                              ),
-                              label: 'Google',
-                              onPressed: canUseGoogle && !_isSubmitting
-                                  ? _signInWithGoogle
-                                  : null,
+                      if (isApplePlatform)
+                        _SocialButton(
+                          icon: Icon(
+                            Icons.apple,
+                            color: context.colors.ink,
+                            size: 22,
+                          ),
+                          label: context.l10n.authContinueWithApple,
+                          onPressed: isConfigured && !_isSubmitting
+                              ? _signInWithApple
+                              : null,
+                        )
+                      else
+                        _SocialButton(
+                          icon: Text(
+                            'G',
+                            style: TextStyle(
+                              color: context.colors.ink,
+                              fontWeight: FontWeight.w800,
+                              fontSize: 17,
                             ),
                           ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: _SocialButton(
-                              icon: Icon(
-                                Icons.apple,
-                                color: context.colors.ink,
-                                size: 22,
-                              ),
-                              label: 'Apple',
-                              onPressed: _isSubmitting
-                                  ? null
-                                  : _signInWithApple,
-                            ),
-                          ),
-                        ],
-                      ),
+                          label: context.l10n.authContinueWithGoogle,
+                          onPressed: canUseGoogle && !_isSubmitting
+                              ? _signInWithGoogle
+                              : null,
+                        ),
+                      // Terms/privacy consent shown at the account-creation
+                      // point (register tab). Sign-in is an existing user, so
+                      // it doesn't need the line.
+                      if (!_isLogin) ...[
+                        const SizedBox(height: 16),
+                        _LegalConsentText(
+                          onTapTerms: () =>
+                              _openLegalUrl(AppConfig.termsOfServiceUrl),
+                          onTapPrivacy: () =>
+                              _openLegalUrl(AppConfig.privacyPolicyUrl),
+                        ),
+                      ],
                     ],
                   ),
                 ),
               ),
             ),
+            // Keyboard avoidance: the sheet is pinned to the screen bottom
+            // (behind the keyboard), so this spacer lifts the scroll viewport's
+            // bottom up to the keyboard's top edge. Without it, focusing the
+            // email/password field auto-scrolls it to where the keyboard would
+            // cover it. Zero-height when the keyboard is closed.
+            SizedBox(height: media.viewInsets.bottom),
           ],
         ),
       ),
@@ -405,8 +431,23 @@ class _AuthCardState extends ConsumerState<_AuthCard> {
     }
   }
 
-  void _signInWithApple() {
-    _showMessage(context.l10n.authAppleSoon);
+  Future<void> _signInWithApple() async {
+    if (_isSubmitting) return;
+    setState(() => _isSubmitting = true);
+
+    try {
+      final user = await SupabaseService.signInWithApple();
+      if (user == null) return; // user cancelled the sheet
+      await ref.read(sessionProvider.notifier).refresh();
+      if (!mounted) return;
+      Navigator.of(context).maybePop();
+    } on AuthException catch (error) {
+      if (mounted) _showMessage(error.message, type: ToastType.error);
+    } catch (error) {
+      if (mounted) _showMessage(error.toString(), type: ToastType.error);
+    } finally {
+      if (mounted) setState(() => _isSubmitting = false);
+    }
   }
 
   /// Sends a Supabase password-reset email. Only the email field needs to be
@@ -432,6 +473,23 @@ class _AuthCardState extends ConsumerState<_AuthCard> {
       if (mounted) _showMessage(error.toString(), type: ToastType.error);
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
+    }
+  }
+
+  /// Opens a legal page (terms / privacy) in the system browser, surfacing a
+  /// toast if it can't be launched. Mirrors `PrivacyDataScreen._openUrl`.
+  Future<void> _openLegalUrl(String url) async {
+    final uri = Uri.tryParse(url);
+    var opened = false;
+    if (uri != null) {
+      try {
+        opened = await launchUrl(uri, mode: LaunchMode.externalApplication);
+      } catch (_) {
+        opened = false;
+      }
+    }
+    if (!opened && mounted) {
+      _showMessage(context.l10n.privacyLinkFailed, type: ToastType.error);
     }
   }
 
@@ -686,6 +744,90 @@ class _SocialButton extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// Fine-print "by continuing you agree to … Terms … Privacy" line with two
+/// tappable links. A `StatefulWidget` because the [TapGestureRecognizer]s it
+/// attaches to the link spans must be disposed. The sentence is one localized
+/// template with `{terms}`/`{privacy}` placeholders (so each language keeps
+/// natural grammar); we substitute private-use sentinel chars, then split on
+/// them to slot in the tappable link spans.
+class _LegalConsentText extends StatefulWidget {
+  const _LegalConsentText({
+    required this.onTapTerms,
+    required this.onTapPrivacy,
+  });
+
+  final VoidCallback onTapTerms;
+  final VoidCallback onTapPrivacy;
+
+  @override
+  State<_LegalConsentText> createState() => _LegalConsentTextState();
+}
+
+class _LegalConsentTextState extends State<_LegalConsentText> {
+  static const _termsMark = '%%TERMS%%';
+  static const _privacyMark = '%%PRIVACY%%';
+
+  late final TapGestureRecognizer _termsTap;
+  late final TapGestureRecognizer _privacyTap;
+
+  @override
+  void initState() {
+    super.initState();
+    _termsTap = TapGestureRecognizer()..onTap = () => widget.onTapTerms();
+    _privacyTap = TapGestureRecognizer()..onTap = () => widget.onTapPrivacy();
+  }
+
+  @override
+  void dispose() {
+    _termsTap.dispose();
+    _privacyTap.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final template = l10n.authLegalConsent(_termsMark, _privacyMark);
+    final linkStyle = const TextStyle(
+      color: AppTheme.spark,
+      fontWeight: FontWeight.w700,
+    );
+
+    final spans = <InlineSpan>[];
+    var start = 0;
+    final pattern = RegExp(
+      '${RegExp.escape(_termsMark)}|${RegExp.escape(_privacyMark)}',
+    );
+    for (final match in pattern.allMatches(template)) {
+      if (match.start > start) {
+        spans.add(TextSpan(text: template.substring(start, match.start)));
+      }
+      final isTerms = match.group(0) == _termsMark;
+      spans.add(
+        TextSpan(
+          text: isTerms ? l10n.authLegalTermsLink : l10n.authLegalPrivacyLink,
+          style: linkStyle,
+          recognizer: isTerms ? _termsTap : _privacyTap,
+        ),
+      );
+      start = match.end;
+    }
+    if (start < template.length) {
+      spans.add(TextSpan(text: template.substring(start)));
+    }
+
+    return Text.rich(
+      TextSpan(children: spans),
+      textAlign: TextAlign.center,
+      style: TextStyle(
+        color: context.colors.subtle,
+        fontSize: 12,
+        height: 1.4,
       ),
     );
   }

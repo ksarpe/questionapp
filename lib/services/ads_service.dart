@@ -23,6 +23,16 @@ class AdsService {
     // SDK fails to initialise we leave [_initialised] false so ad-loading code
     // cleanly no-ops, rather than letting the exception abort app launch.
     try {
+      // Register test devices BEFORE requesting any ad: AdMob then serves test
+      // ads to them even on the real ad unit id, so we can exercise the live
+      // rewarded unit + SSV loop in development without risking an invalid-
+      // traffic ban. Empty (the default) leaves real ads on for everyone else.
+      final testDeviceIds = AppConfig.admobTestDeviceIds;
+      if (testDeviceIds.isNotEmpty) {
+        MobileAds.instance.updateRequestConfiguration(
+          RequestConfiguration(testDeviceIds: testDeviceIds),
+        );
+      }
       await MobileAds.instance.initialize();
       _initialised = true;
     } catch (e) {

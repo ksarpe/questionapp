@@ -1,7 +1,19 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
+}
+
+// Upload-keystore credentials, kept out of git in android/key.properties (see
+// RELEASE_PLAN.md). Absent on dev machines, so we fall back to debug signing
+// below — a Play-store build REQUIRES this file to exist.
+val keystoreProperties = Properties()
+val keystorePropertiesFile = rootProject.file("key.properties")
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
 }
 
 android {
@@ -33,11 +45,37 @@ android {
         versionName = flutter.versionName
     }
 
+    signingConfigs {
+        // Only wired up when android/key.properties exists. The values come from
+        // the upload keystore you generate with keytool (see RELEASE_PLAN.md).
+        if (keystorePropertiesFile.exists()) {
+            create("release") {
+                keyAlias = keystoreProperties["keyAlias"] as String
+                keyPassword = keystoreProperties["keyPassword"] as String
+                storeFile = file(keystoreProperties["storeFile"] as String)
+                storePassword = keystoreProperties["storePassword"] as String
+            }
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            // Sign with the real upload keystore when key.properties is present;
+            // otherwise fall back to debug keys so `flutter run --release` still
+            // works on dev machines. A debug-signed build is REJECTED by Play —
+            // create the keystore before submitting (RELEASE_PLAN.md, Krok 1).
+            signingConfig = if (keystorePropertiesFile.exists()) {
+                signingConfigs.getByName("release")
+            } else {
+                signingConfigs.getByName("debug")
+            }
+            // Flutter enables R8 shrinking/obfuscation for release; supply our
+            // own keep rules (see proguard-rules.pro) so reflectively-loaded
+            // classes — Room's generated WorkManager DB impl — survive.
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro",
+            )
         }
     }
 }

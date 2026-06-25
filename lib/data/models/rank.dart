@@ -51,12 +51,22 @@ class Rank {
 
 /// The default ladder, mirroring the `ranks` table seed. Used as the offline /
 /// mock source so the rank sheet renders without a backend.
+///
+/// Keep in lockstep with the latest `ranks` re-seed migration
+/// (20260625140000_expand_rank_ladder.sql): a dense, front-loaded 13-tier ladder
+/// so early streaks promote every few days.
 const List<Rank> kDefaultRanks = [
   Rank(tier: 0, minStreak: 0, namePl: 'Amator kontrowersji', nameEn: 'Controversy Amateur', icon: 'seedling'),
-  Rank(tier: 1, minStreak: 3, namePl: 'Prowokator', nameEn: 'Provocateur', icon: 'spark'),
-  Rank(tier: 2, minStreak: 7, namePl: 'Podżegacz', nameEn: 'Instigator', icon: 'flame'),
-  Rank(tier: 3, minStreak: 14, namePl: 'Adwokat diabła', nameEn: "Devil's Advocate", icon: 'mask'),
-  Rank(tier: 4, minStreak: 30, namePl: 'Mąciciel', nameEn: 'Troublemaker', icon: 'storm'),
-  Rank(tier: 5, minStreak: 60, namePl: 'Wichrzyciel', nameEn: 'Agitator', icon: 'bolt'),
-  Rank(tier: 6, minStreak: 100, namePl: 'Legenda kontrowersji', nameEn: 'Controversy Legend', icon: 'crown'),
+  Rank(tier: 1, minStreak: 2, namePl: 'Prowokator', nameEn: 'Provocateur', icon: 'spark'),
+  Rank(tier: 2, minStreak: 4, namePl: 'Podżegacz', nameEn: 'Instigator', icon: 'flame'),
+  Rank(tier: 3, minStreak: 7, namePl: 'Buntownik', nameEn: 'Rebel', icon: 'megaphone'),
+  Rank(tier: 4, minStreak: 10, namePl: 'Adwokat diabła', nameEn: "Devil's Advocate", icon: 'mask'),
+  Rank(tier: 5, minStreak: 14, namePl: 'Mąciciel', nameEn: 'Troublemaker', icon: 'storm'),
+  Rank(tier: 6, minStreak: 20, namePl: 'Wichrzyciel', nameEn: 'Agitator', icon: 'bolt'),
+  Rank(tier: 7, minStreak: 28, namePl: 'Burzyciel spokoju', nameEn: 'Peacebreaker', icon: 'whatshot'),
+  Rank(tier: 8, minStreak: 40, namePl: 'Mistrz prowokacji', nameEn: 'Master Provocateur', icon: 'shield'),
+  Rank(tier: 9, minStreak: 55, namePl: 'Ikona kontrowersji', nameEn: 'Controversy Icon', icon: 'star'),
+  Rank(tier: 10, minStreak: 75, namePl: 'Wirtuoz skandalu', nameEn: 'Scandal Virtuoso', icon: 'diamond'),
+  Rank(tier: 11, minStreak: 100, namePl: 'Legenda kontrowersji', nameEn: 'Controversy Legend', icon: 'crown'),
+  Rank(tier: 12, minStreak: 140, namePl: 'Mit kontrowersji', nameEn: 'Controversy Myth', icon: 'rocket'),
 ];

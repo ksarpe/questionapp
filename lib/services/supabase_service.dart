@@ -1,5 +1,10 @@
+import 'dart:convert';
+import 'dart:math';
+
+import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../core/config/app_config.dart';
@@ -59,9 +64,22 @@ class SupabaseService {
     }
   }
 
+  /// Signs the user out. A default (global) sign-out revokes the refresh token
+  /// server-side, which needs the network — so if that fails (e.g. offline) we
+  /// fall back to a LOCAL sign-out, which just clears the on-device session.
+  /// Either way the app ends up logged out and the auth listener converges on a
+  /// fresh guest; a stale refresh token left behind expires server-side and is
+  /// harmless. This makes "Sign out" work even with no connection instead of
+  /// throwing and leaving the user stuck signed in.
   static Future<void> signOut() async {
     if (!_initialised) return;
-    await client.auth.signOut();
+    try {
+      await client.auth.signOut();
+    } catch (e) {
+      debugPrint('SupabaseService.signOut: global sign-out failed ($e); '
+          'falling back to local.');
+      await client.auth.signOut(scope: SignOutScope.local);
+    }
   }
 
   static Future<void> signInWithPassword({
@@ -131,6 +149,63 @@ class SupabaseService {
       accessToken: authorization?.accessToken,
     );
     return response.user;
+  }
+
+  /// Signs in with Apple via the native iOS/macOS sheet, then exchanges Apple's
+  /// identity token for a Supabase session. Returns null if the user cancels.
+  ///
+  /// First sign-in creates the account, so this covers both login and
+  /// registration. A cryptographic nonce ties Apple's token to this request:
+  /// we hand Apple the SHA-256 hash and Supabase the raw value, which it
+  /// re-hashes and compares to reject replayed tokens.
+  ///
+  /// Only offered on Apple platforms (the UI hides it elsewhere); on Android it
+  /// would need a web redirect + Service ID we deliberately don't set up.
+  static Future<User?> signInWithApple() async {
+    if (!_initialised) {
+      throw StateError('Supabase is not configured.');
+    }
+
+    final rawNonce = _generateNonce();
+    final hashedNonce = sha256.convert(utf8.encode(rawNonce)).toString();
+
+    final AuthorizationCredentialAppleID credential;
+    try {
+      credential = await SignInWithApple.getAppleIDCredential(
+        scopes: const [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+        nonce: hashedNonce,
+      );
+    } on SignInWithAppleAuthorizationException catch (e) {
+      // The user dismissing the sheet is not an error to surface.
+      if (e.code == AuthorizationErrorCode.canceled) return null;
+      rethrow;
+    }
+
+    final idToken = credential.identityToken;
+    if (idToken == null) {
+      throw const AuthException('Apple did not return an identity token.');
+    }
+
+    final response = await client.auth.signInWithIdToken(
+      provider: OAuthProvider.apple,
+      idToken: idToken,
+      nonce: rawNonce,
+    );
+    return response.user;
+  }
+
+  /// Cryptographically secure random string used as the Apple sign-in nonce.
+  static String _generateNonce([int length = 32]) {
+    const charset =
+        '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-._';
+    final random = Random.secure();
+    return List.generate(
+      length,
+      (_) => charset[random.nextInt(charset.length)],
+    ).join();
   }
 
   /// Sends a password-reset email so a user who forgot their password can set a

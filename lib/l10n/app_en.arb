@@ -32,7 +32,17 @@
   "authPasswordsMismatch": "Passwords don't match.",
   "authAccountCreated": "Account created.",
   "authConfirmEmail": "Check your email and confirm your account.",
-  "authAppleSoon": "Sign in with Apple — coming soon.",
+  "authContinueWithApple": "Continue with Apple",
+  "authContinueWithGoogle": "Continue with Google",
+  "authLegalConsent": "By continuing, you agree to our {terms} and {privacy}.",
+  "@authLegalConsent": {
+    "placeholders": {
+      "terms": { "type": "String" },
+      "privacy": { "type": "String" }
+    }
+  },
+  "authLegalTermsLink": "Terms of Service",
+  "authLegalPrivacyLink": "Privacy Policy",
   "authPasswordResetSent": "If an account exists for that email, we've sent a reset link.",
   "authMissingSupabaseConfig": "Supabase configuration is missing. Run the app with SUPABASE_URL and SUPABASE_ANON_KEY.",
   "authMissingGoogleConfig": "GOOGLE_SERVER_CLIENT_ID is missing, so Google is temporarily disabled.",
@@ -153,6 +163,7 @@
   "privacyDocsSection": "DOCUMENTS",
   "privacyPolicy": "Privacy policy",
   "privacyTerms": "Terms of service",
+  "privacyDeleteAccount": "Delete account and data",
   "privacyOpenInBrowser": "Opens in your browser",
   "privacyLinkFailed": "Couldn't open the link.",
   "privacyDataSection": "WHAT WE STORE",
@@ -198,6 +209,7 @@
   "manageSubOpenFailedPlayStore": "Couldn't open Google Play. Open Play Store › Menu › Subscriptions to manage it.",
   "manageSubOpenFailedGeneric": "Couldn't open the subscription page. Manage it wherever you purchased Premium.",
   "signedOut": "Signed out.",
+  "signOutError": "Couldn't sign out. Please check your connection and try again.",
   "deleteAccountTitle": "Delete account?",
   "deleteAccountBody": "This permanently deletes your account and all related data — your streak, votes and unlocks. This can't be undone. If you have an active Premium subscription, cancel it separately in the App Store or Google Play.",
   "deleteAccountSuccess": "Your account has been deleted.",
@@ -216,6 +228,14 @@
     }
   },
   "daysInARow": "DAYS IN A ROW",
+  "streakRecord": "{count, plural, one{Record: {count} day} other{Record: {count} days}}",
+  "@streakRecord": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "rankLabel": "RANK",
   "rankCardTopRank": "Highest rank",
   "rankCardPromotionReady": "Promotion ready!",

@@ -105,7 +105,21 @@ class AppLocalizationsPl extends AppLocalizations {
   String get authConfirmEmail => 'Sprawdź email i potwierdź konto.';
 
   @override
-  String get authAppleSoon => 'Logowanie przez Apple — wkrótce.';
+  String get authContinueWithApple => 'Kontynuuj z Apple';
+
+  @override
+  String get authContinueWithGoogle => 'Kontynuuj z Google';
+
+  @override
+  String authLegalConsent(String terms, String privacy) {
+    return 'Kontynuując, akceptujesz $terms oraz $privacy.';
+  }
+
+  @override
+  String get authLegalTermsLink => 'Regulamin';
+
+  @override
+  String get authLegalPrivacyLink => 'Politykę prywatności';
 
   @override
   String get authPasswordResetSent =>
@@ -398,6 +412,9 @@ class AppLocalizationsPl extends AppLocalizations {
   String get privacyTerms => 'Regulamin';
 
   @override
+  String get privacyDeleteAccount => 'Usuń konto i dane';
+
+  @override
   String get privacyOpenInBrowser => 'Otwiera się w przeglądarce';
 
   @override
@@ -506,6 +523,10 @@ class AppLocalizationsPl extends AppLocalizations {
   String get signedOut => 'Wylogowano.';
 
   @override
+  String get signOutError =>
+      'Nie udało się wylogować. Sprawdź połączenie i spróbuj ponownie.';
+
+  @override
   String get deleteAccountTitle => 'Usunąć konto?';
 
   @override
@@ -543,6 +564,19 @@ class AppLocalizationsPl extends AppLocalizations {
   String get daysInARow => 'DNI Z RZĘDU';
 
   @override
+  String streakRecord(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Rekord: $count dni',
+      many: 'Rekord: $count dni',
+      few: 'Rekord: $count dni',
+      one: 'Rekord: $count dzień',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get rankLabel => 'RANGA';
 
   @override
@@ -571,7 +605,7 @@ class AppLocalizationsPl extends AppLocalizations {
   String get swipeHint => 'Przesuń, aby zobaczyć następne pytanie';
 
   @override
-  String get dailyShort => 'Daily';
+  String get dailyShort => 'Pytanie dnia';
 
   @override
   String get loadErrorTitle => 'Nie udało się załadować pytań';

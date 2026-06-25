@@ -290,11 +290,35 @@ abstract class AppLocalizations {
   /// **'Check your email and confirm your account.'**
   String get authConfirmEmail;
 
-  /// No description provided for @authAppleSoon.
+  /// No description provided for @authContinueWithApple.
   ///
   /// In en, this message translates to:
-  /// **'Sign in with Apple — coming soon.'**
-  String get authAppleSoon;
+  /// **'Continue with Apple'**
+  String get authContinueWithApple;
+
+  /// No description provided for @authContinueWithGoogle.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with Google'**
+  String get authContinueWithGoogle;
+
+  /// No description provided for @authLegalConsent.
+  ///
+  /// In en, this message translates to:
+  /// **'By continuing, you agree to our {terms} and {privacy}.'**
+  String authLegalConsent(String terms, String privacy);
+
+  /// No description provided for @authLegalTermsLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of Service'**
+  String get authLegalTermsLink;
+
+  /// No description provided for @authLegalPrivacyLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get authLegalPrivacyLink;
 
   /// No description provided for @authPasswordResetSent.
   ///
@@ -824,6 +848,12 @@ abstract class AppLocalizations {
   /// **'Terms of service'**
   String get privacyTerms;
 
+  /// No description provided for @privacyDeleteAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete account and data'**
+  String get privacyDeleteAccount;
+
   /// No description provided for @privacyOpenInBrowser.
   ///
   /// In en, this message translates to:
@@ -1010,6 +1040,12 @@ abstract class AppLocalizations {
   /// **'Signed out.'**
   String get signedOut;
 
+  /// No description provided for @signOutError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t sign out. Please check your connection and try again.'**
+  String get signOutError;
+
   /// No description provided for @deleteAccountTitle.
   ///
   /// In en, this message translates to:
@@ -1075,6 +1111,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'DAYS IN A ROW'**
   String get daysInARow;
+
+  /// No description provided for @streakRecord.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{Record: {count} day} other{Record: {count} days}}'**
+  String streakRecord(int count);
 
   /// No description provided for @rankLabel.
   ///

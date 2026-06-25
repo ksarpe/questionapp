@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/feedback/app_toast.dart';
 import '../../../core/locale/l10n_extension.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/widgets/sub_screen_chrome.dart';
 import '../../../data/models/daily_history_entry.dart';
 import '../../../data/models/vote_result.dart';
 import '../../../services/purchases_service.dart';
@@ -13,50 +14,69 @@ import '../providers/question_providers.dart';
 /// Gold accent for the PRO upsell, matching the "go Premium" hooks elsewhere.
 const Color _kGold = Color(0xFFFFC857);
 
-/// Opens the PRO "question history": a bottom-sheet table of every PAST daily
+/// Opens the PRO "question history": a full-screen table of every PAST daily
 /// question and how the community voted, so a user who missed a day can still
-/// catch up. Styled to match [showRankSheet] / [showSmaczkiSheet].
+/// catch up. Pushed as a sub-screen (title + X to close) so it matches the
+/// Favorites screen rather than sliding up as a drag sheet.
 ///
-/// The sheet gates itself: premium sees the history, everyone else sees a PRO
+/// The screen gates itself: premium sees the history, everyone else sees a PRO
 /// upsell — so it's safe to open from anywhere without a premium check up front.
-Future<void> showHistorySheet(BuildContext context) {
-  return showModalBottomSheet<void>(
-    context: context,
-    backgroundColor: context.colors.background,
-    showDragHandle: true,
-    isScrollControlled: true,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-    ),
-    builder: (_) => const _HistorySheet(),
+Future<void> openHistory(BuildContext context) {
+  return Navigator.of(context).push(
+    MaterialPageRoute<void>(builder: (_) => const HistoryScreen()),
   );
 }
 
-class _HistorySheet extends ConsumerWidget {
-  const _HistorySheet();
+/// Full-screen PRO history of past dailies. Mirrors the Favorites screen: a
+/// [TopGlow], a [SubScreenHeader] (title + close), then the body — the premium
+/// list of past questions, or the PRO upsell for everyone else.
+class HistoryScreen extends ConsumerWidget {
+  const HistoryScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isPremium = ref.watch(isPremiumProvider);
 
-    return SafeArea(
-      child: ConstrainedBox(
-        // Cap the height so a long history scrolls inside the sheet instead of
-        // swallowing the whole screen; a short one sizes to its content.
-        constraints: BoxConstraints(
-          maxHeight: MediaQuery.sizeOf(context).height * 0.85,
-        ),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 4, 20, 16),
-          child: isPremium ? const _HistoryBody() : const _HistoryUpsell(),
-        ),
+    return Scaffold(
+      backgroundColor: context.colors.background,
+      body: Stack(
+        children: [
+          const TopGlow(),
+          SafeArea(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.fromLTRB(
+                20,
+                8,
+                20,
+                32 + MediaQuery.paddingOf(context).bottom,
+              ),
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 520),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      SubScreenHeader(
+                        title: context.l10n.historyTitle,
+                        onClose: () => Navigator.of(context).maybePop(),
+                      ),
+                      const SizedBox(height: 16),
+                      isPremium ? const _HistoryBody() : const _HistoryUpsell(),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 }
 
-/// The premium view: the title, then the scrollable list of past dailies (or a
-/// loading / error / empty state).
+/// The premium view: a short subtitle, then the list of past dailies (or a
+/// loading / error / empty state). The list itself doesn't scroll — the screen's
+/// outer [SingleChildScrollView] does — so rows are laid out as a plain Column.
 class _HistoryBody extends ConsumerWidget {
   const _HistoryBody();
 
@@ -66,69 +86,8 @@ class _HistoryBody extends ConsumerWidget {
     final lang = Localizations.localeOf(context).languageCode;
 
     return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _Header(),
-        const SizedBox(height: 16),
-        Flexible(
-          child: historyAsync.when(
-            loading: () => const Padding(
-              padding: EdgeInsets.symmetric(vertical: 48),
-              child: Center(child: CircularProgressIndicator()),
-            ),
-            error: (_, _) => _HistoryMessage(
-              icon: Icons.cloud_off_rounded,
-              title: context.l10n.historyLoadError,
-              action: TextButton(
-                onPressed: () => ref.invalidate(dailyHistoryProvider),
-                child: Text(context.l10n.tryAgain),
-              ),
-            ),
-            data: (entries) {
-              if (entries.isEmpty) {
-                return _HistoryMessage(
-                  icon: Icons.history_toggle_off_rounded,
-                  title: context.l10n.historyEmptyTitle,
-                  subtitle: context.l10n.historyEmptyBody,
-                );
-              }
-              return ListView.separated(
-                shrinkWrap: true,
-                padding: const EdgeInsets.only(bottom: 8),
-                itemCount: entries.length,
-                separatorBuilder: (_, _) => const SizedBox(height: 10),
-                itemBuilder: (_, i) => _HistoryRow(entry: entries[i], lang: lang),
-              );
-            },
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _Header extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            const Icon(Icons.history_rounded, color: AppTheme.spark, size: 22),
-            const SizedBox(width: 10),
-            Text(
-              context.l10n.historyTitle,
-              style: TextStyle(
-                color: context.colors.ink,
-                fontSize: 20,
-                fontWeight: FontWeight.w800,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 6),
         Text(
           context.l10n.historySubtitle,
           style: TextStyle(
@@ -136,6 +95,39 @@ class _Header extends StatelessWidget {
             fontSize: 13,
             height: 1.35,
           ),
+        ),
+        const SizedBox(height: 16),
+        historyAsync.when(
+          loading: () => const Padding(
+            padding: EdgeInsets.only(top: 48),
+            child: Center(child: CircularProgressIndicator()),
+          ),
+          error: (_, _) => _HistoryMessage(
+            icon: Icons.cloud_off_rounded,
+            title: context.l10n.historyLoadError,
+            action: TextButton(
+              onPressed: () => ref.invalidate(dailyHistoryProvider),
+              child: Text(context.l10n.tryAgain),
+            ),
+          ),
+          data: (entries) {
+            if (entries.isEmpty) {
+              return _HistoryMessage(
+                icon: Icons.history_toggle_off_rounded,
+                title: context.l10n.historyEmptyTitle,
+                subtitle: context.l10n.historyEmptyBody,
+              );
+            }
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                for (final entry in entries) ...[
+                  _HistoryRow(entry: entry, lang: lang),
+                  const SizedBox(height: 10),
+                ],
+              ],
+            );
+          },
         ),
       ],
     );
@@ -378,7 +370,7 @@ class _HistoryMessage extends StatelessWidget {
 }
 
 /// The non-premium view: explains the history is a PRO feature and offers the
-/// paywall. On purchase the session refreshes and the parent sheet rebuilds into
+/// paywall. On purchase the session refreshes and the parent screen rebuilds into
 /// the real history (it watches [isPremiumProvider]).
 class _HistoryUpsell extends ConsumerStatefulWidget {
   const _HistoryUpsell();
@@ -409,7 +401,7 @@ class _HistoryUpsellState extends ConsumerState<_HistoryUpsell> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(8, 12, 8, 12),
+      padding: const EdgeInsets.fromLTRB(8, 32, 8, 12),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -506,9 +498,9 @@ class _GoProButton extends StatelessWidget {
 }
 
 /// A quiet outlined "Historia" pill, sized and styled to sit next to the share
-/// pill under the daily question. Opens [showHistorySheet]; the sheet itself
-/// gates premium, so this is shown to everyone on the daily (free users land on
-/// the PRO upsell).
+/// pill under the daily question. Opens [openHistory]; the screen itself gates
+/// premium, so this is shown to everyone on the daily (free users land on the
+/// PRO upsell).
 class HistoryButton extends StatelessWidget {
   const HistoryButton({super.key});
 
@@ -529,7 +521,7 @@ class HistoryButton extends StatelessWidget {
           ),
           child: InkWell(
             borderRadius: _radius,
-            onTap: () => showHistorySheet(context),
+            onTap: () => openHistory(context),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 11),
               child: Row(

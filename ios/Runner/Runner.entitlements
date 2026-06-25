@@ -2,6 +2,14 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<!-- Sign in with Apple. Required by App Store guideline 4.8 because the app
+	     also offers a third-party login (Google on Android). Wire this file into
+	     the Runner target in Xcode (Signing & Capabilities → + Sign in with
+	     Apple, or set CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements). -->
+	<key>com.apple.developer.applesignin</key>
+	<array>
+		<string>Default</string>
+	</array>
 	<!-- Shared with the DailyQuestionWidget extension so the app can write the
 	     daily question where the widget can read it. Add the SAME App Group to
 	     the widget target. -->
