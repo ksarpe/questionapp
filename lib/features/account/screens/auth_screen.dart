@@ -11,6 +11,7 @@ import '../../../core/locale/l10n_extension.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../services/supabase_service.dart';
 import '../providers/session_providers.dart';
+import '../widgets/auth_primary_button.dart';
 import '../widgets/auth_segmented_tabs.dart';
 
 /// Presents the sign-in / register form as a modal bottom sheet that slides up
@@ -221,7 +222,7 @@ class _AuthCardState extends ConsumerState<_AuthCard> {
                         ),
                       ],
                       const SizedBox(height: 14),
-                      _PrimaryButton(
+                      AuthPrimaryButton(
                         label: _isLogin
                             ? context.l10n.signIn
                             : context.l10n.authCreateAccount,
@@ -495,81 +496,6 @@ class _AuthCardState extends ConsumerState<_AuthCard> {
   void _showMessage(String message, {ToastType type = ToastType.info}) {
     if (!mounted) return;
     AppToast.show(context, message, type: type);
-  }
-}
-
-/// The big gradient call-to-action.
-class _PrimaryButton extends StatelessWidget {
-  const _PrimaryButton({
-    required this.label,
-    required this.loading,
-    required this.onPressed,
-  });
-
-  final String label;
-  final bool loading;
-  final VoidCallback? onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    final enabled = onPressed != null && !loading;
-    return Opacity(
-      opacity: enabled ? 1 : 0.5,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [Color(0xFFF97316), Color(0xFFEA580C)],
-          ),
-          borderRadius: BorderRadius.circular(14),
-          boxShadow: [
-            BoxShadow(
-              color: AppTheme.spark.withValues(alpha: 0.35),
-              blurRadius: 18,
-              offset: const Offset(0, 6),
-            ),
-          ],
-        ),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            onTap: enabled ? onPressed : null,
-            borderRadius: BorderRadius.circular(14),
-            child: SizedBox(
-              height: 56,
-              child: Center(
-                child: loading
-                    ? const SizedBox.square(
-                        dimension: 22,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Colors.white,
-                        ),
-                      )
-                    : Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            label,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 16,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          const Icon(
-                            Icons.arrow_forward,
-                            color: Colors.white,
-                            size: 20,
-                          ),
-                        ],
-                      ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
   }
 }
 
