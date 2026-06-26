@@ -14,6 +14,7 @@ import '../../account/widgets/save_pro_prompt.dart';
 import '../../monetization/providers/monetization_providers.dart';
 import '../providers/question_providers.dart';
 import '../providers/swipe_hint_providers.dart';
+import 'back_to_daily_link.dart';
 import 'falling_words_text.dart';
 import 'styled_question_text.dart';
 
@@ -876,31 +877,8 @@ class _NoMoreQuestions extends StatelessWidget {
           style: TextStyle(color: context.colors.subtle, fontSize: 14),
         ),
         const SizedBox(height: 28),
-        _BackToDailyLink(onTap: onBackToDaily),
+        BackToDailyLink(onTap: onBackToDaily),
       ],
-    );
-  }
-}
-
-/// A borderless "← Wróć do pytania dnia" link used on the reveal-slot states,
-/// so the paywall and the "no more" screen each carry their own visible escape
-/// back to today's free daily instead of relying on a faint bottom-of-screen
-/// link the user may not notice.
-class _BackToDailyLink extends StatelessWidget {
-  const _BackToDailyLink({required this.onTap});
-
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return TextButton.icon(
-      onPressed: onTap,
-      style: TextButton.styleFrom(
-        foregroundColor: context.colors.subtle,
-        textStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
-      ),
-      icon: const Icon(Icons.arrow_back, size: 16),
-      label: Text(context.l10n.backToDailyQuestion),
     );
   }
 }
@@ -994,7 +972,7 @@ class _RevealPaywall extends StatelessWidget {
         const SizedBox(height: 4),
         // Visible escape back to the free daily, so a user who doesn't want to
         // watch an ad isn't cornered on the paywall.
-        _BackToDailyLink(onTap: busy ? () {} : onBackToDaily),
+        BackToDailyLink(onTap: busy ? () {} : onBackToDaily),
         // Store-required restore path — reachable here because a guest can't
         // open Settings (where the other restore lives).
         TextButton(
