@@ -6,6 +6,7 @@ import '../../../data/models/vote_result.dart';
 import '../../account/screens/auth_screen.dart';
 import '../../questions/widgets/styled_question_text.dart';
 import '../../questions/widgets/vote_visuals.dart';
+import '../widgets/onboarding_intro_card.dart';
 import '../widgets/onboarding_primary_button.dart';
 import '../widgets/spark_logo.dart';
 
@@ -74,12 +75,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     // then the real moment — a juicy question to actually vote on. The taste card
     // is the aha; everything before it is kept brief so the user reaches it fast.
     final introCards = <Widget>[
-      _IntroCard(
+      OnboardingIntroCard(
         glyph: const SparkLogo(size: 52),
         title: l10n.onboardingWelcomeTitle,
         body: l10n.onboardingWelcomeBody,
       ),
-      _IntroCard(
+      OnboardingIntroCard(
         glyph: const _GlyphBubble(
           icon: Icons.wb_sunny_rounded,
           color: AppTheme.spark,
@@ -164,54 +165,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-/// One intro slide: a glyph up top, a bold title, and a paragraph of copy —
-/// vertically centred so every card has the same rhythm.
-class _IntroCard extends StatelessWidget {
-  const _IntroCard({
-    required this.glyph,
-    required this.title,
-    required this.body,
-  });
-
-  final Widget glyph;
-  final String title;
-  final String body;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 32),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          glyph,
-          const SizedBox(height: 40),
-          Text(
-            title,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: context.colors.ink,
-              fontSize: 26,
-              fontWeight: FontWeight.w800,
-              height: 1.15,
-            ),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            body,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: context.colors.subtle,
-              fontSize: 16,
-              height: 1.45,
-            ),
-          ),
-        ],
       ),
     );
   }
