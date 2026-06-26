@@ -11,6 +11,7 @@ import '../../../core/locale/l10n_extension.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../services/supabase_service.dart';
 import '../providers/session_providers.dart';
+import '../widgets/auth_or_divider.dart';
 import '../widgets/auth_primary_button.dart';
 import '../widgets/auth_segmented_tabs.dart';
 import '../widgets/auth_social_button.dart';
@@ -231,7 +232,7 @@ class _AuthCardState extends ConsumerState<_AuthCard> {
                         onPressed: isConfigured ? _submit : null,
                       ),
                       const SizedBox(height: 16),
-                      const _OrDivider(),
+                      const AuthOrDivider(),
                       const SizedBox(height: 14),
                       if (isApplePlatform)
                         AuthSocialButton(
@@ -497,33 +498,6 @@ class _AuthCardState extends ConsumerState<_AuthCard> {
   void _showMessage(String message, {ToastType type = ToastType.info}) {
     if (!mounted) return;
     AppToast.show(context, message, type: type);
-  }
-}
-
-/// "—— LUB ——" separator.
-class _OrDivider extends StatelessWidget {
-  const _OrDivider();
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(child: Divider(color: context.colors.hairline)),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          child: Text(
-            context.l10n.orDivider,
-            style: TextStyle(
-              color: context.colors.subtle,
-              fontSize: 11.5,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 1.5,
-            ),
-          ),
-        ),
-        Expanded(child: Divider(color: context.colors.hairline)),
-      ],
-    );
   }
 }
 
