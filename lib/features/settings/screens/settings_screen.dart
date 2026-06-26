@@ -15,18 +15,15 @@ import '../../../services/supabase_service.dart';
 import '../../account/providers/session_providers.dart';
 import '../../account/screens/auth_screen.dart';
 import '../../questions/providers/favorites_providers.dart';
-import '../../questions/widgets/history_screen.dart';
 import '../providers/app_info_provider.dart';
 import '../providers/reminder_providers.dart';
-import '../widgets/account_action_buttons.dart';
 import '../widgets/manage_subscription_sheet.dart';
-import '../widgets/offline_download_row.dart';
-import '../widgets/premium_active_row.dart';
 import '../widgets/profile_header.dart';
 import '../widgets/rank_card.dart';
-import '../widgets/settings_nav_row.dart';
+import '../widgets/settings_account_section.dart';
+import '../widgets/settings_preferences_section.dart';
 import '../widgets/settings_primitives.dart';
-import '../widgets/settings_toggle_row.dart';
+import '../widgets/settings_session_actions.dart';
 import '../widgets/streak_card.dart';
 import 'about_screen.dart';
 import 'favorites_screen.dart';
@@ -132,144 +129,43 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
                       ),
                       const SizedBox(height: 28),
 
-                      // ---- App settings -----------------------------------
-                      SettingsSectionLabel(context.l10n.settingsSectionApp),
-                      const SizedBox(height: 12),
-                      SettingsCard(
-                        children: [
-                          SettingsToggleRow(
-                            icon: Icons.notifications_none_rounded,
-                            title: context.l10n.settingsReminders,
-                            subtitle: context.l10n.settingsRemindersSubtitle,
-                            value: reminder.enabled,
-                            onChanged: _onReminderToggled,
-                          ),
-                          if (reminder.enabled) ...[
-                            const SettingsRowDivider(),
-                            SettingsNavRow(
-                              icon: Icons.schedule_rounded,
-                              title: context.l10n.settingsReminderTime,
-                              trailingText: _formatTime(reminder.time),
-                              onTap: _openReminderTimePicker,
-                            ),
-                          ],
-
-                          const SettingsRowDivider(),
-                          SettingsNavRow(
-                            icon: Icons.language_rounded,
-                            title: context.l10n.settingsLanguage,
-                            trailingText: _languageName(localeCode),
-                            onTap: _openLanguagePicker,
-                          ),
-
-                          const SettingsRowDivider(),
-                          SettingsNavRow(
-                            icon: _themeModeIcon(themeMode),
-                            title: context.l10n.settingsAppearance,
-                            trailingText: _themeModeName(context, themeMode),
-                            onTap: _openAppearancePicker,
-                          ),
-
-                          // Premium-only: pull the whole (legitimately-readable)
-                          // catalog + smaczki onto the device so it stays
-                          // readable offline. Free users only get the daily +
-                          // their reveals, so the action is meaningless for them.
-                          if (isPremium) ...[
-                            const SettingsRowDivider(),
-                            OfflineDownloadRow(localeCode: localeCode),
-                          ],
-
-                          if (showFavorites) ...[
-                            const SettingsRowDivider(),
-                            SettingsNavRow(
-                              icon: Icons.star_rounded,
-                              iconColor: kGold,
-                              title: context.l10n.settingsFavorites,
-                              trailingText: favoriteCount > 0
-                                  ? '$favoriteCount'
-                                  : null,
-                              onTap: _openFavorites,
-                            ),
-                          ],
-
-                          // The PRO history of past dailies + how people voted.
-                          // Shown to everyone; the screen gates premium itself,
-                          // so a free user lands on the PRO upsell inside it.
-                          const SettingsRowDivider(),
-                          SettingsNavRow(
-                            icon: Icons.history_rounded,
-                            title: context.l10n.historyTitle,
-                            onTap: () => openHistory(context),
-                          ),
-                        ],
+                      SettingsPreferencesSection(
+                        reminderEnabled: reminder.enabled,
+                        reminderTimeLabel: _formatTime(reminder.time),
+                        languageLabel: _languageName(localeCode),
+                        appearanceIcon: _themeModeIcon(themeMode),
+                        appearanceLabel: _themeModeName(context, themeMode),
+                        localeCode: localeCode,
+                        isPremium: isPremium,
+                        showFavorites: showFavorites,
+                        favoriteCount: favoriteCount,
+                        onReminderToggled: _onReminderToggled,
+                        onReminderTime: _openReminderTimePicker,
+                        onLanguage: _openLanguagePicker,
+                        onAppearance: _openAppearancePicker,
+                        onFavorites: _openFavorites,
                       ),
                       const SizedBox(height: 28),
 
-                      // ---- Account ----------------------------------------
-                      SettingsSectionLabel(context.l10n.settingsSectionAccount),
-                      const SizedBox(height: 12),
-                      SettingsCard(
-                        children: [
-                          if (isPremium)
-                            PremiumActiveRow(
-                              localeCode: localeCode,
-                              onTap: _openManageSubscription,
-                            )
-                          else
-                            SettingsNavRow(
-                              icon: Icons.star_rounded,
-                              iconColor: kGold,
-                              title: context.l10n.settingsGoPremium,
-                              titleColor: kGold,
-                              onTap: _openPaywall,
-                            ),
-                          const SettingsRowDivider(),
-                          SettingsNavRow(
-                            icon: Icons.shield_outlined,
-                            title: context.l10n.settingsPrivacy,
-                            onTap: _openPrivacyData,
-                          ),
-                          const SettingsRowDivider(),
-                          SettingsNavRow(
-                            icon: Icons.restore_rounded,
-                            title: context.l10n.restorePurchase,
-                            onTap: _restorePurchases,
-                          ),
-                          const SettingsRowDivider(),
-                          SettingsNavRow(
-                            icon: Icons.info_outline_rounded,
-                            title: context.l10n.settingsAbout,
-                            trailingText: appInfo?.version,
-                            onTap: _openAbout,
-                          ),
-                        ],
+                      SettingsAccountSection(
+                        isPremium: isPremium,
+                        localeCode: localeCode,
+                        appVersion: appInfo?.version,
+                        onManageSubscription: _openManageSubscription,
+                        onGoPremium: _openPaywall,
+                        onPrivacy: _openPrivacyData,
+                        onRestore: _restorePurchases,
+                        onAbout: _openAbout,
                       ),
 
-                      // ---- Session actions --------------------------------
-                      if (hasAccount) ...[
-                        const SizedBox(height: 26),
-                        SignOutButton(onTap: _signOut, loading: _signingOut),
-                        const SizedBox(height: 8),
-                        DeleteAccountButton(onTap: _confirmDeleteAccount),
-                      ] else ...[
-                        const SizedBox(height: 26),
-                        SignInButton(onTap: _openAuth),
-                      ],
-
-                      // Quiet build stamp at the very bottom, the way mature
-                      // apps sign off their settings page.
-                      if (appInfo != null) ...[
-                        const SizedBox(height: 24),
-                        Center(
-                          child: Text(
-                            'Debatly · v${appInfo.version} (${appInfo.build})',
-                            style: TextStyle(
-                              color: context.colors.subtle,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ),
-                      ],
+                      SettingsSessionActions(
+                        hasAccount: hasAccount,
+                        signingOut: _signingOut,
+                        appInfo: appInfo,
+                        onSignOut: _signOut,
+                        onDeleteAccount: _confirmDeleteAccount,
+                        onSignIn: _openAuth,
+                      ),
                     ],
                   ),
                 ),
