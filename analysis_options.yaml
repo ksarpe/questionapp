@@ -6,6 +6,28 @@
 # keep it that way.
 include: package:flutter_lints/flutter.yaml
 
+# Riverpod-specific static analysis. riverpod_lint 3.1.x (the line compatible
+# with flutter_riverpod 3.x) is a native analysis_server_plugin, not a
+# custom_lint plugin, so it is enabled here via the top-level `plugins:` key
+# rather than `dart run custom_lint`. The plugin is resolved by the analyzer
+# itself — it is intentionally NOT a pubspec dev_dependency (that would drag
+# analyzer ^12 into the app's own solve and clash with the rest of the toolchain).
+# Surface its findings with `dart analyze`; note that `flutter analyze` does not
+# yet relay analysis_server_plugin diagnostics on the current toolchain.
+plugins:
+  riverpod_lint:
+    version: ^3.1.4
+    # False positive on this codebase: the app DOES have a root ProviderScope
+    # (lib/main.dart) — it sits one level under runApp's child, wrapped by the
+    # transparent SentryWidget, which the rule's shallow heuristic can't see
+    # past. Reordering to satisfy it would move SentryWidget below the scope and
+    # change startup wiring, so we disable the rule instead. It only ever fires
+    # at the single runApp root, so this is effectively scoped to that one site.
+    # (Inline `// ignore:` doesn't suppress analysis_server_plugin diagnostics on
+    # the current toolchain, so the suppression has to live here.)
+    diagnostics:
+      missing_provider_scope: false
+
 analyzer:
   # Generated and build output should never gate analysis.
   exclude:
