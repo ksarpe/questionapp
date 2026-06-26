@@ -1,0 +1,55 @@
+name: CI
+
+# Runs the same gates a reviewer would: formatting, static analysis, and the
+# full test suite. Triggered on every push to master and on every PR targeting
+# it. Keep this green — it is the contract for "main is always shippable".
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+# Cancel an in-flight run when a newer commit is pushed to the same ref, so the
+# queue never piles up on rapid pushes.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  analyze-and-test:
+    name: Format · Analyze · Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          # Pinned to the toolchain in .metadata so CI matches local builds.
+          # Bump this together with `flutter upgrade` locally.
+          flutter-version: 3.44.1
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      # Fails if any file is not `dart format`-clean. Run `dart format .`
+      # locally before pushing.
+      - name: Verify formatting
+        run: dart format --output=none --set-exit-if-changed .
+
+      # Treat every analyzer hint as a hard failure — no warnings allowed to rot.
+      - name: Analyze
+        run: flutter analyze --fatal-infos --fatal-warnings
+
+      - name: Run tests with coverage
+        run: flutter test --coverage
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage/lcov.info
+          if-no-files-found: ignore

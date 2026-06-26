@@ -1,0 +1,5 @@
+# Default owner for everything in the repo. GitHub requests a review from this
+# account on every PR. Add finer-grained rules below as the team grows, e.g.:
+#   /supabase/   @backend-handle
+#   /lib/l10n/   @localization-handle
+* @ksarpe

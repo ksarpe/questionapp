@@ -1,8 +1,13 @@
-# questionapp
+# Debatly
+
+[![CI](https://github.com/ksarpe/questionapp/actions/workflows/ci.yml/badge.svg)](https://github.com/ksarpe/questionapp/actions/workflows/ci.yml)
 
 A minimalist, modern mobile app designed to spark conversation. It shows a
 single thought-provoking question as styled text, with a fast "wind" animation
 when swiping to the next one.
+
+> The Dart package is still named `questionapp` (see `pubspec.yaml`); **Debatly**
+> is the product/brand name used in the UI and the stores.
 
 > **Shipping to the stores?** [RELEASE_CHECKLIST.md](RELEASE_CHECKLIST.md) is the
 > single source of truth for every manual step left to do (Supabase function
@@ -23,23 +28,30 @@ when swiping to the next one.
 
 ```
 lib/
-├── main.dart                     # Entry point — initialises SDKs, mounts ProviderScope
-├── app.dart                      # MaterialApp + theme
-├── core/
-│   ├── config/app_config.dart    # Secrets via --dart-define
-│   └── theme/app_theme.dart      # Colours + the white-fill/black-stroke text style
-├── data/
-│   ├── models/question.dart      # Question model
-│   ├── mock/mock_questions.dart  # Seed questions for the UI
-│   └── repositories/             # QuestionRepository (mock → Supabase later)
-├── features/
-│   ├── questions/
-│   │   ├── providers/            # Riverpod providers + deck navigation
-│   │   ├── screens/              # QuestionScreen (home)
-│   │   └── widgets/              # StyledQuestionText, WindQuestionView, info sheet
-│   └── settings/
-│       └── screens/              # SettingsScreen (login/logout/preferences)
-└── services/                     # Supabase, RevenueCat, AdMob wrappers
+├── main.dart                # Entry point — Sentry, SDK init, mounts ProviderScope
+├── app.dart                 # MaterialApp: theme, locale, navigation root
+├── core/                    # Cross-cutting concerns, no feature knowledge
+│   ├── config/              # AppConfig — secrets via --dart-define
+│   ├── feedback/            # AppToast (themed sonner overlay)
+│   ├── locale/              # LocaleController + context.l10n extension
+│   ├── monitoring/          # Monitoring facade over Sentry
+│   ├── network/             # Connectivity providers + offline-error detection
+│   ├── share/              # Widget-to-image capture for share cards
+│   ├── theme/               # AppTheme + AppColors theme extension
+│   └── widgets/             # Shared chrome (sub-screen scaffolds)
+├── data/                    # Models + data access, no UI
+│   ├── models/              # Question, Rank, UserStats, VoteResult, …
+│   ├── mock/                # Seed questions (used when Supabase keys absent)
+│   └── repositories/        # QuestionRepository + caching decorator
+├── features/                # Feature-first: providers / screens / widgets each
+│   ├── account/             # Auth, session, stats, rank/streak celebrations
+│   ├── monetization/        # Paywall + entitlement providers
+│   ├── onboarding/          # Splash → first-run tutorial → app entry
+│   ├── questions/           # The home deck, voting, reveals, share, history
+│   └── settings/            # Settings hub, favorites, privacy & data, about
+├── l10n/                    # ARB source strings (en/pl) + generated delegates
+└── services/                # SDK wrappers: Supabase, RevenueCat, AdMob,
+                             # notifications, consent, reviews, caching
 ```
 
 ## The "wind" animation
@@ -71,13 +83,28 @@ flutter run \
   --dart-define=ADMOB_REWARDED_ID=ca-app-pub-.../...
 ```
 
-Or copy `env/example.json` to `env/dev.json`, fill in the real values, and run:
+Or copy `env/example.json` to `env/local.json`, fill in the real values, and run:
 
 ```bash
-flutter run --dart-define-from-file=env/dev.json
+flutter run --dart-define-from-file=env/local.json
 ```
 
-`env/dev.json` is ignored by git, so real keys stay local.
+Everything under `env/` except `example.json` is ignored by git, so real keys
+stay local. Release builds use `env/prod-android.json` / `env/prod-ios.json`.
+
+## Quality gates
+
+CI ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) runs on every push
+and PR. Run the same gates locally before pushing:
+
+```bash
+dart format .
+flutter analyze
+flutter test
+```
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for conventions (architecture, l10n,
+theming, migrations, commit style).
 
 ## Supabase questions
 

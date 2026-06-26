@@ -1,0 +1,29 @@
+version: 2
+updates:
+  # Dart/Flutter packages. Grouped so a week's bumps arrive as one reviewable PR
+  # rather than a dozen. Major bumps stay separate (they can break).
+  - package-ecosystem: pub
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    groups:
+      pub-minor-and-patch:
+        update-types: [minor, patch]
+
+  # The GitHub Actions used by the CI workflow above.
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+
+  # Supabase edge functions are Deno/TypeScript; keep their npm-style imports
+  # fresh too. Harmless if Dependabot finds nothing to update.
+  - package-ecosystem: npm
+    directory: "/supabase/functions"
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 3
