@@ -14,7 +14,7 @@ import '../../settings/screens/settings_screen.dart';
 import '../providers/question_providers.dart';
 import '../providers/swipe_hint_providers.dart';
 import '../widgets/history_screen.dart';
-import '../widgets/category_filter_button.dart';
+import '../widgets/load_error.dart';
 import '../widgets/daily_badge.dart';
 import '../widgets/favorite_star_button.dart';
 import '../widgets/daily_vote_panel.dart';
@@ -66,9 +66,6 @@ class QuestionScreen extends ConsumerWidget {
         // user's feed.
         ref.read(revealedFeedProvider.notifier).clear();
         ref.read(questionIndexProvider.notifier).toDaily();
-        // The premium category filter is per-session and per-identity — drop it
-        // so a new user (who may not even be premium) never inherits a filter.
-        ref.read(selectedCategoryProvider.notifier).clear();
       }
     });
 
@@ -137,12 +134,6 @@ class QuestionScreen extends ConsumerWidget {
     // free reveal slot).
     final current = ref.watch(currentQuestionProvider);
 
-    // Premium gets a category-filter icon right next to the star, narrowing the
-    // browseable catalog to one theme. Free users never browse the catalog, so
-    // it's premium-only (premium never sits on the reveal slot, so `current` is
-    // non-null whenever this matters).
-    final isPremium = ref.watch(isPremiumProvider);
-
     return Scaffold(
       // Let the body fill the whole screen so the question centres against the
       // true midpoint; the (transparent) app bar floats over the top.
@@ -156,18 +147,10 @@ class QuestionScreen extends ConsumerWidget {
         // bar when offline and reserves no space when connected (rather than
         // overlaying the status chips).
         bottom: isOnline ? null : const OfflineBanner(),
-        // Widen the leading slot when the category button rides alongside the star.
-        leadingWidth: isPremium ? 104 : 56,
         leading: current != null
             ? Padding(
                 padding: const EdgeInsets.only(left: 4),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    FavoriteStarButton(questionId: current.id),
-                    if (isPremium) const CategoryFilterButton(),
-                  ],
-                ),
+                child: FavoriteStarButton(questionId: current.id),
               )
             : null,
         centerTitle: true,
@@ -219,7 +202,7 @@ class QuestionScreen extends ConsumerWidget {
         children: [
           Positioned.fill(
             child: deck.isEmpty && loadError != null
-                ? _LoadError(
+                ? LoadError(
                     onRetry: () {
                       ref.invalidate(sessionProvider);
                       ref.invalidate(questionsProvider);
@@ -432,47 +415,3 @@ class _BackToDailyButton extends StatelessWidget {
   }
 }
 
-/// Shown when the launch fetch fails (typically no network) and there is nothing
-/// to render. Replaces the old endless spinner with a friendly message and a
-/// retry that re-runs sign-in + the question/daily/stats fetches.
-class _LoadError extends StatelessWidget {
-  const _LoadError({required this.onRetry});
-
-  final VoidCallback onRetry;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.cloud_off, color: context.colors.subtle, size: 40),
-            const SizedBox(height: 16),
-            Text(
-              context.l10n.loadErrorTitle,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: context.colors.ink,
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              context.l10n.loadErrorBody,
-              textAlign: TextAlign.center,
-              style: TextStyle(color: context.colors.subtle, fontSize: 14),
-            ),
-            const SizedBox(height: 24),
-            FilledButton(
-              onPressed: onRetry,
-              child: Text(context.l10n.tryAgain),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
