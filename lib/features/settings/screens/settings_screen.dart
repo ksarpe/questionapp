@@ -28,6 +28,7 @@ import '../providers/offline_download_providers.dart';
 import '../providers/reminder_providers.dart';
 import '../widgets/settings_nav_row.dart';
 import '../widgets/settings_primitives.dart';
+import '../widgets/settings_toggle_row.dart';
 
 /// Warm flame colour for the (placeholder) streak card.
 const Color _kFlame = Color(0xFFFF7A29);
@@ -137,7 +138,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
                       const SizedBox(height: 12),
                       SettingsCard(
                         children: [
-                          _ToggleRow(
+                          SettingsToggleRow(
                             icon: Icons.notifications_none_rounded,
                             title: context.l10n.settingsReminders,
                             subtitle: context.l10n.settingsRemindersSubtitle,
@@ -938,73 +939,6 @@ class _StatCardShell extends StatelessWidget {
             child: child,
           ),
         ),
-      ),
-    );
-  }
-}
-
-// ---- Reusable building blocks ----------------------------------------------
-
-class _ToggleRow extends StatelessWidget {
-  const _ToggleRow({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-    required this.value,
-    required this.onChanged,
-  });
-
-  final IconData icon;
-  final String title;
-  final String subtitle;
-  final bool value;
-  final ValueChanged<bool> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 12, 12, 12),
-      child: Row(
-        children: [
-          Icon(icon, color: context.colors.subtle, size: 22),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    color: context.colors.ink,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  subtitle,
-                  style: TextStyle(color: context.colors.subtle, fontSize: 13),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 8),
-          Switch(
-            value: value,
-            onChanged: onChanged,
-            thumbColor: WidgetStateProperty.resolveWith(
-              (states) => states.contains(WidgetState.selected)
-                  ? Colors.white
-                  : const Color(0xFFCFCFCF),
-            ),
-            trackColor: WidgetStateProperty.resolveWith(
-              (states) => states.contains(WidgetState.selected)
-                  ? AppTheme.spark
-                  : const Color(0xFF2C2C33),
-            ),
-            trackOutlineColor: const WidgetStatePropertyAll(Colors.transparent),
-          ),
-        ],
       ),
     );
   }
