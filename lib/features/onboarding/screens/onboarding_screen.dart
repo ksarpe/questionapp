@@ -4,6 +4,7 @@ import '../../../core/locale/l10n_extension.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../account/screens/auth_screen.dart';
 import '../widgets/onboarding_choice_card.dart';
+import '../widgets/onboarding_dots.dart';
 import '../widgets/onboarding_glyph_bubble.dart';
 import '../widgets/onboarding_intro_card.dart';
 import '../widgets/onboarding_primary_button.dart';
@@ -145,7 +146,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               padding: const EdgeInsets.fromLTRB(24, 8, 24, 28),
               child: Column(
                 children: [
-                  _Dots(count: pageCount, index: _index),
+                  OnboardingDots(count: pageCount, index: _index),
                   const SizedBox(height: 20),
                   AnimatedSize(
                     duration: const Duration(milliseconds: 220),
@@ -166,38 +167,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           ],
         ),
       ),
-    );
-  }
-}
-
-/// The page-progress dots beneath the deck: the active one stretches into a
-/// orange pill, the rest stay small and grey.
-class _Dots extends StatelessWidget {
-  const _Dots({required this.count, required this.index});
-
-  final int count;
-  final int index;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: List.generate(count, (i) {
-        final active = i == index;
-        return AnimatedContainer(
-          duration: const Duration(milliseconds: 250),
-          curve: Curves.easeOut,
-          margin: const EdgeInsets.symmetric(horizontal: 3),
-          width: active ? 22 : 7,
-          height: 7,
-          decoration: BoxDecoration(
-            color: active
-                ? AppTheme.spark
-                : context.colors.subtle.withValues(alpha: 0.35),
-            borderRadius: BorderRadius.circular(4),
-          ),
-        );
-      }),
     );
   }
 }
