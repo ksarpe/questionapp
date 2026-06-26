@@ -31,9 +31,7 @@ import '../widgets/settings_nav_row.dart';
 import '../widgets/settings_primitives.dart';
 import '../widgets/settings_toggle_row.dart';
 import '../widgets/stat_card_shell.dart';
-
-/// Warm flame colour for the (placeholder) streak card.
-const Color _kFlame = Color(0xFFFF7A29);
+import '../widgets/streak_card.dart';
 
 /// The signed-in user's profile hub: identity, gamification stats, app
 /// preferences, subscription and account actions — all on one scrollable page.
@@ -127,7 +125,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: const [
-                            Expanded(child: _StreakCard()),
+                            Expanded(child: StreakCard()),
                             SizedBox(width: 14),
                             Expanded(child: _RankCard()),
                           ],
@@ -703,58 +701,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
 }
 
 // ---- Stat cards (live from sync_user_state) --------------------------------
-
-class _StreakCard extends ConsumerWidget {
-  const _StreakCard();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final streak = ref.watch(currentStreakProvider);
-    final record = ref.watch(
-      userStatsValueProvider.select((s) => s.longestStreak),
-    );
-    return StatCardShell(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Icons.local_fire_department, color: _kFlame, size: 28),
-          const SizedBox(height: 8),
-          Text(
-            '$streak',
-            style: TextStyle(
-              color: context.colors.ink,
-              fontSize: 32,
-              fontWeight: FontWeight.w800,
-              height: 1,
-            ),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            context.l10n.daysInARow,
-            style: TextStyle(
-              color: context.colors.subtle,
-              fontSize: 11,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 1,
-            ),
-          ),
-          // Personal best, kept deliberately quiet beneath the headline streak.
-          if (record > 0) ...[
-            const SizedBox(height: 4),
-            Text(
-              context.l10n.streakRecord(record),
-              style: TextStyle(
-                color: context.colors.subtle.withValues(alpha: 0.7),
-                fontSize: 10,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-}
 
 class _RankCard extends ConsumerWidget {
   const _RankCard();
