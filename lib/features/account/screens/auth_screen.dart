@@ -11,8 +11,7 @@ import '../../../core/locale/l10n_extension.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../services/supabase_service.dart';
 import '../providers/session_providers.dart';
-
-enum _AuthMode { password, register }
+import '../widgets/auth_segmented_tabs.dart';
 
 /// Presents the sign-in / register form as a modal bottom sheet that slides up
 /// from the bottom of the screen.
@@ -58,7 +57,7 @@ class _AuthCardState extends ConsumerState<_AuthCard> {
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
 
-  _AuthMode _mode = _AuthMode.password;
+  AuthMode _mode = AuthMode.password;
   bool _isSubmitting = false;
   bool _obscurePassword = true;
 
@@ -70,7 +69,7 @@ class _AuthCardState extends ConsumerState<_AuthCard> {
     super.dispose();
   }
 
-  bool get _isLogin => _mode == _AuthMode.password;
+  bool get _isLogin => _mode == AuthMode.password;
 
   @override
   Widget build(BuildContext context) {
@@ -119,7 +118,7 @@ class _AuthCardState extends ConsumerState<_AuthCard> {
                     children: [
                       _buildCloseRow(context),
                       const SizedBox(height: 4),
-                      _SegmentedTabs(
+                      AuthSegmentedTabs(
                         mode: _mode,
                         enabled: !_isSubmitting,
                         onChanged: _changeMode,
@@ -298,7 +297,7 @@ class _AuthCardState extends ConsumerState<_AuthCard> {
     );
   }
 
-  void _changeMode(_AuthMode mode) {
+  void _changeMode(AuthMode mode) {
     if (_isSubmitting || mode == _mode) return;
     setState(() {
       _mode = mode;
@@ -352,7 +351,7 @@ class _AuthCardState extends ConsumerState<_AuthCard> {
   String? _validatePassword(String? value) {
     final password = value ?? '';
     if (password.isEmpty) return context.l10n.authEnterPassword;
-    if (_mode == _AuthMode.register && password.length < 6) {
+    if (_mode == AuthMode.register && password.length < 6) {
       return context.l10n.authMinPassword;
     }
     return null;
@@ -377,7 +376,7 @@ class _AuthCardState extends ConsumerState<_AuthCard> {
       final password = _passwordController.text;
 
       switch (_mode) {
-        case _AuthMode.password:
+        case AuthMode.password:
           await SupabaseService.signInWithPassword(
             email: email,
             password: password,
@@ -385,7 +384,7 @@ class _AuthCardState extends ConsumerState<_AuthCard> {
           await ref.read(sessionProvider.notifier).refresh();
           if (!mounted) return;
           Navigator.of(context).maybePop();
-        case _AuthMode.register:
+        case AuthMode.register:
           await SupabaseService.registerWithPassword(
             email: email,
             password: password,
@@ -496,104 +495,6 @@ class _AuthCardState extends ConsumerState<_AuthCard> {
   void _showMessage(String message, {ToastType type = ToastType.info}) {
     if (!mounted) return;
     AppToast.show(context, message, type: type);
-  }
-}
-
-/// Animated two-segment toggle between "sign in" and "create account".
-class _SegmentedTabs extends StatelessWidget {
-  const _SegmentedTabs({
-    required this.mode,
-    required this.enabled,
-    required this.onChanged,
-  });
-
-  final _AuthMode mode;
-  final bool enabled;
-  final ValueChanged<_AuthMode> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    final isLogin = mode == _AuthMode.password;
-    return Container(
-      padding: const EdgeInsets.all(4),
-      decoration: BoxDecoration(
-        color: context.colors.accent,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: context.colors.hairline),
-      ),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final pillWidth = constraints.maxWidth / 2;
-          return SizedBox(
-            height: 44,
-            child: Stack(
-              children: [
-                AnimatedAlign(
-                  duration: const Duration(milliseconds: 220),
-                  curve: Curves.easeOutCubic,
-                  alignment: isLogin
-                      ? Alignment.centerLeft
-                      : Alignment.centerRight,
-                  child: Container(
-                    width: pillWidth,
-                    height: 44,
-                    decoration: BoxDecoration(
-                      // The brand orange (same gradient as the primary CTA) so the
-                      // selected tab matches the app accent instead of a stray violet.
-                      gradient: const LinearGradient(
-                        colors: [AppTheme.spark, Color(0xFFEA580C)],
-                      ),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                ),
-                Row(
-                  children: [
-                    _tab(
-                      context,
-                      context.l10n.authTabSignIn,
-                      _AuthMode.password,
-                      isLogin,
-                    ),
-                    _tab(
-                      context,
-                      context.l10n.authTabSignUp,
-                      _AuthMode.register,
-                      !isLogin,
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _tab(
-    BuildContext context,
-    String label,
-    _AuthMode tabMode,
-    bool selected,
-  ) {
-    return Expanded(
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: enabled ? () => onChanged(tabMode) : null,
-        child: Center(
-          child: Text(
-            label,
-            style: TextStyle(
-              color: selected ? Colors.white : context.colors.subtle,
-              fontWeight: FontWeight.w700,
-              fontSize: 12.5,
-              letterSpacing: 0.8,
-            ),
-          ),
-        ),
-      ),
-    );
   }
 }
 
