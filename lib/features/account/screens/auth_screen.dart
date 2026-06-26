@@ -11,6 +11,7 @@ import '../../../core/locale/l10n_extension.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../services/supabase_service.dart';
 import '../providers/session_providers.dart';
+import '../widgets/auth_circle_icon_button.dart';
 import '../widgets/auth_or_divider.dart';
 import '../widgets/auth_primary_button.dart';
 import '../widgets/auth_segmented_tabs.dart';
@@ -293,7 +294,7 @@ class _AuthCardState extends ConsumerState<_AuthCard> {
   Widget _buildCloseRow(BuildContext context) {
     return Align(
       alignment: Alignment.centerRight,
-      child: _CircleIconButton(
+      child: AuthCircleIconButton(
         icon: Icons.close,
         onTap: () => Navigator.of(context).maybePop(),
       ),
@@ -585,29 +586,6 @@ class _LegalConsentTextState extends State<_LegalConsentText> {
   }
 }
 
-class _CircleIconButton extends StatelessWidget {
-  const _CircleIconButton({required this.icon, required this.onTap});
-
-  final IconData icon;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: context.colors.accent,
-      shape: const CircleBorder(),
-      child: InkWell(
-        onTap: onTap,
-        customBorder: const CircleBorder(),
-        child: SizedBox(
-          width: 34,
-          height: 34,
-          child: Icon(icon, size: 18, color: context.colors.subtle),
-        ),
-      ),
-    );
-  }
-}
 class _Notice extends StatelessWidget {
   const _Notice({required this.icon, required this.text});
 
