@@ -29,6 +29,7 @@ import '../providers/reminder_providers.dart';
 import '../widgets/settings_nav_row.dart';
 import '../widgets/settings_primitives.dart';
 import '../widgets/settings_toggle_row.dart';
+import '../widgets/stat_card_shell.dart';
 
 /// Warm flame colour for the (placeholder) streak card.
 const Color _kFlame = Color(0xFFFF7A29);
@@ -794,7 +795,7 @@ class _StreakCard extends ConsumerWidget {
     final record = ref.watch(
       userStatsValueProvider.select((s) => s.longestStreak),
     );
-    return _StatCardShell(
+    return StatCardShell(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -858,7 +859,7 @@ class _RankCard extends ConsumerWidget {
               ? context.l10n.rankCardDaysToPromotion(remaining)
               : context.l10n.rankCardPromotionReady);
 
-    return _StatCardShell(
+    return StatCardShell(
       // Tapping the rank card opens the same rank sheet as tapping the streak
       // flame on the main screen — the full ladder, progress and freeze state.
       onTap: () => showRankSheet(context),
@@ -907,38 +908,6 @@ class _RankCard extends ConsumerWidget {
             style: TextStyle(color: context.colors.subtle, fontSize: 11),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _StatCardShell extends StatelessWidget {
-  const _StatCardShell({required this.child, this.onTap});
-
-  final Widget child;
-
-  /// When provided, the card becomes tappable (with a matching ripple).
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final radius = BorderRadius.circular(18);
-    return Material(
-      color: context.colors.cardSurface,
-      borderRadius: radius,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: radius,
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            borderRadius: radius,
-            border: Border.all(color: context.colors.hairline),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
-            child: child,
-          ),
-        ),
       ),
     );
   }
