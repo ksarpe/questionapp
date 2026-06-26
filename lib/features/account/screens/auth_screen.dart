@@ -12,6 +12,7 @@ import '../../../core/theme/app_theme.dart';
 import '../../../services/supabase_service.dart';
 import '../providers/session_providers.dart';
 import '../widgets/auth_circle_icon_button.dart';
+import '../widgets/auth_notice.dart';
 import '../widgets/auth_or_divider.dart';
 import '../widgets/auth_primary_button.dart';
 import '../widgets/auth_segmented_tabs.dart';
@@ -130,14 +131,14 @@ class _AuthCardState extends ConsumerState<_AuthCard> {
 
                       const SizedBox(height: 14),
                       if (!isConfigured) ...[
-                        _Notice(
+                        AuthNotice(
                           icon: Icons.info_outline,
                           text: context.l10n.authMissingSupabaseConfig,
                         ),
                         const SizedBox(height: 14),
                       ] else if (!isApplePlatform &&
                           !AppConfig.hasGoogleSignIn) ...[
-                        _Notice(
+                        AuthNotice(
                           icon: Icons.info_outline,
                           text: context.l10n.authMissingGoogleConfig,
                         ),
@@ -581,40 +582,6 @@ class _LegalConsentTextState extends State<_LegalConsentText> {
         color: context.colors.subtle,
         fontSize: 12,
         height: 1.4,
-      ),
-    );
-  }
-}
-
-class _Notice extends StatelessWidget {
-  const _Notice({required this.icon, required this.text});
-
-  final IconData icon;
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        border: Border.all(color: const Color(0xFF4A3A1A)),
-        borderRadius: BorderRadius.circular(12),
-        color: const Color(0xFF171207),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(14),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Icon(icon, color: const Color(0xFFFFC857), size: 20),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                text,
-                style: TextStyle(color: context.colors.ink, height: 1.35),
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
