@@ -13,6 +13,7 @@ import '../../../services/supabase_service.dart';
 import '../providers/session_providers.dart';
 import '../widgets/auth_primary_button.dart';
 import '../widgets/auth_segmented_tabs.dart';
+import '../widgets/auth_social_button.dart';
 
 /// Presents the sign-in / register form as a modal bottom sheet that slides up
 /// from the bottom of the screen.
@@ -233,7 +234,7 @@ class _AuthCardState extends ConsumerState<_AuthCard> {
                       const _OrDivider(),
                       const SizedBox(height: 14),
                       if (isApplePlatform)
-                        _SocialButton(
+                        AuthSocialButton(
                           icon: Icon(
                             Icons.apple,
                             color: context.colors.ink,
@@ -245,7 +246,7 @@ class _AuthCardState extends ConsumerState<_AuthCard> {
                               : null,
                         )
                       else
-                        _SocialButton(
+                        AuthSocialButton(
                           icon: Text(
                             'G',
                             style: TextStyle(
@@ -522,56 +523,6 @@ class _OrDivider extends StatelessWidget {
         ),
         Expanded(child: Divider(color: context.colors.hairline)),
       ],
-    );
-  }
-}
-
-class _SocialButton extends StatelessWidget {
-  const _SocialButton({
-    required this.icon,
-    required this.label,
-    required this.onPressed,
-  });
-
-  final Widget icon;
-  final String label;
-  final VoidCallback? onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return Opacity(
-      opacity: onPressed == null ? 0.5 : 1,
-      child: Material(
-        color: context.colors.accent,
-        borderRadius: BorderRadius.circular(12),
-        child: InkWell(
-          onTap: onPressed,
-          borderRadius: BorderRadius.circular(12),
-          child: Container(
-            height: 52,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: context.colors.hairline),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                icon,
-                const SizedBox(width: 10),
-                Text(
-                  label,
-                  style: TextStyle(
-                    color: context.colors.ink,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 15,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
     );
   }
 }
