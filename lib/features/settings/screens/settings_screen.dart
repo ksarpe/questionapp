@@ -23,6 +23,7 @@ import '../../questions/widgets/history_screen.dart';
 import '../../questions/widgets/share_question_button.dart';
 import '../providers/app_info_provider.dart';
 import '../providers/reminder_providers.dart';
+import '../widgets/account_action_buttons.dart';
 import '../widgets/manage_subscription_sheet.dart';
 import '../widgets/offline_download_row.dart';
 import '../widgets/premium_active_row.dart';
@@ -249,12 +250,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
                       // ---- Session actions --------------------------------
                       if (hasAccount) ...[
                         const SizedBox(height: 26),
-                        _SignOutButton(onTap: _signOut, loading: _signingOut),
+                        SignOutButton(onTap: _signOut, loading: _signingOut),
                         const SizedBox(height: 8),
-                        _DeleteAccountButton(onTap: _confirmDeleteAccount),
+                        DeleteAccountButton(onTap: _confirmDeleteAccount),
                       ] else ...[
                         const SizedBox(height: 26),
-                        _SignInButton(onTap: _openAuth),
+                        SignInButton(onTap: _openAuth),
                       ],
 
                       // Quiet build stamp at the very bottom, the way mature
@@ -697,125 +698,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
   void _showMessage(String message, {ToastType type = ToastType.info}) {
     if (!mounted) return;
     AppToast.show(context, message, type: type);
-  }
-}
-
-/// Full-width bordered "Sign out" action. Shows a spinner and ignores taps
-/// while a sign-out is in flight, so a slow token revoke never looks like a
-/// dead button or fires twice.
-class _SignOutButton extends StatelessWidget {
-  const _SignOutButton({required this.onTap, this.loading = false});
-
-  final VoidCallback onTap;
-  final bool loading;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: context.colors.cardSurface,
-      borderRadius: BorderRadius.circular(16),
-      child: InkWell(
-        onTap: loading ? null : onTap,
-        borderRadius: BorderRadius.circular(16),
-        child: Container(
-          height: 54,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: context.colors.hairline),
-          ),
-          child: loading
-              ? SizedBox(
-                  width: 22,
-                  height: 22,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2.4,
-                    color: context.colors.ink,
-                  ),
-                )
-              : Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      Icons.logout_rounded,
-                      color: context.colors.ink,
-                      size: 20,
-                    ),
-                    const SizedBox(width: 10),
-                    Text(
-                      context.l10n.signOut,
-                      style: TextStyle(
-                        color: context.colors.ink,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-        ),
-      ),
-    );
-  }
-}
-
-/// Full-width gradient "Sign in" action, shown to guests reaching this screen.
-class _SignInButton extends StatelessWidget {
-  const _SignInButton({required this.onTap});
-
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFFF97316), Color(0xFFEA580C)],
-        ),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(16),
-          child: SizedBox(
-            height: 54,
-            child: Center(
-              child: Text(
-                context.l10n.signIn,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// Centred destructive "Delete account" text action.
-class _DeleteAccountButton extends StatelessWidget {
-  const _DeleteAccountButton({required this.onTap});
-
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: TextButton.icon(
-        onPressed: onTap,
-        style: TextButton.styleFrom(foregroundColor: kDanger),
-        icon: const Icon(Icons.delete_outline_rounded, size: 18),
-        label: Text(
-          context.l10n.deleteAccount,
-          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
-        ),
-      ),
-    );
   }
 }
 
