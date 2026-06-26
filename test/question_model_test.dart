@@ -1,5 +1,5 @@
+import 'package:debatly/data/models/question.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:questionapp/data/models/question.dart';
 
 /// The unlock flow swaps a locked question for its unlocked twin (same id, text
 /// now present). Value equality must reflect that, or Riverpod's

@@ -1,8 +1,8 @@
+import 'package:debatly/core/locale/app_locale.dart'
+    show sharedPreferencesProvider;
+import 'package:debatly/features/settings/providers/review_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:questionapp/core/locale/app_locale.dart'
-    show sharedPreferencesProvider;
-import 'package:questionapp/features/settings/providers/review_providers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// The in-app review ask is gated by a single pure decision so its timing is

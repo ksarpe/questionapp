@@ -1,4 +1,4 @@
-name: questionapp
+name: debatly
 description: "A minimalist app that sparks conversation with one thought-provoking question at a time."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.

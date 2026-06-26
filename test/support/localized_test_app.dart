@@ -1,8 +1,7 @@
+import 'package:debatly/core/locale/app_locale.dart';
+import 'package:debatly/l10n/gen/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-
-import 'package:questionapp/core/locale/app_locale.dart';
-import 'package:questionapp/l10n/gen/app_localizations.dart';
 
 /// A [MaterialApp] pre-wired with the app's localization delegates and pinned to
 /// a fixed [locale] (Polish by default).

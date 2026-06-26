@@ -1,9 +1,8 @@
+import 'package:debatly/data/models/question.dart';
+import 'package:debatly/data/models/rank.dart';
+import 'package:debatly/data/models/smaczek.dart';
+import 'package:debatly/data/models/user_stats.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:questionapp/data/models/question.dart';
-import 'package:questionapp/data/models/rank.dart';
-import 'package:questionapp/data/models/smaczek.dart';
-import 'package:questionapp/data/models/user_stats.dart';
 
 /// `fromJson` is the contract boundary between the app and the SQL RPCs: every
 /// column name and null-handling rule here mirrors what the server returns. A

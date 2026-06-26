@@ -1,8 +1,8 @@
 import 'dart:ui';
 
+import 'package:debatly/core/locale/app_locale.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:questionapp/core/locale/app_locale.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// The language is the one source of truth feeding both the UI chrome and the

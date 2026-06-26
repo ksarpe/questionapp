@@ -1,8 +1,7 @@
+import 'package:debatly/core/share/widget_to_image.dart';
+import 'package:debatly/features/questions/widgets/share_question_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:questionapp/core/share/widget_to_image.dart';
-import 'package:questionapp/features/questions/widgets/share_question_card.dart';
 
 import 'support/localized_test_app.dart';
 

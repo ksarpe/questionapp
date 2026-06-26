@@ -21,12 +21,12 @@
 //   SCREENSHOT_PIXEL_RATIO  default "3"  (3 ⇒ 360×640 logical ⇒ 1080×1920 px)
 import 'dart:io';
 
+import 'package:debatly/core/share/widget_to_image.dart';
+import 'package:debatly/features/questions/widgets/share_question_card.dart';
+import 'package:debatly/l10n/gen/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:questionapp/core/share/widget_to_image.dart';
-import 'package:questionapp/features/questions/widgets/share_question_card.dart';
-import 'package:questionapp/l10n/gen/app_localizations.dart';
 
 const _logicalSize = Size(360, 640);
 

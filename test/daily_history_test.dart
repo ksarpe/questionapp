@@ -1,7 +1,7 @@
+import 'package:debatly/data/models/daily_history_entry.dart';
+import 'package:debatly/data/models/vote_result.dart';
+import 'package:debatly/data/repositories/question_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:questionapp/data/models/daily_history_entry.dart';
-import 'package:questionapp/data/models/vote_result.dart';
-import 'package:questionapp/data/repositories/question_repository.dart';
 
 void main() {
   group('DailyHistoryEntry.fromJson', () {

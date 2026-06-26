@@ -1,6 +1,5 @@
+import 'package:debatly/features/account/providers/session_providers.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:questionapp/features/account/providers/session_providers.dart';
 
 /// Premium is tied to the *identity* (the Supabase UUID every user gets at
 /// launch via anonymous sign-in), NOT to having a real account. These tests pin

@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:debatly/core/network/network_error.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:questionapp/core/network/network_error.dart';
 
 /// `isOfflineError` must classify transport failures as offline (so the caller
 /// falls back to cache) while letting genuine server errors through untouched

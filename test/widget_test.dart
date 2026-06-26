@@ -1,16 +1,16 @@
+import 'package:debatly/app.dart';
+import 'package:debatly/core/locale/app_locale.dart';
+import 'package:debatly/features/account/providers/session_providers.dart';
+import 'package:debatly/features/account/screens/auth_screen.dart';
+import 'package:debatly/features/onboarding/providers/onboarding_providers.dart';
+import 'package:debatly/features/onboarding/screens/onboarding_screen.dart';
+import 'package:debatly/features/questions/widgets/go_deeper_button.dart';
+import 'package:debatly/features/settings/screens/settings_screen.dart';
 import 'package:flutter/foundation.dart'
     show debugDefaultTargetPlatformOverride;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:questionapp/app.dart';
-import 'package:questionapp/core/locale/app_locale.dart';
-import 'package:questionapp/features/account/providers/session_providers.dart';
-import 'package:questionapp/features/account/screens/auth_screen.dart';
-import 'package:questionapp/features/onboarding/providers/onboarding_providers.dart';
-import 'package:questionapp/features/onboarding/screens/onboarding_screen.dart';
-import 'package:questionapp/features/questions/widgets/go_deeper_button.dart';
-import 'package:questionapp/features/settings/screens/settings_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'support/localized_test_app.dart';

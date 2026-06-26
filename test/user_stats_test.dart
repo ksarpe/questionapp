@@ -1,11 +1,10 @@
+import 'package:debatly/data/models/user_stats.dart';
+import 'package:debatly/data/repositories/question_repository.dart';
+import 'package:debatly/features/account/providers/session_providers.dart';
+import 'package:debatly/features/account/providers/stats_providers.dart';
+import 'package:debatly/features/questions/providers/question_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:questionapp/data/models/user_stats.dart';
-import 'package:questionapp/data/repositories/question_repository.dart';
-import 'package:questionapp/features/account/providers/session_providers.dart';
-import 'package:questionapp/features/account/providers/stats_providers.dart';
-import 'package:questionapp/features/questions/providers/question_providers.dart';
 
 /// Tests for the user-stats layer that backs the streak + free-unlock chips.
 /// The streak/credit math lives in the SQL RPC; here we pin the CLIENT

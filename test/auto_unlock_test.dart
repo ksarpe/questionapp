@@ -1,14 +1,13 @@
+import 'package:debatly/core/locale/app_locale.dart';
+import 'package:debatly/data/models/question.dart';
+import 'package:debatly/data/repositories/question_repository.dart';
+import 'package:debatly/features/account/providers/session_providers.dart';
+import 'package:debatly/features/account/providers/stats_providers.dart';
+import 'package:debatly/features/questions/providers/question_providers.dart';
+import 'package:debatly/features/questions/widgets/wind_question_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:questionapp/core/locale/app_locale.dart';
-import 'package:questionapp/data/models/question.dart';
-import 'package:questionapp/data/repositories/question_repository.dart';
-import 'package:questionapp/features/account/providers/session_providers.dart';
-import 'package:questionapp/features/account/providers/stats_providers.dart';
-import 'package:questionapp/features/questions/providers/question_providers.dart';
-import 'package:questionapp/features/questions/widgets/wind_question_view.dart';
 
 import 'support/localized_test_app.dart';
 import 'support/test_prefs.dart';

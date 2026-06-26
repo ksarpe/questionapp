@@ -1,10 +1,10 @@
 import 'dart:math';
 
+import 'package:debatly/data/models/user_stats.dart';
+import 'package:debatly/l10n/gen/app_localizations.dart';
+import 'package:debatly/services/reminder_messages.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:questionapp/data/models/user_stats.dart';
-import 'package:questionapp/l10n/gen/app_localizations.dart';
-import 'package:questionapp/services/reminder_messages.dart';
 
 /// The text the reminder loop produces is the retention payload, so we pin the
 /// state-switching contract: a user who already voted is never told to go vote,

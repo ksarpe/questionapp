@@ -1,9 +1,8 @@
+import 'package:debatly/data/models/question.dart';
+import 'package:debatly/features/account/providers/session_providers.dart';
+import 'package:debatly/features/questions/providers/question_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:questionapp/data/models/question.dart';
-import 'package:questionapp/features/account/providers/session_providers.dart';
-import 'package:questionapp/features/questions/providers/question_providers.dart';
 
 /// Deck composition under the reveal-feed model:
 ///   * a FREE user's deck is the daily plus whatever they've revealed this

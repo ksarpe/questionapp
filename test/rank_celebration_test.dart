@@ -1,5 +1,5 @@
+import 'package:debatly/features/account/providers/rank_celebration_providers.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:questionapp/features/account/providers/rank_celebration_providers.dart';
 
 void main() {
   group('shouldCelebrateRank', () {

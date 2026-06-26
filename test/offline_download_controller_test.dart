@@ -1,16 +1,16 @@
+import 'package:debatly/core/locale/app_locale.dart';
+import 'package:debatly/data/models/daily_history_entry.dart';
+import 'package:debatly/data/models/question.dart';
+import 'package:debatly/data/models/rank.dart';
+import 'package:debatly/data/models/smaczek.dart';
+import 'package:debatly/data/models/user_stats.dart';
+import 'package:debatly/data/models/vote_result.dart';
+import 'package:debatly/data/repositories/question_repository.dart';
+import 'package:debatly/features/questions/providers/question_providers.dart';
+import 'package:debatly/features/settings/providers/offline_download_providers.dart';
+import 'package:debatly/services/question_cache.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:questionapp/core/locale/app_locale.dart';
-import 'package:questionapp/data/models/daily_history_entry.dart';
-import 'package:questionapp/data/models/question.dart';
-import 'package:questionapp/data/models/rank.dart';
-import 'package:questionapp/data/models/smaczek.dart';
-import 'package:questionapp/data/models/user_stats.dart';
-import 'package:questionapp/data/models/vote_result.dart';
-import 'package:questionapp/data/repositories/question_repository.dart';
-import 'package:questionapp/features/questions/providers/question_providers.dart';
-import 'package:questionapp/features/settings/providers/offline_download_providers.dart';
-import 'package:questionapp/services/question_cache.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// The download controller must walk the whole catalog (one smaczki fetch per

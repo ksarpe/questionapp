@@ -1,10 +1,9 @@
+import 'package:debatly/data/repositories/question_repository.dart';
+import 'package:debatly/features/account/providers/session_providers.dart';
+import 'package:debatly/features/questions/providers/favorites_providers.dart';
+import 'package:debatly/features/questions/providers/question_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:questionapp/data/repositories/question_repository.dart';
-import 'package:questionapp/features/account/providers/session_providers.dart';
-import 'package:questionapp/features/questions/providers/favorites_providers.dart';
-import 'package:questionapp/features/questions/providers/question_providers.dart';
 
 /// A repository whose only real behaviour is a favorites store, so the notifier's
 /// optimistic-toggle + rollback can be exercised without a backend. Everything

@@ -1,9 +1,8 @@
+import 'package:debatly/data/models/vote_result.dart';
+import 'package:debatly/data/repositories/question_repository.dart';
+import 'package:debatly/features/questions/providers/question_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:questionapp/data/models/vote_result.dart';
-import 'package:questionapp/data/repositories/question_repository.dart';
-import 'package:questionapp/features/questions/providers/question_providers.dart';
 
 /// Tests for the daily-vote layer: the [VoteResult] percentage math and the
 /// client contract for casting / reading a vote. The streak side effect of a
