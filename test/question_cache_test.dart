@@ -19,12 +19,12 @@ void main() {
   });
 
   Question q(String id, {bool locked = false, String? teaser}) => Question(
-        id: id,
-        category: 'CAT_$id',
-        questionText: 'Question $id?',
-        isLocked: locked,
-        teaser: teaser,
-      );
+    id: id,
+    category: 'CAT_$id',
+    questionText: 'Question $id?',
+    isLocked: locked,
+    teaser: teaser,
+  );
 
   test('catalog round-trips preserving locked/teaser fields', () async {
     final catalog = [q('a'), q('b', locked: true, teaser: 'Czy miliarderzy')];
@@ -55,17 +55,19 @@ void main() {
     expect(cache.readDaily('pl', '2026-06-24'), isNull);
   });
 
-  test('readLatestDaily returns the last cached daily regardless of date',
-      () async {
-    await cache.writeDaily('pl', '2026-06-23', q('d1'));
-    final latest = cache.readLatestDaily('pl');
-    expect(latest?.question.id, 'd1');
-    expect(latest?.date, '2026-06-23');
+  test(
+    'readLatestDaily returns the last cached daily regardless of date',
+    () async {
+      await cache.writeDaily('pl', '2026-06-23', q('d1'));
+      final latest = cache.readLatestDaily('pl');
+      expect(latest?.question.id, 'd1');
+      expect(latest?.date, '2026-06-23');
 
-    // Writing a newer day overwrites the single per-locale slot.
-    await cache.writeDaily('pl', '2026-06-24', q('d2'));
-    expect(cache.readLatestDaily('pl')?.question.id, 'd2');
-  });
+      // Writing a newer day overwrites the single per-locale slot.
+      await cache.writeDaily('pl', '2026-06-24', q('d2'));
+      expect(cache.readLatestDaily('pl')?.question.id, 'd2');
+    },
+  );
 
   test('smaczki round-trip and key by locale + question id', () async {
     final smaczki = [
@@ -131,7 +133,9 @@ void main() {
   test('clearContent wipes every cached entry and the premium tag', () async {
     await cache.writeCatalog('pl', [q('a')]);
     await cache.writeDaily('pl', '2026-06-23', q('d'));
-    await cache.writeSmaczki('pl', 'q1', const [Smaczek(position: 1, isLocked: false)]);
+    await cache.writeSmaczki('pl', 'q1', const [
+      Smaczek(position: 1, isLocked: false),
+    ]);
     await cache.writeFavoriteIds('pl', {'a'});
     await cache.writeStats(UserStats.empty);
     await cache.writeRanks(kDefaultRanks);

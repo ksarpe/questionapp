@@ -42,23 +42,27 @@ void main() {
   Question q(String id) =>
       Question(id: id, category: id, questionText: 'Q $id?');
 
-  test('downloads every question, fetching smaczki per question, then done',
-      () async {
-    repo.catalog = [q('a'), q('b'), q('c')];
-    final container = makeContainer();
+  test(
+    'downloads every question, fetching smaczki per question, then done',
+    () async {
+      repo.catalog = [q('a'), q('b'), q('c')];
+      final container = makeContainer();
 
-    await container.read(offlineDownloadControllerProvider.notifier).download();
+      await container
+          .read(offlineDownloadControllerProvider.notifier)
+          .download();
 
-    final state = container.read(offlineDownloadControllerProvider);
-    expect(state.status, OfflineDownloadStatus.done);
-    expect(state.done, 3);
-    expect(state.total, 3);
-    expect(state.lastSyncAt, isNotNull);
-    // One smaczki fetch per catalog question.
-    expect(repo.smaczkiCallIds, ['a', 'b', 'c']);
-    // The cache's sync stamp was written.
-    expect(container.read(questionCacheProvider).lastSyncAt, isNotNull);
-  });
+      final state = container.read(offlineDownloadControllerProvider);
+      expect(state.status, OfflineDownloadStatus.done);
+      expect(state.done, 3);
+      expect(state.total, 3);
+      expect(state.lastSyncAt, isNotNull);
+      // One smaczki fetch per catalog question.
+      expect(repo.smaczkiCallIds, ['a', 'b', 'c']);
+      // The cache's sync stamp was written.
+      expect(container.read(questionCacheProvider).lastSyncAt, isNotNull);
+    },
+  );
 
   test('surfaces an error status when a fetch fails', () async {
     repo.failQuestions = true;

@@ -68,15 +68,15 @@ class UserStats {
   /// back through [UserStats.fromJson] — lets the streak / credit chips render
   /// from the last sync while offline instead of resetting to [empty].
   Map<String, dynamic> toJson() => {
-        'current_streak': currentStreak,
-        'longest_streak': longestStreak,
-        'free_unlock_credits': freeUnlockCredits,
-        'rank_tier': rankTier,
-        'rank_name': rankName,
-        'next_rank_streak': nextRankStreak,
-        'grace_days_left': graceDaysLeft,
-        'is_premium': isPremium,
-      };
+    'current_streak': currentStreak,
+    'longest_streak': longestStreak,
+    'free_unlock_credits': freeUnlockCredits,
+    'rank_tier': rankTier,
+    'rank_name': rankName,
+    'next_rank_streak': nextRankStreak,
+    'grace_days_left': graceDaysLeft,
+    'is_premium': isPremium,
+  };
 
   /// A zeroed state used as the offline/mock baseline and before the first sync.
   static const UserStats empty = UserStats(

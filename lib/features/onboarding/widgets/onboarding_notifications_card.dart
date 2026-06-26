@@ -110,9 +110,7 @@ class _OnboardingNotificationsCardState
           const SizedBox(height: 8),
           TextButton(
             onPressed: _busy ? null : widget.onContinue,
-            style: TextButton.styleFrom(
-              foregroundColor: context.colors.subtle,
-            ),
+            style: TextButton.styleFrom(foregroundColor: context.colors.subtle),
             child: Text(l10n.onboardingNotifySkip),
           ),
         ],

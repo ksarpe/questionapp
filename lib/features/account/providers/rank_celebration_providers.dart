@@ -83,5 +83,5 @@ class RankCelebrationController extends Notifier<void> {
 
 final rankCelebrationControllerProvider =
     NotifierProvider<RankCelebrationController, void>(
-  RankCelebrationController.new,
-);
+      RankCelebrationController.new,
+    );

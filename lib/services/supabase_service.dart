@@ -80,8 +80,10 @@ class SupabaseService {
     try {
       await client.auth.signOut();
     } catch (e) {
-      debugPrint('SupabaseService.signOut: global sign-out failed ($e); '
-          'falling back to local.');
+      debugPrint(
+        'SupabaseService.signOut: global sign-out failed ($e); '
+        'falling back to local.',
+      );
       // Recovered (local sign-out still logs the user out), so just leave a trail
       // for context rather than raising an issue.
       Monitoring.addBreadcrumb(
@@ -285,7 +287,11 @@ class SupabaseService {
       debugPrint('SupabaseService.syncEntitlement failed: $e');
       // The caller falls back to the DB/store flag, but a failing reconcile can
       // mean "bought PRO, sees nothing" — report it (offline is filtered out).
-      await Monitoring.captureException(e, stackTrace: st, feature: 'entitlement');
+      await Monitoring.captureException(
+        e,
+        stackTrace: st,
+        feature: 'entitlement',
+      );
       return null;
     }
   }
@@ -317,7 +323,11 @@ class SupabaseService {
       return expiry == null || expiry.isAfter(DateTime.now());
     } catch (e, st) {
       debugPrint('SupabaseService.fetchIsPremium failed: $e');
-      await Monitoring.captureException(e, stackTrace: st, feature: 'entitlement');
+      await Monitoring.captureException(
+        e,
+        stackTrace: st,
+        feature: 'entitlement',
+      );
       return null;
     }
   }

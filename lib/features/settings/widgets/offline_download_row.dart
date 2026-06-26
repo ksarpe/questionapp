@@ -25,10 +25,13 @@ class OfflineDownloadRow extends ConsumerWidget {
     final l10n = context.l10n;
 
     final subtitle = switch (state.status) {
-      OfflineDownloadStatus.running =>
-        l10n.offlineDownloadProgress(state.done, state.total),
-      _ when state.lastSyncAt != null =>
-        l10n.offlineDownloadSynced(formatLongDate(state.lastSyncAt!, localeCode)),
+      OfflineDownloadStatus.running => l10n.offlineDownloadProgress(
+        state.done,
+        state.total,
+      ),
+      _ when state.lastSyncAt != null => l10n.offlineDownloadSynced(
+        formatLongDate(state.lastSyncAt!, localeCode),
+      ),
       _ => l10n.offlineDownloadReady,
     };
 
@@ -59,7 +62,10 @@ class OfflineDownloadRow extends ConsumerWidget {
                   const SizedBox(height: 2),
                   Text(
                     subtitle,
-                    style: TextStyle(color: context.colors.subtle, fontSize: 13),
+                    style: TextStyle(
+                      color: context.colors.subtle,
+                      fontSize: 13,
+                    ),
                   ),
                 ],
               ),
@@ -80,8 +86,13 @@ class OfflineDownloadRow extends ConsumerWidget {
         child: CircularProgressIndicator(strokeWidth: 2.2),
       );
     }
-    if (state.status != OfflineDownloadStatus.error && state.lastSyncAt != null) {
-      return const Icon(Icons.check_circle_rounded, color: kPremiumGreen, size: 22);
+    if (state.status != OfflineDownloadStatus.error &&
+        state.lastSyncAt != null) {
+      return const Icon(
+        Icons.check_circle_rounded,
+        color: kPremiumGreen,
+        size: 22,
+      );
     }
     return const Icon(Icons.download_rounded, color: AppTheme.spark, size: 22);
   }

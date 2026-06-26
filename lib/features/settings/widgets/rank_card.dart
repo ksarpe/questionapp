@@ -13,7 +13,9 @@ class RankCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final stats = ref.watch(userStatsValueProvider);
-    final rankName = stats.rankName.isEmpty ? '—' : stats.rankName.toUpperCase();
+    final rankName = stats.rankName.isEmpty
+        ? '—'
+        : stats.rankName.toUpperCase();
     final next = stats.nextRankStreak;
     // Progress toward the next rank. Without the current rank's floor we
     // approximate against the next threshold — good enough for the profile card;

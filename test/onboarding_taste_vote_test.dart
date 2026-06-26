@@ -22,9 +22,7 @@ void main() {
 
   Future<void> pumpOnboarding(WidgetTester tester) async {
     await tester.pumpWidget(
-      LocalizedTestApp(
-        home: OnboardingScreen(onFinish: () {}),
-      ),
+      LocalizedTestApp(home: OnboardingScreen(onFinish: () {})),
     );
     await settlePage(tester);
   }
@@ -37,8 +35,9 @@ void main() {
     await settlePage(tester);
   }
 
-  testWidgets('voting TAK reveals the split, the majority line and Continue',
-      (tester) async {
+  testWidgets('voting TAK reveals the split, the majority line and Continue', (
+    tester,
+  ) async {
     await pumpOnboarding(tester);
     await reachVotePage(tester);
 

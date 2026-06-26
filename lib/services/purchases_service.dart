@@ -91,7 +91,11 @@ class PurchasesService {
       );
       // No RevenueCat = nobody can buy or restore PRO this session: a serious,
       // revenue-affecting failure, not a transient blip.
-      await Monitoring.captureException(e, stackTrace: st, feature: 'purchases');
+      await Monitoring.captureException(
+        e,
+        stackTrace: st,
+        feature: 'purchases',
+      );
     }
   }
 
@@ -118,7 +122,11 @@ class PurchasesService {
       debugPrint('PurchasesService.identify failed: $e');
       // Entitlements may not follow the right identity if this fails — worth
       // knowing about, but the app keeps working off the anonymous RC user.
-      await Monitoring.captureException(e, stackTrace: st, feature: 'purchases');
+      await Monitoring.captureException(
+        e,
+        stackTrace: st,
+        feature: 'purchases',
+      );
     }
   }
 
@@ -249,7 +257,11 @@ class PurchasesService {
       }
     } catch (e, st) {
       debugPrint('PurchasesService.presentPaywall failed: $e');
-      await Monitoring.captureException(e, stackTrace: st, feature: 'purchases');
+      await Monitoring.captureException(
+        e,
+        stackTrace: st,
+        feature: 'purchases',
+      );
       return false;
     }
   }
@@ -265,7 +277,11 @@ class PurchasesService {
     } catch (e, st) {
       debugPrint('PurchasesService.restorePurchases failed: $e');
       // A failed restore strands a paying user on the free tier — report it.
-      await Monitoring.captureException(e, stackTrace: st, feature: 'purchases');
+      await Monitoring.captureException(
+        e,
+        stackTrace: st,
+        feature: 'purchases',
+      );
       return false;
     }
   }

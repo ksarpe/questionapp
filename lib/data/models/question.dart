@@ -110,6 +110,13 @@ class Question {
           seen == other.seen;
 
   @override
-  int get hashCode =>
-      Object.hash(id, category, questionText, isPremium, isLocked, teaser, seen);
+  int get hashCode => Object.hash(
+    id,
+    category,
+    questionText,
+    isPremium,
+    isLocked,
+    teaser,
+    seen,
+  );
 }

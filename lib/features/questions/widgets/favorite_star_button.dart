@@ -172,9 +172,7 @@ class _FavoriteStarButtonState extends ConsumerState<FavoriteStarButton>
                 final t = _pop.value; // 0..1, only runs on a fresh "add"
                 // A quick overshoot then settle — the satisfying "snap" of the
                 // star locking in. Stays at 1.0 when idle.
-                final pop = t == 0
-                    ? 1.0
-                    : 1.0 + math.sin(t * math.pi) * 0.35;
+                final pop = t == 0 ? 1.0 : 1.0 + math.sin(t * math.pi) * 0.35;
                 return Stack(
                   alignment: Alignment.center,
                   children: [
@@ -186,9 +184,7 @@ class _FavoriteStarButtonState extends ConsumerState<FavoriteStarButton>
                     Transform.scale(
                       scale: pop,
                       child: Icon(
-                        filled
-                            ? Icons.star_rounded
-                            : Icons.star_border_rounded,
+                        filled ? Icons.star_rounded : Icons.star_border_rounded,
                         size: 26,
                         color: color,
                         shadows: filled

@@ -8,17 +8,20 @@ const List<Question> kMockQuestions = [
   Question(
     id: '1',
     category: 'Connection',
-    questionText: 'What is a belief you held strongly five years ago that you no longer hold?',
+    questionText:
+        'What is a belief you held strongly five years ago that you no longer hold?',
   ),
   Question(
     id: '2',
     category: 'Dreams',
-    questionText: 'If money were no object, how would you spend the next ten years?',
+    questionText:
+        'If money were no object, how would you spend the next ten years?',
   ),
   Question(
     id: '3',
     category: 'Reflection',
-    questionText: 'When did you last change your mind about something important?',
+    questionText:
+        'When did you last change your mind about something important?',
   ),
   Question(
     id: '4',
@@ -28,7 +31,8 @@ const List<Question> kMockQuestions = [
   Question(
     id: '5',
     category: 'Values',
-    questionText: 'What is something you are proud of but rarely get to talk about?',
+    questionText:
+        'What is something you are proud of but rarely get to talk about?',
     isPremium: true,
   ),
   Question(

@@ -9,18 +9,18 @@ import 'package:questionapp/features/account/providers/session_providers.dart';
 void main() {
   // A signed-in-but-anonymous guest: has a stable UUID, no email, isAnonymous.
   SessionState guest({bool isPremium = false}) => SessionState(
-        userId: 'anon-uuid',
-        isAnonymous: true,
-        isPremium: isPremium,
-      );
+    userId: 'anon-uuid',
+    isAnonymous: true,
+    isPremium: isPremium,
+  );
 
   // A real account: anonymous identity upgraded to email/password or Google.
   SessionState account({bool isPremium = false}) => SessionState(
-        userId: 'anon-uuid',
-        email: 'user@example.com',
-        isAnonymous: false,
-        isPremium: isPremium,
-      );
+    userId: 'anon-uuid',
+    email: 'user@example.com',
+    isAnonymous: false,
+    isPremium: isPremium,
+  );
 
   group('identity vs account', () {
     test('a guest is signed in but has no account', () {
@@ -33,19 +33,25 @@ void main() {
       expect(account().hasAccount, isTrue);
     });
 
-    test('a still-loading session (null userId) is neither signed in nor an account', () {
-      const s = SessionState();
-      expect(s.isSignedIn, isFalse);
-      expect(s.hasAccount, isFalse);
-    });
+    test(
+      'a still-loading session (null userId) is neither signed in nor an account',
+      () {
+        const s = SessionState();
+        expect(s.isSignedIn, isFalse);
+        expect(s.hasAccount, isFalse);
+      },
+    );
   });
 
   group('premium is independent of having an account', () {
     test('a guest can hold PRO', () {
       final s = guest(isPremium: true);
       expect(s.isPremium, isTrue);
-      expect(s.hasAccount, isFalse,
-          reason: 'PRO must not require a real account');
+      expect(
+        s.hasAccount,
+        isFalse,
+        reason: 'PRO must not require a real account',
+      );
     });
 
     test('an account without PRO is possible', () {

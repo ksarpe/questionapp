@@ -30,13 +30,12 @@ class OfflineDownloadState {
     int? done,
     int? total,
     DateTime? lastSyncAt,
-  }) =>
-      OfflineDownloadState(
-        status: status ?? this.status,
-        done: done ?? this.done,
-        total: total ?? this.total,
-        lastSyncAt: lastSyncAt ?? this.lastSyncAt,
-      );
+  }) => OfflineDownloadState(
+    status: status ?? this.status,
+    done: done ?? this.done,
+    total: total ?? this.total,
+    lastSyncAt: lastSyncAt ?? this.lastSyncAt,
+  );
 }
 
 /// Drives the premium "download everything for offline" action.
@@ -49,9 +48,9 @@ class OfflineDownloadState {
 class OfflineDownloadController extends Notifier<OfflineDownloadState> {
   @override
   OfflineDownloadState build() => OfflineDownloadState(
-        status: OfflineDownloadStatus.idle,
-        lastSyncAt: ref.read(questionCacheProvider).lastSyncAt,
-      );
+    status: OfflineDownloadStatus.idle,
+    lastSyncAt: ref.read(questionCacheProvider).lastSyncAt,
+  );
 
   /// Fetches and caches the entire premium-accessible content set. Smaczki are
   /// per-question RPCs, so this is the slow part — we surface progress as
@@ -105,5 +104,5 @@ class OfflineDownloadController extends Notifier<OfflineDownloadState> {
 
 final offlineDownloadControllerProvider =
     NotifierProvider<OfflineDownloadController, OfflineDownloadState>(
-  OfflineDownloadController.new,
-);
+      OfflineDownloadController.new,
+    );

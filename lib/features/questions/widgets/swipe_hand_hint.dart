@@ -245,7 +245,5 @@ class _ContactRipple extends CustomPainter {
 
   @override
   bool shouldRepaint(_ContactRipple old) =>
-      old.progress != progress ||
-      old.opacity != opacity ||
-      old.color != color;
+      old.progress != progress || old.opacity != opacity || old.color != color;
 }

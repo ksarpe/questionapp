@@ -19,10 +19,10 @@ import 'support/test_prefs.dart';
 /// in [WindQuestionView._advance].
 void main() {
   Question q(String id) => Question(
-        id: id,
-        category: id.toUpperCase(),
-        questionText: 'Question $id?',
-      );
+    id: id,
+    category: id.toUpperCase(),
+    questionText: 'Question $id?',
+  );
 
   Future<ProviderContainer> pumpFeed(
     WidgetTester tester, {
@@ -32,7 +32,9 @@ void main() {
   }) async {
     final container = ProviderContainer(
       overrides: [
-        sharedPreferencesProvider.overrideWithValue(await mockSharedPreferences()),
+        sharedPreferencesProvider.overrideWithValue(
+          await mockSharedPreferences(),
+        ),
         todaysDailyQuestionProvider.overrideWith((ref) async => daily),
         isPremiumProvider.overrideWithValue(false),
         freeUnlockCreditsProvider.overrideWithValue(credits),
@@ -47,7 +49,11 @@ void main() {
         child: const LocalizedTestApp(
           home: Scaffold(
             body: Center(
-              child: SizedBox(width: 300, height: 600, child: WindQuestionView()),
+              child: SizedBox(
+                width: 300,
+                height: 600,
+                child: WindQuestionView(),
+              ),
             ),
           ),
         ),
@@ -60,19 +66,32 @@ void main() {
   // Drives the wind transition + the reveal microtask, then drains the
   // falling-words animation that plays once a revealed question lands.
   Future<void> swipeLeft(WidgetTester tester) async {
-    await tester.fling(find.byType(WindQuestionView), const Offset(-300, 0), 1000);
+    await tester.fling(
+      find.byType(WindQuestionView),
+      const Offset(-300, 0),
+      1000,
+    );
     await tester.pump(); // dispatch the fling, start the OUT animation
-    await tester.pump(const Duration(milliseconds: 260)); // finish the animation
+    await tester.pump(
+      const Duration(milliseconds: 260),
+    ); // finish the animation
     await tester.pump(const Duration(milliseconds: 120)); // fire the 80ms beat
     await tester.pump(); // forwardLinear + reveal microtask
     await tester.pump(); // append + setState
     await tester.pumpAndSettle(); // drain the falling-words / paywall frame
   }
 
-  testWidgets('a credit auto-reveals the next question on swipe', (tester) async {
+  testWidgets('a credit auto-reveals the next question on swipe', (
+    tester,
+  ) async {
     final daily = q('daily');
     final repo = _RevealRepo();
-    final container = await pumpFeed(tester, daily: daily, credits: 1, repo: repo);
+    final container = await pumpFeed(
+      tester,
+      daily: daily,
+      credits: 1,
+      repo: repo,
+    );
 
     expect(container.read(questionIndexProvider), 0); // on the daily
 
@@ -87,11 +106,17 @@ void main() {
     expect(container.read(isAtRevealSlotProvider), isFalse);
   });
 
-  testWidgets('the next teaser is prefetched on the daily, instant paywall',
-      (tester) async {
+  testWidgets('the next teaser is prefetched on the daily, instant paywall', (
+    tester,
+  ) async {
     final daily = q('daily');
     final repo = _RevealRepo();
-    final container = await pumpFeed(tester, daily: daily, credits: 0, repo: repo);
+    final container = await pumpFeed(
+      tester,
+      daily: daily,
+      credits: 0,
+      repo: repo,
+    );
 
     // Warmed while parked on the daily — before any swipe touches the network.
     expect(repo.peeks, 1);
@@ -106,11 +131,17 @@ void main() {
     expect(find.text('Odblokuj reklamą'.toUpperCase()), findsOneWidget);
   });
 
-  testWidgets('with no credit the swipe lands on the paywall, no reveal',
-      (tester) async {
+  testWidgets('with no credit the swipe lands on the paywall, no reveal', (
+    tester,
+  ) async {
     final daily = q('daily');
     final repo = _RevealRepo();
-    final container = await pumpFeed(tester, daily: daily, credits: 0, repo: repo);
+    final container = await pumpFeed(
+      tester,
+      daily: daily,
+      credits: 0,
+      repo: repo,
+    );
 
     await swipeLeft(tester);
 

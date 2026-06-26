@@ -24,9 +24,11 @@ const int kReviewCooldownDays = 7;
 /// cooldown is intentionally coarse, so local midnight is the right boundary.
 int _todayEpochDay() {
   final now = DateTime.now();
-  return DateTime(now.year, now.month, now.day)
-      .difference(DateTime.utc(1970))
-      .inDays;
+  return DateTime(
+    now.year,
+    now.month,
+    now.day,
+  ).difference(DateTime.utc(1970)).inDays;
 }
 
 /// Pure decision: should we ask for a store review right now?

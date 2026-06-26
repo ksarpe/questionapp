@@ -1,4 +1,5 @@
-import 'package:flutter/foundation.dart' show debugDefaultTargetPlatformOverride;
+import 'package:flutter/foundation.dart'
+    show debugDefaultTargetPlatformOverride;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -157,7 +158,9 @@ void main() {
 
     // Sign-in tab: no consent line (existing user, not creating an account).
     expect(
-      find.text('Kontynuując, akceptujesz Regulamin oraz Politykę prywatności.'),
+      find.text(
+        'Kontynuując, akceptujesz Regulamin oraz Politykę prywatności.',
+      ),
       findsNothing,
     );
 
@@ -166,7 +169,9 @@ void main() {
     await tester.tap(find.text('ZAŁÓŻ KONTO'));
     await tester.pumpAndSettle();
     expect(
-      find.text('Kontynuując, akceptujesz Regulamin oraz Politykę prywatności.'),
+      find.text(
+        'Kontynuując, akceptujesz Regulamin oraz Politykę prywatności.',
+      ),
       findsOneWidget,
     );
   });

@@ -70,8 +70,9 @@ void main() {
       final repo = _FakeFavRepo();
       final c = await containerWith(repo);
 
-      final nowFavorite =
-          await c.read(favoriteIdsProvider.notifier).toggle('q1');
+      final nowFavorite = await c
+          .read(favoriteIdsProvider.notifier)
+          .toggle('q1');
 
       expect(nowFavorite, isTrue);
       expect(c.read(favoriteIdsProvider).value, {'q1'});
@@ -83,8 +84,9 @@ void main() {
       final c = await containerWith(repo);
       expect(c.read(favoriteIdsProvider).value, {'q1'});
 
-      final nowFavorite =
-          await c.read(favoriteIdsProvider.notifier).toggle('q1');
+      final nowFavorite = await c
+          .read(favoriteIdsProvider.notifier)
+          .toggle('q1');
 
       expect(nowFavorite, isFalse);
       expect(c.read(favoriteIdsProvider).value, isEmpty);
@@ -105,16 +107,18 @@ void main() {
       expect(c.read(favoriteIdsProvider).value, isEmpty);
     });
 
-    test('the optimistic flip is visible before the round-trip settles',
-        () async {
-      final repo = _FakeFavRepo();
-      final c = await containerWith(repo);
+    test(
+      'the optimistic flip is visible before the round-trip settles',
+      () async {
+        final repo = _FakeFavRepo();
+        final c = await containerWith(repo);
 
-      // Don't await: the optimistic state must already show the star filled.
-      final pending = c.read(favoriteIdsProvider.notifier).toggle('q1');
-      expect(c.read(favoriteIdsProvider).value, {'q1'});
-      await pending;
-      expect(c.read(favoriteIdsProvider).value, {'q1'});
-    });
+        // Don't await: the optimistic state must already show the star filled.
+        final pending = c.read(favoriteIdsProvider.notifier).toggle('q1');
+        expect(c.read(favoriteIdsProvider).value, {'q1'});
+        await pending;
+        expect(c.read(favoriteIdsProvider).value, {'q1'});
+      },
+    );
   });
 }

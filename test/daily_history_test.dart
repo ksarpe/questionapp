@@ -58,8 +58,10 @@ void main() {
       }
       // … and they descend in date (newest first).
       for (var i = 1; i < history.length; i++) {
-        expect(history[i].publishDate.isBefore(history[i - 1].publishDate),
-            isTrue);
+        expect(
+          history[i].publishDate.isBefore(history[i - 1].publishDate),
+          isTrue,
+        );
       }
     });
   });

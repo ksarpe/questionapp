@@ -72,7 +72,8 @@ class PrivacyDataScreen extends StatelessWidget {
                                   AppConfig.privacyPolicyUrl,
                                 ),
                               ),
-                            if (hasPolicy && hasTerms) const SettingsRowDivider(),
+                            if (hasPolicy && hasTerms)
+                              const SettingsRowDivider(),
                             if (hasTerms)
                               SettingsNavRow(
                                 icon: Icons.gavel_rounded,

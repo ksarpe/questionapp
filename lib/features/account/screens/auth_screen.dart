@@ -1,4 +1,5 @@
-import 'package:flutter/foundation.dart' show defaultTargetPlatform, TargetPlatform;
+import 'package:flutter/foundation.dart'
+    show defaultTargetPlatform, TargetPlatform;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -84,7 +85,8 @@ class _AuthCardState extends ConsumerState<_AuthCard> {
     // Sign in with Apple is offered on Apple platforms only (where it's an App
     // Store requirement); everywhere else we show Google. Both never share the
     // sheet — a user on Android has no use for an Apple button, and vice versa.
-    final isApplePlatform = defaultTargetPlatform == TargetPlatform.iOS ||
+    final isApplePlatform =
+        defaultTargetPlatform == TargetPlatform.iOS ||
         defaultTargetPlatform == TargetPlatform.macOS;
 
     // Let the sheet grow to fit its content — short forms stay compact, longer

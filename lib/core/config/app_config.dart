@@ -13,18 +13,26 @@
 class AppConfig {
   AppConfig._();
 
-  static const String supabaseUrl =
-      String.fromEnvironment('SUPABASE_URL', defaultValue: '');
-  static const String supabaseAnonKey =
-      String.fromEnvironment('SUPABASE_ANON_KEY', defaultValue: '');
+  static const String supabaseUrl = String.fromEnvironment(
+    'SUPABASE_URL',
+    defaultValue: '',
+  );
+  static const String supabaseAnonKey = String.fromEnvironment(
+    'SUPABASE_ANON_KEY',
+    defaultValue: '',
+  );
 
   /// Google "Web" OAuth client id. Passed as serverClientId for native Google
   /// sign-in so Google returns an ID token Supabase can verify.
-  static const String googleServerClientId =
-      String.fromEnvironment('GOOGLE_SERVER_CLIENT_ID', defaultValue: '');
+  static const String googleServerClientId = String.fromEnvironment(
+    'GOOGLE_SERVER_CLIENT_ID',
+    defaultValue: '',
+  );
 
-  static const String revenueCatApiKey =
-      String.fromEnvironment('REVENUECAT_API_KEY', defaultValue: '');
+  static const String revenueCatApiKey = String.fromEnvironment(
+    'REVENUECAT_API_KEY',
+    defaultValue: '',
+  );
 
   /// Google's public test banner unit id is used as a safe default so the app
   /// shows test ads until real ids are supplied.
@@ -52,8 +60,10 @@ class AppConfig {
   /// Grab the id from the device log the first time an ad loads, e.g.:
   /// `Use RequestConfiguration.Builder.setTestDeviceIds(["33BE2250…"])`.
   /// Leave empty for store builds. Wired in [AdsService.initialise].
-  static const String _admobTestDeviceIdsRaw =
-      String.fromEnvironment('ADMOB_TEST_DEVICE_IDS', defaultValue: '');
+  static const String _admobTestDeviceIdsRaw = String.fromEnvironment(
+    'ADMOB_TEST_DEVICE_IDS',
+    defaultValue: '',
+  );
 
   static List<String> get admobTestDeviceIds => _admobTestDeviceIdsRaw
       .split(',')
@@ -91,21 +101,27 @@ class AppConfig {
   /// initialised in a disabled state so the app still runs against mock data with
   /// no error reporting — see [Monitoring]. Not a secret in the password sense
   /// (it only allows sending events), but kept out of git like the other keys.
-  static const String sentryDsn =
-      String.fromEnvironment('SENTRY_DSN', defaultValue: '');
+  static const String sentryDsn = String.fromEnvironment(
+    'SENTRY_DSN',
+    defaultValue: '',
+  );
 
   /// Logical deployment name shown on every Sentry event, so you can filter
   /// dev/staging noise away from real user crashes. Defaults are resolved in
   /// [Monitoring] from the build mode when this is left blank.
-  static const String sentryEnvironment =
-      String.fromEnvironment('SENTRY_ENVIRONMENT', defaultValue: '');
+  static const String sentryEnvironment = String.fromEnvironment(
+    'SENTRY_ENVIRONMENT',
+    defaultValue: '',
+  );
 
   /// Fraction of transactions sampled for performance tracing (0.0–1.0). The
   /// Developer plan has a monthly performance-unit budget, so we sample rather
   /// than trace every navigation. Passed as a string so it fits the dart-define
   /// model; falls back to a conservative 20%.
-  static const String _sentryTracesSampleRateRaw =
-      String.fromEnvironment('SENTRY_TRACES_SAMPLE_RATE', defaultValue: '0.2');
+  static const String _sentryTracesSampleRateRaw = String.fromEnvironment(
+    'SENTRY_TRACES_SAMPLE_RATE',
+    defaultValue: '0.2',
+  );
 
   static double get sentryTracesSampleRate =>
       double.tryParse(_sentryTracesSampleRateRaw)?.clamp(0.0, 1.0) ?? 0.2;

@@ -37,8 +37,12 @@ void main() {
       // A Postgrest-style error that reached the server (has a code/status) and
       // a plain logic error must rethrow, not be masked by cache.
       expect(
-        isOfflineError(_StringError('PostgrestException: permission denied, '
-            'code: 42501')),
+        isOfflineError(
+          _StringError(
+            'PostgrestException: permission denied, '
+            'code: 42501',
+          ),
+        ),
         isFalse,
       );
       expect(isOfflineError(StateError('bad state')), isFalse);

@@ -35,14 +35,17 @@ void main() {
       expect(q.teaser, isNull);
     });
 
-    test('`seen` is read from get_questions and defaults false when absent', () {
-      // Only get_questions returns `seen`; the daily / reveal shapes omit it.
-      expect(
-        Question.fromJson(const {'id': 'q1', 'seen': true}).seen,
-        isTrue,
-      );
-      expect(Question.fromJson(const {'id': 'q2'}).seen, isFalse);
-    });
+    test(
+      '`seen` is read from get_questions and defaults false when absent',
+      () {
+        // Only get_questions returns `seen`; the daily / reveal shapes omit it.
+        expect(
+          Question.fromJson(const {'id': 'q1', 'seen': true}).seen,
+          isTrue,
+        );
+        expect(Question.fromJson(const {'id': 'q2'}).seen, isFalse);
+      },
+    );
   });
 
   group('Smaczek.fromJson', () {
@@ -62,10 +65,13 @@ void main() {
       expect(s.text, isNull);
     });
 
-    test('a missing is_locked fails safe to locked — never leak unflagged text', () {
-      final s = Smaczek.fromJson(const {'position': 3});
-      expect(s.isLocked, true);
-    });
+    test(
+      'a missing is_locked fails safe to locked — never leak unflagged text',
+      () {
+        final s = Smaczek.fromJson(const {'position': 3});
+        expect(s.isLocked, true);
+      },
+    );
   });
 
   group('Rank', () {
@@ -87,33 +93,44 @@ void main() {
     test('the default ladder is contiguous and strictly increasing', () {
       // The rank-selection logic (_currentRank/_nextRank) assumes the ladder is
       // ordered by ascending tier *and* minStreak; guard that invariant.
-      expect(kDefaultRanks.first.minStreak, 0,
-          reason: 'the entry rank must be reachable from a zero streak');
+      expect(
+        kDefaultRanks.first.minStreak,
+        0,
+        reason: 'the entry rank must be reachable from a zero streak',
+      );
       for (var i = 1; i < kDefaultRanks.length; i++) {
         expect(kDefaultRanks[i].tier, kDefaultRanks[i - 1].tier + 1);
-        expect(kDefaultRanks[i].minStreak,
-            greaterThan(kDefaultRanks[i - 1].minStreak));
+        expect(
+          kDefaultRanks[i].minStreak,
+          greaterThan(kDefaultRanks[i - 1].minStreak),
+        );
       }
     });
   });
 
   group('UserStats.fromJson grace window', () {
     Map<String, Object?> row({Object? grace}) => {
-          'current_streak': 5,
-          'longest_streak': 9,
-          'free_unlock_credits': 1,
-          'rank_tier': 1,
-          'rank_name': 'Prowokator',
-          'next_rank_streak': 7,
-          'grace_days_left': grace,
-        };
+      'current_streak': 5,
+      'longest_streak': 9,
+      'free_unlock_credits': 1,
+      'rank_tier': 1,
+      'rank_name': 'Prowokator',
+      'next_rank_streak': 7,
+      'grace_days_left': grace,
+    };
 
-    test('a null grace_days_left means the streak is intact (no freeze badge)', () {
-      expect(UserStats.fromJson(row(grace: null)).graceDaysLeft, isNull);
-    });
+    test(
+      'a null grace_days_left means the streak is intact (no freeze badge)',
+      () {
+        expect(UserStats.fromJson(row(grace: null)).graceDaysLeft, isNull);
+      },
+    );
 
-    test('a present grace_days_left is parsed (mid-freeze, about to drop a tier)', () {
-      expect(UserStats.fromJson(row(grace: 2)).graceDaysLeft, 2);
-    });
+    test(
+      'a present grace_days_left is parsed (mid-freeze, about to drop a tier)',
+      () {
+        expect(UserStats.fromJson(row(grace: 2)).graceDaysLeft, 2);
+      },
+    );
   });
 }

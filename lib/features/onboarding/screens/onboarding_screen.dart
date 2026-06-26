@@ -164,7 +164,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     // the notifications page and the choice page each carry their
                     // own buttons, so the global "Next" only drives the plain
                     // intro cards.
-                    child: (_isChoicePage ||
+                    child:
+                        (_isChoicePage ||
                             _index == votePageIndex ||
                             _index == notifyPageIndex)
                         ? const SizedBox(width: double.infinity)

@@ -130,8 +130,8 @@ class _RankSheet extends ConsumerWidget {
                             // target (already named in the progress line above)
                             // stay sharp. Purely a local visual effect — the row
                             // data is still loaded, just obscured client-side.
-                            obscured: streak < r.minStreak &&
-                                r.tier != next?.tier,
+                            obscured:
+                                streak < r.minStreak && r.tier != next?.tier,
                           ),
                       ],
                     ),
@@ -208,8 +208,11 @@ class _Header extends StatelessWidget {
               const SizedBox(height: 2),
               Row(
                 children: [
-                  const Icon(Icons.local_fire_department_rounded,
-                      color: Color(0xFFF59E0B), size: 16),
+                  const Icon(
+                    Icons.local_fire_department_rounded,
+                    color: Color(0xFFF59E0B),
+                    size: 16,
+                  ),
                   const SizedBox(width: 4),
                   Text(
                     context.l10n.streakDays(streak),
@@ -278,7 +281,10 @@ class _Progress extends StatelessWidget {
     if (next == null) {
       return Text(
         context.l10n.topRankRespect,
-        style: const TextStyle(color: AppTheme.spark, fontWeight: FontWeight.w600),
+        style: const TextStyle(
+          color: AppTheme.spark,
+          fontWeight: FontWeight.w600,
+        ),
       );
     }
 
@@ -320,7 +326,11 @@ class _LongestLine extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(Icons.emoji_events_outlined, color: context.colors.subtle, size: 16),
+        Icon(
+          Icons.emoji_events_outlined,
+          color: context.colors.subtle,
+          size: 16,
+        ),
         const SizedBox(width: 6),
         Text(
           context.l10n.longestStreakDays(longest),
@@ -367,9 +377,11 @@ class _LadderRow extends StatelessWidget {
       child: Row(
         children: [
           _blur(
-            Icon(rankIcon(rank.icon),
-                color: unlocked ? AppTheme.spark : context.colors.subtle,
-                size: 22),
+            Icon(
+              rankIcon(rank.icon),
+              color: unlocked ? AppTheme.spark : context.colors.subtle,
+              size: 22,
+            ),
           ),
           const SizedBox(width: 12),
           Expanded(

@@ -88,9 +88,11 @@ void main() {
     // can be placed a known number of days before today.
     int todayEpochDay() {
       final now = DateTime.now();
-      return DateTime(now.year, now.month, now.day)
-          .difference(DateTime.utc(1970))
-          .inDays;
+      return DateTime(
+        now.year,
+        now.month,
+        now.day,
+      ).difference(DateTime.utc(1970)).inDays;
     }
 
     Future<ProviderContainer> containerWith(Map<String, Object> prefs) async {
@@ -113,32 +115,47 @@ void main() {
       // second getInstance() wouldn't reflect the write (shared_preferences
       // 2.5.5 quirk; see locale_controller_test).
       final sp = c.read(sharedPreferencesProvider);
-      expect(sp.getInt(lastPromptedKey), todayEpochDay(),
-          reason: 'a due ask records today so the cooldown starts');
+      expect(
+        sp.getInt(lastPromptedKey),
+        todayEpochDay(),
+        reason: 'a due ask records today so the cooldown starts',
+      );
     });
 
-    test('below the milestone it asks for nothing and records nothing',
-        () async {
-      final c = await containerWith({});
-      await c
-          .read(reviewPromptControllerProvider.notifier)
-          .maybePromptForStreak(kReviewFirstStreakMilestone - 1);
+    test(
+      'below the milestone it asks for nothing and records nothing',
+      () async {
+        final c = await containerWith({});
+        await c
+            .read(reviewPromptControllerProvider.notifier)
+            .maybePromptForStreak(kReviewFirstStreakMilestone - 1);
 
-      final sp = c.read(sharedPreferencesProvider);
-      expect(sp.getInt(lastPromptedKey), isNull,
-          reason: 'no ask → no stamp, so it can still ask later when due');
-    });
+        final sp = c.read(sharedPreferencesProvider);
+        expect(
+          sp.getInt(lastPromptedKey),
+          isNull,
+          reason: 'no ask → no stamp, so it can still ask later when due',
+        );
+      },
+    );
 
-    test('within the cooldown it leaves the existing stamp untouched', () async {
-      final recent = todayEpochDay() - 1; // asked "yesterday" — well inside 7d
-      final c = await containerWith({lastPromptedKey: recent});
-      await c
-          .read(reviewPromptControllerProvider.notifier)
-          .maybePromptForStreak(10);
+    test(
+      'within the cooldown it leaves the existing stamp untouched',
+      () async {
+        final recent =
+            todayEpochDay() - 1; // asked "yesterday" — well inside 7d
+        final c = await containerWith({lastPromptedKey: recent});
+        await c
+            .read(reviewPromptControllerProvider.notifier)
+            .maybePromptForStreak(10);
 
-      final sp = c.read(sharedPreferencesProvider);
-      expect(sp.getInt(lastPromptedKey), recent,
-          reason: 'a not-due ask must not slide the cooldown window forward');
-    });
+        final sp = c.read(sharedPreferencesProvider);
+        expect(
+          sp.getInt(lastPromptedKey),
+          recent,
+          reason: 'a not-due ask must not slide the cooldown window forward',
+        );
+      },
+    );
   });
 }

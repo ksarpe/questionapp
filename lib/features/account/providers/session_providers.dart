@@ -124,7 +124,8 @@ class SessionNotifier extends AsyncNotifier<SessionState> {
     // from the profile, so a promotional grant with no purchase behind it still
     // unlocks the app. Only with no backend at all do we fall back to the
     // on-device RevenueCat cache.
-    final isPremium = await SupabaseService.syncEntitlement() ??
+    final isPremium =
+        await SupabaseService.syncEntitlement() ??
         await SupabaseService.fetchIsPremium() ??
         await PurchasesService.isPremium();
 

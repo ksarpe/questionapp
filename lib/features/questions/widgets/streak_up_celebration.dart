@@ -77,8 +77,9 @@ class _StreakCelebrationListenerState
       // this lighter flourish under it. The baseline was still advanced above, so
       // it won't re-fire later. Reduced motion skips the flight entirely (the
       // chip number still updates).
-      final isPromotionDay =
-          ladder.any((r) => r.tier > 0 && r.minStreak == streak);
+      final isPromotionDay = ladder.any(
+        (r) => r.tier > 0 && r.minStreak == streak,
+      );
       if (reduceMotion || isPromotionDay) return;
 
       willShow = true;
@@ -95,7 +96,8 @@ class _StreakCelebrationListenerState
     final overlay = Overlay.of(context, rootOverlay: true);
     final media = MediaQuery.of(context);
     final target =
-        _streakChipCenter() ?? Offset(media.size.width / 2, media.padding.top + 28);
+        _streakChipCenter() ??
+        Offset(media.size.width / 2, media.padding.top + 28);
     final rankTier = ref.read(userStatsValueProvider).rankTier;
 
     late final OverlayEntry entry;
@@ -158,12 +160,13 @@ class _StreakBurstState extends State<_StreakBurst>
   @override
   void initState() {
     super.initState();
-    _c = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1700),
-    )..addStatusListener((s) {
-        if (s == AnimationStatus.completed) widget.onDone();
-      });
+    _c =
+        AnimationController(
+          vsync: this,
+          duration: const Duration(milliseconds: 1700),
+        )..addStatusListener((s) {
+          if (s == AnimationStatus.completed) widget.onDone();
+        });
     _c.forward();
   }
 
@@ -204,7 +207,8 @@ class _StreakBurstState extends State<_StreakBurst>
     final flameSize = lerpDouble(_bigSize, _smallSize, travel)!;
 
     // The flame fades out quickly once it has landed.
-    final landFade = 1 - Curves.easeIn.transform(((t - 0.86) / 0.14).clamp(0.0, 1.0));
+    final landFade =
+        1 - Curves.easeIn.transform(((t - 0.86) / 0.14).clamp(0.0, 1.0));
     final flameOpacity = appear * landFade;
 
     // The big soft halo behind the flame is brightest in the middle and gone by
@@ -292,10 +296,7 @@ class _StreakBurstState extends State<_StreakBurst>
                   fontSize: 16,
                   fontWeight: FontWeight.w900,
                   shadows: [
-                    Shadow(
-                      color: flame.withValues(alpha: 0.6),
-                      blurRadius: 10,
-                    ),
+                    Shadow(color: flame.withValues(alpha: 0.6), blurRadius: 10),
                   ],
                 ),
               ),

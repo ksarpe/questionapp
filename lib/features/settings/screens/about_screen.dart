@@ -71,7 +71,10 @@ class AboutScreen extends ConsumerWidget {
                       Center(
                         child: Text(
                           '© 2026 Debatly',
-                          style: TextStyle(color: context.colors.subtle, fontSize: 12),
+                          style: TextStyle(
+                            color: context.colors.subtle,
+                            fontSize: 12,
+                          ),
                         ),
                       ),
                     ],

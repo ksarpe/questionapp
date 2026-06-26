@@ -42,11 +42,11 @@ void main() {
         .map((s) => s.trim())
         .where((s) => s.isNotEmpty)
         .toList();
-    final outRoot = Platform.environment['SCREENSHOT_OUT_DIR'] ??
-        'build/store_screenshots';
+    final outRoot =
+        Platform.environment['SCREENSHOT_OUT_DIR'] ?? 'build/store_screenshots';
     final pixelRatio =
         double.tryParse(Platform.environment['SCREENSHOT_PIXEL_RATIO'] ?? '') ??
-            3;
+        3;
 
     var total = 0;
     for (final code in locales) {
@@ -86,8 +86,11 @@ void main() {
       );
     }
     stderr.writeln('Done — $total PNG(s) written under $outRoot/.');
-    expect(total, greaterThan(0),
-        reason: 'no screenshots were produced; check the questions files');
+    expect(
+      total,
+      greaterThan(0),
+      reason: 'no screenshots were produced; check the questions files',
+    );
   });
 }
 
@@ -112,8 +115,7 @@ List<String> _readQuestions(String locale) {
 /// `Roboto` (the tagline) from the Flutter SDK's cached font artifacts.
 Future<void> _loadFonts() async {
   await _load('Anton', 'assets/fonts/Anton-Regular.ttf');
-  final materialFonts =
-      '${_flutterRoot()}/bin/cache/artifacts/material_fonts';
+  final materialFonts = '${_flutterRoot()}/bin/cache/artifacts/material_fonts';
   await _load('MaterialIcons', '$materialFonts/materialicons-regular.otf');
   await _load('Roboto', '$materialFonts/roboto-regular.ttf');
 }

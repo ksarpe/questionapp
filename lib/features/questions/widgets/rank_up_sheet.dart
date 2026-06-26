@@ -39,10 +39,7 @@ Future<void> showRankUpCelebration(
     pageBuilder: (_, _, _) => _RankUpView(rank: rank, streak: streak),
     transitionBuilder: (_, anim, _, child) {
       final curved = CurvedAnimation(parent: anim, curve: Curves.easeOutCubic);
-      return FadeTransition(
-        opacity: curved,
-        child: child,
-      );
+      return FadeTransition(opacity: curved, child: child);
     },
   );
 }
@@ -191,7 +188,10 @@ class _RankUpViewState extends State<_RankUpView>
                 Align(
                   alignment: Alignment.topRight,
                   child: IconButton(
-                    icon: const Icon(Icons.close_rounded, color: Colors.white70),
+                    icon: const Icon(
+                      Icons.close_rounded,
+                      color: Colors.white70,
+                    ),
                     onPressed: () => Navigator.of(context).pop(),
                   ),
                 ),
@@ -235,7 +235,9 @@ class _RankUpViewState extends State<_RankUpView>
                             ),
                           ),
                           const SizedBox(height: 18),
-                          _StreakChip(text: l10n.rankUpStreakLine(widget.streak)),
+                          _StreakChip(
+                            text: l10n.rankUpStreakLine(widget.streak),
+                          ),
                           const SizedBox(height: 40),
                           _ShareButton(busy: _sharing, onTap: _share),
                           const SizedBox(height: 8),
@@ -333,8 +335,11 @@ class _StreakChip extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.local_fire_department_rounded,
-              color: Color(0xFFF59E0B), size: 18),
+          const Icon(
+            Icons.local_fire_department_rounded,
+            color: Color(0xFFF59E0B),
+            size: 18,
+          ),
           const SizedBox(width: 7),
           Text(
             text,
@@ -368,9 +373,7 @@ class _ShareButton extends StatelessWidget {
         disabledBackgroundColor: AppTheme.spark.withValues(alpha: 0.6),
         disabledForegroundColor: Colors.white70,
         padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(30),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
         textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
       ),
       icon: busy

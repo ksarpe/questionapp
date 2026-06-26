@@ -51,55 +51,66 @@ void main() {
     expect((await r.fetchQuestions()).map((e) => e.id), ['a', 'b']);
   });
 
-  test('rethrows a genuine server error instead of masking it with cache',
-      () async {
-    inner.catalog = [q('a')];
-    final r = repo(premium: true);
-    await r.fetchQuestions(); // warm cache
+  test(
+    'rethrows a genuine server error instead of masking it with cache',
+    () async {
+      inner.catalog = [q('a')];
+      final r = repo(premium: true);
+      await r.fetchQuestions(); // warm cache
 
-    // A non-transport error must propagate even though a cache exists.
-    inner.error = StateError('boom');
-    expect(r.fetchQuestions(), throwsA(isA<StateError>()));
-  });
+      // A non-transport error must propagate even though a cache exists.
+      inner.error = StateError('boom');
+      expect(r.fetchQuestions(), throwsA(isA<StateError>()));
+    },
+  );
 
   test('rethrows offline when there is no cache to fall back on', () async {
     inner.error = const SocketException('offline');
-    expect(repo(premium: true).fetchQuestions(), throwsA(isA<SocketException>()));
+    expect(
+      repo(premium: true).fetchQuestions(),
+      throwsA(isA<SocketException>()),
+    );
   });
 
-  test('refuses to serve a premium cache to a now-free identity, and wipes it',
-      () async {
-    // A premium session caches the full catalog.
-    inner.catalog = [q('a'), q('b')];
-    await repo(premium: true).fetchQuestions();
-    expect(cache.cachedAsPremium, isTrue);
+  test(
+    'refuses to serve a premium cache to a now-free identity, and wipes it',
+    () async {
+      // A premium session caches the full catalog.
+      inner.catalog = [q('a'), q('b')];
+      await repo(premium: true).fetchQuestions();
+      expect(cache.cachedAsPremium, isTrue);
 
-    // The user lapses to free and goes offline. The premium-text cache must NOT
-    // be served, and it should be wiped on the attempt.
-    inner.error = const SocketException('offline');
-    final free = repo(premium: false);
-    await expectLater(free.fetchQuestions(), throwsA(isA<SocketException>()));
-    expect(cache.readCatalog('pl'), isNull);
-  });
+      // The user lapses to free and goes offline. The premium-text cache must NOT
+      // be served, and it should be wiped on the attempt.
+      inner.error = const SocketException('offline');
+      final free = repo(premium: false);
+      await expectLater(free.fetchQuestions(), throwsA(isA<SocketException>()));
+      expect(cache.readCatalog('pl'), isNull);
+    },
+  );
 
-  test('daily falls back to the latest cached daily on a fresh-day outage',
-      () async {
-    inner.daily = q('d-mon');
-    final r = repo();
-    await r.fetchDailyQuestion(DateTime(2026, 6, 23)); // cache Monday's daily
+  test(
+    'daily falls back to the latest cached daily on a fresh-day outage',
+    () async {
+      inner.daily = q('d-mon');
+      final r = repo();
+      await r.fetchDailyQuestion(DateTime(2026, 6, 23)); // cache Monday's daily
 
-    // Next day, offline: the exact date misses but we still surface Monday's.
-    inner.error = const SocketException('offline');
-    final result = await r.fetchDailyQuestion(DateTime(2026, 6, 24));
-    expect(result?.id, 'd-mon');
-  });
+      // Next day, offline: the exact date misses but we still surface Monday's.
+      inner.error = const SocketException('offline');
+      final result = await r.fetchDailyQuestion(DateTime(2026, 6, 24));
+      expect(result?.id, 'd-mon');
+    },
+  );
 
-  test('ranks fall back to the compiled-in default when offline with no cache',
-      () async {
-    inner.error = const SocketException('offline');
-    final ranks = await repo().fetchRanks();
-    expect(ranks, hasLength(kDefaultRanks.length));
-  });
+  test(
+    'ranks fall back to the compiled-in default when offline with no cache',
+    () async {
+      inner.error = const SocketException('offline');
+      final ranks = await repo().fetchRanks();
+      expect(ranks, hasLength(kDefaultRanks.length));
+    },
+  );
 
   test('favorite ids degrade to an empty set offline', () async {
     inner.error = const SocketException('offline');

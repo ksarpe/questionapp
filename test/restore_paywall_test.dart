@@ -22,15 +22,17 @@ import 'support/test_prefs.dart';
 /// purchase found" without any network call.
 void main() {
   Question q(String id) => Question(
-        id: id,
-        category: id.toUpperCase(),
-        questionText: 'Question $id?',
-      );
+    id: id,
+    category: id.toUpperCase(),
+    questionText: 'Question $id?',
+  );
 
   Future<void> pumpGuestPaywall(WidgetTester tester) async {
     final container = ProviderContainer(
       overrides: [
-        sharedPreferencesProvider.overrideWithValue(await mockSharedPreferences()),
+        sharedPreferencesProvider.overrideWithValue(
+          await mockSharedPreferences(),
+        ),
         questionsProvider.overrideWith((ref) async => const <Question>[]),
         todaysDailyQuestionProvider.overrideWith((ref) async => q('daily')),
         isPremiumProvider.overrideWithValue(false),
@@ -47,7 +49,11 @@ void main() {
         child: const LocalizedTestApp(
           home: Scaffold(
             body: Center(
-              child: SizedBox(width: 300, height: 600, child: WindQuestionView()),
+              child: SizedBox(
+                width: 300,
+                height: 600,
+                child: WindQuestionView(),
+              ),
             ),
           ),
         ),
@@ -56,7 +62,11 @@ void main() {
     await tester.pumpAndSettle();
 
     // Swipe a free user with no credit onto the reveal slot → the paywall.
-    await tester.fling(find.byType(WindQuestionView), const Offset(-300, 0), 1000);
+    await tester.fling(
+      find.byType(WindQuestionView),
+      const Offset(-300, 0),
+      1000,
+    );
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 260));
     await tester.pump(const Duration(milliseconds: 120));
@@ -65,8 +75,9 @@ void main() {
     await tester.pumpAndSettle();
   }
 
-  testWidgets('a guest sees the restore affordance on the paywall',
-      (tester) async {
+  testWidgets('a guest sees the restore affordance on the paywall', (
+    tester,
+  ) async {
     await pumpGuestPaywall(tester);
 
     // Sanity: we're on the paywall (the ad CTA is the anchor) ...
@@ -75,18 +86,25 @@ void main() {
     expect(find.text('Przywróć zakup'), findsOneWidget);
   });
 
-  testWidgets('tapping restore runs the store flow, not a login', (tester) async {
+  testWidgets('tapping restore runs the store flow, not a login', (
+    tester,
+  ) async {
     await pumpGuestPaywall(tester);
 
     await tester.tap(find.text('Przywróć zakup'));
     await tester.pump(); // start the async restore
     await tester.pump(); // resolve restorePurchases() (false, unconfigured)
-    await tester.pump(const Duration(milliseconds: 750)); // animate the SnackBar
+    await tester.pump(
+      const Duration(milliseconds: 750),
+    ); // animate the SnackBar
 
     // Store path ran and reported no purchase — no auth sheet was opened.
     expect(find.text('Nie znaleziono wcześniejszego zakupu.'), findsOneWidget);
-    expect(find.byType(AuthScreen), findsNothing,
-        reason: 'restore must not be a login affordance');
+    expect(
+      find.byType(AuthScreen),
+      findsNothing,
+      reason: 'restore must not be a login affordance',
+    );
   });
 }
 

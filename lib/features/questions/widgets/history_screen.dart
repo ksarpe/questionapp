@@ -22,9 +22,9 @@ const Color _kGold = Color(0xFFFFC857);
 /// The screen gates itself: premium sees the history, everyone else sees a PRO
 /// upsell — so it's safe to open from anywhere without a premium check up front.
 Future<void> openHistory(BuildContext context) {
-  return Navigator.of(context).push(
-    MaterialPageRoute<void>(builder: (_) => const HistoryScreen()),
-  );
+  return Navigator.of(
+    context,
+  ).push(MaterialPageRoute<void>(builder: (_) => const HistoryScreen()));
 }
 
 /// Full-screen PRO history of past dailies. Mirrors the Favorites screen: a
@@ -249,9 +249,7 @@ class _MiniVoteBar extends StatelessWidget {
               children: [
                 // Full-width NIE (red) track …
                 Positioned.fill(
-                  child: ColoredBox(
-                    color: AppTheme.no.withValues(alpha: 0.85),
-                  ),
+                  child: ColoredBox(color: AppTheme.no.withValues(alpha: 0.85)),
                 ),
                 // … overlaid by the TAK (green) portion from the left.
                 FractionallySizedBox(
@@ -301,11 +299,7 @@ class _SideLabel extends StatelessWidget {
     );
     final percent = Text(
       '$pct%',
-      style: TextStyle(
-        color: color,
-        fontSize: 13,
-        fontWeight: FontWeight.w800,
-      ),
+      style: TextStyle(color: color, fontSize: 13, fontWeight: FontWeight.w800),
     );
     final check = mine
         ? Padding(
@@ -557,12 +551,32 @@ class HistoryButton extends StatelessWidget {
 /// (the rest of the app formats dates the same way — see settings_screen).
 String _formatDate(DateTime date, String lang) {
   const monthsPl = [
-    'sty', 'lut', 'mar', 'kwi', 'maj', 'cze',
-    'lip', 'sie', 'wrz', 'paź', 'lis', 'gru',
+    'sty',
+    'lut',
+    'mar',
+    'kwi',
+    'maj',
+    'cze',
+    'lip',
+    'sie',
+    'wrz',
+    'paź',
+    'lis',
+    'gru',
   ];
   const monthsEn = [
-    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
   ];
   final d = date.toLocal();
   if (lang == 'pl') {

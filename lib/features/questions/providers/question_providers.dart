@@ -239,10 +239,7 @@ final questionDeckProvider = Provider<List<Question>>((ref) {
     }
 
     if (daily == null) return orderedUnseenFirst(pool);
-    return [
-      daily,
-      ...orderedUnseenFirst(pool.where((q) => q.id != daily.id)),
-    ];
+    return [daily, ...orderedUnseenFirst(pool.where((q) => q.id != daily.id))];
   }
 
   final revealed = ref.watch(revealedFeedProvider);

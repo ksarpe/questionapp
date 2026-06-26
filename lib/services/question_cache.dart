@@ -89,12 +89,11 @@ class QuestionCache {
     String locale,
     String questionId,
     List<Smaczek> smaczki,
-  ) =>
-      _writeList(
-        '$_smaczkiPrefix${locale}_$questionId',
-        smaczki,
-        (s) => s.toJson(),
-      );
+  ) => _writeList(
+    '$_smaczkiPrefix${locale}_$questionId',
+    smaczki,
+    (s) => s.toJson(),
+  );
 
   // ---- Favorites -------------------------------------------------------------
 
@@ -109,12 +108,10 @@ class QuestionCache {
   List<Question>? readFavoriteQuestions(String locale) =>
       _readList(_favQuestionsPrefix + locale, Question.fromJson);
 
-  Future<void> writeFavoriteQuestions(String locale, List<Question> questions) =>
-      _writeList(
-        _favQuestionsPrefix + locale,
-        questions,
-        (q) => q.toJson(),
-      );
+  Future<void> writeFavoriteQuestions(
+    String locale,
+    List<Question> questions,
+  ) => _writeList(_favQuestionsPrefix + locale, questions, (q) => q.toJson());
 
   // ---- Stats -----------------------------------------------------------------
 
@@ -155,10 +152,8 @@ class QuestionCache {
     return DateTime.tryParse(raw);
   }
 
-  Future<void> markSynced([DateTime? at]) => _prefs.setString(
-        _lastSyncKey,
-        (at ?? DateTime.now()).toIso8601String(),
-      );
+  Future<void> markSynced([DateTime? at]) =>
+      _prefs.setString(_lastSyncKey, (at ?? DateTime.now()).toIso8601String());
 
   /// Wipes every cached content entry (catalog, daily, smaczki, favorites,
   /// stats, ranks) and the premium tag. Called when premium lapses so a former

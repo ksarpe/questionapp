@@ -221,18 +221,17 @@ class QuestionTextStyles {
   }
 
   /// Bottom layer: the black outline, drawn slightly wider, with a drop shadow.
-  static TextStyle strokeFor(double fontSize) =>
-      AppTheme.questionBase.copyWith(
-        fontSize: fontSize,
-        foreground: Paint()
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = fontSize * _strokeRatio
-          ..strokeJoin = StrokeJoin.round
-          ..color = Colors.black,
-        shadows: const [
-          Shadow(color: Color(0x55000000), offset: Offset(0, 4), blurRadius: 6),
-        ],
-      );
+  static TextStyle strokeFor(double fontSize) => AppTheme.questionBase.copyWith(
+    fontSize: fontSize,
+    foreground: Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = fontSize * _strokeRatio
+      ..strokeJoin = StrokeJoin.round
+      ..color = Colors.black,
+    shadows: const [
+      Shadow(color: Color(0x55000000), offset: Offset(0, 4), blurRadius: 6),
+    ],
+  );
 
   /// Top layer: the white fill sitting inside the outline.
   static TextStyle fillFor(double fontSize) =>

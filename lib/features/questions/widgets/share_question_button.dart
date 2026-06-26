@@ -133,8 +133,7 @@ class _ShareQuestionButtonState extends State<ShareQuestionButton> {
             borderRadius: _radius,
             onTap: _busy ? null : _share,
             child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 18, vertical: 11),
+              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 11),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [

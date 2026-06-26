@@ -144,7 +144,8 @@ class _AnimatedFlameIconState extends State<AnimatedFlameIcon>
 
         // Flicker: a few incommensurate (but integer-cycle) sines sum into an
         // irregular wobble that still wraps cleanly. Roughly -1..1.
-        final flick = 0.5 * math.sin(twoPi * 7 * p) +
+        final flick =
+            0.5 * math.sin(twoPi * 7 * p) +
             0.3 * math.sin(twoPi * 11 * p + 1.7) +
             0.2 * math.sin(twoPi * 13 * p + 3.1);
 
@@ -158,18 +159,26 @@ class _AnimatedFlameIconState extends State<AnimatedFlameIcon>
         final scale = flickerScale * burstScale;
 
         // Glow: breathes, grows with heat, flares on a burst.
-        final glowAlpha =
-            (0.35 + 0.25 * breath + 0.35 * heat + 0.6 * burst).clamp(0.0, 1.0);
-        final glowBlur = widget.size *
-            (0.5 + 0.25 * breath + 0.4 * heat + 0.8 * burst);
+        final glowAlpha = (0.35 + 0.25 * breath + 0.35 * heat + 0.6 * burst)
+            .clamp(0.0, 1.0);
+        final glowBlur =
+            widget.size * (0.5 + 0.25 * breath + 0.4 * heat + 0.8 * burst);
 
         // Palette: cooler amber at low streaks; pushes toward a deep-orange core
         // and bright tips as it heats. A burst momentarily blows it brighter.
         // The hot tip and burst target stay saturated on light themes (where
         // near-white would vanish) and reach toward white on dark themes.
         final tip = isLight
-            ? Color.lerp(const Color(0xFFFB923C), const Color(0xFFFBBF24), heat)!
-            : Color.lerp(const Color(0xFFFFD27D), const Color(0xFFFFF3C4), heat)!;
+            ? Color.lerp(
+                const Color(0xFFFB923C),
+                const Color(0xFFFBBF24),
+                heat,
+              )!
+            : Color.lerp(
+                const Color(0xFFFFD27D),
+                const Color(0xFFFFF3C4),
+                heat,
+              )!;
         final flare = isLight ? const Color(0xFFFDE047) : Colors.white;
         var cool = Color.lerp(
           isLight ? kFlameLight : kFlame,
@@ -242,7 +251,12 @@ class _StillFlame extends StatelessWidget {
       size: size,
       color: color,
       shadows: active
-          ? [Shadow(color: color.withValues(alpha: 0.6), blurRadius: size * 0.6)]
+          ? [
+              Shadow(
+                color: color.withValues(alpha: 0.6),
+                blurRadius: size * 0.6,
+              ),
+            ]
           : null,
     );
   }

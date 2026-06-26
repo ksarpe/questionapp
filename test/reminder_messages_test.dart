@@ -19,14 +19,14 @@ void main() {
   });
 
   UserStats stats({int streak = 0, int? grace, int? nextRank}) => UserStats(
-        currentStreak: streak,
-        longestStreak: streak,
-        freeUnlockCredits: 0,
-        rankTier: 1,
-        rankName: 'Provocateur',
-        nextRankStreak: nextRank,
-        graceDaysLeft: grace,
-      );
+    currentStreak: streak,
+    longestStreak: streak,
+    freeUnlockCredits: 0,
+    rankTier: 1,
+    rankName: 'Provocateur',
+    nextRankStreak: nextRank,
+    graceDaysLeft: grace,
+  );
 
   /// Every distinct body the builder can return across many random draws for the
   /// given inputs — lets a test assert what is (or isn't) ever reachable.
@@ -36,18 +36,17 @@ void main() {
     required bool isToday,
     UserStats? userStats,
     int? disagreePct,
-  }) =>
-      {
-        for (var seed = 0; seed < seeds; seed++)
-          buildReminderMessage(
-            l10n: l10n,
-            stats: userStats,
-            votedToday: votedToday,
-            isToday: isToday,
-            disagreePct: disagreePct,
-            random: Random(seed),
-          ).body,
-      };
+  }) => {
+    for (var seed = 0; seed < seeds; seed++)
+      buildReminderMessage(
+        l10n: l10n,
+        stats: userStats,
+        votedToday: votedToday,
+        isToday: isToday,
+        disagreePct: disagreePct,
+        random: Random(seed),
+      ).body,
+  };
 
   group('not voted', () {
     test('streak 0, rank intact → only evergreen controversy nudges', () {
@@ -59,11 +58,13 @@ void main() {
       );
       expect(
         bodies,
-        everyElement(isIn(<String>{
-          l10n.notifNudgeBody1,
-          l10n.notifNudgeBody2,
-          l10n.notifNudgeBody3,
-        })),
+        everyElement(
+          isIn(<String>{
+            l10n.notifNudgeBody1,
+            l10n.notifNudgeBody2,
+            l10n.notifNudgeBody3,
+          }),
+        ),
       );
     });
 

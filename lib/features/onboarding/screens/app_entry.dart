@@ -39,9 +39,7 @@ class _AppEntryState extends ConsumerState<AppEntry> {
         : const Duration(milliseconds: 1900);
     _timer = Timer(splashFor, () {
       if (!mounted) return;
-      setState(
-        () => _phase = onboardingDone ? _Phase.home : _Phase.onboarding,
-      );
+      setState(() => _phase = onboardingDone ? _Phase.home : _Phase.onboarding);
     });
   }
 

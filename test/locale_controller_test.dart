@@ -28,19 +28,23 @@ void main() {
     expect(c.read(localeControllerProvider), const Locale('en'));
   });
 
-  test('with no saved choice it resolves to a supported locale (never junk)',
-      () async {
-    final c = await containerWith({});
-    // The test host's device language is unspecified, so we only assert the
-    // contract: the resolved locale is always one the app actually ships.
-    expect(kSupportedLocales, contains(c.read(localeControllerProvider)));
-  });
+  test(
+    'with no saved choice it resolves to a supported locale (never junk)',
+    () async {
+      final c = await containerWith({});
+      // The test host's device language is unspecified, so we only assert the
+      // contract: the resolved locale is always one the app actually ships.
+      expect(kSupportedLocales, contains(c.read(localeControllerProvider)));
+    },
+  );
 
-  test('an invalid saved code is ignored in favour of the device fallback',
-      () async {
-    final c = await containerWith({kLocalePrefKey: 'zz'});
-    expect(kSupportedLocales, contains(c.read(localeControllerProvider)));
-  });
+  test(
+    'an invalid saved code is ignored in favour of the device fallback',
+    () async {
+      final c = await containerWith({kLocalePrefKey: 'zz'});
+      expect(kSupportedLocales, contains(c.read(localeControllerProvider)));
+    },
+  );
 
   test('setLocale updates state and persists the choice', () async {
     // Start from a supported locale that differs from the target. Seeding an
@@ -60,8 +64,11 @@ void main() {
     // `SharedPreferences.getInstance()` returns an independent handle whose
     // snapshot doesn't reflect this write (a shared_preferences 2.5.5 quirk).
     final sp = c.read(sharedPreferencesProvider);
-    expect(sp.getString(kLocalePrefKey), 'en',
-        reason: 'the choice must survive a restart');
+    expect(
+      sp.getString(kLocalePrefKey),
+      'en',
+      reason: 'the choice must survive a restart',
+    );
   });
 
   test('setLocale ignores an unsupported locale (stays put)', () async {

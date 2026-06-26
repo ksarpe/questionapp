@@ -85,8 +85,7 @@ class ConsentService {
   static Future<void> _requestIosTracking() async {
     if (kIsWeb || !Platform.isIOS) return;
     try {
-      final status =
-          await AppTrackingTransparency.trackingAuthorizationStatus;
+      final status = await AppTrackingTransparency.trackingAuthorizationStatus;
       if (status == TrackingStatus.notDetermined) {
         await AppTrackingTransparency.requestTrackingAuthorization();
       }

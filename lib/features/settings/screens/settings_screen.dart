@@ -322,7 +322,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
     }
     if (!mounted) return;
     _showMessage(
-      restored ? context.l10n.purchaseRestored : context.l10n.noPreviousPurchase,
+      restored
+          ? context.l10n.purchaseRestored
+          : context.l10n.noPreviousPurchase,
       type: restored ? ToastType.success : ToastType.info,
     );
   }
@@ -674,23 +676,23 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
   /// Pushes the Privacy & data screen — document links plus a plain-language
   /// summary of what the app stores.
   void _openPrivacyData() {
-    Navigator.of(context).push(
-      MaterialPageRoute<void>(builder: (_) => const PrivacyDataScreen()),
-    );
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute<void>(builder: (_) => const PrivacyDataScreen()));
   }
 
   /// Pushes the About screen — brand mark, version and a one-line summary.
   void _openAbout() {
-    Navigator.of(context).push(
-      MaterialPageRoute<void>(builder: (_) => const AboutScreen()),
-    );
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute<void>(builder: (_) => const AboutScreen()));
   }
 
   /// Pushes the Favorites screen — the user's saved questions as cards.
   void _openFavorites() {
-    Navigator.of(context).push(
-      MaterialPageRoute<void>(builder: (_) => const FavoritesScreen()),
-    );
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute<void>(builder: (_) => const FavoritesScreen()));
   }
 
   void _showMessage(String message, {ToastType type = ToastType.info}) {

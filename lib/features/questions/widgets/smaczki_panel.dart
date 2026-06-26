@@ -84,10 +84,9 @@ class _SmaczkiSheetState extends ConsumerState<_SmaczkiSheet> {
             children: [
               Text(
                 context.l10n.smaczkiTitle,
-                style: Theme.of(context)
-                    .textTheme
-                    .headlineSmall
-                    ?.copyWith(fontWeight: FontWeight.w700),
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.w700,
+                ),
               ),
               const SizedBox(height: 6),
               Text(

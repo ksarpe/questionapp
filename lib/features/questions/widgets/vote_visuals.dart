@@ -24,11 +24,7 @@ const double _kVoteHeight = 56;
 /// chosen side ([VoteResult.yes] / [VoteResult.no]); [busy] dims + disables them
 /// while a cast is in flight.
 class VoteButtonsRow extends StatelessWidget {
-  const VoteButtonsRow({
-    required this.busy,
-    required this.onVote,
-    super.key,
-  });
+  const VoteButtonsRow({required this.busy, required this.onVote, super.key});
 
   final bool busy;
   final void Function(int choice) onVote;

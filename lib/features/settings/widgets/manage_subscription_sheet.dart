@@ -125,7 +125,9 @@ class _ManageSubscriptionSheetState
             Center(
               child: TextButton(
                 onPressed: () => Navigator.of(context).maybePop(),
-                style: TextButton.styleFrom(foregroundColor: context.colors.subtle),
+                style: TextButton.styleFrom(
+                  foregroundColor: context.colors.subtle,
+                ),
                 child: Text(l10n.later),
               ),
             ),

@@ -12,7 +12,9 @@ import 'support/localized_test_app.dart';
 /// PNG so the share button can attach an image (with a text fallback when it
 /// can't).
 void main() {
-  testWidgets('card renders the wordmark, question and tagline', (tester) async {
+  testWidgets('card renders the wordmark, question and tagline', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       const LocalizedTestApp(
         home: Scaffold(
@@ -29,14 +31,8 @@ void main() {
     expect(find.text('Debatly'), findsOneWidget);
     // The question is rendered uppercased, in two stacked Text layers
     // (stroke + fill), so it appears twice.
-    expect(
-      find.text('CZY ZDRADA MYŚLAMI JEST ZDRADĄ?'),
-      findsNWidgets(2),
-    );
-    expect(
-      find.text('JEDNO PRZEWROTNE PYTANIE DZIENNIE'),
-      findsOneWidget,
-    );
+    expect(find.text('CZY ZDRADA MYŚLAMI JEST ZDRADĄ?'), findsNWidgets(2));
+    expect(find.text('JEDNO PRZEWROTNE PYTANIE DZIENNIE'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 

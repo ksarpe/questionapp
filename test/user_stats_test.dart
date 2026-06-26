@@ -119,36 +119,40 @@ void main() {
     expect(result, isNull);
   });
 
-  test('freeUnlockCreditsProvider reflects the synced credits for a free user',
-      () async {
-    final repo = _CountingRepo(stats);
-    final c = container(
-      session: const SessionState(userId: 'u1', isAnonymous: false),
-      repo: repo,
-    );
+  test(
+    'freeUnlockCreditsProvider reflects the synced credits for a free user',
+    () async {
+      final repo = _CountingRepo(stats);
+      final c = container(
+        session: const SessionState(userId: 'u1', isAnonymous: false),
+        repo: repo,
+      );
 
-    await c.read(sessionProvider.future);
-    await c.read(userStatsProvider.future);
+      await c.read(sessionProvider.future);
+      await c.read(userStatsProvider.future);
 
-    expect(c.read(freeUnlockCreditsProvider), 1);
-    expect(c.read(currentStreakProvider), 4);
-  });
+      expect(c.read(freeUnlockCreditsProvider), 1);
+      expect(c.read(currentStreakProvider), 4);
+    },
+  );
 
-  test('freeUnlockCreditsProvider is 0 for premium regardless of stats',
-      () async {
-    // Even if a stale sync somehow reported a credit, the premium session forces
-    // the chip to 0 — premium users do not use the credit system.
-    final repo = _CountingRepo(stats);
-    final c = container(
-      session: const SessionState(userId: 'u1', isPremium: true),
-      repo: repo,
-    );
+  test(
+    'freeUnlockCreditsProvider is 0 for premium regardless of stats',
+    () async {
+      // Even if a stale sync somehow reported a credit, the premium session forces
+      // the chip to 0 — premium users do not use the credit system.
+      final repo = _CountingRepo(stats);
+      final c = container(
+        session: const SessionState(userId: 'u1', isPremium: true),
+        repo: repo,
+      );
 
-    await c.read(sessionProvider.future);
-    await c.read(userStatsProvider.future);
+      await c.read(sessionProvider.future);
+      await c.read(userStatsProvider.future);
 
-    expect(c.read(freeUnlockCreditsProvider), 0);
-  });
+      expect(c.read(freeUnlockCreditsProvider), 0);
+    },
+  );
 }
 
 /// A session fixed to a known state, so stats gating can be exercised without

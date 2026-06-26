@@ -179,11 +179,7 @@ class _Badge extends StatelessWidget {
           ),
         ],
       ),
-      child: Icon(
-        rankIcon(iconKey),
-        color: Colors.white,
-        size: diameter * 0.5,
-      ),
+      child: Icon(rankIcon(iconKey), color: Colors.white, size: diameter * 0.5),
     );
   }
 }

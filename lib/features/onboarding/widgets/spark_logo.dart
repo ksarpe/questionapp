@@ -66,7 +66,8 @@ class _SparkLogoState extends State<SparkLogo> with TickerProviderStateMixin {
       builder: (context, child) {
         final t = Curves.easeOutCubic.transform(_entrance.value);
         // A little overshoot so the mark "pops" into place.
-        final scale = Curves.easeOutBack.transform(_entrance.value) * 0.18 + 0.82;
+        final scale =
+            Curves.easeOutBack.transform(_entrance.value) * 0.18 + 0.82;
         // Slow swell 0..1 used to breathe the halo strength.
         final breath = 0.5 + 0.5 * math.sin(2 * math.pi * _glow.value);
         final glowAlpha = 0.30 + 0.30 * breath;

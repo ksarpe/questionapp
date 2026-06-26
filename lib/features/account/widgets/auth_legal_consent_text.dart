@@ -80,11 +80,7 @@ class _AuthLegalConsentTextState extends State<AuthLegalConsentText> {
     return Text.rich(
       TextSpan(children: spans),
       textAlign: TextAlign.center,
-      style: TextStyle(
-        color: context.colors.subtle,
-        fontSize: 12,
-        height: 1.4,
-      ),
+      style: TextStyle(color: context.colors.subtle, fontSize: 12, height: 1.4),
     );
   }
 }

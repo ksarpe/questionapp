@@ -143,8 +143,9 @@ class MockQuestionRepository implements QuestionRepository {
     if (kMockQuestions.isEmpty) return null;
 
     // The daily is always free to read, regardless of its position in the pool.
-    return kMockQuestions[date.day % kMockQuestions.length]
-        .copyWith(isLocked: false);
+    return kMockQuestions[date.day % kMockQuestions.length].copyWith(
+      isLocked: false,
+    );
   }
 
   @override
@@ -171,10 +172,14 @@ class MockQuestionRepository implements QuestionRepository {
   Future<({String id, String teaser})?> peekNextQuestion() async {
     await Future.delayed(const Duration(milliseconds: 150));
     if (kMockQuestions.length < 2) return null;
-    final pick = kMockQuestions[
-        1 + DateTime.now().microsecond % (kMockQuestions.length - 1)];
-    final teaser =
-        pick.questionText.trim().split(RegExp(r'\s+')).take(2).join(' ');
+    final pick =
+        kMockQuestions[1 +
+            DateTime.now().microsecond % (kMockQuestions.length - 1)];
+    final teaser = pick.questionText
+        .trim()
+        .split(RegExp(r'\s+'))
+        .take(2)
+        .join(' ');
     return (id: pick.id, teaser: teaser);
   }
 
@@ -190,10 +195,9 @@ class MockQuestionRepository implements QuestionRepository {
             (q) => q.id == questionId,
             orElse: () => kMockQuestions.first,
           )
-        : kMockQuestions[
-            kMockQuestions.length < 2
-                ? 0
-                : 1 + DateTime.now().microsecond % (kMockQuestions.length - 1)];
+        : kMockQuestions[kMockQuestions.length < 2
+              ? 0
+              : 1 + DateTime.now().microsecond % (kMockQuestions.length - 1)];
     return pick.copyWith(isLocked: false);
   }
 

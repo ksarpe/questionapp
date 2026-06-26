@@ -41,7 +41,9 @@ ReminderMessage buildReminderMessage({
         title: l10n.notifMinorityTitle,
         body: l10n.notifMinorityBody(disagreePct),
       );
-      candidates..add(minority)..add(minority);
+      candidates
+        ..add(minority)
+        ..add(minority);
     }
     candidates.add((title: l10n.notifResultTitle, body: l10n.notifResultBody));
     candidates.add((title: l10n.notifNextTitle, body: l10n.notifNextBody));
@@ -59,7 +61,10 @@ ReminderMessage buildReminderMessage({
       final dropping = (title: l10n.notifGraceTitle, body: body);
       // Losing a rank is the most motivating hook — weight it heavily (but not
       // to certainty, so it stays unpredictable).
-      candidates..add(dropping)..add(dropping)..add(dropping);
+      candidates
+        ..add(dropping)
+        ..add(dropping)
+        ..add(dropping);
     }
     final streak = stats?.currentStreak ?? 0;
     if (streak > 0) {

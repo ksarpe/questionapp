@@ -82,8 +82,9 @@ class _DailyVotePanelState extends ConsumerState<DailyVotePanel> {
     AppLocalizations l10n,
   ) async {
     try {
-      final disagreePct =
-          result.myChoice == VoteResult.yes ? result.noPct : result.yesPct;
+      final disagreePct = result.myChoice == VoteResult.yes
+          ? result.noPct
+          : result.yesPct;
       await ref
           .read(reminderControllerProvider.notifier)
           .markVotedToday(disagreePct: disagreePct);
@@ -117,8 +118,9 @@ class _DailyVotePanelState extends ConsumerState<DailyVotePanel> {
       // not an edge one. The review ask comes around again on the next eligible
       // day per its own cooldown.
       final ladder = ref.read(ranksProvider).value ?? kDefaultRanks;
-      final isPromotionDay =
-          ladder.any((r) => r.tier > 0 && r.minStreak == streak);
+      final isPromotionDay = ladder.any(
+        (r) => r.tier > 0 && r.minStreak == streak,
+      );
       if (isPromotionDay) return;
 
       await ref
@@ -140,10 +142,7 @@ class _DailyVotePanelState extends ConsumerState<DailyVotePanel> {
     // a vote is only ever recorded for a real account. (No provider read here, so
     // we don't even fetch the split for a guest.)
     if (!hasAccount) {
-      return VoteButtonsRow(
-        busy: false,
-        onVote: (_) => showAuthSheet(context),
-      );
+      return VoteButtonsRow(busy: false, onVote: (_) => showAuthSheet(context));
     }
 
     final async = ref.watch(dailyVoteStateProvider(widget.questionId));
@@ -167,4 +166,3 @@ class _DailyVotePanelState extends ConsumerState<DailyVotePanel> {
     );
   }
 }
-

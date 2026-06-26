@@ -75,5 +75,5 @@ class StreakCelebrationController extends Notifier<void> {
 
 final streakCelebrationControllerProvider =
     NotifierProvider<StreakCelebrationController, void>(
-  StreakCelebrationController.new,
-);
+      StreakCelebrationController.new,
+    );

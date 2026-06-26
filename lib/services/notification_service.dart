@@ -92,14 +92,18 @@ class NotificationService {
     if (!_initialised) return false;
     try {
       if (Platform.isAndroid) {
-        final android = _plugin.resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>();
+        final android = _plugin
+            .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin
+            >();
         // Null = pre-Android-13: no runtime gate to revoke, so treat as enabled.
         return (await android?.areNotificationsEnabled()) ?? true;
       }
       if (Platform.isIOS || Platform.isMacOS) {
-        final darwin = _plugin.resolvePlatformSpecificImplementation<
-            IOSFlutterLocalNotificationsPlugin>();
+        final darwin = _plugin
+            .resolvePlatformSpecificImplementation<
+              IOSFlutterLocalNotificationsPlugin
+            >();
         final options = await darwin?.checkPermissions();
         return options?.isEnabled ?? false;
       }
@@ -128,8 +132,10 @@ class NotificationService {
     if (!_initialised) return false;
     try {
       if (Platform.isIOS || Platform.isMacOS) {
-        final ios = _plugin.resolvePlatformSpecificImplementation<
-            IOSFlutterLocalNotificationsPlugin>();
+        final ios = _plugin
+            .resolvePlatformSpecificImplementation<
+              IOSFlutterLocalNotificationsPlugin
+            >();
         final granted = await ios?.requestPermissions(
           alert: true,
           badge: true,
@@ -138,8 +144,10 @@ class NotificationService {
         return granted ?? false;
       }
       if (Platform.isAndroid) {
-        final android = _plugin.resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>();
+        final android = _plugin
+            .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin
+            >();
         final granted = await android?.requestNotificationsPermission();
         // Null = pre-Android-13, where notifications need no runtime grant.
         return granted ?? true;
@@ -166,7 +174,7 @@ class NotificationService {
     required int minute,
     required int days,
     required ({String title, String body}) Function(int dayOffset, bool isToday)
-        build,
+    build,
   }) async {
     if (!_initialised) return;
     try {

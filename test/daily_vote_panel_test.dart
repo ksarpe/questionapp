@@ -16,8 +16,7 @@ import 'support/localized_test_app.dart';
 ///   * an account that votes is shown the split (green %, red %, with "VS"
 ///     between) with its own side marked.
 void main() {
-  SessionState guest() =>
-      const SessionState(userId: 'anon', isAnonymous: true);
+  SessionState guest() => const SessionState(userId: 'anon', isAnonymous: true);
   SessionState account() =>
       const SessionState(userId: 'u1', isAnonymous: false);
 
@@ -50,8 +49,9 @@ void main() {
     return repo;
   }
 
-  testWidgets('a guest sees the buttons but tapping opens sign-in, no vote',
-      (tester) async {
+  testWidgets('a guest sees the buttons but tapping opens sign-in, no vote', (
+    tester,
+  ) async {
     final repo = await pumpPanel(
       tester,
       session: guest(),
@@ -68,28 +68,34 @@ void main() {
     await tester.pumpAndSettle(); // run the sign-in sheet transition
 
     // The sign-in card opened (its email/password fields), not a vote.
-    expect(find.byType(TextField), findsWidgets,
-        reason: 'a guest tap is a login prompt, not a vote');
+    expect(
+      find.byType(TextField),
+      findsWidgets,
+      reason: 'a guest tap is a login prompt, not a vote',
+    );
     expect(repo.castCalls, 0, reason: 'no vote is recorded for a guest');
     expect(find.textContaining('%'), findsNothing);
   });
 
-  testWidgets('an account that has not voted sees the buttons, no split leaked',
-      (tester) async {
-    await pumpPanel(
-      tester,
-      session: account(),
-      initial: VoteResult.empty, // myChoice null → not voted
-    );
+  testWidgets(
+    'an account that has not voted sees the buttons, no split leaked',
+    (tester) async {
+      await pumpPanel(
+        tester,
+        session: account(),
+        initial: VoteResult.empty, // myChoice null → not voted
+      );
 
-    expect(find.text('TAK'), findsOneWidget);
-    expect(find.text('NIE'), findsOneWidget);
-    expect(find.text('VS'), findsNothing);
-    expect(find.textContaining('%'), findsNothing);
-  });
+      expect(find.text('TAK'), findsOneWidget);
+      expect(find.text('NIE'), findsOneWidget);
+      expect(find.text('VS'), findsNothing);
+      expect(find.textContaining('%'), findsNothing);
+    },
+  );
 
-  testWidgets('voting reveals the green/red split with VS and marks my side',
-      (tester) async {
+  testWidgets('voting reveals the green/red split with VS and marks my side', (
+    tester,
+  ) async {
     final repo = await pumpPanel(
       tester,
       session: account(),

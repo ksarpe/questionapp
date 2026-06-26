@@ -155,7 +155,8 @@ class _ConfettiPainter extends CustomPainter {
       final y = (-0.08 + math.pow(tc, 1.25) * 1.2 * p.fall) * size.height;
       if (y > size.height + p.size) continue;
 
-      final x = p.x * size.width +
+      final x =
+          p.x * size.width +
           math.sin(tc * p.driftFreq * math.pi * 2 + p.driftPhase) * p.driftAmp;
 
       // Fade out over the last fifth so pieces dissolve rather than vanish.

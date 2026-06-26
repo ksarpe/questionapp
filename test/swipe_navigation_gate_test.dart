@@ -20,10 +20,10 @@ import 'support/test_prefs.dart';
 ///   * with no credit the slot is a wall: swiping forward again does nothing.
 void main() {
   Question q(String id) => Question(
-        id: id,
-        category: id.toUpperCase(),
-        questionText: 'Question $id?',
-      );
+    id: id,
+    category: id.toUpperCase(),
+    questionText: 'Question $id?',
+  );
 
   Future<ProviderContainer> pumpFeed(
     WidgetTester tester, {
@@ -35,7 +35,9 @@ void main() {
   }) async {
     final container = ProviderContainer(
       overrides: [
-        sharedPreferencesProvider.overrideWithValue(await mockSharedPreferences()),
+        sharedPreferencesProvider.overrideWithValue(
+          await mockSharedPreferences(),
+        ),
         questionsProvider.overrideWith((ref) async => pool),
         todaysDailyQuestionProvider.overrideWith((ref) async => daily),
         isPremiumProvider.overrideWithValue(premium),
@@ -52,7 +54,11 @@ void main() {
         child: const LocalizedTestApp(
           home: Scaffold(
             body: Center(
-              child: SizedBox(width: 300, height: 600, child: WindQuestionView()),
+              child: SizedBox(
+                width: 300,
+                height: 600,
+                child: WindQuestionView(),
+              ),
             ),
           ),
         ),
@@ -90,8 +96,9 @@ void main() {
     expect(container.read(questionIndexProvider), 2);
   });
 
-  testWidgets('free user with no credit is walled on the reveal slot',
-      (tester) async {
+  testWidgets('free user with no credit is walled on the reveal slot', (
+    tester,
+  ) async {
     final daily = q('daily');
     final repo = _RevealRepo();
     final container = await pumpFeed(
@@ -113,7 +120,9 @@ void main() {
     expect(repo.freeReveals, 0);
   });
 
-  testWidgets('free user can swipe back through the session feed', (tester) async {
+  testWidgets('free user can swipe back through the session feed', (
+    tester,
+  ) async {
     final daily = q('daily');
     final repo = _RevealRepo();
     final container = await pumpFeed(
