@@ -20,10 +20,10 @@ const Color kFlameLight = Color(0xFFD97706);
 Color flameColor(BuildContext context) =>
     Theme.of(context).brightness == Brightness.light ? kFlameLight : kFlame;
 
-/// Cool sky-blue for the streak "freeze" — the forgiving grace window that
+/// Cool sky-blue for the streak's "graces" — the forgiving grace window that
 /// cushions a missed day. The deliberate cold counterpoint to [kFlame], used by
-/// the rank sheet's freeze warning.
-const Color kFreeze = Color(0xFF38BDF8);
+/// the rank sheet's grace warning.
+const Color kGrace = Color(0xFF38BDF8);
 
 /// The streak flame, brought to life.
 ///

@@ -506,12 +506,6 @@ abstract class AppLocalizations {
   /// **'Nice one. Come back tomorrow to keep it going.'**
   String get notifSafeBody;
 
-  /// No description provided for @widgetDailyLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Daily question'**
-  String get widgetDailyLabel;
-
   /// No description provided for @settingsLanguage.
   ///
   /// In en, this message translates to:
@@ -733,90 +727,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No votes'**
   String get historyNoVotes;
-
-  /// No description provided for @categoryFilterTooltip.
-  ///
-  /// In en, this message translates to:
-  /// **'Filter by category'**
-  String get categoryFilterTooltip;
-
-  /// No description provided for @categoryFilterTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Categories'**
-  String get categoryFilterTitle;
-
-  /// No description provided for @categoryFilterSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Show questions from one category only. The daily question stays as is.'**
-  String get categoryFilterSubtitle;
-
-  /// No description provided for @categoryAll.
-  ///
-  /// In en, this message translates to:
-  /// **'All'**
-  String get categoryAll;
-
-  /// No description provided for @categorySociety.
-  ///
-  /// In en, this message translates to:
-  /// **'Society'**
-  String get categorySociety;
-
-  /// No description provided for @categoryEthics.
-  ///
-  /// In en, this message translates to:
-  /// **'Ethics'**
-  String get categoryEthics;
-
-  /// No description provided for @categoryJustice.
-  ///
-  /// In en, this message translates to:
-  /// **'Justice'**
-  String get categoryJustice;
-
-  /// No description provided for @categoryTechnology.
-  ///
-  /// In en, this message translates to:
-  /// **'Technology'**
-  String get categoryTechnology;
-
-  /// No description provided for @categoryMoney.
-  ///
-  /// In en, this message translates to:
-  /// **'Money'**
-  String get categoryMoney;
-
-  /// No description provided for @categoryConnection.
-  ///
-  /// In en, this message translates to:
-  /// **'Connection'**
-  String get categoryConnection;
-
-  /// No description provided for @categoryDreams.
-  ///
-  /// In en, this message translates to:
-  /// **'Dreams'**
-  String get categoryDreams;
-
-  /// No description provided for @categoryEnvironment.
-  ///
-  /// In en, this message translates to:
-  /// **'Environment'**
-  String get categoryEnvironment;
-
-  /// No description provided for @categoryFamily.
-  ///
-  /// In en, this message translates to:
-  /// **'Family'**
-  String get categoryFamily;
-
-  /// No description provided for @categoryReflection.
-  ///
-  /// In en, this message translates to:
-  /// **'Reflection'**
-  String get categoryReflection;
 
   /// No description provided for @aboutVersion.
   ///
@@ -1412,11 +1322,11 @@ abstract class AppLocalizations {
   /// **'{minStreak}+'**
   String rankFrom(int minStreak);
 
-  /// No description provided for @streakFreezeWarning.
+  /// Warns how many 'graces' (forgiven missed days) remain before the rank drops a tier.
   ///
   /// In en, this message translates to:
-  /// **'{count, plural, one{Freeze: rank drops in {count} day} other{Freeze: rank drops in {count} days}}'**
-  String streakFreezeWarning(int count);
+  /// **'{count, plural, one{{count} grace left — then your rank drops} other{{count} graces left — then your rank drops}}'**
+  String streakGraceWarning(int count);
 
   /// Eyebrow above the rank name on the rank-up celebration.
   ///
@@ -1561,6 +1471,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'With some limits'**
   String get onboardingStartAnonHint;
+
+  /// No description provided for @onboardingNotifyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Never miss the daily question'**
+  String get onboardingNotifyTitle;
+
+  /// No description provided for @onboardingNotifyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on reminders and we\'ll nudge you once a day about the new question. No spam — just one a day.'**
+  String get onboardingNotifyBody;
+
+  /// No description provided for @onboardingNotifyEnable.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on reminders'**
+  String get onboardingNotifyEnable;
+
+  /// No description provided for @onboardingNotifySkip.
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get onboardingNotifySkip;
 }
 
 class _AppLocalizationsDelegate

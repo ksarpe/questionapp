@@ -24,9 +24,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:questionapp/features/questions/widgets/share_question_card.dart';
 import 'package:questionapp/core/share/widget_to_image.dart';
+import 'package:questionapp/features/questions/widgets/share_question_card.dart';
 import 'package:questionapp/l10n/gen/app_localizations.dart';
 
 const _logicalSize = Size(360, 640);
@@ -80,7 +79,7 @@ void main() {
         File('${dir.path}/$name').writeAsBytesSync(png);
         total++;
       }
-      final px = (_logicalSize * pixelRatio);
+      final px = _logicalSize * pixelRatio;
       stderr.writeln(
         '✓ $code: ${questions.length} screenshot(s) '
         '@ ${px.width.toInt()}×${px.height.toInt()} → ${dir.path}',

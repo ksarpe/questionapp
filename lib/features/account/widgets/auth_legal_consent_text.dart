@@ -49,7 +49,7 @@ class _AuthLegalConsentTextState extends State<AuthLegalConsentText> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final template = l10n.authLegalConsent(_termsMark, _privacyMark);
-    final linkStyle = const TextStyle(
+    const linkStyle = TextStyle(
       color: AppTheme.spark,
       fontWeight: FontWeight.w700,
     );

@@ -95,7 +95,7 @@ class _RankSheet extends ConsumerWidget {
                 _Header(rank: current, streak: streak, lang: lang),
                 if (stats.graceDaysLeft != null) ...[
                   const SizedBox(height: 12),
-                  _FreezeWarning(daysLeft: stats.graceDaysLeft!),
+                  _GraceWarning(daysLeft: stats.graceDaysLeft!),
                 ],
                 const SizedBox(height: 20),
                 _Progress(streak: streak, current: current, next: next),
@@ -225,10 +225,11 @@ class _Header extends StatelessWidget {
   }
 }
 
-/// Shown while the streak "freeze" is counting down: the user has missed a day
-/// but hasn't lost a rank yet — this warns how long until the next tier drop.
-class _FreezeWarning extends StatelessWidget {
-  const _FreezeWarning({required this.daysLeft});
+/// Shown while the streak's "graces" are counting down: the user has missed a
+/// day but hasn't lost a rank yet — this warns how many graces remain (one is
+/// spent per missed day) before the next tier drop.
+class _GraceWarning extends StatelessWidget {
+  const _GraceWarning({required this.daysLeft});
 
   final int daysLeft;
 
@@ -238,16 +239,16 @@ class _FreezeWarning extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        color: kFreeze.withValues(alpha: 0.12),
-        border: Border.all(color: kFreeze.withValues(alpha: 0.4)),
+        color: kGrace.withValues(alpha: 0.12),
+        border: Border.all(color: kGrace.withValues(alpha: 0.4)),
       ),
       child: Row(
         children: [
-          const Icon(Icons.ac_unit_rounded, color: kFreeze, size: 18),
+          const Icon(Icons.favorite_rounded, color: kGrace, size: 18),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
-              context.l10n.streakFreezeWarning(daysLeft),
+              context.l10n.streakGraceWarning(daysLeft),
               style: TextStyle(
                 color: context.colors.ink,
                 fontSize: 13,

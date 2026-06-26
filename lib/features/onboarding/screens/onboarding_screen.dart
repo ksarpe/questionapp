@@ -7,6 +7,7 @@ import '../widgets/onboarding_choice_card.dart';
 import '../widgets/onboarding_dots.dart';
 import '../widgets/onboarding_glyph_bubble.dart';
 import '../widgets/onboarding_intro_card.dart';
+import '../widgets/onboarding_notifications_card.dart';
 import '../widgets/onboarding_primary_button.dart';
 import '../widgets/spark_logo.dart';
 import '../widgets/taste_vote_card.dart';
@@ -91,14 +92,21 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       ),
     ];
 
-    // The interactive "taste" vote sits last among the intro pages, right before
-    // the account choice. The user must vote (or skip) to move on, so the split
-    // reveal — the payoff — isn't missed; voting unveils its own "Continue".
+    // The interactive "taste" vote sits among the intro pages. The user must vote
+    // (or skip) to move on, so the split reveal — the payoff — isn't missed;
+    // voting unveils its own "Continue".
     final votePage = TasteVoteCard(onContinue: _next);
 
-    // Account choice comes after the taste vote.
-    _introCount = introCards.length + 1; // intro cards + the taste vote page
-    final votePageIndex = _introCount - 1;
+    // Straight after the aha, while the app still feels fresh, we ask to turn on
+    // the daily reminder. The card carries its own buttons (Enable / Not now),
+    // both of which advance to the account choice.
+    final notifyPage = OnboardingNotificationsCard(onContinue: _next);
+
+    final votePageIndex = introCards.length;
+    final notifyPageIndex = introCards.length + 1;
+
+    // Account choice comes after the taste vote + the notifications ask.
+    _introCount = introCards.length + 2;
 
     final pageCount = _introCount + 1; // + the account-choice card
 
@@ -133,6 +141,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 children: [
                   ...introCards,
                   votePage,
+                  notifyPage,
                   OnboardingChoiceCard(
                     onStartAnonymous: widget.onFinish,
                     onSignIn: _signIn,
@@ -151,10 +160,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   AnimatedSize(
                     duration: const Duration(milliseconds: 220),
                     curve: Curves.easeOut,
-                    // The taste-vote page carries its own "Continue" (revealed
-                    // after voting) and the choice page its own buttons, so the
-                    // global "Next" only drives the plain intro cards.
-                    child: (_isChoicePage || _index == votePageIndex)
+                    // The taste-vote page (its "Continue" revealed after voting),
+                    // the notifications page and the choice page each carry their
+                    // own buttons, so the global "Next" only drives the plain
+                    // intro cards.
+                    child: (_isChoicePage ||
+                            _index == votePageIndex ||
+                            _index == notifyPageIndex)
                         ? const SizedBox(width: double.infinity)
                         : OnboardingPrimaryButton(
                             label: l10n.onboardingNext,

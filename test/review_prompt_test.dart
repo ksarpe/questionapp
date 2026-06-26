@@ -1,10 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
 import 'package:questionapp/core/locale/app_locale.dart'
     show sharedPreferencesProvider;
 import 'package:questionapp/features/settings/providers/review_providers.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// The in-app review ask is gated by a single pure decision so its timing is
 /// fully testable without the OS sheet: ask once the user is engaged (a 3-day

@@ -228,9 +228,6 @@ class AppLocalizationsPl extends AppLocalizations {
   String get notifSafeBody => 'Dobra robota. Wróć jutro, żeby ją podtrzymać.';
 
   @override
-  String get widgetDailyLabel => 'Pytanie dnia';
-
-  @override
   String get settingsLanguage => 'Język';
 
   @override
@@ -349,49 +346,6 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get historyNoVotes => 'Brak głosów';
-
-  @override
-  String get categoryFilterTooltip => 'Filtruj według kategorii';
-
-  @override
-  String get categoryFilterTitle => 'Kategorie';
-
-  @override
-  String get categoryFilterSubtitle =>
-      'Pokazuj pytania tylko z wybranej kategorii. Pytanie dnia zostaje bez zmian.';
-
-  @override
-  String get categoryAll => 'Wszystkie';
-
-  @override
-  String get categorySociety => 'Społeczeństwo';
-
-  @override
-  String get categoryEthics => 'Etyka';
-
-  @override
-  String get categoryJustice => 'Sprawiedliwość';
-
-  @override
-  String get categoryTechnology => 'Technologia';
-
-  @override
-  String get categoryMoney => 'Pieniądze';
-
-  @override
-  String get categoryConnection => 'Relacje';
-
-  @override
-  String get categoryDreams => 'Marzenia';
-
-  @override
-  String get categoryEnvironment => 'Środowisko';
-
-  @override
-  String get categoryFamily => 'Rodzina';
-
-  @override
-  String get categoryReflection => 'Refleksja';
 
   @override
   String aboutVersion(String version, String build) {
@@ -787,14 +741,14 @@ class AppLocalizationsPl extends AppLocalizations {
   }
 
   @override
-  String streakFreezeWarning(int count) {
+  String streakGraceWarning(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Zamrożenie: ranga spadnie za $count dnia',
-      many: 'Zamrożenie: ranga spadnie za $count dni',
-      few: 'Zamrożenie: ranga spadnie za $count dni',
-      one: 'Zamrożenie: ranga spadnie za $count dzień',
+      other: 'Zostało Ci $count łaski — potem ranga spadnie',
+      many: 'Zostało Ci $count łask — potem ranga spadnie',
+      few: 'Zostały Ci $count łaski — potem ranga spadnie',
+      one: 'Została Ci $count łaska — potem ranga spadnie',
     );
     return '$_temp0';
   }
@@ -896,4 +850,17 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get onboardingStartAnonHint => 'Z pewnymi ograniczeniami';
+
+  @override
+  String get onboardingNotifyTitle => 'Nie przegap pytania dnia';
+
+  @override
+  String get onboardingNotifyBody =>
+      'Włącz przypomnienia, a codziennie damy Ci znać o nowym pytaniu. Bez spamu — jedno na dzień.';
+
+  @override
+  String get onboardingNotifyEnable => 'Włącz przypomnienia';
+
+  @override
+  String get onboardingNotifySkip => 'Nie teraz';
 }

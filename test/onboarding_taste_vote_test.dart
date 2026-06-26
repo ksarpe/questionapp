@@ -70,19 +70,47 @@ void main() {
     expect(find.text('Jesteś w mniejszości. 👀'), findsOneWidget);
   });
 
-  testWidgets('Continue after voting advances to the account choice',
-      (tester) async {
+  testWidgets('Continue after voting advances to the notifications ask, then '
+      'the account choice', (tester) async {
     await pumpOnboarding(tester);
     await reachVotePage(tester);
 
     await tester.tap(find.text('TAK'));
     await settlePage(tester);
 
-    // The card's own "Continue" (the bottom Next is suppressed on this page).
+    // The card's own "Continue" (the bottom Next is suppressed on this page)
+    // lands on the reminder opt-in, not yet the account choice.
     await tester.tap(find.text('Dalej'));
+    await settlePage(tester);
+
+    expect(find.text('Nie przegap pytania dnia'), findsOneWidget);
+    expect(find.text('Włącz przypomnienia'), findsOneWidget);
+    expect(find.text('Zacznij anonimowo'), findsNothing);
+
+    // "Not now" carries the user on to the account choice without enabling.
+    await tester.tap(find.text('Nie teraz'));
     await settlePage(tester);
 
     expect(find.text('Zacznij anonimowo'), findsOneWidget);
     expect(find.text('Zaloguj / Załóż konto'), findsOneWidget);
+  });
+
+  testWidgets('the reminder ask never traps the user — "Enable" advances even '
+      'when the notification plugin is unavailable', (tester) async {
+    // The native plugin no-ops in the test host, so the permission request
+    // resolves false; the card must still carry the user to the account choice
+    // rather than stalling on its busy spinner.
+    await pumpOnboarding(tester);
+    await reachVotePage(tester);
+
+    await tester.tap(find.text('TAK'));
+    await settlePage(tester);
+    await tester.tap(find.text('Dalej')); // taste vote → reminder ask
+    await settlePage(tester);
+
+    await tester.tap(find.text('Włącz przypomnienia'));
+    await settlePage(tester);
+
+    expect(find.text('Zacznij anonimowo'), findsOneWidget);
   });
 }

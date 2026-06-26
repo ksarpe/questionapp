@@ -2,9 +2,8 @@ import 'dart:ui';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
 import 'package:questionapp/core/locale/app_locale.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// The language is the one source of truth feeding both the UI chrome and the
 /// content `p_locale`, persisted so a guest's choice survives a restart. These

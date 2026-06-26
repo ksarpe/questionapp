@@ -73,7 +73,6 @@
   "notifSafeTitle": "Seria zabezpieczona 🔥",
   "notifSafeBody": "Dobra robota. Wróć jutro, żeby ją podtrzymać.",
 
-  "widgetDailyLabel": "Pytanie dnia",
   "settingsLanguage": "Język",
   "chooseLanguage": "Wybierz język",
   "settingsAppearance": "Wygląd",
@@ -123,20 +122,6 @@
   "historyPremiumTitle": "Historia to funkcja PRO",
   "historyPremiumBody": "Przejdź na PRO, aby przeglądać wszystkie poprzednie pytania dnia i zobaczyć, jak głosowali inni.",
   "historyNoVotes": "Brak głosów",
-  "categoryFilterTooltip": "Filtruj według kategorii",
-  "categoryFilterTitle": "Kategorie",
-  "categoryFilterSubtitle": "Pokazuj pytania tylko z wybranej kategorii. Pytanie dnia zostaje bez zmian.",
-  "categoryAll": "Wszystkie",
-  "categorySociety": "Społeczeństwo",
-  "categoryEthics": "Etyka",
-  "categoryJustice": "Sprawiedliwość",
-  "categoryTechnology": "Technologia",
-  "categoryMoney": "Pieniądze",
-  "categoryConnection": "Relacje",
-  "categoryDreams": "Marzenia",
-  "categoryEnvironment": "Środowisko",
-  "categoryFamily": "Rodzina",
-  "categoryReflection": "Refleksja",
   "aboutVersion": "Wersja {version} ({build})",
   "@aboutVersion": {
     "placeholders": {
@@ -259,7 +244,7 @@
   "longestStreakDays": "Najdłuższa seria: {count, plural, one{{count} dzień} few{{count} dni} many{{count} dni} other{{count} dni}}",
   "daysToRank": "{remaining, plural, one{Jeszcze {remaining} dzień do rangi „{rankName}”} few{Jeszcze {remaining} dni do rangi „{rankName}”} many{Jeszcze {remaining} dni do rangi „{rankName}”} other{Jeszcze {remaining} dni do rangi „{rankName}”}}",
   "rankFrom": "od {minStreak}",
-  "streakFreezeWarning": "{count, plural, one{Zamrożenie: ranga spadnie za {count} dzień} few{Zamrożenie: ranga spadnie za {count} dni} many{Zamrożenie: ranga spadnie za {count} dni} other{Zamrożenie: ranga spadnie za {count} dnia}}",
+  "streakGraceWarning": "{count, plural, one{Została Ci {count} łaska — potem ranga spadnie} few{Zostały Ci {count} łaski — potem ranga spadnie} many{Zostało Ci {count} łask — potem ranga spadnie} other{Zostało Ci {count} łaski — potem ranga spadnie}}",
 
   "rankUpEyebrow": "NOWA RANGA",
   "rankUpStreakLine": "{count, plural, one{{count} dzień z rzędu 🔥} few{{count} dni z rzędu 🔥} many{{count} dni z rzędu 🔥} other{{count} dnia z rzędu 🔥}}",
@@ -306,5 +291,9 @@
   "onboardingSignInCta": "Zaloguj / Załóż konto",
   "onboardingSignInHint": "Zapisz passę i postępy",
   "onboardingStartAnon": "Zacznij anonimowo",
-  "onboardingStartAnonHint": "Z pewnymi ograniczeniami"
+  "onboardingStartAnonHint": "Z pewnymi ograniczeniami",
+  "onboardingNotifyTitle": "Nie przegap pytania dnia",
+  "onboardingNotifyBody": "Włącz przypomnienia, a codziennie damy Ci znać o nowym pytaniu. Bez spamu — jedno na dzień.",
+  "onboardingNotifyEnable": "Włącz przypomnienia",
+  "onboardingNotifySkip": "Nie teraz"
 }

@@ -121,13 +121,6 @@ class QuestionDeckNotifier extends Notifier<int> {
   /// swiped onto the reveal slot and doesn't want to watch an ad: instead of
   /// being stuck on the paywall, they can return to the free daily in one tap.
   void toDaily() => state = 0;
-
-  /// Lands on a specific deck position (clamped to be non-negative). Used by the
-  /// premium category filter: picking a category jumps to its first question
-  /// (index 1, right after the always-present daily), clearing it returns to the
-  /// daily (index 0). [currentQuestionProvider] wraps the index modulo the deck
-  /// length, so a value past a freshly-narrowed deck still resolves safely.
-  void jumpTo(int index) => state = index < 0 ? 0 : index;
 }
 
 /// Index of the currently displayed question.
@@ -209,53 +202,6 @@ final revealedFeedProvider =
       RevealedFeedNotifier.new,
     );
 
-/// The premium-only catalog filter: the category the deck should be limited to,
-/// or null for "all categories" (the default).
-///
-/// A free user never browses the arbitrary catalog (their deck is the daily plus
-/// the questions they reveal one at a time), so the filter is meaningless for
-/// them and the picker is hidden — this only ever shapes the PREMIUM deck. Held
-/// in session memory like the deck itself; [QuestionScreen] clears it when the
-/// signed-in identity changes so a new user never inherits the previous filter.
-class CategoryFilterNotifier extends Notifier<String?> {
-  @override
-  String? build() => null;
-
-  void select(String? category) => state = category;
-
-  void clear() => state = null;
-}
-
-final selectedCategoryProvider =
-    NotifierProvider<CategoryFilterNotifier, String?>(
-      CategoryFilterNotifier.new,
-    );
-
-/// The distinct categories present in the loaded catalog, sorted, for the premium
-/// category-filter menu.
-///
-/// Derived straight from the already-fetched pool, so it needs no extra
-/// round-trip and lists exactly the categories that actually have questions. The
-/// daily is part of that pool too (`get_questions` returns every active
-/// question), so its category is offered even if it's the only one of its kind.
-/// Empty until the pool resolves — and for a free user, who never loads it.
-final availableCategoriesProvider = Provider<List<String>>((ref) {
-  final pool = ref.watch(questionsProvider).asData?.value ?? const <Question>[];
-  final categories = <String>{for (final q in pool) q.category};
-  return categories.toList()..sort();
-});
-
-/// How many catalog questions sit in each category, for the picker's per-chip
-/// counts. Derived from the same loaded pool as [availableCategoriesProvider].
-final categoryCountsProvider = Provider<Map<String, int>>((ref) {
-  final pool = ref.watch(questionsProvider).asData?.value ?? const <Question>[];
-  final counts = <String, int>{};
-  for (final q in pool) {
-    counts[q.category] = (counts[q.category] ?? 0) + 1;
-  }
-  return counts;
-});
-
 /// The ordered deck the home screen walks through.
 ///
 /// Position 0 is always today's daily. PREMIUM gets the whole catalog after it,
@@ -277,15 +223,6 @@ final questionDeckProvider = Provider<List<Question>>((ref) {
         ref.watch(questionsProvider).asData?.value ?? const <Question>[];
     final seed = ref.watch(deckShuffleSeedProvider);
 
-    // Premium-only category filter. When a category is selected the browseable
-    // catalog is narrowed to it; the daily is EXEMPT (it always stays at index 0
-    // regardless of its own category) so the user never loses their free daily by
-    // filtering. Filtering only narrows the set the unseen-first ordering runs
-    // over, so the seen-memory behaviour is unchanged within the chosen category.
-    final category = ref.watch(selectedCategoryProvider);
-    Iterable<Question> inCategory(Iterable<Question> qs) =>
-        category == null ? qs : qs.where((q) => q.category == category);
-
     // Order unseen-before-seen, shuffling each group with the per-launch seed:
     // random each open, STABLE across refetches within the session so the user
     // isn't jumped around. The `seen` flags are read once at fetch time and we do
@@ -301,10 +238,10 @@ final questionDeckProvider = Provider<List<Question>>((ref) {
       return [...unseen, ...seen];
     }
 
-    if (daily == null) return orderedUnseenFirst(inCategory(pool));
+    if (daily == null) return orderedUnseenFirst(pool);
     return [
       daily,
-      ...orderedUnseenFirst(inCategory(pool.where((q) => q.id != daily.id))),
+      ...orderedUnseenFirst(pool.where((q) => q.id != daily.id)),
     ];
   }
 

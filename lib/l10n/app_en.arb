@@ -85,7 +85,6 @@
   "notifSafeTitle": "Streak secured 🔥",
   "notifSafeBody": "Nice one. Come back tomorrow to keep it going.",
 
-  "widgetDailyLabel": "Daily question",
   "settingsLanguage": "Language",
   "chooseLanguage": "Choose language",
   "settingsAppearance": "Appearance",
@@ -134,20 +133,6 @@
   "historyPremiumTitle": "History is a PRO feature",
   "historyPremiumBody": "Go PRO to browse every past daily question and see how others voted.",
   "historyNoVotes": "No votes",
-  "categoryFilterTooltip": "Filter by category",
-  "categoryFilterTitle": "Categories",
-  "categoryFilterSubtitle": "Show questions from one category only. The daily question stays as is.",
-  "categoryAll": "All",
-  "categorySociety": "Society",
-  "categoryEthics": "Ethics",
-  "categoryJustice": "Justice",
-  "categoryTechnology": "Technology",
-  "categoryMoney": "Money",
-  "categoryConnection": "Connection",
-  "categoryDreams": "Dreams",
-  "categoryEnvironment": "Environment",
-  "categoryFamily": "Family",
-  "categoryReflection": "Reflection",
   "aboutVersion": "Version {version} ({build})",
   "@aboutVersion": {
     "placeholders": {
@@ -347,8 +332,9 @@
       }
     }
   },
-  "streakFreezeWarning": "{count, plural, one{Freeze: rank drops in {count} day} other{Freeze: rank drops in {count} days}}",
-  "@streakFreezeWarning": {
+  "streakGraceWarning": "{count, plural, one{{count} grace left — then your rank drops} other{{count} graces left — then your rank drops}}",
+  "@streakGraceWarning": {
+    "description": "Warns how many 'graces' (forgiven missed days) remain before the rank drops a tier.",
     "placeholders": {
       "count": {
         "type": "int"
@@ -414,5 +400,9 @@
   "onboardingSignInCta": "Sign in / Sign up",
   "onboardingSignInHint": "Save your streak and progress",
   "onboardingStartAnon": "Start anonymously",
-  "onboardingStartAnonHint": "With some limits"
+  "onboardingStartAnonHint": "With some limits",
+  "onboardingNotifyTitle": "Never miss the daily question",
+  "onboardingNotifyBody": "Turn on reminders and we'll nudge you once a day about the new question. No spam — just one a day.",
+  "onboardingNotifyEnable": "Turn on reminders",
+  "onboardingNotifySkip": "Not now"
 }

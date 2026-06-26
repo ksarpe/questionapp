@@ -229,9 +229,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notifSafeBody => 'Nice one. Come back tomorrow to keep it going.';
 
   @override
-  String get widgetDailyLabel => 'Daily question';
-
-  @override
   String get settingsLanguage => 'Language';
 
   @override
@@ -350,49 +347,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get historyNoVotes => 'No votes';
-
-  @override
-  String get categoryFilterTooltip => 'Filter by category';
-
-  @override
-  String get categoryFilterTitle => 'Categories';
-
-  @override
-  String get categoryFilterSubtitle =>
-      'Show questions from one category only. The daily question stays as is.';
-
-  @override
-  String get categoryAll => 'All';
-
-  @override
-  String get categorySociety => 'Society';
-
-  @override
-  String get categoryEthics => 'Ethics';
-
-  @override
-  String get categoryJustice => 'Justice';
-
-  @override
-  String get categoryTechnology => 'Technology';
-
-  @override
-  String get categoryMoney => 'Money';
-
-  @override
-  String get categoryConnection => 'Connection';
-
-  @override
-  String get categoryDreams => 'Dreams';
-
-  @override
-  String get categoryEnvironment => 'Environment';
-
-  @override
-  String get categoryFamily => 'Family';
-
-  @override
-  String get categoryReflection => 'Reflection';
 
   @override
   String aboutVersion(String version, String build) {
@@ -774,12 +728,12 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String streakFreezeWarning(int count) {
+  String streakGraceWarning(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Freeze: rank drops in $count days',
-      one: 'Freeze: rank drops in $count day',
+      other: '$count graces left — then your rank drops',
+      one: '$count grace left — then your rank drops',
     );
     return '$_temp0';
   }
@@ -877,4 +831,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get onboardingStartAnonHint => 'With some limits';
+
+  @override
+  String get onboardingNotifyTitle => 'Never miss the daily question';
+
+  @override
+  String get onboardingNotifyBody =>
+      'Turn on reminders and we\'ll nudge you once a day about the new question. No spam — just one a day.';
+
+  @override
+  String get onboardingNotifyEnable => 'Turn on reminders';
+
+  @override
+  String get onboardingNotifySkip => 'Not now';
 }

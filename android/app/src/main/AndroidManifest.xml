@@ -41,20 +41,6 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <!-- Daily-question home-screen widget. Renders whatever the Flutter app
-             last pushed to shared storage (see DailyQuestionWidgetProvider /
-             WidgetSyncService); tapping it opens the app on the daily. -->
-        <receiver
-            android:name=".DailyQuestionWidgetProvider"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-            </intent-filter>
-            <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/daily_question_widget_info" />
-        </receiver>
-
         <!-- flutter_local_notifications: receivers that fire the scheduled daily
              reminder and re-register it after a device reboot. -->
         <receiver

@@ -1,8 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
 import 'package:questionapp/data/models/daily_history_entry.dart';
 import 'package:questionapp/data/models/question.dart';
 import 'package:questionapp/data/models/rank.dart';
@@ -12,6 +10,7 @@ import 'package:questionapp/data/models/vote_result.dart';
 import 'package:questionapp/data/repositories/caching_question_repository.dart';
 import 'package:questionapp/data/repositories/question_repository.dart';
 import 'package:questionapp/services/question_cache.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// The caching decorator must:
 ///   * refresh the cache on a successful fetch and serve it on a transport error;

@@ -3,7 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_theme.dart';
-import 'animated_flame_icon.dart' show kFlame, kFreeze;
+import 'animated_flame_icon.dart' show kFlame, kGrace;
 
 /// A one-shot confetti burst that rains across the whole overlay and then stops.
 ///
@@ -43,7 +43,7 @@ class _ConfettiOverlayState extends State<ConfettiOverlay>
   static const List<Color> _palette = [
     AppTheme.spark,
     kFlame,
-    kFreeze,
+    kGrace,
     AppTheme.yes,
     AppTheme.no,
     Colors.white,
@@ -146,7 +146,7 @@ class _ConfettiPainter extends CustomPainter {
 
     for (final p in pieces) {
       // Local life 0..1, shifted by the piece's start delay.
-      final t = ((progress - p.delay) / (1 - p.delay));
+      final t = (progress - p.delay) / (1 - p.delay);
       if (t <= 0) continue;
       final tc = t.clamp(0.0, 1.0);
 

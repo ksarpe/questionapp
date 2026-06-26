@@ -10,12 +10,5 @@
 	<array>
 		<string>Default</string>
 	</array>
-	<!-- Shared with the DailyQuestionWidget extension so the app can write the
-	     daily question where the widget can read it. Add the SAME App Group to
-	     the widget target. -->
-	<key>com.apple.security.application-groups</key>
-	<array>
-		<string>group.com.aknsoftware.questionapp</string>
-	</array>
 </dict>
 </plist>

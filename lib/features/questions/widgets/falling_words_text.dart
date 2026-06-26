@@ -137,7 +137,7 @@ class _FallingWord extends StatelessWidget {
     return AnimatedBuilder(
       animation: controller,
       builder: (context, child) {
-        final span = (window.end - window.start);
+        final span = window.end - window.start;
         final raw = span <= 0
             ? 1.0
             : ((controller.value - window.start) / span).clamp(0.0, 1.0);

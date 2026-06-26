@@ -14,7 +14,6 @@ import 'services/notification_service.dart';
 import 'services/purchases_service.dart';
 import 'services/reminder_scheduler.dart';
 import 'services/supabase_service.dart';
-import 'services/widget_sync_service.dart';
 
 Future<void> main() async {
   // Initialise Sentry FIRST and run the whole app inside its `appRunner`. That
@@ -43,11 +42,6 @@ Future<void> _startApp() async {
   await ConsentService.gather();
   await AdsService.initialise();
   await NotificationService.initialise();
-
-  // Bind the iOS App Group so the home-screen widget can read the daily question
-  // the app pushes to it (no-op on Android). The actual push happens once the
-  // daily resolves (see AppEntry).
-  await WidgetSyncService.init();
 
   // Resolve persisted preferences before the first frame so the chosen language
   // (or the device-detected one) is available synchronously to MaterialApp and

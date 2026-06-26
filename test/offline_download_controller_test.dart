@@ -1,7 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
 import 'package:questionapp/core/locale/app_locale.dart';
 import 'package:questionapp/data/models/daily_history_entry.dart';
 import 'package:questionapp/data/models/question.dart';
@@ -13,6 +11,7 @@ import 'package:questionapp/data/repositories/question_repository.dart';
 import 'package:questionapp/features/questions/providers/question_providers.dart';
 import 'package:questionapp/features/settings/providers/offline_download_providers.dart';
 import 'package:questionapp/services/question_cache.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// The download controller must walk the whole catalog (one smaczki fetch per
 /// question), stamp the sync time, and end in `done` — or surface `error` when a
