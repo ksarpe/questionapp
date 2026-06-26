@@ -63,6 +63,10 @@ dependencies:
   connectivity_plus: ^6.1.0
   sign_in_with_apple: ^8.1.0
   crypto: ^3.0.7
+  # Crash + error reporting. Initialised in main() and centralised behind the
+  # Monitoring facade (lib/core/monitoring/monitoring.dart); a no-op when no
+  # SENTRY_DSN is provided, so dev/mock builds run untouched. See SENTRY_SETUP.md.
+  sentry_flutter: 9.0.0
 
 dev_dependencies:
   flutter_test:

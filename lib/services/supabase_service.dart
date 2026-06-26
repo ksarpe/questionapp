@@ -8,6 +8,7 @@ import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../core/config/app_config.dart';
+import '../core/monitoring/monitoring.dart';
 
 /// Thin wrapper around the Supabase client lifecycle.
 ///
@@ -58,8 +59,11 @@ class SupabaseService {
     try {
       final response = await client.auth.signInAnonymously();
       return response.user?.id;
-    } catch (e) {
+    } catch (e, st) {
       debugPrint('SupabaseService.ensureSignedIn failed: $e');
+      // Failing to mint a guest means the whole app falls back to a sign-in-less
+      // state (every RPC 401s) — a real, non-offline failure worth surfacing.
+      await Monitoring.captureException(e, stackTrace: st, feature: 'auth');
       return null;
     }
   }
@@ -78,6 +82,12 @@ class SupabaseService {
     } catch (e) {
       debugPrint('SupabaseService.signOut: global sign-out failed ($e); '
           'falling back to local.');
+      // Recovered (local sign-out still logs the user out), so just leave a trail
+      // for context rather than raising an issue.
+      Monitoring.addBreadcrumb(
+        'Global sign-out failed; fell back to local',
+        category: 'auth',
+      );
       await client.auth.signOut(scope: SignOutScope.local);
     }
   }
@@ -271,8 +281,11 @@ class SupabaseService {
         return data['is_premium'] as bool;
       }
       return null;
-    } catch (e) {
+    } catch (e, st) {
       debugPrint('SupabaseService.syncEntitlement failed: $e');
+      // The caller falls back to the DB/store flag, but a failing reconcile can
+      // mean "bought PRO, sees nothing" — report it (offline is filtered out).
+      await Monitoring.captureException(e, stackTrace: st, feature: 'entitlement');
       return null;
     }
   }
@@ -302,8 +315,9 @@ class SupabaseService {
       final expiry = DateTime.tryParse(until as String);
       // isAfter compares absolute instants, so a UTC expiry vs local now is fine.
       return expiry == null || expiry.isAfter(DateTime.now());
-    } catch (e) {
+    } catch (e, st) {
       debugPrint('SupabaseService.fetchIsPremium failed: $e');
+      await Monitoring.captureException(e, stackTrace: st, feature: 'entitlement');
       return null;
     }
   }

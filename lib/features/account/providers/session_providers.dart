@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../core/monitoring/monitoring.dart';
 import '../../../services/purchases_service.dart';
 import '../../../services/supabase_service.dart';
 
@@ -133,6 +134,15 @@ class SessionNotifier extends AsyncNotifier<SessionState> {
     final displayName =
         (metadata?['full_name'] ?? metadata?['name']) as String?;
     final createdAt = user != null ? DateTime.tryParse(user.createdAt) : null;
+
+    // Tag every Sentry event with the (pseudonymous) identity + tier, so a crash
+    // report says WHO hit it and whether they were premium — without ever sending
+    // an email/name. Re-runs on each reload, so a sign-out/switch keeps it fresh.
+    await Monitoring.setUser(
+      id: userId,
+      isPremium: isPremium,
+      isAnonymous: user?.isAnonymous ?? false,
+    );
 
     return SessionState(
       userId: userId,

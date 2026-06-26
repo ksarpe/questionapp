@@ -4,6 +4,7 @@ import 'package:purchases_ui_flutter/purchases_ui_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../core/config/app_config.dart';
+import '../core/monitoring/monitoring.dart';
 
 /// Where the active subscription is billed — drives the wording and the
 /// "manage" deep link, since cancellation lives in a different place on each
@@ -84,10 +85,13 @@ class PurchasesService {
         PurchasesConfiguration(AppConfig.revenueCatApiKey),
       );
       _configured = true;
-    } catch (e) {
+    } catch (e, st) {
       debugPrint(
         'PurchasesService: RevenueCat configure failed — premium disabled. $e',
       );
+      // No RevenueCat = nobody can buy or restore PRO this session: a serious,
+      // revenue-affecting failure, not a transient blip.
+      await Monitoring.captureException(e, stackTrace: st, feature: 'purchases');
     }
   }
 
@@ -110,8 +114,11 @@ class PurchasesService {
     if (!_configured) return;
     try {
       await Purchases.logIn(appUserId);
-    } catch (e) {
+    } catch (e, st) {
       debugPrint('PurchasesService.identify failed: $e');
+      // Entitlements may not follow the right identity if this fails — worth
+      // knowing about, but the app keeps working off the anonymous RC user.
+      await Monitoring.captureException(e, stackTrace: st, feature: 'purchases');
     }
   }
 
@@ -223,6 +230,12 @@ class PurchasesService {
     }
     try {
       final result = await RevenueCatUI.presentPaywall();
+      // Leave a trail of how the paywall resolved — invaluable when a later
+      // "I paid but I'm still free" report comes in.
+      Monitoring.addBreadcrumb(
+        'Paywall result: ${result.name}',
+        category: 'purchases',
+      );
       switch (result) {
         case PaywallResult.purchased:
         case PaywallResult.restored:
@@ -234,8 +247,9 @@ class PurchasesService {
         case PaywallResult.notPresented:
           return false;
       }
-    } catch (e) {
+    } catch (e, st) {
       debugPrint('PurchasesService.presentPaywall failed: $e');
+      await Monitoring.captureException(e, stackTrace: st, feature: 'purchases');
       return false;
     }
   }
@@ -248,8 +262,10 @@ class PurchasesService {
     try {
       await Purchases.restorePurchases();
       return await isPremium();
-    } catch (e) {
+    } catch (e, st) {
       debugPrint('PurchasesService.restorePurchases failed: $e');
+      // A failed restore strands a paying user on the free tier — report it.
+      await Monitoring.captureException(e, stackTrace: st, feature: 'purchases');
       return false;
     }
   }

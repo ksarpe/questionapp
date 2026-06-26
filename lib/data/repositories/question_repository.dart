@@ -5,6 +5,7 @@ import '../models/rank.dart';
 import '../models/smaczek.dart';
 import '../models/user_stats.dart';
 import '../models/vote_result.dart';
+import '../../core/monitoring/monitoring.dart';
 import '../../services/supabase_service.dart';
 
 /// Abstraction over the source of questions.
@@ -487,7 +488,13 @@ class SupabaseQuestionRepository implements QuestionRepository {
         params: {'p_question_id': questionId},
       );
     } catch (e) {
-      // Non-fatal: the deck still works, just without this view recorded.
+      // Non-fatal: the deck still works, just without this view recorded. Keep a
+      // breadcrumb only — a failed marker is benign and routinely offline.
+      Monitoring.addBreadcrumb(
+        'mark_question_seen failed',
+        category: 'questions',
+        data: {'questionId': questionId},
+      );
     }
   }
 

@@ -113,9 +113,9 @@ class QuestionShareCard extends StatelessWidget {
   }
 }
 
-/// The static Debatly wordmark: a glowing orange bolt beside "Debatly" set in the
-/// display font. A non-animated sibling of the splash/onboarding [SparkLogo],
-/// safe to paint in a one-shot off-screen render.
+/// The static Debatly wordmark, set in the display font. A non-animated sibling
+/// of the splash/onboarding [SparkLogo], safe to paint in a one-shot off-screen
+/// render.
 class _Wordmark extends StatelessWidget {
   const _Wordmark({required this.fontSize});
 
@@ -123,33 +123,15 @@ class _Wordmark extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Icon(
-          Icons.bolt,
-          size: fontSize * 1.18,
-          color: AppTheme.spark,
-          shadows: [
-            Shadow(
-              color: AppTheme.spark.withValues(alpha: 0.55),
-              blurRadius: fontSize * 0.7,
-            ),
-          ],
-        ),
-        SizedBox(width: fontSize * 0.06),
-        Text(
-          'Debatly',
-          style: TextStyle(
-            fontFamily: 'Anton',
-            fontSize: fontSize,
-            height: 1,
-            letterSpacing: 1,
-            color: Colors.white,
-          ),
-        ),
-      ],
+    return Text(
+      'Debatly',
+      style: TextStyle(
+        fontFamily: 'Anton',
+        fontSize: fontSize,
+        height: 1,
+        letterSpacing: 1,
+        color: Colors.white,
+      ),
     );
   }
 }

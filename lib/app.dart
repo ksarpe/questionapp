@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 import 'core/locale/app_locale.dart';
 import 'core/theme/app_theme.dart';
@@ -40,6 +41,10 @@ class QuestionApp extends ConsumerWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: kSupportedLocales,
+      // Feeds Sentry navigation breadcrumbs (which screen the user was on when an
+      // error fired) and per-route performance transactions. Harmless when Sentry
+      // is disabled — the observer just produces no-op events.
+      navigatorObservers: [SentryNavigatorObserver()],
       // The launch flow: brand splash → first-run tutorial → the live daily.
       // After onboarding has run once, this drops straight through to the
       // question screen (see AppEntry).

@@ -26,6 +26,9 @@ fill it in, and run `flutter run --dart-define-from-file=env/dev.json`.
 | `PRIVACY_POLICY_URL`         | Privacy & data screen link                  | Defaults to debatly.app 🟢   |
 | `TERMS_OF_SERVICE_URL`       | Privacy & data screen link                  | Defaults to debatly.app 🟢   |
 | `DELETE_ACCOUNT_URL`         | Privacy & data screen + Play data-safety    | Defaults to debatly.app 🟢   |
+| `SENTRY_DSN` 🔑              | Crash & error reporting                     | If error monitoring (see §10)|
+| `SENTRY_ENVIRONMENT`         | Splits dev/prod events in Sentry            | Defaults per build mode 🟢   |
+| `SENTRY_TRACES_SAMPLE_RATE`  | Perf tracing sample rate (0.0–1.0)          | Defaults to `0.2` 🟢         |
 
 > The three legal URLs are **baked into `AppConfig`** (public, non-secret) so the
 > links always work; the `--dart-define` keys above only override them. They
@@ -217,6 +220,23 @@ nothing premium is exposed. 🟢
 
 ---
 
+## 10. Crash & error reporting (Sentry) ☁️ + 🔑
+
+Wired in code (a no-op until a DSN is supplied), so dev/mock builds are
+untouched. Full walkthrough + dashboard setup: **`SENTRY_SETUP.md`**.
+
+- [ ] Create the Sentry project (platform **Flutter**), copy its **DSN** into
+      `SENTRY_DSN` in your `env/*.json` (see §1). Empty = reporting off.
+- [ ] (Recommended) Set `SENTRY_ENVIRONMENT=production` for release builds and
+      leave it `development` for `env/local.json`, so prod crashes aren't buried
+      under dev noise.
+- [ ] (Recommended for release) Upload Dart/native **debug symbols** so obfuscated
+      release stack traces are readable — `sentry_dart_plugin` step in
+      `SENTRY_SETUP.md` §5. Needs a `SENTRY_AUTH_TOKEN` (auth token, NOT the DSN).
+- [ ] Verify a test event reaches the dashboard (`SENTRY_SETUP.md` §4).
+
+---
+
 ## Quick "is it wired?" map
 
 | Concern              | Code entry point                                                       |
@@ -228,3 +248,4 @@ nothing premium is exposed. 🟢
 | In-app review        | `lib/services/review_service.dart` + `review_providers.dart`           |
 | Premium gate         | `sync-entitlement` / `revenuecat-webhook` + `profiles.is_premium`      |
 | Home-screen widget   | `lib/services/widget_sync_service.dart` + `ios/DailyQuestionWidget/`   |
+| Crash/error reporting| `lib/core/monitoring/monitoring.dart` + `SentryFlutter.init` in `main.dart` |

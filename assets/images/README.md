@@ -1,9 +1,3 @@
-# assets/images
-
-Brand art for the app. Drop two PNG files here, then run the two generators
-(see below). Until the real files exist, the in-app logo gracefully falls back
-to the code-drawn "⚡ Debatly" wordmark (see lib/features/onboarding/widgets/spark_logo.dart).
-
 ## Files to provide
 
 | File       | Size              | Background    | Used for                                    |

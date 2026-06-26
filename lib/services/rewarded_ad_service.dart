@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import '../core/config/app_config.dart';
+import '../core/monitoring/monitoring.dart';
 import 'ads_service.dart';
 import 'consent_service.dart';
 
@@ -46,6 +47,13 @@ class RewardedAdService {
         },
         onAdFailedToLoad: (error) {
           debugPrint('RewardedAdService: failed to load — $error');
+          // No-fill is routine, so this is a breadcrumb (context for a later
+          // error), never an issue of its own.
+          Monitoring.addBreadcrumb(
+            'Rewarded ad failed to load',
+            category: 'ads',
+            data: {'code': error.code, 'message': error.message},
+          );
           _ad = null;
           _isLoading = false;
         },
@@ -91,6 +99,13 @@ class RewardedAdService {
         );
       } catch (e) {
         debugPrint('RewardedAdService: setServerSideOptions failed — $e');
+        // SSV is audit-only and the reward flow continues regardless; record it
+        // as context rather than failing the unlock.
+        Monitoring.addBreadcrumb(
+          'Rewarded SSV options failed',
+          category: 'ads',
+          data: {'error': e.toString()},
+        );
       }
     }
 
@@ -108,6 +123,11 @@ class RewardedAdService {
       },
       onAdFailedToShowFullScreenContent: (ad, error) {
         debugPrint('RewardedAdService: failed to show — $error');
+        Monitoring.addBreadcrumb(
+          'Rewarded ad failed to show',
+          category: 'ads',
+          data: {'code': error.code, 'message': error.message},
+        );
         ad.dispose();
         preload();
         finish();

@@ -41,6 +41,29 @@ subprojects {
     project.evaluationDependsOn(":app")
 }
 
+subprojects {
+    // sentry_flutter's Android module pins Kotlin languageVersion/apiVersion to
+    // 1.6 in its own build.gradle. The Kotlin 2.3 compiler bundled with this
+    // Flutter (see settings.gradle.kts) no longer accepts anything below 2.0
+    // ("Language version 1.6 is no longer supported; use version 2.0 or greater
+    // instead"), so its compile task fails. Bump just that module to the minimum
+    // supported version. configureEach is lazy, so it applies whenever/if the
+    // task is created; other plugins don't pin an old version and are untouched.
+    if (project.name == "sentry_flutter") {
+        tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>()
+            .configureEach {
+                compilerOptions {
+                    languageVersion.set(
+                        org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_0,
+                    )
+                    apiVersion.set(
+                        org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_0,
+                    )
+                }
+            }
+    }
+}
+
 tasks.register<Delete>("clean") {
     delete(rootProject.layout.buildDirectory)
 }
