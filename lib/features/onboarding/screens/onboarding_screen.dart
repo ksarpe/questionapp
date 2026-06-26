@@ -6,6 +6,7 @@ import '../../../data/models/vote_result.dart';
 import '../../account/screens/auth_screen.dart';
 import '../../questions/widgets/styled_question_text.dart';
 import '../../questions/widgets/vote_visuals.dart';
+import '../widgets/onboarding_glyph_bubble.dart';
 import '../widgets/onboarding_intro_card.dart';
 import '../widgets/onboarding_primary_button.dart';
 import '../widgets/spark_logo.dart';
@@ -81,7 +82,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         body: l10n.onboardingWelcomeBody,
       ),
       OnboardingIntroCard(
-        glyph: const _GlyphBubble(
+        glyph: const OnboardingGlyphBubble(
           icon: Icons.wb_sunny_rounded,
           color: AppTheme.spark,
         ),
@@ -277,45 +278,6 @@ class _TasteVoteCardState extends State<_TasteVoteCard> {
   /// only when their side is the larger one.
   bool _isMajority(int choice) =>
       choice == VoteResult.yes ? _yesPct >= _noPct : _noPct > _yesPct;
-}
-
-/// A round, softly-lit icon container — the visual anchor at the top of each
-/// feature card.
-class _GlyphBubble extends StatelessWidget {
-  const _GlyphBubble({required this.icon, required this.color});
-
-  final IconData icon;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 112,
-      height: 112,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: color.withValues(alpha: 0.10),
-        border: Border.all(color: color.withValues(alpha: 0.30)),
-        boxShadow: [
-          BoxShadow(
-            color: color.withValues(alpha: 0.30),
-            blurRadius: 28,
-            spreadRadius: -6,
-          ),
-        ],
-      ),
-      child: Center(
-        child: Icon(
-          icon,
-          size: 52,
-          color: color,
-          shadows: [
-            Shadow(color: color.withValues(alpha: 0.6), blurRadius: 16),
-          ],
-        ),
-      ),
-    );
-  }
 }
 
 /// The final card: the user picks how to start. Sign-in is the highlighted path
