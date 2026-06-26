@@ -26,14 +26,10 @@ import '../../questions/widgets/share_question_button.dart';
 import '../providers/app_info_provider.dart';
 import '../providers/offline_download_providers.dart';
 import '../providers/reminder_providers.dart';
+import '../widgets/settings_primitives.dart';
 
 /// Warm flame colour for the (placeholder) streak card.
 const Color _kFlame = Color(0xFFFF7A29);
-
-/// Gold accent for the "go Premium" upsell, matching the auth notice.
-const Color _kGold = Color(0xFFFFC857);
-
-const Color _kDanger = Color(0xFFFF6B6B);
 
 /// The signed-in user's profile hub: identity, gamification stats, app
 /// preferences, subscription and account actions — all on one scrollable page.
@@ -136,9 +132,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
                       const SizedBox(height: 28),
 
                       // ---- App settings -----------------------------------
-                      _SectionLabel(context.l10n.settingsSectionApp),
+                      SettingsSectionLabel(context.l10n.settingsSectionApp),
                       const SizedBox(height: 12),
-                      _Card(
+                      SettingsCard(
                         children: [
                           _ToggleRow(
                             icon: Icons.notifications_none_rounded,
@@ -148,7 +144,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
                             onChanged: _onReminderToggled,
                           ),
                           if (reminder.enabled) ...[
-                            const _RowDivider(),
+                            const SettingsRowDivider(),
                             _NavRow(
                               icon: Icons.schedule_rounded,
                               title: context.l10n.settingsReminderTime,
@@ -157,7 +153,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
                             ),
                           ],
 
-                          const _RowDivider(),
+                          const SettingsRowDivider(),
                           _NavRow(
                             icon: Icons.language_rounded,
                             title: context.l10n.settingsLanguage,
@@ -165,7 +161,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
                             onTap: _openLanguagePicker,
                           ),
 
-                          const _RowDivider(),
+                          const SettingsRowDivider(),
                           _NavRow(
                             icon: _themeModeIcon(themeMode),
                             title: context.l10n.settingsAppearance,
@@ -178,15 +174,15 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
                           // readable offline. Free users only get the daily +
                           // their reveals, so the action is meaningless for them.
                           if (isPremium) ...[
-                            const _RowDivider(),
+                            const SettingsRowDivider(),
                             _OfflineDownloadRow(localeCode: localeCode),
                           ],
 
                           if (showFavorites) ...[
-                            const _RowDivider(),
+                            const SettingsRowDivider(),
                             _NavRow(
                               icon: Icons.star_rounded,
-                              iconColor: _kGold,
+                              iconColor: kGold,
                               title: context.l10n.settingsFavorites,
                               trailingText: favoriteCount > 0
                                   ? '$favoriteCount'
@@ -198,7 +194,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
                           // The PRO history of past dailies + how people voted.
                           // Shown to everyone; the screen gates premium itself,
                           // so a free user lands on the PRO upsell inside it.
-                          const _RowDivider(),
+                          const SettingsRowDivider(),
                           _NavRow(
                             icon: Icons.history_rounded,
                             title: context.l10n.historyTitle,
@@ -209,9 +205,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
                       const SizedBox(height: 28),
 
                       // ---- Account ----------------------------------------
-                      _SectionLabel(context.l10n.settingsSectionAccount),
+                      SettingsSectionLabel(context.l10n.settingsSectionAccount),
                       const SizedBox(height: 12),
-                      _Card(
+                      SettingsCard(
                         children: [
                           if (isPremium)
                             _PremiumActiveRow(
@@ -221,24 +217,24 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
                           else
                             _NavRow(
                               icon: Icons.star_rounded,
-                              iconColor: _kGold,
+                              iconColor: kGold,
                               title: context.l10n.settingsGoPremium,
-                              titleColor: _kGold,
+                              titleColor: kGold,
                               onTap: _openPaywall,
                             ),
-                          const _RowDivider(),
+                          const SettingsRowDivider(),
                           _NavRow(
                             icon: Icons.shield_outlined,
                             title: context.l10n.settingsPrivacy,
                             onTap: _openPrivacyData,
                           ),
-                          const _RowDivider(),
+                          const SettingsRowDivider(),
                           _NavRow(
                             icon: Icons.restore_rounded,
                             title: context.l10n.restorePurchase,
                             onTap: _restorePurchases,
                           ),
-                          const _RowDivider(),
+                          const SettingsRowDivider(),
                           _NavRow(
                             icon: Icons.info_outline_rounded,
                             title: context.l10n.settingsAbout,
@@ -377,7 +373,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
             child: Text(context.l10n.cancel),
           ),
           TextButton(
-            style: TextButton.styleFrom(foregroundColor: _kDanger),
+            style: TextButton.styleFrom(foregroundColor: kDanger),
             onPressed: () => Navigator.of(dialogContext).pop(true),
             child: Text(context.l10n.deleteAccount),
           ),
@@ -948,72 +944,6 @@ class _StatCardShell extends StatelessWidget {
 
 // ---- Reusable building blocks ----------------------------------------------
 
-class _SectionLabel extends StatelessWidget {
-  const _SectionLabel(this.text);
-
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 4),
-      child: Align(
-        alignment: Alignment.centerLeft,
-        child: Text(
-          text,
-          style: const TextStyle(
-            color: AppTheme.spark,
-            fontSize: 13,
-            fontWeight: FontWeight.w800,
-            letterSpacing: 0.5,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// Rounded card grouping a column of rows.
-class _Card extends StatelessWidget {
-  const _Card({required this.children});
-
-  final List<Widget> children;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: context.colors.cardSurface,
-      borderRadius: BorderRadius.circular(18),
-      clipBehavior: Clip.antiAlias,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: context.colors.hairline),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: children,
-        ),
-      ),
-    );
-  }
-}
-
-/// Hairline separator inset past the leading icon, like iOS grouped lists.
-class _RowDivider extends StatelessWidget {
-  const _RowDivider();
-
-  @override
-  Widget build(BuildContext context) {
-    return Divider(
-      height: 1,
-      thickness: 1,
-      color: context.colors.hairline,
-      indent: 56,
-    );
-  }
-}
-
 class _ToggleRow extends StatelessWidget {
   const _ToggleRow({
     required this.icon,
@@ -1170,7 +1100,7 @@ class _OfflineDownloadRow extends ConsumerWidget {
       OfflineDownloadStatus.running =>
         l10n.offlineDownloadProgress(state.done, state.total),
       _ when state.lastSyncAt != null =>
-        l10n.offlineDownloadSynced(_formatLongDate(state.lastSyncAt!, localeCode)),
+        l10n.offlineDownloadSynced(formatLongDate(state.lastSyncAt!, localeCode)),
       _ => l10n.offlineDownloadReady,
     };
 
@@ -1223,7 +1153,7 @@ class _OfflineDownloadRow extends ConsumerWidget {
       );
     }
     if (state.status != OfflineDownloadStatus.error && state.lastSyncAt != null) {
-      return const Icon(Icons.check_circle_rounded, color: _kPremiumGreen, size: 22);
+      return const Icon(Icons.check_circle_rounded, color: kPremiumGreen, size: 22);
     }
     return const Icon(Icons.download_rounded, color: AppTheme.spark, size: 22);
   }
@@ -1249,9 +1179,6 @@ class _OfflineDownloadRow extends ConsumerWidget {
   }
 }
 
-/// Soft green used for the active-premium state, matching the original row.
-const Color _kPremiumGreen = Color(0xFF7CE38B);
-
 /// The "Premium active" account row. Tapping opens the Manage-subscription
 /// sheet. As soon as [premiumStatusProvider] resolves it shows the renewal date
 /// — or, once the user has cancelled in the store, the date access ends — as a
@@ -1268,9 +1195,9 @@ class _PremiumActiveRow extends ConsumerWidget {
     final status = ref.watch(premiumStatusProvider).value;
     return _NavRow(
       icon: Icons.workspace_premium,
-      iconColor: _kPremiumGreen,
+      iconColor: kPremiumGreen,
       title: context.l10n.settingsPremiumActive,
-      titleColor: _kPremiumGreen,
+      titleColor: kPremiumGreen,
       subtitle: _subtitle(context, status),
       onTap: onTap,
     );
@@ -1279,7 +1206,7 @@ class _PremiumActiveRow extends ConsumerWidget {
   String? _subtitle(BuildContext context, PremiumStatus? status) {
     final expiry = status?.expirationDate;
     if (expiry == null) return null;
-    final date = _formatLongDate(expiry, localeCode);
+    final date = formatLongDate(expiry, localeCode);
     return status!.willRenew
         ? context.l10n.manageSubRenewsOn(date)
         : context.l10n.manageSubActiveUntil(date);
@@ -1338,7 +1265,7 @@ class _ManageSubscriptionSheetState
               children: [
                 const Icon(
                   Icons.workspace_premium,
-                  color: _kPremiumGreen,
+                  color: kPremiumGreen,
                   size: 24,
                 ),
                 const SizedBox(width: 10),
@@ -1364,7 +1291,7 @@ class _ManageSubscriptionSheetState
                     height: 22,
                     child: CircularProgressIndicator(
                       strokeWidth: 2.4,
-                      color: _kPremiumGreen,
+                      color: kPremiumGreen,
                     ),
                   ),
                 ),
@@ -1386,7 +1313,7 @@ class _ManageSubscriptionSheetState
               Text(
                 _storeOpenFailed(l10n, store),
                 style: const TextStyle(
-                  color: _kDanger,
+                  color: kDanger,
                   fontSize: 13,
                   height: 1.4,
                 ),
@@ -1447,11 +1374,11 @@ class _StatusCard extends StatelessWidget {
     final headline = cancelled
         ? l10n.manageSubStatusCancelled
         : l10n.manageSubStatusActive;
-    final headlineColor = cancelled ? _kGold : _kPremiumGreen;
+    final headlineColor = cancelled ? kGold : kPremiumGreen;
 
     String? dateLine;
     if (expiry != null) {
-      final date = _formatLongDate(expiry, localeCode);
+      final date = formatLongDate(expiry, localeCode);
       dateLine = cancelled
           ? l10n.manageSubActiveUntil(date)
           : l10n.manageSubRenewsOn(date);
@@ -1522,7 +1449,7 @@ class _ManageButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: _kGold,
+      color: kGold,
       borderRadius: BorderRadius.circular(16),
       child: InkWell(
         onTap: busy ? null : onTap,
@@ -1615,45 +1542,6 @@ String _storeOpenFailed(AppLocalizations l10n, PremiumStore store) {
     case PremiumStore.other:
       return l10n.manageSubOpenFailedGeneric;
   }
-}
-
-/// Full month names for the renewal/expiry date, hand-rolled per locale to
-/// avoid pulling in `intl`'s date-symbol initialisation.
-/// Polish months are in the genitive case ("21 lipca 2026"), as dates take it.
-const List<String> _monthsEnFull = [
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December',
-];
-
-const List<String> _monthsPlGenitive = [
-  'stycznia',
-  'lutego',
-  'marca',
-  'kwietnia',
-  'maja',
-  'czerwca',
-  'lipca',
-  'sierpnia',
-  'września',
-  'października',
-  'listopada',
-  'grudnia',
-];
-
-String _formatLongDate(DateTime date, String localeCode) {
-  final local = date.toLocal();
-  final months = localeCode == 'pl' ? _monthsPlGenitive : _monthsEnFull;
-  return '${local.day} ${months[local.month - 1]} ${local.year}';
 }
 
 /// Full-width bordered "Sign out" action. Shows a spinner and ignores taps
@@ -1764,7 +1652,7 @@ class _DeleteAccountButton extends StatelessWidget {
     return Center(
       child: TextButton.icon(
         onPressed: onTap,
-        style: TextButton.styleFrom(foregroundColor: _kDanger),
+        style: TextButton.styleFrom(foregroundColor: kDanger),
         icon: const Icon(Icons.delete_outline_rounded, size: 18),
         label: Text(
           context.l10n.deleteAccount,
@@ -1997,7 +1885,7 @@ class _FavoriteCard extends ConsumerWidget {
               IconButton(
                 onPressed: () => _remove(context, ref),
                 tooltip: context.l10n.favoriteRemoveTooltip,
-                icon: const Icon(Icons.star_rounded, color: _kGold, size: 26),
+                icon: const Icon(Icons.star_rounded, color: kGold, size: 26),
               ),
             ],
           ),
@@ -2103,9 +1991,9 @@ class PrivacyDataScreen extends StatelessWidget {
 
                       // ---- Documents (only when URLs are configured) --------
                       if (hasDocs) ...[
-                        _SectionLabel(l10n.privacyDocsSection),
+                        SettingsSectionLabel(l10n.privacyDocsSection),
                         const SizedBox(height: 12),
-                        _Card(
+                        SettingsCard(
                           children: [
                             if (hasPolicy)
                               _NavRow(
@@ -2117,7 +2005,7 @@ class PrivacyDataScreen extends StatelessWidget {
                                   AppConfig.privacyPolicyUrl,
                                 ),
                               ),
-                            if (hasPolicy && hasTerms) const _RowDivider(),
+                            if (hasPolicy && hasTerms) const SettingsRowDivider(),
                             if (hasTerms)
                               _NavRow(
                                 icon: Icons.gavel_rounded,
@@ -2129,7 +2017,7 @@ class PrivacyDataScreen extends StatelessWidget {
                                 ),
                               ),
                             if ((hasPolicy || hasTerms) && hasDeleteUrl)
-                              const _RowDivider(),
+                              const SettingsRowDivider(),
                             if (hasDeleteUrl)
                               _NavRow(
                                 icon: Icons.person_remove_outlined,
@@ -2146,7 +2034,7 @@ class PrivacyDataScreen extends StatelessWidget {
                       ],
 
                       // ---- What we store ------------------------------------
-                      _SectionLabel(l10n.privacyDataSection),
+                      SettingsSectionLabel(l10n.privacyDataSection),
                       const SizedBox(height: 12),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(4, 0, 4, 14),
@@ -2159,26 +2047,26 @@ class PrivacyDataScreen extends StatelessWidget {
                           ),
                         ),
                       ),
-                      _Card(
+                      SettingsCard(
                         children: [
                           _PrivacyDataRow(
                             icon: Icons.person_outline_rounded,
                             title: l10n.privacyDataAccountTitle,
                             body: l10n.privacyDataAccountBody,
                           ),
-                          const _RowDivider(),
+                          const SettingsRowDivider(),
                           _PrivacyDataRow(
                             icon: Icons.insights_rounded,
                             title: l10n.privacyDataActivityTitle,
                             body: l10n.privacyDataActivityBody,
                           ),
-                          const _RowDivider(),
+                          const SettingsRowDivider(),
                           _PrivacyDataRow(
                             icon: Icons.workspace_premium_outlined,
                             title: l10n.privacyDataPurchasesTitle,
                             body: l10n.privacyDataPurchasesBody,
                           ),
-                          const _RowDivider(),
+                          const SettingsRowDivider(),
                           _PrivacyDataRow(
                             icon: Icons.campaign_outlined,
                             title: l10n.privacyDataAdsTitle,
