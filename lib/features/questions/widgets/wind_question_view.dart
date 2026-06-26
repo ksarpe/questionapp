@@ -17,6 +17,7 @@ import '../providers/swipe_hint_providers.dart';
 import 'back_to_daily_link.dart';
 import 'falling_words_text.dart';
 import 'lock_reveal.dart';
+import 'revealing_indicator.dart';
 import 'styled_question_text.dart';
 
 /// Displays the current question and runs the signature "wind" transition.
@@ -627,7 +628,7 @@ class _WindQuestionViewState extends ConsumerState<WindQuestionView>
       child = LockReveal(controller: _lockController);
     } else if (atRevealSlot) {
       if (_revealing || _peeking) {
-        child = const _Revealing();
+        child = const RevealingIndicator();
       } else if (_exhausted) {
         child = _NoMoreQuestions(onBackToDaily: _backToDaily);
       } else {
@@ -666,28 +667,6 @@ class _WindQuestionViewState extends ConsumerState<WindQuestionView>
         },
         child: child,
       ),
-    );
-  }
-}
-
-/// The brief placeholder shown while a reveal RPC is in flight on the slot.
-class _Revealing extends StatelessWidget {
-  const _Revealing();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        SizedBox(
-          height: 22,
-          width: 22,
-          child: CircularProgressIndicator(
-            strokeWidth: 2,
-            color: AppTheme.spark,
-          ),
-        ),
-      ],
     );
   }
 }
