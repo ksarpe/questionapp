@@ -26,6 +26,7 @@ import '../../questions/widgets/share_question_button.dart';
 import '../providers/app_info_provider.dart';
 import '../providers/offline_download_providers.dart';
 import '../providers/reminder_providers.dart';
+import '../widgets/settings_nav_row.dart';
 import '../widgets/settings_primitives.dart';
 
 /// Warm flame colour for the (placeholder) streak card.
@@ -145,7 +146,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
                           ),
                           if (reminder.enabled) ...[
                             const SettingsRowDivider(),
-                            _NavRow(
+                            SettingsNavRow(
                               icon: Icons.schedule_rounded,
                               title: context.l10n.settingsReminderTime,
                               trailingText: _formatTime(reminder.time),
@@ -154,7 +155,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
                           ],
 
                           const SettingsRowDivider(),
-                          _NavRow(
+                          SettingsNavRow(
                             icon: Icons.language_rounded,
                             title: context.l10n.settingsLanguage,
                             trailingText: _languageName(localeCode),
@@ -162,7 +163,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
                           ),
 
                           const SettingsRowDivider(),
-                          _NavRow(
+                          SettingsNavRow(
                             icon: _themeModeIcon(themeMode),
                             title: context.l10n.settingsAppearance,
                             trailingText: _themeModeName(context, themeMode),
@@ -180,7 +181,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
 
                           if (showFavorites) ...[
                             const SettingsRowDivider(),
-                            _NavRow(
+                            SettingsNavRow(
                               icon: Icons.star_rounded,
                               iconColor: kGold,
                               title: context.l10n.settingsFavorites,
@@ -195,7 +196,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
                           // Shown to everyone; the screen gates premium itself,
                           // so a free user lands on the PRO upsell inside it.
                           const SettingsRowDivider(),
-                          _NavRow(
+                          SettingsNavRow(
                             icon: Icons.history_rounded,
                             title: context.l10n.historyTitle,
                             onTap: () => openHistory(context),
@@ -215,7 +216,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
                               onTap: _openManageSubscription,
                             )
                           else
-                            _NavRow(
+                            SettingsNavRow(
                               icon: Icons.star_rounded,
                               iconColor: kGold,
                               title: context.l10n.settingsGoPremium,
@@ -223,19 +224,19 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
                               onTap: _openPaywall,
                             ),
                           const SettingsRowDivider(),
-                          _NavRow(
+                          SettingsNavRow(
                             icon: Icons.shield_outlined,
                             title: context.l10n.settingsPrivacy,
                             onTap: _openPrivacyData,
                           ),
                           const SettingsRowDivider(),
-                          _NavRow(
+                          SettingsNavRow(
                             icon: Icons.restore_rounded,
                             title: context.l10n.restorePurchase,
                             onTap: _restorePurchases,
                           ),
                           const SettingsRowDivider(),
-                          _NavRow(
+                          SettingsNavRow(
                             icon: Icons.info_outline_rounded,
                             title: context.l10n.settingsAbout,
                             trailingText: appInfo?.version,
@@ -1009,76 +1010,6 @@ class _ToggleRow extends StatelessWidget {
   }
 }
 
-class _NavRow extends StatelessWidget {
-  const _NavRow({
-    required this.icon,
-    required this.title,
-    this.subtitle,
-    this.trailingText,
-    this.iconColor,
-    this.titleColor,
-    this.onTap,
-  });
-
-  final IconData icon;
-  final String title;
-  final String? subtitle;
-  final String? trailingText;
-  final Color? iconColor;
-  final Color? titleColor;
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
-        child: Row(
-          children: [
-            Icon(icon, color: iconColor ?? context.colors.subtle, size: 22),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: TextStyle(
-                      color: titleColor ?? context.colors.ink,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  if (subtitle != null) ...[
-                    const SizedBox(height: 2),
-                    Text(
-                      subtitle!,
-                      style: TextStyle(
-                        color: context.colors.subtle,
-                        fontSize: 13,
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-            ),
-            if (trailingText != null)
-              Padding(
-                padding: const EdgeInsets.only(right: 6),
-                child: Text(
-                  trailingText!,
-                  style: TextStyle(color: context.colors.subtle, fontSize: 14),
-                ),
-              ),
-            Icon(Icons.chevron_right, color: context.colors.subtle, size: 22),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 /// Premium-only "download everything for offline" row.
 ///
 /// Drives [offlineDownloadControllerProvider], which walks the catalog + every
@@ -1193,7 +1124,7 @@ class _PremiumActiveRow extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final status = ref.watch(premiumStatusProvider).value;
-    return _NavRow(
+    return SettingsNavRow(
       icon: Icons.workspace_premium,
       iconColor: kPremiumGreen,
       title: context.l10n.settingsPremiumActive,
@@ -1996,7 +1927,7 @@ class PrivacyDataScreen extends StatelessWidget {
                         SettingsCard(
                           children: [
                             if (hasPolicy)
-                              _NavRow(
+                              SettingsNavRow(
                                 icon: Icons.description_outlined,
                                 title: l10n.privacyPolicy,
                                 subtitle: l10n.privacyOpenInBrowser,
@@ -2007,7 +1938,7 @@ class PrivacyDataScreen extends StatelessWidget {
                               ),
                             if (hasPolicy && hasTerms) const SettingsRowDivider(),
                             if (hasTerms)
-                              _NavRow(
+                              SettingsNavRow(
                                 icon: Icons.gavel_rounded,
                                 title: l10n.privacyTerms,
                                 subtitle: l10n.privacyOpenInBrowser,
@@ -2019,7 +1950,7 @@ class PrivacyDataScreen extends StatelessWidget {
                             if ((hasPolicy || hasTerms) && hasDeleteUrl)
                               const SettingsRowDivider(),
                             if (hasDeleteUrl)
-                              _NavRow(
+                              SettingsNavRow(
                                 icon: Icons.person_remove_outlined,
                                 title: l10n.privacyDeleteAccount,
                                 subtitle: l10n.privacyOpenInBrowser,
