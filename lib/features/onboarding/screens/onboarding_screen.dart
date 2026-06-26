@@ -6,6 +6,7 @@ import '../../../data/models/vote_result.dart';
 import '../../account/screens/auth_screen.dart';
 import '../../questions/widgets/styled_question_text.dart';
 import '../../questions/widgets/vote_visuals.dart';
+import '../widgets/onboarding_primary_button.dart';
 import '../widgets/spark_logo.dart';
 
 /// The first-launch tutorial: a swipeable deck that welcomes the user, walks
@@ -153,7 +154,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     // global "Next" only drives the plain intro cards.
                     child: (_isChoicePage || _index == votePageIndex)
                         ? const SizedBox(width: double.infinity)
-                        : _PrimaryButton(
+                        : OnboardingPrimaryButton(
                             label: l10n.onboardingNext,
                             onPressed: _next,
                           ),
@@ -301,7 +302,7 @@ class _TasteVoteCardState extends State<_TasteVoteCard> {
                           ),
                         ),
                         const SizedBox(height: 24),
-                        _PrimaryButton(
+                        OnboardingPrimaryButton(
                           label: l10n.onboardingTasteContinue,
                           onPressed: widget.onContinue,
                         ),
@@ -500,66 +501,6 @@ class _ChoiceButton extends StatelessWidget {
                 ),
                 Icon(Icons.arrow_forward, color: labelColor, size: 20),
               ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// The orange gradient "Next" call-to-action, matching the auth sheet's primary
-/// button so onboarding and sign-in feel like one family.
-class _PrimaryButton extends StatelessWidget {
-  const _PrimaryButton({required this.label, required this.onPressed});
-
-  final String label;
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFFF97316), Color(0xFFEA580C)],
-        ),
-        borderRadius: BorderRadius.circular(14),
-        boxShadow: [
-          BoxShadow(
-            color: AppTheme.spark.withValues(alpha: 0.35),
-            blurRadius: 18,
-            offset: const Offset(0, 6),
-          ),
-        ],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onPressed,
-          borderRadius: BorderRadius.circular(14),
-          child: SizedBox(
-            height: 56,
-            width: double.infinity,
-            child: Center(
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    label,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 16,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  const Icon(
-                    Icons.arrow_forward,
-                    color: Colors.white,
-                    size: 20,
-                  ),
-                ],
-              ),
             ),
           ),
         ),
