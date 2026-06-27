@@ -34,6 +34,12 @@ analyzer:
     - "lib/l10n/gen/**"
     - "build/**"
     - ".dart_tool/**"
+  language:
+    # Treat implicit down-casts from `dynamic` as errors. Supabase returns
+    # untyped JSON (`Map<String, dynamic>` / `dynamic`), so every read out of a
+    # row must now spell out its cast — no silent `dynamic`-to-T coercion.
+    # (strict-raw-types is deferred to a follow-up.)
+    strict-casts: true
   errors:
     # A dangling `// TODO` should nag in the IDE, not fail the build.
     todo: ignore

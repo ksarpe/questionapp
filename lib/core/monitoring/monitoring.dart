@@ -63,7 +63,7 @@ class Monitoring {
     // banner for these — they are not bugs). Manual reports are already filtered
     // in [captureException]; this also covers framework/zone-caught errors.
     options.beforeSend = (event, hint) {
-      final thrown = event.throwable;
+      final Object? thrown = event.throwable;
       if (thrown != null && isOfflineError(thrown)) return null;
       return event;
     };
