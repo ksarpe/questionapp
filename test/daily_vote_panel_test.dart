@@ -119,6 +119,89 @@ void main() {
     // The user's own side carries the check mark.
     expect(find.byIcon(Icons.check_rounded), findsOneWidget);
   });
+
+  testWidgets(
+    'after voting, leaving the daily and returning still shows the split — '
+    'no second vote',
+    (tester) async {
+      // Server-faithful repo: once a vote is cast, get_daily_vote_state reports
+      // the post-vote state (myChoice set), exactly like the real RPC.
+      final repo = _PersistingVoteRepo();
+      final container = ProviderContainer(
+        overrides: [
+          sessionProvider.overrideWith(() => _FakeSession(account())),
+          questionRepositoryProvider.overrideWithValue(repo),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      // A panel that can be mounted/unmounted to simulate swiping off the daily
+      // (isDaily=false → panel gone) and back to it.
+      Widget tree({required bool showPanel}) => UncontrolledProviderScope(
+        container: container,
+        child: LocalizedTestApp(
+          home: Scaffold(
+            body: Center(
+              child: showPanel
+                  ? const DailyVotePanel(questionId: 'q1')
+                  : const SizedBox.shrink(),
+            ),
+          ),
+        ),
+      );
+
+      await tester.pumpWidget(tree(showPanel: true));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('TAK'));
+      await tester.pumpAndSettle();
+      expect(repo.castCalls, 1);
+      // The result bars (keyed 'results'), not the vote buttons (keyed 'buttons').
+      expect(find.byKey(const ValueKey('results')), findsOneWidget);
+
+      // Swipe to another question: the daily panel unmounts (its local state is
+      // discarded).
+      await tester.pumpWidget(tree(showPanel: false));
+      await tester.pumpAndSettle();
+
+      // Come back to the daily: a fresh panel mounts with no local state.
+      await tester.pumpWidget(tree(showPanel: true));
+      await tester.pumpAndSettle();
+
+      // It must still show the split, never the buttons — and must not let the
+      // user cast a second vote. (Both rows label their sides "TAK"/"NIE", so the
+      // distinguishing signal is the AnimatedSwitcher child key, not the text.)
+      expect(find.byKey(const ValueKey('results')), findsOneWidget);
+      expect(find.byKey(const ValueKey('buttons')), findsNothing);
+      expect(
+        repo.castCalls,
+        1,
+        reason: 'returning to the daily is not a re-vote',
+      );
+    },
+  );
+}
+
+/// A repo that remembers a cast vote, so `getDailyVoteState` reflects it on the
+/// next read — mirroring the server, where the vote is persisted and the panel
+/// is meant to read it back as "already voted".
+class _PersistingVoteRepo extends MockQuestionRepository {
+  VoteResult? _voted;
+  int castCalls = 0;
+
+  @override
+  Future<VoteResult> getDailyVoteState(String questionId) async =>
+      _voted ?? VoteResult.empty;
+
+  @override
+  Future<VoteResult> castDailyVote(String questionId, int choice) async {
+    castCalls++;
+    return _voted = VoteResult(
+      yesCount: choice == VoteResult.yes ? 60 : 40,
+      noCount: choice == VoteResult.no ? 60 : 40,
+      myChoice: choice,
+    );
+  }
 }
 
 /// A session fixed to a known identity, so the account/guest branch can be

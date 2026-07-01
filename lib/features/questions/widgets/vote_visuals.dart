@@ -62,8 +62,12 @@ class VoteButtonsRow extends StatelessWidget {
 }
 
 /// The post-vote state: the two slanted result panels (green TAK %, red NIE %)
-/// with the "VS" badge over the seam and the total beneath. The caller's own
-/// side ([VoteResult.myChoice]) is brightened and checked.
+/// with the "VS" badge over the seam. The caller's own side
+/// ([VoteResult.myChoice]) is brightened and checked.
+///
+/// The raw vote total is deliberately NOT shown: early on the counts are small,
+/// and a low "40 votes" reads as "nobody's here" and discourages voting. The
+/// percentages alone carry the social signal and look livelier at any scale.
 class VoteResultsRow extends StatelessWidget {
   const VoteResultsRow({required this.result, super.key});
 
@@ -73,48 +77,38 @@ class VoteResultsRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return ConstrainedBox(
       constraints: const BoxConstraints(maxWidth: 320),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // The two slanted panels plus a "VS" badge floating over the seam.
-          SizedBox(
-            height: _kVoteHeight,
-            child: Stack(
-              alignment: Alignment.center,
+      // The two slanted panels plus a "VS" badge floating over the seam.
+      child: SizedBox(
+        height: _kVoteHeight,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Row(
               children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: _ResultPanel(
-                        label: context.l10n.voteYes,
-                        pct: result.yesPct,
-                        color: AppTheme.yes,
-                        slant: _Slant.left,
-                        mine: result.myChoice == VoteResult.yes,
-                      ),
-                    ),
-                    const SizedBox(width: 28),
-                    Expanded(
-                      child: _ResultPanel(
-                        label: context.l10n.voteNo,
-                        pct: result.noPct,
-                        color: AppTheme.no,
-                        slant: _Slant.right,
-                        mine: result.myChoice == VoteResult.no,
-                      ),
-                    ),
-                  ],
+                Expanded(
+                  child: _ResultPanel(
+                    label: context.l10n.voteYes,
+                    pct: result.yesPct,
+                    color: AppTheme.yes,
+                    slant: _Slant.left,
+                    mine: result.myChoice == VoteResult.yes,
+                  ),
                 ),
-                const _VsBadge(),
+                const SizedBox(width: 28),
+                Expanded(
+                  child: _ResultPanel(
+                    label: context.l10n.voteNo,
+                    pct: result.noPct,
+                    color: AppTheme.no,
+                    slant: _Slant.right,
+                    mine: result.myChoice == VoteResult.no,
+                  ),
+                ),
               ],
             ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            context.l10n.votesCount(result.total),
-            style: TextStyle(color: context.colors.subtle, fontSize: 12),
-          ),
-        ],
+            const _VsBadge(),
+          ],
+        ),
       ),
     );
   }

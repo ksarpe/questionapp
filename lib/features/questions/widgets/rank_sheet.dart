@@ -17,6 +17,11 @@ Future<void> showRankSheet(BuildContext context) {
     backgroundColor: context.colors.background,
     showDragHandle: true,
     isScrollControlled: true,
+    // Without this the sheet (and its drag handle) can grow up behind the
+    // status bar when the ladder is tall, leaving the handle in the notch /
+    // safe area. `useSafeArea: true` keeps the top edge below it — the inner
+    // SafeArea below then only has the bottom inset left to handle.
+    useSafeArea: true,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
     ),

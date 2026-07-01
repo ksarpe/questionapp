@@ -68,6 +68,13 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
+  # Pulled in directly (it is already a transitive dep of supabase) so tests may
+  # import `package:http/testing.dart` MockClient without tripping the
+  # depend_on_referenced_packages lint. Used to back a real SupabaseClient with a
+  # mock HTTP transport in test/supabase_question_repository_test.dart, exercising
+  # the production RPC↔model mapping with no live backend.
+  http: ^1.6.0
+
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your

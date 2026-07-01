@@ -1,9 +1,38 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../core/monitoring/monitoring.dart';
 import '../../../services/purchases_service.dart';
 import '../../../services/supabase_service.dart';
+
+/// Whether [event] is an OUT-OF-BAND identity change the session must converge
+/// on by reloading. A silent sign-out (a refresh-token failure / server-side
+/// revocation) and an anonymous→email upgrade (`userUpdated`) both change who we
+/// are; the initial session, a plain `signedIn`, and a token refresh carry no
+/// identity change to act on and are deliberately ignored.
+///
+/// Extracted from [SessionNotifier] so the "which events trip a reload" rule —
+/// easy to widen by accident into a reload storm — is pinned by a unit test.
+@visibleForTesting
+bool isIdentityChangingAuthEvent(AuthChangeEvent event) =>
+    event == AuthChangeEvent.signedOut || event == AuthChangeEvent.userUpdated;
+
+/// Resolves the EFFECTIVE premium flag from the three sources in strict
+/// precedence: the reconciled store↔DB sync wins; else the raw profile flag (so
+/// a promotional / admin grant with no purchase behind it still unlocks); else
+/// the on-device store cache (only reached with no backend at all).
+///
+/// The sources are LAZY thunks, not values, so the short-circuit is preserved —
+/// a successful [sync] must NOT fire [profile] or [store] (each is a network /
+/// SDK call). Extracted so both the order and that no-redundant-call guarantee
+/// are unit-tested without standing up the whole static service layer.
+@visibleForTesting
+Future<bool> resolveEffectivePremium({
+  required Future<bool?> Function() sync,
+  required Future<bool?> Function() profile,
+  required Future<bool> Function() store,
+}) async => await sync() ?? await profile() ?? await store();
 
 /// Immutable snapshot of who the current user is and what they're entitled to.
 ///
@@ -93,13 +122,7 @@ class SessionNotifier extends AsyncNotifier<SessionState> {
   void _subscribeToAuthChanges() {
     if (!SupabaseService.isInitialised) return;
     final sub = SupabaseService.client.auth.onAuthStateChange.listen((data) {
-      switch (data.event) {
-        case AuthChangeEvent.signedOut:
-        case AuthChangeEvent.userUpdated:
-          refresh();
-        default:
-          break;
-      }
+      if (isIdentityChangingAuthEvent(data.event)) refresh();
     });
     ref.onDispose(sub.cancel);
   }
@@ -124,10 +147,11 @@ class SessionNotifier extends AsyncNotifier<SessionState> {
     // from the profile, so a promotional grant with no purchase behind it still
     // unlocks the app. Only with no backend at all do we fall back to the
     // on-device RevenueCat cache.
-    final isPremium =
-        await SupabaseService.syncEntitlement() ??
-        await SupabaseService.fetchIsPremium() ??
-        await PurchasesService.isPremium();
+    final isPremium = await resolveEffectivePremium(
+      sync: SupabaseService.syncEntitlement,
+      profile: SupabaseService.fetchIsPremium,
+      store: PurchasesService.isPremium,
+    );
 
     // 4. Pull the display name (social logins only) and the account's creation
     // date for the profile header.

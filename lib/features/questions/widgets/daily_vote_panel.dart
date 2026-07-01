@@ -53,6 +53,13 @@ class _DailyVotePanelState extends ConsumerState<DailyVotePanel> {
       if (!mounted) return;
       // The vote may have moved the streak — refresh the top chip.
       ref.invalidate(userStatsProvider);
+      // Persist the "already voted" state into the (non-autoDispose) provider, not
+      // just this widget's `_local`. The panel unmounts when the user swipes off
+      // the daily, discarding `_local`; without this, returning to the daily would
+      // re-read the provider's STALE pre-vote value and show the buttons again,
+      // letting the user "vote" a second time. Invalidating forces a refetch of the
+      // server's post-vote state (myChoice set → result bars on the next mount).
+      ref.invalidate(dailyVoteStateProvider(widget.questionId));
       setState(() => _local = result);
       await _refreshReminderAfterVote(result, l10n);
       await _maybeAskForReview();

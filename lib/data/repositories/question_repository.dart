@@ -1,3 +1,5 @@
+import 'package:supabase_flutter/supabase_flutter.dart';
+
 import '../../core/monitoring/monitoring.dart';
 import '../../services/supabase_service.dart';
 import '../mock/mock_questions.dart';
@@ -318,9 +320,22 @@ final Set<String> _mockFavorites = <String>{};
 /// daily + unlocked) while a premium user receives all of it. Writes never
 /// happen here — content is managed via the dashboard / service-role.
 class SupabaseQuestionRepository implements QuestionRepository {
-  const SupabaseQuestionRepository({this.locale = 'pl'});
+  SupabaseQuestionRepository({this.locale = 'pl', this.client});
 
   final String locale;
+
+  /// The Supabase client to talk to. Null in production — the repo then falls
+  /// back to the app-wide [SupabaseService.client]; a test injects one backed by
+  /// a mock HTTP transport to exercise the real RPC↔model mapping and the
+  /// param/function names without a live backend.
+  ///
+  /// The fallback is resolved lazily (only when an RPC actually fires, via [_db])
+  /// rather than in the constructor, so building the repo never touches the
+  /// singleton — the provider can construct it without forcing [SupabaseService]
+  /// to be initialised at that exact moment.
+  final SupabaseClient? client;
+
+  SupabaseClient get _db => client ?? SupabaseService.client;
 
   @override
   Future<List<Question>> fetchQuestions() async {
@@ -329,7 +344,7 @@ class SupabaseQuestionRepository implements QuestionRepository {
     // the device's local date (`p_date`), which the gate clamps to UTC ±1 so the
     // user's real "today" is honoured but the archive can't be harvested.
     // Everything else comes back locked (no text) and renders as a locked card.
-    final data = await SupabaseService.client.rpc(
+    final data = await _db.rpc(
       'get_questions',
       params: {'p_locale': locale, 'p_date': _dateOnly(DateTime.now())},
     );
@@ -344,7 +359,7 @@ class SupabaseQuestionRepository implements QuestionRepository {
   Future<Question?> fetchDailyQuestion(DateTime date) async {
     // The RPC returns the flat shape Question.fromJson expects and applies the
     // free-daily / premium gate itself.
-    final data = await SupabaseService.client.rpc(
+    final data = await _db.rpc(
       'get_daily_question',
       params: {'p_locale': locale, 'p_date': _dateOnly(date)},
     );
@@ -361,7 +376,7 @@ class SupabaseQuestionRepository implements QuestionRepository {
     // The RPC returns every smaczek for the question but withholds the text of
     // locked ones (premium-only beyond the first). RLS/grants are deliberately
     // off on the smaczki tables — this SECURITY DEFINER RPC is the only way in.
-    final data = await SupabaseService.client.rpc(
+    final data = await _db.rpc(
       'get_question_smaczki',
       params: {'p_question_id': questionId, 'p_locale': locale},
     );
@@ -376,7 +391,7 @@ class SupabaseQuestionRepository implements QuestionRepository {
   Future<({String id, String teaser})?> peekNextQuestion() async {
     // SECURITY DEFINER RPC: previews the next unseen pick's teaser without
     // revealing it (no text, not marked seen). Empty = nothing left.
-    final data = await SupabaseService.client.rpc(
+    final data = await _db.rpc(
       'peek_next_question',
       params: {'p_locale': locale, 'p_date': _dateOnly(DateTime.now())},
     );
@@ -391,7 +406,7 @@ class SupabaseQuestionRepository implements QuestionRepository {
     // SECURITY DEFINER RPC: reveals the peeked question (when still eligible) or
     // a random unseen, non-premium, non-daily one, records it in question_seen,
     // and returns it WITH text. Empty result = nothing unseen left.
-    final data = await SupabaseService.client.rpc(
+    final data = await _db.rpc(
       'reveal_ad_question',
       params: {
         'p_locale': locale,
@@ -409,10 +424,7 @@ class SupabaseQuestionRepository implements QuestionRepository {
     // SECURITY DEFINER RPC: returns the server's view of streak / credits / rank
     // and tops up today's free credit (once per UTC day, capped at 1) as a side
     // effect. Returns a single row.
-    final data = await SupabaseService.client.rpc(
-      'sync_user_state',
-      params: {'p_locale': locale},
-    );
+    final data = await _db.rpc('sync_user_state', params: {'p_locale': locale});
 
     final rows = (data as List).cast<Map<String, dynamic>>();
     if (rows.isEmpty) return null;
@@ -421,7 +433,7 @@ class SupabaseQuestionRepository implements QuestionRepository {
 
   @override
   Future<VoteResult> getDailyVoteState(String questionId) async {
-    final data = await SupabaseService.client.rpc(
+    final data = await _db.rpc(
       'get_daily_vote_state',
       params: {'p_question_id': questionId},
     );
@@ -437,7 +449,7 @@ class SupabaseQuestionRepository implements QuestionRepository {
     // returns the fresh community split. Pass the device's local date so the
     // streak's "is this the daily" check honours the user's timezone (clamped to
     // UTC ±1 server-side).
-    final data = await SupabaseService.client.rpc(
+    final data = await _db.rpc(
       'cast_daily_vote',
       params: {
         'p_question_id': questionId,
@@ -457,7 +469,7 @@ class SupabaseQuestionRepository implements QuestionRepository {
     // SECURITY DEFINER RPC: same pick as reveal_ad_question but charges one
     // daily credit (real accounts only). Empty result = nothing unseen left
     // (no charge). Throws on no-credit / premium / guest — the caller surfaces it.
-    final data = await SupabaseService.client.rpc(
+    final data = await _db.rpc(
       'reveal_free_question',
       params: {'p_locale': locale, 'p_date': _dateOnly(DateTime.now())},
     );
@@ -469,10 +481,7 @@ class SupabaseQuestionRepository implements QuestionRepository {
   @override
   Future<List<Rank>> fetchRanks() async {
     // The ranks table is public-readable; order by tier for the ladder.
-    final data = await SupabaseService.client
-        .from('ranks')
-        .select()
-        .order('tier');
+    final data = await _db.from('ranks').select().order('tier');
 
     return (data as List)
         .cast<Map<String, dynamic>>()
@@ -487,7 +496,7 @@ class SupabaseQuestionRepository implements QuestionRepository {
     // question might be surfaced as "new" again, so swallow errors rather than
     // bubbling them into a fire-and-forget call site.
     try {
-      await SupabaseService.client.rpc(
+      await _db.rpc(
         'mark_question_seen',
         params: {'p_question_id': questionId},
       );
@@ -505,7 +514,7 @@ class SupabaseQuestionRepository implements QuestionRepository {
   @override
   Future<Set<String>> fetchFavoriteIds() async {
     // SECURITY DEFINER RPC: the caller's favorite ids (own rows only).
-    final data = await SupabaseService.client.rpc('get_favorite_ids');
+    final data = await _db.rpc('get_favorite_ids');
     return (data as List).map((e) => e.toString()).toSet();
   }
 
@@ -514,7 +523,7 @@ class SupabaseQuestionRepository implements QuestionRepository {
     // SECURITY DEFINER RPC: pins the row to auth.uid(), enforces the premium
     // gate on ADD server-side, and returns the new state. Throws on a non-premium
     // add ('premium required') — the caller surfaces the paywall instead.
-    final data = await SupabaseService.client.rpc(
+    final data = await _db.rpc(
       'toggle_question_favorite',
       params: {'p_question_id': questionId},
     );
@@ -526,7 +535,7 @@ class SupabaseQuestionRepository implements QuestionRepository {
     // SECURITY DEFINER RPC: returns favorites WITH text (readable forever), so —
     // unlike get_questions — nothing comes back locked. fromJson sees no `locked`
     // key, defaulting isLocked to false.
-    final data = await SupabaseService.client.rpc(
+    final data = await _db.rpc(
       'get_favorite_questions',
       params: {'p_locale': locale},
     );
@@ -542,7 +551,7 @@ class SupabaseQuestionRepository implements QuestionRepository {
     // community vote split, gating on premium server-side — a non-premium caller
     // simply gets zero rows. Pass the device's local date so "past" honours the
     // user's timezone (clamped to the UTC clock server-side).
-    final data = await SupabaseService.client.rpc(
+    final data = await _db.rpc(
       'get_daily_history',
       params: {'p_locale': locale, 'p_date': _dateOnly(DateTime.now())},
     );
