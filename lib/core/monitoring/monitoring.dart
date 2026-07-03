@@ -56,7 +56,7 @@ class Monitoring {
 
     // Tells Sentry which frames are ours vs. package/SDK code, so issues group
     // on the app's own stack and the "In App" filter works.
-    options.addInAppInclude('questionapp');
+    options.addInAppInclude('debatly');
 
     // Last line of defence against quota noise: drop anything that is really a
     // loss of connectivity (the app falls back to cache and shows an offline

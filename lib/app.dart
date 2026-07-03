@@ -10,8 +10,8 @@ import 'features/onboarding/screens/app_entry.dart';
 import 'l10n/gen/app_localizations.dart';
 
 /// Root widget. Riverpod's `ProviderScope` is mounted in `main()`.
-class QuestionApp extends ConsumerWidget {
-  const QuestionApp({super.key});
+class DebatlyApp extends ConsumerWidget {
+  const DebatlyApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

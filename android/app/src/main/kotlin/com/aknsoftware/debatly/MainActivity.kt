@@ -1,4 +1,4 @@
-package com.aknsoftware.questionapp
+package com.aknsoftware.debatly
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 

@@ -1,11 +1,11 @@
 {
-    "name": "questionapp",
-    "short_name": "questionapp",
+    "name": "Debatly",
+    "short_name": "Debatly",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "A minimalist app that sparks conversation with one thought-provoking question at a time.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

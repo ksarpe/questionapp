@@ -67,9 +67,8 @@ Done — see "Already done" above. Nothing left here except backing up the `.jks
 ### 2. RevenueCat ☁️🔑 (Premium)
 `REVENUECAT_API_KEY` in `env/prod-android.json` is still the `goog_REPLACE_…`
 placeholder.
-- [ ] Create the entitlement (`premium`) + products (App Store + Play).
-- [ ] Build the Paywall in the RevenueCat dashboard.
-- [ ] Put the **public SDK key** in `env/prod-*.json` (`REVENUECAT_API_KEY`).
+- [ ] add products (App Store + Play).
+- [ ] Put the **public SDK key** in `env/prod-*.json` (`REVENUECAT_API_KEY`). // DONE FOR ANDROID
 - [ ] Set the **secret REST key** + **webhook secret** as Supabase secrets
       (`REVENUECAT_REST_API_KEY`, `REVENUECAT_WEBHOOK_SECRET`) and point the
       webhook at `.../revenue-cat-webhook` — **note the hyphen**, the deployed
@@ -82,10 +81,6 @@ placeholder.
       function returns 200.
 
 ### 3. AdMob ☁️📱
-- [x] ~~Banner ad~~ — decided 2026-07-01: **rewarded-only, no banner.**
-      `AdsService.createBannerAd` was dead code (no widget ever called it, so no
-      banner rendered anyway) and has been removed. Don't create a banner ad unit
-      in the AdMob console — there's nothing to point it at.
 - [ ] **SSV callback URL (required)** on the rewarded unit →
       `https://<project-ref>.functions.supabase.co/admob-ssv`. Without it, no free
       reveal-by-ad ever validates.
@@ -97,27 +92,18 @@ placeholder.
     the SSV wiring good.
 - [ ] Create a **GDPR consent message** (and an iOS **ATT** message) in the
       Privacy & messaging section — without them the consent form is blank.
-- [x] ~~Paste Google's full SKAdNetwork list into iOS `Info.plist`~~ — done, see
-      "Already done" above.
 
 ### 4. Supabase Auth (dashboard toggles) ☁️
 Can't be set by a migration.
-- [ ] **Confirm email ON** (Providers → Email) — activates the anti-farm credit
-      guard.
 - [ ] **Leaked-password protection ON** (Sign In → Passwords) — still flagged by
       the security advisor.
 
 ### 5. Sign-in providers ☁️📱
-- [ ] **Google** — partially done: the **Web** OAuth client exists and its id is
-      already in `env/prod-*.json` (`GOOGLE_SERVER_CLIENT_ID`). Still left:
-  - [ ] iOS OAuth client + Android OAuth client (with the release SHA-1).
-  - [ ] Enable Google in Supabase Auth (Web client id in Authorized Client IDs).
 - [ ] **Apple (iOS, required by App Store 4.8)** — enable *Sign in with Apple* on
       the App ID; add the capability in Xcode (wires `Runner.entitlements`); enable
-      the Apple provider in Supabase with bundle id `com.aknsoftware.questionapp`.
+      the Apple provider in Supabase with bundle id `com.aknsoftware.debatly`.
 
 ### 6. Legal pages live ☁️
-- [ ] Publish the actual pages at `https://debatly.app/{privacy,terms,delete-account}`.
 - [ ] Paste the delete-account URL into the Play **Data safety** deletion field.
 
 ### 7. iOS build 📱
@@ -133,7 +119,6 @@ Can't be set by a migration.
       needed, `pod install` should not fail on a deployment-target mismatch.)
 
 ### 8. Store submission ☁️
-- [x] ~~Screenshots~~ — generated, see "Already done" above.
 - [ ] Store listings: descriptions, data-safety / privacy forms.
 - [ ] **Play Console**: content rating questionnaire, category, and the "Ads" +
       "Advertising ID" declaration (yes — `google_mobile_ads` pulls in

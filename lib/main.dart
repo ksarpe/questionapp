@@ -60,7 +60,7 @@ Future<void> _startApp() async {
     SentryWidget(
       child: ProviderScope(
         overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
-        child: const QuestionApp(),
+        child: const DebatlyApp(),
       ),
     ),
   );

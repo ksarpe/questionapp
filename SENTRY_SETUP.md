@@ -67,7 +67,7 @@ Nothing else to change. The app reads these at build time.
 Exactly the existing commands — the keys are already in the env files:
 
 ```bash
-# Dev (VS Code "questionapp (local env)" launch config already uses this file)
+# Dev (VS Code "debatly (local env)" launch config already uses this file)
 flutter run --dart-define-from-file=env/local.json
 
 # Release

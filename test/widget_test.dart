@@ -21,7 +21,7 @@ import 'support/localized_test_app.dart';
 const _goDeeperLabelPl = 'WEJDŹ GŁĘBIEJ';
 
 /// In-memory SharedPreferences pinned to Polish so [localeControllerProvider]
-/// (read by QuestionApp/SettingsScreen) resolves deterministically to `pl`
+/// (read by DebatlyApp/SettingsScreen) resolves deterministically to `pl`
 /// regardless of the host device locale — the assertions below are in Polish.
 ///
 /// Onboarding is marked complete so `AppEntry` behaves like a returning user:
@@ -50,7 +50,7 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
-        child: const QuestionApp(),
+        child: const DebatlyApp(),
       ),
     );
 
@@ -80,7 +80,7 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
-        child: const QuestionApp(),
+        child: const DebatlyApp(),
       ),
     );
 
