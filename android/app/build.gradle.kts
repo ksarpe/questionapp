@@ -52,7 +52,10 @@ android {
             create("release") {
                 keyAlias = keystoreProperties["keyAlias"] as String
                 keyPassword = keystoreProperties["keyPassword"] as String
-                storeFile = file(keystoreProperties["storeFile"] as String)
+                // storeFile in key.properties is relative to android/ (see
+                // RELEASE_CHECKLIST.md: android/keys/upload-keystore.jks), so
+                // resolve against the root project, not this app module.
+                storeFile = rootProject.file(keystoreProperties["storeFile"] as String)
                 storePassword = keystoreProperties["storePassword"] as String
             }
         }

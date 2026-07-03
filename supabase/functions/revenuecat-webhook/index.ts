@@ -3,7 +3,14 @@
 //
 // Setup
 //   1. RevenueCat dashboard: Project > Integrations > Webhooks
-//        URL:  https://<project-ref>.functions.supabase.co/revenuecat-webhook
+//        URL:  https://<project-ref>.functions.supabase.co/revenue-cat-webhook
+//        (NOTE the hyphen before "cat" — the function is LIVE under the slug
+//        `revenue-cat-webhook`, which does not match this folder's name
+//        `revenuecat-webhook`. Pointing RevenueCat at the folder-name URL
+//        instead returns a 404 and renewals/cancellations silently stop
+//        syncing. Before changing the deploy command below, confirm which
+//        slug your Supabase CLI version actually deploys to — either rename
+//        this folder to match, or deploy with an explicit slug argument.)
 //        Authorization header: pick a long random secret.
 //   2. Store the SAME secret for this function:
 //        supabase secrets set REVENUECAT_WEBHOOK_SECRET="<that-secret>"
@@ -11,7 +18,8 @@
 //        supabase secrets set PREMIUM_ENTITLEMENT="premium"
 //   3. In the Flutter app, tie RevenueCat to the Supabase user:
 //        await Purchases.logIn(supabaseUserId);   // app_user_id == auth.uid()
-//   4. Deploy:
+//   4. Deploy — see the slug note above before running this, to make sure it
+//      updates the live function rather than creating a new one:
 //        supabase functions deploy revenuecat-webhook --no-verify-jwt
 //      (--no-verify-jwt because RevenueCat calls it, not a logged-in user;
 //       we authenticate via the Authorization secret instead.)
@@ -58,7 +66,15 @@ const GRANTING_TYPES = new Set([
   "SUBSCRIPTION_EXTENDED",
 ]);
 
-const REVOKING_TYPES = ["EXPIRATION", "BILLING_ISSUE", "SUBSCRIPTION_PAUSED"];
+// Event types that end access immediately. BILLING_ISSUE is deliberately NOT
+// here: the store keeps retrying payment through a grace period and RevenueCat
+// carries the grace end in expiration_at_ms, so it takes the expiry branch
+// below — an immediate revoke would cut a paying user off mid-grace. (With no
+// expiration_at_ms it still resolves to inactive via the GRANTING_TYPES check.)
+const REVOKING_TYPES = ["EXPIRATION", "SUBSCRIPTION_PAUSED"];
+
+// Statuses meaning auto-renew is off or at risk, for `subscriptions.will_renew`.
+const NON_RENEWING_STATUSES = ["CANCELLATION", "BILLING_ISSUE", ...REVOKING_TYPES];
 
 Deno.serve(async (req) => {
   if (req.method !== "POST") {
@@ -136,7 +152,7 @@ Deno.serve(async (req) => {
       status: statusType,
       is_active: isActive,
       current_period_end: expiresAt,
-      will_renew: isActive && !["CANCELLATION", ...REVOKING_TYPES].includes(statusType),
+      will_renew: isActive && !NON_RENEWING_STATUSES.includes(statusType),
       updated_at: new Date().toISOString(),
     }, { onConflict: "user_id,entitlement" });
     if (subErr) throw new Error(`subscriptions upsert: ${subErr.message}`);
@@ -182,7 +198,7 @@ Deno.serve(async (req) => {
     if (REVOKING_TYPES.includes(event.type)) {
       isActive = false;
     } else if (expiresMs) {
-      isActive = expiresMs > Date.now(); // e.g. CANCELLATION stays active to period end
+      isActive = expiresMs > Date.now(); // CANCELLATION / BILLING_ISSUE stay active to period / grace end
     } else {
       isActive = GRANTING_TYPES.has(event.type); // lifetime / non-renewing
     }

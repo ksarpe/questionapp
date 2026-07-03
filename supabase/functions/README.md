@@ -6,7 +6,7 @@ only these functions (running with the `service_role` key) do.
 
 | Function | Trigger | Writes |
 |----------|---------|--------|
-| `revenuecat-webhook` | RevenueCat webhook (POST) | `billing_events`, `subscriptions`, `profiles.is_premium` |
+| `revenuecat-webhook` (live slug: `revenue-cat-webhook`, hyphenated — see below) | RevenueCat webhook (POST) | `billing_events`, `subscriptions`, `profiles.is_premium` |
 | `admob-ssv` | AdMob SSV callback (GET) | `ad_reward_events` (audit only) |
 | `sync-entitlement` | App, on launch / after purchase (POST, JWT) | `profiles.is_premium` / `premium_until` |
 | `delete-account` | App, Settings → Delete account (POST, JWT) | deletes `auth.users` (cascades to all user data) |
@@ -23,6 +23,12 @@ supabase db push        # applies migrations/20260618120000_init.sql
 supabase secrets set REVENUECAT_WEBHOOK_SECRET="<long-random-secret>"
 
 # Functions — public (Google / RevenueCat call them, not a logged-in user)
+# NOTE: the live RevenueCat webhook is deployed under the slug
+# `revenue-cat-webhook` (hyphenated), not this folder's name
+# `revenuecat-webhook` — deploying with the command below as-is creates a
+# SEPARATE, unused function rather than updating the live one. Confirm the
+# right target slug for your Supabase CLI version before running it (either
+# rename this folder to match, or deploy with an explicit slug argument).
 supabase functions deploy revenuecat-webhook --no-verify-jwt
 supabase functions deploy admob-ssv          --no-verify-jwt
 

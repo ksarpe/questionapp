@@ -8,7 +8,7 @@
 ///   --dart-define=SUPABASE_URL=https://xyz.supabase.co \
 ///   --dart-define=SUPABASE_ANON_KEY=... \
 ///   --dart-define=REVENUECAT_API_KEY=... \
-///   --dart-define=ADMOB_BANNER_ID=...
+///   --dart-define=ADMOB_REWARDED_ID=...
 /// ```
 class AppConfig {
   AppConfig._();
@@ -32,13 +32,6 @@ class AppConfig {
   static const String revenueCatApiKey = String.fromEnvironment(
     'REVENUECAT_API_KEY',
     defaultValue: '',
-  );
-
-  /// Google's public test banner unit id is used as a safe default so the app
-  /// shows test ads until real ids are supplied.
-  static const String admobBannerId = String.fromEnvironment(
-    'ADMOB_BANNER_ID',
-    defaultValue: 'ca-app-pub-3940256099942544/6300978111',
   );
 
   /// Rewarded ad unit shown by the "Unlock next question" sheet.
