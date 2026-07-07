@@ -62,7 +62,7 @@ dependencies:
   # Crash + error reporting. Initialised in main() and centralised behind the
   # Monitoring facade (lib/core/monitoring/monitoring.dart); a no-op when no
   # SENTRY_DSN is provided, so dev/mock builds run untouched. See SENTRY_SETUP.md.
-  sentry_flutter: 9.0.0
+  sentry_flutter: 9.24.0
 
 dev_dependencies:
   flutter_test:
