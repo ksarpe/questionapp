@@ -94,10 +94,7 @@ Future<void> _initBackgroundServices(SharedPreferences prefs) async {
   // but not necessarily a device reboot, and re-scheduling also refreshes the
   // notification text to the user's current language. Runs after the
   // notification plugin is up (it no-ops otherwise).
-  await _guardedInit(
-    'reminder',
-    () => _rescheduleReminderIfEnabled(prefs),
-  );
+  await _guardedInit('reminder', () => _rescheduleReminderIfEnabled(prefs));
 }
 
 /// Runs a startup SDK init defensively so it can never wall the launch.
@@ -114,8 +111,10 @@ Future<void> _guardedInit(String name, Future<void> Function() init) async {
     // Monitoring's offline filter drops timeouts as expected connectivity blips,
     // but a walled init is a real bug we must see (these SDKs don't need the
     // network to initialise, so a timeout means a broken channel, not offline).
-    debugPrint('startup: "$name" did not initialise within '
-        '${_kInitTimeout.inSeconds}s — continuing without it');
+    debugPrint(
+      'startup: "$name" did not initialise within '
+      '${_kInitTimeout.inSeconds}s — continuing without it',
+    );
     await Monitoring.captureException(
       StartupInitException(name, _kInitTimeout),
       stackTrace: StackTrace.current,
