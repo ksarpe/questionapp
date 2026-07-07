@@ -113,71 +113,79 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     return Scaffold(
       backgroundColor: context.colors.background,
       body: SafeArea(
-        child: Column(
-          children: [
-            // Top bar: a quiet "Skip" that jumps to the account choice. Hidden on
-            // the choice page itself (nothing left to skip).
-            SizedBox(
-              height: 48,
-              child: Align(
-                alignment: Alignment.centerRight,
-                child: AnimatedOpacity(
-                  duration: const Duration(milliseconds: 200),
-                  opacity: _isChoicePage ? 0 : 1,
-                  child: TextButton(
-                    onPressed: _isChoicePage ? null : _skip,
-                    style: TextButton.styleFrom(
-                      foregroundColor: context.colors.subtle,
+        // Cap the content width and centre it so cards and buttons don't stretch
+        // edge-to-edge on tablets. Matches the auth sheet's 480 cap; a no-op on
+        // phones, which are narrower.
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 480),
+            child: Column(
+              children: [
+                // Top bar: a quiet "Skip" that jumps to the account choice. Hidden on
+                // the choice page itself (nothing left to skip).
+                SizedBox(
+                  height: 48,
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: AnimatedOpacity(
+                      duration: const Duration(milliseconds: 200),
+                      opacity: _isChoicePage ? 0 : 1,
+                      child: TextButton(
+                        onPressed: _isChoicePage ? null : _skip,
+                        style: TextButton.styleFrom(
+                          foregroundColor: context.colors.subtle,
+                        ),
+                        child: Text(l10n.onboardingSkip),
+                      ),
                     ),
-                    child: Text(l10n.onboardingSkip),
                   ),
                 ),
-              ),
-            ),
-            Expanded(
-              child: PageView(
-                controller: _controller,
-                onPageChanged: (i) => setState(() => _index = i),
-                children: [
-                  ...introCards,
-                  votePage,
-                  notifyPage,
-                  OnboardingChoiceCard(
-                    onStartAnonymous: widget.onFinish,
-                    onSignIn: _signIn,
+                Expanded(
+                  child: PageView(
+                    controller: _controller,
+                    onPageChanged: (i) => setState(() => _index = i),
+                    children: [
+                      ...introCards,
+                      votePage,
+                      notifyPage,
+                      OnboardingChoiceCard(
+                        onStartAnonymous: widget.onFinish,
+                        onSignIn: _signIn,
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ),
-            // Progress dots + the "Next" CTA on intro pages; the choice card
-            // carries its own buttons, so only the dots remain there.
-            Padding(
-              padding: const EdgeInsets.fromLTRB(24, 8, 24, 28),
-              child: Column(
-                children: [
-                  OnboardingDots(count: pageCount, index: _index),
-                  const SizedBox(height: 20),
-                  AnimatedSize(
-                    duration: const Duration(milliseconds: 220),
-                    curve: Curves.easeOut,
-                    // The taste-vote page (its "Continue" revealed after voting),
-                    // the notifications page and the choice page each carry their
-                    // own buttons, so the global "Next" only drives the plain
-                    // intro cards.
-                    child:
-                        (_isChoicePage ||
-                            _index == votePageIndex ||
-                            _index == notifyPageIndex)
-                        ? const SizedBox(width: double.infinity)
-                        : OnboardingPrimaryButton(
-                            label: l10n.onboardingNext,
-                            onPressed: _next,
-                          ),
+                ),
+                // Progress dots + the "Next" CTA on intro pages; the choice card
+                // carries its own buttons, so only the dots remain there.
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 8, 24, 28),
+                  child: Column(
+                    children: [
+                      OnboardingDots(count: pageCount, index: _index),
+                      const SizedBox(height: 20),
+                      AnimatedSize(
+                        duration: const Duration(milliseconds: 220),
+                        curve: Curves.easeOut,
+                        // The taste-vote page (its "Continue" revealed after voting),
+                        // the notifications page and the choice page each carry their
+                        // own buttons, so the global "Next" only drives the plain
+                        // intro cards.
+                        child:
+                            (_isChoicePage ||
+                                _index == votePageIndex ||
+                                _index == notifyPageIndex)
+                            ? const SizedBox(width: double.infinity)
+                            : OnboardingPrimaryButton(
+                                label: l10n.onboardingNext,
+                                onPressed: _next,
+                              ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

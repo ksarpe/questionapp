@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.0+2
+version: 1.0.0+3
 
 environment:
   sdk: ^3.12.1
@@ -159,9 +159,12 @@ flutter_launcher_icons:
   ios: true
   remove_alpha_ios: true
   image_path: "assets/images/icon.png"
-  # Android adaptive icon: a black plate behind the mark. If you'd rather the
-  # mark sit on its own square art, point foreground at a dedicated file.
-  adaptive_icon_background: "#000000"
+  # Android adaptive icon. The foreground is the full orange square (icon.png),
+  # so the background MUST be the same brand orange (#FF751F, sampled from the
+  # icon corner) — otherwise the launcher's round/squircle mask shows the plate
+  # colour around the square and the mark looks like it floats. Matching the
+  # colour makes the whole icon a seamless edge-to-edge orange, like on iOS.
+  adaptive_icon_background: "#FF751F"
   adaptive_icon_foreground: "assets/images/icon.png"
 
 # Native splash (the frame shown before the Flutter engine draws). Matches the

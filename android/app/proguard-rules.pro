@@ -24,3 +24,35 @@
 -keep class androidx.sqlite.** { *; }
 -keep class * extends androidx.room.RoomDatabase { <init>(); }
 -dontwarn androidx.work.**
+
+# --- Startup SDKs (native platform-channel plugins) ----------------------
+# Insurance against the same failure mode as above. Every SDK in main()'s boot
+# sequence talks to native code over a Flutter method channel. If R8 strips or
+# renames a plugin's native handler, the Dart-side `await` on that channel never
+# gets its reply and the app hangs on the splash forever — a release-only stall
+# no Dart try/catch can see. `_startApp` now bounds each init with a timeout so
+# a break degrades gracefully, but keeping these classes means the feature keeps
+# WORKING rather than merely failing quietly. Most ship consumer rules already;
+# these are explicit belt-and-braces for the ones that boot before any UI.
+
+# Sentry (installed first — wraps the whole app, incl. the native crash handler)
+-keep class io.sentry.** { *; }
+-dontwarn io.sentry.**
+
+# Google Mobile Ads + UMP consent — the heaviest native stack (pulls
+# play-services, and WorkManager transitively; see the Room keeps above).
+-keep class com.google.android.gms.ads.** { *; }
+-keep class com.google.android.ump.** { *; }
+-dontwarn com.google.android.gms.**
+
+# RevenueCat (purchases_flutter / purchases_ui_flutter). The native SDK aborts
+# the process on bad state, so a mangled class is especially unforgiving.
+-keep class com.revenuecat.** { *; }
+-dontwarn com.revenuecat.**
+
+# flutter_local_notifications (de)serialises its notification models with Gson
+# via reflection — it needs both its own classes and Gson's generic machinery.
+-keep class com.dexterous.** { *; }
+-keep class com.google.gson.** { *; }
+-keep class * extends com.google.gson.reflect.TypeToken
+-dontwarn com.dexterous.**

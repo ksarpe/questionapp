@@ -1,4 +1,54 @@
-# Store-screenshot exporter
+# Screenshot exporters
+
+Two head-less exporters — no emulator, no backend — write upload-ready PNGs:
+
+- **`export_app_screenshots.dart`** — real in-app screens (daily + vote, feed
+  question, rank ladder, rank poster, PRO history) at **three device sizes**
+  (phone / 7" tablet / 10" tablet). This is what the store listing wants. See
+  ["App-screen exporter"](#app-screen-exporter) below.
+- **`export_store_screenshots.dart`** — just the branded `QuestionShareCard`
+  poster (documented in the rest of this file).
+
+---
+
+## App-screen exporter
+
+```bash
+flutter test tool/export_app_screenshots.dart
+```
+
+Output → `build/store_screenshots/app/<device>/<locale>/NN_name.png`, wiped and
+rewritten per run. Three sizes, all valid for Google Play:
+
+| Device     | logical  | ×dpr | pixels    |
+| ---------- | -------- | ---- | --------- |
+| `phone`    | 360×640  | 3    | 1080×1920 |
+| `tablet7`  | 600×960  | 2    | 1200×1920 |
+| `tablet10` | 800×1280 | 2    | 1600×2560 |
+
+Six screens each: `01_daily_vote`, `02_daily_result`, `03_feed_question`,
+`04_rank_ladder`, `05_rank_share`, `06_history`.
+
+It renders the app's **real** presentational widgets (`StyledQuestionText`,
+`VoteButtonsRow`/`VoteResultsRow`, `RankShareCard`) plus faithful, provider-free
+reconstructions of the surrounding chrome (status chips, rank ladder, history
+table) — so no Supabase/RevenueCat/ads are touched. All screens use the dark
+theme (the app's signature black canvas).
+
+Change the questions / rank / history sample data inline near the top of the
+screen builders in `export_app_screenshots.dart`.
+
+Options (OS env vars): `SCREENSHOT_LOCALES` (default `pl`; e.g. `pl,en`),
+`SCREENSHOT_OUT_DIR` (default `build/store_screenshots/app`).
+
+```powershell
+# Polish + English, both:
+$env:SCREENSHOT_LOCALES='pl,en'; flutter test tool/export_app_screenshots.dart
+```
+
+---
+
+## Store-screenshot exporter (branded poster only)
 
 Renders branded question posters (the **same** `QuestionShareCard` the in-app
 share button shares) to PNGs you can upload to the Play Store / App Store. One
