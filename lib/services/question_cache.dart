@@ -9,6 +9,7 @@ import '../data/models/question.dart';
 import '../data/models/rank.dart';
 import '../data/models/smaczek.dart';
 import '../data/models/user_stats.dart';
+import '../data/models/vote_result.dart';
 
 /// On-device cache of the content the app can legitimately show offline.
 ///
@@ -36,6 +37,7 @@ class QuestionCache {
   static const String _smaczkiPrefix = '${_prefix}smaczki_'; // + locale + _id
   static const String _favIdsPrefix = '${_prefix}fav_ids_'; // + locale
   static const String _favQuestionsPrefix = '${_prefix}fav_qs_'; // + locale
+  static const String _votePrefix = '${_prefix}vote_'; // + questionId
   static const String _statsKey = '${_prefix}stats';
   static const String _ranksKey = '${_prefix}ranks';
   static const String _cachedAsPremiumKey = '${_prefix}cached_as_premium';
@@ -112,6 +114,36 @@ class QuestionCache {
     String locale,
     List<Question> questions,
   ) => _writeList(_favQuestionsPrefix + locale, questions, (q) => q.toJson());
+
+  // ---- Daily vote state ------------------------------------------------------
+  // Not locale-keyed: a vote is on the canonical question id and the community
+  // tally aggregates across every language. Stamped with the voter's id so a
+  // different identity never reads someone else's cached vote. Only the daily is
+  // ever written (one question at a time), so this stays a single small entry.
+
+  /// The last-known vote state for [questionId] IFF it was cached for [userId].
+  /// Returns null when nothing is cached, the blob is malformed, or it belongs
+  /// to a different identity.
+  VoteResult? readVoteState(String questionId, String? userId) {
+    final map = _readMap(_votePrefix + questionId);
+    if (map == null || map['user_id'] != userId) return null;
+    try {
+      return VoteResult.fromJson(map.cast<String, dynamic>());
+    } catch (_) {
+      return null;
+    }
+  }
+
+  /// Remembers [result] for [questionId] under [userId] so a later offline open
+  /// can confirm the user's own vote.
+  Future<void> writeVoteState(
+    String questionId,
+    String? userId,
+    VoteResult result,
+  ) {
+    final map = <String, Object?>{...result.toJson(), 'user_id': userId};
+    return _writeMap(_votePrefix + questionId, map);
+  }
 
   // ---- Stats -----------------------------------------------------------------
 

@@ -321,7 +321,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get historySubtitle =>
-      'See how people voted on previous daily questions.';
+      'See how people voted on the daily questions you answered.';
 
   @override
   String get historyLabel => 'History';
@@ -333,7 +333,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get historyEmptyTitle => 'Nothing here yet';
 
   @override
-  String get historyEmptyBody => 'Previous daily questions will show up here.';
+  String get historyEmptyBody =>
+      'Vote on a daily question and it will show up here.';
 
   @override
   String get historyLoadError => 'Couldn\'t load the history.';
@@ -343,7 +344,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get historyPremiumBody =>
-      'Go PRO to browse every past daily question and see how others voted.';
+      'Go PRO to look back at the daily questions you voted on and see how others voted.';
 
   @override
   String get historyNoVotes => 'No votes';
@@ -566,6 +567,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get offlineBannerLabel => 'You\'re offline';
+
+  @override
+  String get offlineResultsHidden => 'Results return when you\'re back online';
+
+  @override
+  String get yourVote => 'Your vote';
 
   @override
   String get goDeeper => 'GO DEEPER';

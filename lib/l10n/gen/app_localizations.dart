@@ -677,7 +677,7 @@ abstract class AppLocalizations {
   /// No description provided for @historySubtitle.
   ///
   /// In en, this message translates to:
-  /// **'See how people voted on previous daily questions.'**
+  /// **'See how people voted on the daily questions you answered.'**
   String get historySubtitle;
 
   /// No description provided for @historyLabel.
@@ -701,7 +701,7 @@ abstract class AppLocalizations {
   /// No description provided for @historyEmptyBody.
   ///
   /// In en, this message translates to:
-  /// **'Previous daily questions will show up here.'**
+  /// **'Vote on a daily question and it will show up here.'**
   String get historyEmptyBody;
 
   /// No description provided for @historyLoadError.
@@ -719,7 +719,7 @@ abstract class AppLocalizations {
   /// No description provided for @historyPremiumBody.
   ///
   /// In en, this message translates to:
-  /// **'Go PRO to browse every past daily question and see how others voted.'**
+  /// **'Go PRO to look back at the daily questions you voted on and see how others voted.'**
   String get historyPremiumBody;
 
   /// No description provided for @historyNoVotes.
@@ -1087,6 +1087,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You\'re offline'**
   String get offlineBannerLabel;
+
+  /// No description provided for @offlineResultsHidden.
+  ///
+  /// In en, this message translates to:
+  /// **'Results return when you\'re back online'**
+  String get offlineResultsHidden;
+
+  /// No description provided for @yourVote.
+  ///
+  /// In en, this message translates to:
+  /// **'Your vote'**
+  String get yourVote;
 
   /// No description provided for @goDeeper.
   ///

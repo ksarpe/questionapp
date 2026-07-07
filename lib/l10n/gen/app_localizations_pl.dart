@@ -320,7 +320,7 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get historySubtitle =>
-      'Zobacz, jak głosowano w poprzednich pytaniach dnia.';
+      'Zobacz, jak głosowano w pytaniach dnia, na które oddałeś głos.';
 
   @override
   String get historyLabel => 'Historia';
@@ -332,7 +332,8 @@ class AppLocalizationsPl extends AppLocalizations {
   String get historyEmptyTitle => 'Brak historii';
 
   @override
-  String get historyEmptyBody => 'Poprzednie pytania dnia pojawią się tutaj.';
+  String get historyEmptyBody =>
+      'Zagłosuj w pytaniu dnia, a pojawi się ono tutaj.';
 
   @override
   String get historyLoadError => 'Nie udało się wczytać historii.';
@@ -342,7 +343,7 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get historyPremiumBody =>
-      'Przejdź na PRO, aby przeglądać wszystkie poprzednie pytania dnia i zobaczyć, jak głosowali inni.';
+      'Przejdź na PRO, aby wracać do pytań dnia, na które zagłosowałeś, i zobaczyć, jak głosowali inni.';
 
   @override
   String get historyNoVotes => 'Brak głosów';
@@ -570,6 +571,12 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get offlineBannerLabel => 'Jesteś offline';
+
+  @override
+  String get offlineResultsHidden => 'Wyniki wrócą po połączeniu';
+
+  @override
+  String get yourVote => 'Twój głos';
 
   @override
   String get goDeeper => 'WEJDŹ GŁĘBIEJ';

@@ -69,47 +69,129 @@ class VoteButtonsRow extends StatelessWidget {
 /// and a low "40 votes" reads as "nobody's here" and discourages voting. The
 /// percentages alone carry the social signal and look livelier at any scale.
 class VoteResultsRow extends StatelessWidget {
-  const VoteResultsRow({required this.result, super.key});
+  const VoteResultsRow({
+    required this.result,
+    this.communityHidden = false,
+    this.confirmMyVote = false,
+    super.key,
+  });
 
   final VoteResult result;
 
+  /// When true, the community percentages are withheld: we only have an offline
+  /// cached snapshot, so rather than show a possibly-stale split we confirm just
+  /// the user's own side (a dash stands in for each %) and add a caption noting
+  /// the numbers return online. See the daily panel's offline path.
+  final bool communityHidden;
+
+  /// When true, a "Twój głos: TAK/NIE" chip sits under the bars so the user can
+  /// always tell which side they picked — the in-panel highlight alone was too
+  /// easy to miss. Opt-in: the onboarding taste card leaves it off (it has its
+  /// own majority/minority line), the real daily turns it on.
+  final bool confirmMyVote;
+
   @override
   Widget build(BuildContext context) {
+    // The two slanted panels plus a "VS" badge floating over the seam.
+    final panels = SizedBox(
+      height: _kVoteHeight,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: _ResultPanel(
+                  label: context.l10n.voteYes,
+                  pct: result.yesPct,
+                  color: AppTheme.yes,
+                  slant: _Slant.left,
+                  mine: result.myChoice == VoteResult.yes,
+                  showPct: !communityHidden,
+                ),
+              ),
+              const SizedBox(width: 28),
+              Expanded(
+                child: _ResultPanel(
+                  label: context.l10n.voteNo,
+                  pct: result.noPct,
+                  color: AppTheme.no,
+                  slant: _Slant.right,
+                  mine: result.myChoice == VoteResult.no,
+                  showPct: !communityHidden,
+                ),
+              ),
+            ],
+          ),
+          const _VsBadge(),
+        ],
+      ),
+    );
+
+    final showMine = confirmMyVote && result.hasVoted;
+    if (!showMine && !communityHidden) {
+      return ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 320),
+        child: panels,
+      );
+    }
     return ConstrainedBox(
       constraints: const BoxConstraints(maxWidth: 320),
-      // The two slanted panels plus a "VS" badge floating over the seam.
-      child: SizedBox(
-        height: _kVoteHeight,
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: _ResultPanel(
-                    label: context.l10n.voteYes,
-                    pct: result.yesPct,
-                    color: AppTheme.yes,
-                    slant: _Slant.left,
-                    mine: result.myChoice == VoteResult.yes,
-                  ),
-                ),
-                const SizedBox(width: 28),
-                Expanded(
-                  child: _ResultPanel(
-                    label: context.l10n.voteNo,
-                    pct: result.noPct,
-                    color: AppTheme.no,
-                    slant: _Slant.right,
-                    mine: result.myChoice == VoteResult.no,
-                  ),
-                ),
-              ],
-            ),
-            const _VsBadge(),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          panels,
+          // A quiet "Twój głos" sits directly under the tile the user picked —
+          // no chip or background, just a muted caption aligned to that side.
+          if (showMine) ...[
+            const SizedBox(height: 6),
+            _MyVoteCaption(mineIsYes: result.myChoice == VoteResult.yes),
           ],
+          if (communityHidden) ...[
+            const SizedBox(height: 8),
+            Text(
+              context.l10n.offlineResultsHidden,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: context.colors.subtle,
+                fontSize: 11.5,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+/// A muted "Twój głos" caption placed under whichever tile the user chose. It
+/// mirrors the two-column layout of the result bars (same 28px seam gap) so the
+/// label lines up under the picked side rather than floating in the centre.
+class _MyVoteCaption extends StatelessWidget {
+  const _MyVoteCaption({required this.mineIsYes});
+
+  final bool mineIsYes;
+
+  @override
+  Widget build(BuildContext context) {
+    final label = Center(
+      child: Text(
+        context.l10n.yourVote,
+        style: TextStyle(
+          color: context.colors.subtle,
+          fontSize: 11.5,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 0.3,
         ),
       ),
+    );
+    return Row(
+      children: [
+        Expanded(child: mineIsYes ? label : const SizedBox.shrink()),
+        const SizedBox(width: 28),
+        Expanded(child: mineIsYes ? const SizedBox.shrink() : label),
+      ],
     );
   }
 }
@@ -175,6 +257,7 @@ class _ResultPanel extends StatelessWidget {
     required this.color,
     required this.slant,
     required this.mine,
+    this.showPct = true,
   });
 
   final String label;
@@ -183,13 +266,22 @@ class _ResultPanel extends StatelessWidget {
   final _Slant slant;
   final bool mine;
 
+  /// When false the percentage is replaced by a muted dash (offline: we hold no
+  /// trustworthy community split, only the user's own [mine] side).
+  final bool showPct;
+
   @override
   Widget build(BuildContext context) {
+    // Push the two sides apart so the picked one clearly "wins": the chosen
+    // panel gets a stronger fill and full-strength text, the other fades back.
+    final pctColor = !showPct
+        ? color.withValues(alpha: 0.55)
+        : (mine ? color : color.withValues(alpha: 0.62));
     return ClipPath(
       clipper: _SkewClipper(slant),
       child: Container(
         height: _kVoteHeight,
-        color: color.withValues(alpha: mine ? 0.30 : 0.16),
+        color: color.withValues(alpha: mine ? 0.42 : 0.12),
         alignment: Alignment.center,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -200,7 +292,7 @@ class _ResultPanel extends StatelessWidget {
                 Text(
                   label,
                   style: TextStyle(
-                    color: color.withValues(alpha: 0.85),
+                    color: color.withValues(alpha: mine ? 1 : 0.6),
                     fontSize: 11,
                     fontWeight: FontWeight.w800,
                     letterSpacing: 1.5,
@@ -208,14 +300,14 @@ class _ResultPanel extends StatelessWidget {
                 ),
                 if (mine) ...[
                   const SizedBox(width: 4),
-                  Icon(Icons.check_rounded, color: color, size: 13),
+                  Icon(Icons.check_rounded, color: color, size: 14),
                 ],
               ],
             ),
             Text(
-              '$pct%',
+              showPct ? '$pct%' : '–',
               style: TextStyle(
-                color: color,
+                color: pctColor,
                 fontSize: 22,
                 fontWeight: FontWeight.w800,
                 height: 1.1,

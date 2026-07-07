@@ -133,34 +133,22 @@ class _ShareQuestionButtonState extends State<ShareQuestionButton> {
             borderRadius: _radius,
             onTap: _busy ? null : _share,
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 11),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // A small spinner replaces nothing — it slides in to the left
-                  // of the label while the card renders, so the pill keeps its
-                  // shape and the tap clearly "did something".
-                  if (_busy) ...[
-                    SizedBox(
-                      width: 13,
-                      height: 13,
-                      child: CircularProgressIndicator(
+              padding: const EdgeInsets.all(11),
+              child: SizedBox(
+                width: 20,
+                height: 20,
+                // While the card renders, the spinner takes the icon's place so
+                // the pill keeps its shape and the tap clearly "did something".
+                child: _busy
+                    ? CircularProgressIndicator(
                         strokeWidth: 2,
                         color: context.colors.subtle,
+                      )
+                    : Icon(
+                        Icons.ios_share,
+                        size: 20,
+                        color: context.colors.subtle,
                       ),
-                    ),
-                    const SizedBox(width: 9),
-                  ],
-                  Text(
-                    context.l10n.shareLabel,
-                    style: TextStyle(
-                      color: context.colors.subtle,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 0.6,
-                    ),
-                  ),
-                ],
               ),
             ),
           ),

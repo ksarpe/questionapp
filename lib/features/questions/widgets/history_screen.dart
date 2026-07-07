@@ -517,26 +517,15 @@ class HistoryButton extends StatelessWidget {
             borderRadius: _radius,
             onTap: () => openHistory(context),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 11),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.history_rounded,
-                    size: 15,
-                    color: context.colors.subtle,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    context.l10n.historyLabel,
-                    style: TextStyle(
-                      color: context.colors.subtle,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 0.6,
-                    ),
-                  ),
-                ],
+              padding: const EdgeInsets.all(11),
+              child: SizedBox(
+                width: 20,
+                height: 20,
+                child: Icon(
+                  Icons.history_rounded,
+                  size: 20,
+                  color: context.colors.subtle,
+                ),
               ),
             ),
           ),

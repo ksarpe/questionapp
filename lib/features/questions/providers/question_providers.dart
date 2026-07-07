@@ -40,6 +40,9 @@ final questionRepositoryProvider = Provider<QuestionRepository>((ref) {
     cache: ref.watch(questionCacheProvider),
     locale: locale,
     isPremium: ref.watch(isPremiumProvider),
+    // Scopes the cached daily-vote snapshot to this identity so a re-logged /
+    // switched account never reads the previous user's vote offline.
+    userId: ref.watch(sessionProvider.select((s) => s.value?.userId)),
   );
 });
 

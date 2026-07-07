@@ -10,6 +10,7 @@ class VoteResult {
     required this.yesCount,
     required this.noCount,
     this.myChoice,
+    this.fromCache = false,
   });
 
   /// 1 = TAK, 2 = NIE — matches the `choice` column / RPC contract.
@@ -21,6 +22,13 @@ class VoteResult {
 
   /// The caller's vote (1 = TAK, 2 = NIE), or null if they haven't voted.
   final int? myChoice;
+
+  /// True when this result was served from the on-device cache after a failed
+  /// fetch (offline) rather than freshly from the server. It's a serve-time flag
+  /// (never persisted): the daily panel reads it to withhold the possibly-stale
+  /// community split and only confirm the user's own vote. See
+  /// [CachingQuestionRepository.getDailyVoteState].
+  final bool fromCache;
 
   int get total => yesCount + noCount;
 
@@ -46,6 +54,22 @@ class VoteResult {
       myChoice: json['my_choice'] == null ? null : asInt(json['my_choice']),
     );
   }
+
+  /// The counts + the caller's own choice, ready to persist in the on-device
+  /// cache. [fromCache] is deliberately NOT serialised — it's a serve-time tag.
+  Map<String, dynamic> toJson() => {
+    'yes_count': yesCount,
+    'no_count': noCount,
+    'my_choice': myChoice,
+  };
+
+  /// A copy tagged as served from the offline cache (see [fromCache]).
+  VoteResult asCached() => VoteResult(
+    yesCount: yesCount,
+    noCount: noCount,
+    myChoice: myChoice,
+    fromCache: true,
+  );
 
   static const VoteResult empty = VoteResult(yesCount: 0, noCount: 0);
 }

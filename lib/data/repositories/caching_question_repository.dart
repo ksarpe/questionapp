@@ -34,12 +34,17 @@ class CachingQuestionRepository implements QuestionRepository {
     required this.cache,
     required this.locale,
     required this.isPremium,
+    this.userId,
   });
 
   final QuestionRepository inner;
   final QuestionCache cache;
   final String locale;
   final bool isPremium;
+
+  /// The signed-in identity, used to scope the cached daily-vote state so one
+  /// account never reads another's vote. Null for a guest (who can't vote).
+  final String? userId;
 
   @override
   Future<List<Question>> fetchQuestions() async {
@@ -161,10 +166,6 @@ class CachingQuestionRepository implements QuestionRepository {
   @override
   Future<Question?> revealFreeQuestion() => inner.revealFreeQuestion();
 
-  @override
-  Future<VoteResult> getDailyVoteState(String questionId) =>
-      inner.getDailyVoteState(questionId);
-
   // The history's vote tallies are live (they keep changing) and premium-gated,
   // so it goes straight to the server every open rather than serving a stale
   // cache; offline it throws and the sheet shows its retry state.
@@ -172,9 +173,42 @@ class CachingQuestionRepository implements QuestionRepository {
   Future<List<DailyHistoryEntry>> fetchDailyHistory() =>
       inner.fetchDailyHistory();
 
+  // ---- Daily vote state (cache-fallback for the user's OWN vote) -------------
+
+  /// Network-first with a cache fallback, but only for the user's own vote —
+  /// NOT the live community split. On a successful fetch we remember a cast vote
+  /// (identity-scoped) and return it fresh. Offline we serve that snapshot
+  /// tagged [VoteResult.fromCache] so the panel confirms "you voted X" without
+  /// showing a possibly-stale percentage; with nothing cached we rethrow so the
+  /// buttons stay (a guest / not-yet-voted user simply can't vote offline).
   @override
-  Future<VoteResult> castDailyVote(String questionId, int choice) =>
-      inner.castDailyVote(questionId, choice);
+  Future<VoteResult> getDailyVoteState(String questionId) async {
+    try {
+      final fresh = await inner.getDailyVoteState(questionId);
+      if (fresh.hasVoted) {
+        await cache.writeVoteState(questionId, userId, fresh);
+      }
+      return fresh;
+    } catch (e) {
+      if (!isOfflineError(e)) rethrow;
+      final cached = cache.readVoteState(questionId, userId);
+      if (cached != null && cached.hasVoted) return cached.asCached();
+      rethrow;
+    }
+  }
+
+  /// A write — it needs the server, so offline it throws and the caller surfaces
+  /// the "no connection" toast (we deliberately do NOT queue). On success we
+  /// write through so a vote cast right before losing signal is still confirmed
+  /// on the next open.
+  @override
+  Future<VoteResult> castDailyVote(String questionId, int choice) async {
+    final result = await inner.castDailyVote(questionId, choice);
+    if (result.hasVoted) {
+      await cache.writeVoteState(questionId, userId, result);
+    }
+    return result;
+  }
 
   @override
   Future<void> markQuestionSeen(String questionId) =>

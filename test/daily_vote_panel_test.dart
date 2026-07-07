@@ -118,7 +118,39 @@ void main() {
     expect(find.text('VS'), findsOneWidget);
     // The user's own side carries the check mark.
     expect(find.byIcon(Icons.check_rounded), findsOneWidget);
+    // ...and a muted "Twój głos" caption sits under the picked tile.
+    expect(find.text('Twój głos'), findsOneWidget);
   });
+
+  testWidgets(
+    'an offline cached vote confirms my side but withholds the community split',
+    (tester) async {
+      // A snapshot served from cache offline: the user's own vote is known, but
+      // the community split must not be shown (it may be stale).
+      await pumpPanel(
+        tester,
+        session: account(),
+        initial: const VoteResult(
+          yesCount: 61,
+          noCount: 39,
+          myChoice: VoteResult.yes,
+          fromCache: true,
+        ),
+      );
+
+      // My side is still confirmed (check mark + the VS shell), so it reads as
+      // "you voted" rather than an empty gap...
+      expect(find.byKey(const ValueKey('results')), findsOneWidget);
+      expect(find.byIcon(Icons.check_rounded), findsOneWidget);
+      // ...but no percentage leaks — a dash stands in on both sides, with a
+      // caption explaining the numbers return online.
+      expect(find.textContaining('%'), findsNothing);
+      expect(find.text('–'), findsNWidgets(2));
+      expect(find.text('Wyniki wrócą po połączeniu'), findsOneWidget);
+      // The "your vote" caption still shows offline (it's my own data).
+      expect(find.text('Twój głos'), findsOneWidget);
+    },
+  );
 
   testWidgets(
     'after voting, leaving the daily and returning still shows the split — '

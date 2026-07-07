@@ -28,12 +28,13 @@ void main() {
     inner = _FakeRepo();
   });
 
-  CachingQuestionRepository repo({bool premium = false}) =>
+  CachingQuestionRepository repo({bool premium = false, String? userId}) =>
       CachingQuestionRepository(
         inner: inner,
         cache: cache,
         locale: 'pl',
         isPremium: premium,
+        userId: userId,
       );
 
   Question q(String id) =>
@@ -132,6 +133,62 @@ void main() {
     final stats = await r.syncUserState();
     expect(stats?.currentStreak, 4);
   });
+
+  group('daily vote state', () {
+    const voted = VoteResult(yesCount: 61, noCount: 39, myChoice: VoteResult.yes);
+
+    test('serves the cached vote (flagged fromCache) offline', () async {
+      inner.voteState = voted;
+      final r = repo(userId: 'u1');
+
+      // A live fetch warms the cache and is NOT flagged as cached.
+      final live = await r.getDailyVoteState('q1');
+      expect(live.myChoice, VoteResult.yes);
+      expect(live.fromCache, isFalse);
+
+      // Offline: the user's own vote comes back, tagged so the panel withholds
+      // the (possibly stale) community split.
+      inner.error = const SocketException('offline');
+      final cached = await r.getDailyVoteState('q1');
+      expect(cached.myChoice, VoteResult.yes);
+      expect(cached.fromCache, isTrue);
+    });
+
+    test('never serves another identity\'s cached vote', () async {
+      inner.voteState = voted;
+      await repo(userId: 'u1').getDailyVoteState('q1'); // u1 warms the cache
+
+      // A different account, offline, must not read u1's vote — it rethrows.
+      inner.error = const SocketException('offline');
+      await expectLater(
+        repo(userId: 'u2').getDailyVoteState('q1'),
+        throwsA(isA<SocketException>()),
+      );
+    });
+
+    test('rethrows offline when the user has not voted yet', () async {
+      inner.voteState = VoteResult.empty; // no myChoice → nothing worth caching
+      final r = repo(userId: 'u1');
+      await r.getDailyVoteState('q1');
+
+      inner.error = const SocketException('offline');
+      await expectLater(
+        r.getDailyVoteState('q1'),
+        throwsA(isA<SocketException>()),
+      );
+    });
+
+    test('write-through on cast confirms the vote on a later offline open', () async {
+      inner.castResult = voted;
+      final r = repo(userId: 'u1');
+      await r.castDailyVote('q1', VoteResult.yes); // warms the cache
+
+      inner.error = const SocketException('offline');
+      final cached = await r.getDailyVoteState('q1');
+      expect(cached.myChoice, VoteResult.yes);
+      expect(cached.fromCache, isTrue);
+    });
+  });
 }
 
 /// A configurable in-memory [QuestionRepository]: every read returns its canned
@@ -146,6 +203,8 @@ class _FakeRepo implements QuestionRepository {
   UserStats? stats;
   Set<String> favoriteIds = const {};
   List<Question> favoriteQuestions = const [];
+  VoteResult voteState = VoteResult.empty;
+  VoteResult castResult = VoteResult.empty;
 
   T _read<T>(T value) {
     if (error != null) throw error!;
@@ -186,12 +245,12 @@ class _FakeRepo implements QuestionRepository {
   Future<Question?> revealFreeQuestion() => throw UnimplementedError();
 
   @override
-  Future<VoteResult> getDailyVoteState(String questionId) =>
-      throw UnimplementedError();
+  Future<VoteResult> getDailyVoteState(String questionId) async =>
+      _read(voteState);
 
   @override
-  Future<VoteResult> castDailyVote(String questionId, int choice) =>
-      throw UnimplementedError();
+  Future<VoteResult> castDailyVote(String questionId, int choice) async =>
+      _read(castResult);
 
   @override
   Future<void> markQuestionSeen(String questionId) async {}

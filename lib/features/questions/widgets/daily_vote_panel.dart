@@ -164,7 +164,15 @@ class _DailyVotePanelState extends ConsumerState<DailyVotePanel> {
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 250),
       child: result.hasVoted
-          ? VoteResultsRow(key: const ValueKey('results'), result: result)
+          ? VoteResultsRow(
+              key: const ValueKey('results'),
+              result: result,
+              // Always spell out which side was mine under the bars...
+              confirmMyVote: true,
+              // ...and offline, withhold the (possibly stale) community split
+              // until we're back online.
+              communityHidden: result.fromCache,
+            )
           : VoteButtonsRow(
               key: const ValueKey('buttons'),
               busy: _busy,

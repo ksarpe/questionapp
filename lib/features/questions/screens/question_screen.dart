@@ -91,6 +91,9 @@ class QuestionScreen extends ConsumerWidget {
         ref.invalidate(questionsProvider);
         ref.invalidate(todaysDailyQuestionProvider);
         ref.invalidate(userStatsProvider);
+        // Swap the offline "you voted X" snapshot back for the live community
+        // split now that we can reach the server.
+        ref.invalidate(dailyVoteStateProvider);
       }
     });
 

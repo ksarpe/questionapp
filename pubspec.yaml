@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.0+3
+version: 1.0.0+5
 
 environment:
   sdk: ^3.12.1
@@ -167,11 +167,20 @@ flutter_launcher_icons:
   adaptive_icon_background: "#FF751F"
   adaptive_icon_foreground: "assets/images/icon.png"
 
-# Native splash (the frame shown before the Flutter engine draws). Matches the
-# app's black canvas; SparkLogo takes over once Flutter is up.
+# Native splash (the frame shown before the Flutter engine draws). Background is
+# the brand orange (#FF751F, the same flat orange as icon.png / the adaptive icon
+# plate) so the mark sits edge-to-edge with no visible seam — on a black canvas
+# the logo's rounded corners showed the black and Android 12's circular icon mask
+# clipped the badge unpleasantly. On Android 12+ the system masks the splash icon
+# to a circle and only shows the inner ~2/3 (outer third is always clipped), so a
+# full-bleed "D" gets its edges chopped. splash_icon_android12.png is icon.png with
+# the "D" scaled to ~45% and re-centred on the same orange so the whole letter sits
+# inside that safe circle — the orange padding is invisible (same #FF751F).
+# Regenerate it with scripts/gen_android12_splash.py, not by hand. SparkLogo takes
+# over once Flutter is up.
 flutter_native_splash:
-  color: "#000000"
+  color: "#FF751F"
   image: assets/images/logo.png
   android_12:
-    color: "#000000"
-    image: assets/images/logo.png
+    color: "#FF751F"
+    image: assets/images/splash_icon_android12.png

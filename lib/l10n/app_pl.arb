@@ -113,14 +113,14 @@
   "favoriteError": "Nie udało się zaktualizować ulubionych.",
 
   "historyTitle": "Historia pytań",
-  "historySubtitle": "Zobacz, jak głosowano w poprzednich pytaniach dnia.",
+  "historySubtitle": "Zobacz, jak głosowano w pytaniach dnia, na które oddałeś głos.",
   "historyLabel": "Historia",
   "historyTooltip": "Historia pytań",
   "historyEmptyTitle": "Brak historii",
-  "historyEmptyBody": "Poprzednie pytania dnia pojawią się tutaj.",
+  "historyEmptyBody": "Zagłosuj w pytaniu dnia, a pojawi się ono tutaj.",
   "historyLoadError": "Nie udało się wczytać historii.",
   "historyPremiumTitle": "Historia to funkcja PRO",
-  "historyPremiumBody": "Przejdź na PRO, aby przeglądać wszystkie poprzednie pytania dnia i zobaczyć, jak głosowali inni.",
+  "historyPremiumBody": "Przejdź na PRO, aby wracać do pytań dnia, na które zagłosowałeś, i zobaczyć, jak głosowali inni.",
   "historyNoVotes": "Brak głosów",
   "aboutVersion": "Wersja {version} ({build})",
   "@aboutVersion": {
@@ -189,6 +189,8 @@
   "loadErrorTitle": "Nie udało się załadować pytań",
   "loadErrorBody": "Sprawdź połączenie z internetem i spróbuj ponownie.",
   "offlineBannerLabel": "Jesteś offline",
+  "offlineResultsHidden": "Wyniki wrócą po połączeniu",
+  "yourVote": "Twój głos",
 
   "goDeeper": "WEJDŹ GŁĘBIEJ",
   "dailyBadge": "PYTANIE DNIA",
