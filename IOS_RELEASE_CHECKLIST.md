@@ -135,6 +135,20 @@ Purchase nie wymaga wpisu w entitlements; profil generowany z App ID już ją za
       zmienne (każda jako Secure): `SUPABASE_URL`, `SUPABASE_ANON_KEY`,
       `REVENUECAT_API_KEY_IOS` (appl_…), `ADMOB_REWARDED_ID_IOS`,
       `GOOGLE_SERVER_CLIENT_ID`, `SENTRY_DSN`
+- [ ] **Code signing identities** (WYMAGANE — `ios_signing` w yaml dopasowuje pliki wgrane
+      do Codemagica, nie tworzy ich samo; bez tego build kończy się błędem
+      "No matching profiles found"):
+  - [ ] Codemagic → Team settings → **Code signing identities** → zakładka **iOS certificates**
+        → **Generate certificate** → Reference name np. `debatly-distribution`, typ
+        **Apple Distribution**, wybierz klucz `AppStoreConnect` → Create certificate
+  - [ ] developer.apple.com → **Certificates, Identifiers & Profiles → Profiles** → **+** →
+        sekcja Distribution: **App Store Connect** → Continue → App ID
+        `com.aknsoftware.debatly` → Continue → zaznacz certyfikat Apple Distribution
+        (ten z poprzedniego kroku będzie na liście) → Continue → nazwa np.
+        `Debatly App Store` → Generate (pliku nie trzeba pobierać)
+  - [ ] Codemagic → Code signing identities → zakładka **iOS provisioning profiles** →
+        **Fetch profiles** → zaznacz `Debatly App Store` → Reference name np.
+        `debatly-app-store` → Download selected
 - [ ] Push repo na GitHub (codemagic.yaml + entitlements muszą być w repo)
 - [ ] **Start new build** → workflow `ios-testflight` → build ląduje w TestFlight
 - [ ] Kolejne uploady: podbij `+N` w `version:` w pubspec.yaml (numer builda musi rosnąć)
