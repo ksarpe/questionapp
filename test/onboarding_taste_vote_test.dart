@@ -13,9 +13,14 @@ import 'support/localized_test_app.dart';
 /// every step uses explicit `pump`s past the page/switcher transitions instead
 /// (the same pattern as widget_test's onboarding flow).
 void main() {
-  // The page transition is 320ms; pump comfortably past it.
+  // The page transition is 320ms; pump comfortably past it. A second timed pump
+  // lets the PageView's post-animation ballistic settle finish — until that
+  // frame lands the incoming page's buttons stay non-hit-testable, so a tap on
+  // the freshly-arrived taste card would silently miss. (pumpAndSettle can't be
+  // used here: the welcome card's perpetual glow means it never returns.)
   Future<void> settlePage(WidgetTester tester) async {
     await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
     await tester.pump(const Duration(milliseconds: 400));
   }
 
@@ -24,6 +29,16 @@ void main() {
       LocalizedTestApp(home: OnboardingScreen(onFinish: () {})),
     );
     await settlePage(tester);
+  }
+
+  // The post-vote card and the reminder card are taller than the 600px test
+  // viewport, so their bottom CTAs render below the fold inside the card's
+  // scroll view — scroll them in first, or the tap lands off-screen and misses.
+  Future<void> tapText(WidgetTester tester, String label) async {
+    final finder = find.text(label);
+    await tester.ensureVisible(finder);
+    await tester.pump();
+    await tester.tap(finder);
   }
 
   // Walks welcome → daily → the taste-vote page via the bottom "Next" CTA.
@@ -78,7 +93,7 @@ void main() {
 
     // The card's own "Continue" (the bottom Next is suppressed on this page)
     // lands on the reminder opt-in, not yet the account choice.
-    await tester.tap(find.text('Dalej'));
+    await tapText(tester, 'Dalej');
     await settlePage(tester);
 
     expect(find.text('Nie przegap pytania dnia'), findsOneWidget);
@@ -86,7 +101,7 @@ void main() {
     expect(find.text('Zacznij anonimowo'), findsNothing);
 
     // "Not now" carries the user on to the account choice without enabling.
-    await tester.tap(find.text('Nie teraz'));
+    await tapText(tester, 'Nie teraz');
     await settlePage(tester);
 
     expect(find.text('Zacznij anonimowo'), findsOneWidget);
@@ -103,10 +118,10 @@ void main() {
 
     await tester.tap(find.text('TAK'));
     await settlePage(tester);
-    await tester.tap(find.text('Dalej')); // taste vote → reminder ask
+    await tapText(tester, 'Dalej'); // taste vote → reminder ask
     await settlePage(tester);
 
-    await tester.tap(find.text('Włącz przypomnienia'));
+    await tapText(tester, 'Włącz przypomnienia');
     await settlePage(tester);
 
     expect(find.text('Zacznij anonimowo'), findsOneWidget);
