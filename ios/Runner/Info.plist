@@ -241,6 +241,19 @@
 		<string>$(FLUTTER_BUILD_NUMBER)</string>
 		<key>LSRequiresIPhoneOS</key>
 		<true/>
+		<!-- Export compliance: the app only uses standard HTTPS/TLS (exempt), so
+	     answer Apple's encryption question once here — otherwise every TestFlight
+	     upload sits blocked on a manual "Manage Compliance" prompt in App Store
+	     Connect. -->
+		<key>ITSAppUsesNonExemptEncryption</key>
+		<false/>
+		<!-- Google Sign-In (google_sign_in_ios). GIDClientID is the iOS OAuth client
+	     id from Google Cloud Console (public, not a secret) — the plugin reads it
+	     from here because Dart only passes serverClientId (the web client id, via
+	     GOOGLE_SERVER_CLIENT_ID). The URL scheme below is its reversed form, used
+	     by Google to return control to the app after the sign-in sheet. -->
+		<key>GIDClientID</key>
+		<string>450651345001-fpa83gdt355toldlte4asfdsch1jc2m4.apps.googleusercontent.com</string>
 		<key>CFBundleURLTypes</key>
 		<array>
 			<dict>

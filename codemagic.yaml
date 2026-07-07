@@ -1,0 +1,70 @@
+# Codemagic CI — build iOS bez Maca i publikacja do TestFlight.
+#
+# Wymagana jednorazowa konfiguracja w UI Codemagic (szczegóły: IOS_RELEASE_CHECKLIST.md, sekcja 11):
+#
+# 1. codemagic.io → zaloguj przez GitHub → Add application → wybierz to repo → Flutter App.
+# 2. Team settings (ikona zębatki przy teamie) → Integrations → Developer Portal →
+#    dodaj klucz App Store Connect API (rola App Manager) i nazwij go DOKŁADNIE:
+#    "AppStoreConnect" (nazwa musi zgadzać się z `integrations.app_store_connect` poniżej).
+# 3. W aplikacji → Environment variables → utwórz grupę "debatly_secrets" i dodaj
+#    (każdą jako Secure):
+#      SUPABASE_URL              — https://….supabase.co
+#      SUPABASE_ANON_KEY         — anon key z Supabase
+#      REVENUECAT_API_KEY_IOS    — klucz appl_… (RevenueCat → apka App Store → Public API Key)
+#      ADMOB_REWARDED_ID_IOS     — iOS-owy rewarded ad unit (ca-app-pub-…/…)
+#      GOOGLE_SERVER_CLIENT_ID   — ten sam web client ID co na Androidzie
+#      SENTRY_DSN                — DSN z Sentry
+# 4. Start new build → workflow "ios-testflight".
+#
+# Numer builda bierze się z pubspec.yaml (wersja `1.0.0+N`) — każdy kolejny upload
+# do TestFlight wymaga podbicia N.
+
+workflows:
+  ios-testflight:
+    name: iOS -> TestFlight
+    instance_type: mac_mini_m2
+    max_build_duration: 60
+    integrations:
+      app_store_connect: AppStoreConnect
+    environment:
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+      # Automatyczne podpisywanie: Codemagic sam tworzy/pobiera certyfikat dystrybucyjny
+      # i provisioning profile dla bundle ID przez App Store Connect API — zero Xcode.
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.aknsoftware.debatly
+      groups:
+        - debatly_secrets
+    scripts:
+      - name: Flutter packages
+        script: flutter pub get
+      - name: Apply signing profiles to Xcode project
+        script: xcode-project use-profiles
+      - name: Build IPA
+        script: |
+          flutter build ipa --release \
+            --export-options-plist=/Users/builder/export_options.plist \
+            --dart-define=SUPABASE_URL=$SUPABASE_URL \
+            --dart-define=SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY \
+            --dart-define=REVENUECAT_API_KEY=$REVENUECAT_API_KEY_IOS \
+            --dart-define=ADMOB_REWARDED_ID=$ADMOB_REWARDED_ID_IOS \
+            --dart-define=GOOGLE_SERVER_CLIENT_ID=$GOOGLE_SERVER_CLIENT_ID \
+            --dart-define=SENTRY_DSN=$SENTRY_DSN \
+            --dart-define=SENTRY_ENVIRONMENT=production
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+    publishing:
+      app_store_connect:
+        auth: integration
+        # Upload do TestFlight po udanym buildzie; do App Store wysyłasz ręcznie
+        # z App Store Connect, kiedy wersja jest gotowa.
+        submit_to_testflight: true
+      email:
+        recipients:
+          - 229kasper@gmail.com
+        notify:
+          success: true
+          failure: true

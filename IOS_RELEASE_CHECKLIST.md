@@ -4,8 +4,9 @@ Bundle ID: `com.aknsoftware.debatly`. Konto Apple Developer zaakceptowane 2026-0
 Kolejność sekcji = zalecana kolejność wykonywania. Sekcja 2 (umowy) blokuje działanie
 subskrypcji, więc zrób ją najpierw — reszta może iść równolegle.
 
-Uwaga: build i upload apki wymagają Maca z Xcode (sekcje 11–12). Wszystko wcześniejsze
-(portale) da się wyklikać z dowolnej przeglądarki.
+Uwaga: Mac NIE jest potrzebny — build i upload robi Codemagic (sekcja 11,
+konfiguracja w `codemagic.yaml`). Do testów potrzebny jest fizyczny iPhone
+z TestFlight. Wszystkie portale wyklikasz z dowolnej przeglądarki.
 
 ---
 
@@ -109,23 +110,37 @@ Apka iOS w AdMob już istnieje (app ID `ca-app-pub-7626099438648527~6955416427` 
 
 Kod w apce już jest (`sign_in_with_apple`); Apple WYMAGA tego logowania, skoro jest Google (guideline 4.8).
 
-- [ ] Capability na App ID włączona w sekcji 1 ✅
-- [ ] Na Macu w Xcode: otwórz `ios/Runner.xcworkspace` → target **Runner** → **Signing & Capabilities** → **+ Capability** → **Sign in with Apple**
+- [x] Capability na App ID włączona w sekcji 1
+- [x] Entitlement w projekcie: `ios/Runner/Runner.entitlements` wpięty w `project.pbxproj`
+      (`CODE_SIGN_ENTITLEMENTS` w Debug/Release/Profile) — zrobione z Windowsa 2026-07-07,
+      Xcode niepotrzebny
 - [ ] Supabase Dashboard → **Authentication → Sign In / Up → Apple** → Enable
 - [ ] W polu **Authorized Client IDs** wpisz `com.aknsoftware.debatly` (dla natywnego flow nie trzeba Services ID ani secretu — te są tylko do web OAuth)
-- [ ] Sprawdź na urządzeniu/symulatorze, że przycisk Apple faktycznie renderuje się na iOS
+- [ ] Sprawdź na urządzeniu (TestFlight), że przycisk Apple faktycznie renderuje się na iOS
 
-## 11. Xcode — podpisywanie i build (Mac)
+## 11. Build i upload bez Maca — Codemagic
 
-- [ ] Xcode → **Settings → Accounts** → **+** → zaloguj Apple ID konta developerskiego
-- [ ] Otwórz `ios/Runner.xcworkspace` → target Runner → **Signing & Capabilities**
-- [ ] Team: wybierz swój team; **Automatically manage signing** ✓
-- [ ] **+ Capability** → **In-App Purchase** (obok Sign in with Apple z sekcji 10)
-- [ ] `flutter build ipa` z pełnym zestawem dart-define:
-  `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `REVENUECAT_API_KEY=appl_…` (iOS-owy!),
-  `ADMOB_REWARDED_ID` (iOS-owy unit z sekcji 8), `GOOGLE_SERVER_CLIENT_ID`, `SENTRY_DSN`
-- [ ] Upload: Xcode → Window → **Organizer** → Distribute App → App Store Connect
-  (alternatywnie: aplikacja **Transporter** + plik `.ipa`)
+Konfiguracja workflow jest w repo: `codemagic.yaml` (workflow `ios-testflight`).
+Podpisywanie jest w pełni automatyczne (Codemagic tworzy certyfikat i provisioning
+profile przez App Store Connect API) — kroki Xcode są zbędne. Capability In-App
+Purchase nie wymaga wpisu w entitlements; profil generowany z App ID już ją zawiera.
+
+- [ ] App Store Connect → **Users and Access → Integrations → App Store Connect API** →
+      **Generate API Key**, rola **App Manager** → pobierz `.p8` (tylko raz!), zanotuj
+      Key ID + Issuer ID. UWAGA: to INNY klucz niż In-App Purchase Key z sekcji 5
+- [ ] codemagic.io → zaloguj przez GitHub → **Add application** → wybierz repo → Flutter App
+- [ ] Team settings (zębatka) → **Integrations → Developer Portal** → dodaj klucz z
+      poprzedniego kroku pod nazwą dokładnie `AppStoreConnect` (musi zgadzać się z yaml)
+- [ ] W aplikacji na Codemagic → **Environment variables** → grupa `debatly_secrets`,
+      zmienne (każda jako Secure): `SUPABASE_URL`, `SUPABASE_ANON_KEY`,
+      `REVENUECAT_API_KEY_IOS` (appl_…), `ADMOB_REWARDED_ID_IOS`,
+      `GOOGLE_SERVER_CLIENT_ID`, `SENTRY_DSN`
+- [ ] Push repo na GitHub (codemagic.yaml + entitlements muszą być w repo)
+- [ ] **Start new build** → workflow `ios-testflight` → build ląduje w TestFlight
+- [ ] Kolejne uploady: podbij `+N` w `version:` w pubspec.yaml (numer builda musi rosnąć)
+
+Alternatywy, gdyby CI nie wystarczyło (debugowanie natywne): wynajem Maca w chmurze
+(MacinCloud/MacStadium, ~100–200 zł/mies.) albo Mac znajomego na godzinę.
 
 ## 12. Testowanie — sandbox + TestFlight
 
