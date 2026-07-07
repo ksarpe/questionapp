@@ -16,8 +16,10 @@
 #      SENTRY_DSN                — DSN z Sentry
 # 4. Start new build → workflow "ios-testflight".
 #
-# Numer builda bierze się z pubspec.yaml (wersja `1.0.0+N`) — każdy kolejny upload
-# do TestFlight wymaga podbicia N.
+# Numer builda (CFBundleVersion) bierze się z auto-inkrementującego licznika
+# Codemagic ($BUILD_NUMBER) — każdy build dostaje unikalny, rosnący numer, więc
+# nie trzeba go ręcznie podbijać w pubspec. Nazwa wersji
+# (CFBundleShortVersionString) pochodzi z pubspec.yaml (pole `version:`, np. 1.0.1).
 
 workflows:
   ios-testflight:
@@ -45,6 +47,7 @@ workflows:
       - name: Build IPA
         script: |
           flutter build ipa --release \
+            --build-number=$BUILD_NUMBER \
             --export-options-plist=/Users/builder/export_options.plist \
             --dart-define=SUPABASE_URL=$SUPABASE_URL \
             --dart-define=SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY \
@@ -64,7 +67,7 @@ workflows:
         submit_to_testflight: true
       email:
         recipients:
-          - 229kasper@gmail.com
+          - kasper@aknsoftware.com
         notify:
           success: true
           failure: true

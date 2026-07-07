@@ -135,7 +135,11 @@ void main() {
   });
 
   group('daily vote state', () {
-    const voted = VoteResult(yesCount: 61, noCount: 39, myChoice: VoteResult.yes);
+    const voted = VoteResult(
+      yesCount: 61,
+      noCount: 39,
+      myChoice: VoteResult.yes,
+    );
 
     test('serves the cached vote (flagged fromCache) offline', () async {
       inner.voteState = voted;
@@ -178,16 +182,19 @@ void main() {
       );
     });
 
-    test('write-through on cast confirms the vote on a later offline open', () async {
-      inner.castResult = voted;
-      final r = repo(userId: 'u1');
-      await r.castDailyVote('q1', VoteResult.yes); // warms the cache
+    test(
+      'write-through on cast confirms the vote on a later offline open',
+      () async {
+        inner.castResult = voted;
+        final r = repo(userId: 'u1');
+        await r.castDailyVote('q1', VoteResult.yes); // warms the cache
 
-      inner.error = const SocketException('offline');
-      final cached = await r.getDailyVoteState('q1');
-      expect(cached.myChoice, VoteResult.yes);
-      expect(cached.fromCache, isTrue);
-    });
+        inner.error = const SocketException('offline');
+        final cached = await r.getDailyVoteState('q1');
+        expect(cached.myChoice, VoteResult.yes);
+        expect(cached.fromCache, isTrue);
+      },
+    );
   });
 }
 

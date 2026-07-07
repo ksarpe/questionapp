@@ -40,8 +40,18 @@ android {
         // default if it is lower.
         minSdk = maxOf(flutter.minSdkVersion, 24)
         targetSdk = flutter.targetSdkVersion
-        versionCode = flutter.versionCode
+        // Google Play requires a strictly-increasing integer versionCode on
+        // every upload. Instead of hand-maintaining a "+buildNumber" in
+        // pubspec.yaml, derive it from the semantic versionName so you only
+        // ever bump "x.y.z" (e.g. 1.0.1 -> 1.0.2). Scheme leaves room for
+        // .999 minor/patch: MAJOR*1_000_000 + MINOR*1_000 + PATCH.
         versionName = flutter.versionName
+        versionCode = flutter.versionName.split(".").let { parts ->
+            val major = parts.getOrNull(0)?.toIntOrNull() ?: 0
+            val minor = parts.getOrNull(1)?.toIntOrNull() ?: 0
+            val patch = parts.getOrNull(2)?.toIntOrNull() ?: 0
+            major * 1_000_000 + minor * 1_000 + patch
+        }
     }
 
     signingConfigs {
