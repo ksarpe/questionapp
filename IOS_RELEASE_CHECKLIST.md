@@ -168,7 +168,7 @@ Alternatywy, gdyby CI nie wystarczyło (debugowanie natywne): wynajem Maca w chm
 ## 13. Fiszka App Store — przed wysłaniem do review
 
 - [ ] Screenshoty 6.9"/6.7" (i starsze rozmiary jeśli wymagane) — jest `tool/export_app_screenshots.dart`
-- [ ] **App Privacy** (nutrition labels): identyfikatory (IDFA — reklamy), email (konto), historia zakupów; **Tracking = Yes** (AdMob + ATT)
+- [ ] **App Privacy** (nutrition labels): identyfikatory (IDFA — reklamy), email (konto), historia zakupów; **Tracking = Yes** (AdMob + ATT). Musi być SPÓJNE z manifestem `ios/Runner/PrivacyInfo.xcprivacy` (już w repo, wpięty w target Runner) — jeśli zmienisz etykiety, zaktualizuj też manifest
 - [ ] Privacy Policy URL: https://debatly.app/privacy
 - [ ] Auto-odnawialne subskrypcje: link do **Terms of Use (EULA)** w opisie apki albo w polu EULA — Apple to egzekwuje (https://debatly.app/terms)
 - [ ] **App Review Information**: konto demo (email + hasło działającego konta) + notka, że darmowy user widzi 1 pytanie dziennie

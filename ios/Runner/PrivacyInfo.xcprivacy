@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  App-level privacy manifest for the Runner target.
+
+  Third-party SDKs (Google Mobile Ads, RevenueCat, Sentry, Supabase, path_provider,
+  shared_preferences, …) each ship their OWN PrivacyInfo.xcprivacy inside their pods;
+  Apple aggregates all of them into the App Privacy Report. This file covers the
+  APP's own first-party posture so the binary is never flagged with ITMS-91053
+  ("missing privacy manifest") for statically-linked required-reason API symbols.
+
+  Keep this consistent with the App Store Connect "App Privacy" nutrition labels
+  (see IOS_RELEASE_CHECKLIST.md §13): Tracking = Yes (AdMob/IDFA), plus email,
+  purchase history and crash data.
+-->
+<plist version="1.0">
+<dict>
+	<!-- The app uses the IDFA via AdMob to deliver/measure personalised ads, which
+	     Apple classes as tracking. Gated at runtime behind the ATT prompt
+	     (NSUserTrackingUsageDescription in Info.plist). -->
+	<key>NSPrivacyTracking</key>
+	<true/>
+
+	<!-- Tracking domains are enumerated by the Google Mobile Ads SDK's own manifest;
+	     the app's first-party code initiates no tracking connections of its own. -->
+	<key>NSPrivacyTrackingDomains</key>
+	<array/>
+
+	<key>NSPrivacyCollectedDataTypes</key>
+	<array>
+		<!-- Account email (sign-in via Supabase). Linked to the user, not used for
+		     tracking, only for app functionality. -->
+		<dict>
+			<key>NSPrivacyCollectedDataType</key>
+			<string>NSPrivacyCollectedDataTypeEmailAddress</string>
+			<key>NSPrivacyCollectedDataTypeLinked</key>
+			<true/>
+			<key>NSPrivacyCollectedDataTypeTracking</key>
+			<false/>
+			<key>NSPrivacyCollectedDataTypePurposes</key>
+			<array>
+				<string>NSPrivacyCollectedDataTypePurposeAppFunctionality</string>
+			</array>
+		</dict>
+		<!-- Device identifier (IDFA) used by AdMob for third-party advertising; this
+		     is the tracking data type. -->
+		<dict>
+			<key>NSPrivacyCollectedDataType</key>
+			<string>NSPrivacyCollectedDataTypeDeviceID</string>
+			<key>NSPrivacyCollectedDataTypeLinked</key>
+			<true/>
+			<key>NSPrivacyCollectedDataTypeTracking</key>
+			<true/>
+			<key>NSPrivacyCollectedDataTypePurposes</key>
+			<array>
+				<string>NSPrivacyCollectedDataTypePurposeThirdPartyAdvertising</string>
+			</array>
+		</dict>
+		<!-- Purchase / subscription status (RevenueCat + StoreKit). Linked, not
+		     tracking, app functionality only. -->
+		<dict>
+			<key>NSPrivacyCollectedDataType</key>
+			<string>NSPrivacyCollectedDataTypePurchaseHistory</string>
+			<key>NSPrivacyCollectedDataTypeLinked</key>
+			<true/>
+			<key>NSPrivacyCollectedDataTypeTracking</key>
+			<false/>
+			<key>NSPrivacyCollectedDataTypePurposes</key>
+			<array>
+				<string>NSPrivacyCollectedDataTypePurposeAppFunctionality</string>
+			</array>
+		</dict>
+		<!-- Crash diagnostics (Sentry). Not linked to identity, not tracking. -->
+		<dict>
+			<key>NSPrivacyCollectedDataType</key>
+			<string>NSPrivacyCollectedDataTypeCrashData</string>
+			<key>NSPrivacyCollectedDataTypeLinked</key>
+			<false/>
+			<key>NSPrivacyCollectedDataTypeTracking</key>
+			<false/>
+			<key>NSPrivacyCollectedDataTypePurposes</key>
+			<array>
+				<string>NSPrivacyCollectedDataTypePurposeAppFunctionality</string>
+			</array>
+		</dict>
+	</array>
+
+	<!-- Required-reason APIs. Declared defensively for the categories most commonly
+	     reached through first-party paths (persisting settings, reading cached-file
+	     timestamps for the offline catalog). -->
+	<key>NSPrivacyAccessedAPITypes</key>
+	<array>
+		<dict>
+			<key>NSPrivacyAccessedAPIType</key>
+			<string>NSPrivacyAccessedAPICategoryUserDefaults</string>
+			<key>NSPrivacyAccessedAPITypeReasons</key>
+			<array>
+				<string>CA92.1</string>
+			</array>
+		</dict>
+		<dict>
+			<key>NSPrivacyAccessedAPIType</key>
+			<string>NSPrivacyAccessedAPICategoryFileTimestamp</string>
+			<key>NSPrivacyAccessedAPITypeReasons</key>
+			<array>
+				<string>C617.1</string>
+			</array>
+		</dict>
+	</array>
+</dict>
+</plist>
