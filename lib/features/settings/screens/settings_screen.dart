@@ -229,17 +229,18 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
     if (_signingOut) return;
     setState(() => _signingOut = true);
 
-    // signOut() fires Supabase's `signedOut` event, which the session's auth
-    // listener turns into a single flash-free refresh() — re-running
-    // ensureSignedIn to mint a fresh guest. We deliberately do NOT also
-    // `invalidate(sessionProvider)` here: invalidate flips the session to
-    // AsyncValue.loading() (nulling userId mid-reload), so the QuestionScreen
-    // identity listener fires on account→null→guest instead of a clean
-    // account→guest — wiping the feed and flashing the spinner several times
-    // before it settles. Letting the listener own the reload gives one smooth
-    // transition with a single loader.
+    // Await the FULL sign-out + reload-into-guest before leaving Settings, so we
+    // pop onto a home screen that already shows the guest rather than the stale
+    // signed-in view that then reloads in the background (the visible "double
+    // reload" on sign-out). signOutAndReload owns the reload — re-running
+    // ensureSignedIn to mint a fresh guest — and suppresses the auth listener's
+    // duplicate refresh, so this is one clean transition with a single loader.
+    // We deliberately do NOT `invalidate(sessionProvider)`: that flips the
+    // session to AsyncValue.loading() (nulling userId mid-reload), tripping the
+    // QuestionScreen identity listener on account→null→guest and flashing the
+    // feed instead of a clean account→guest.
     try {
-      await SupabaseService.signOut();
+      await ref.read(sessionProvider.notifier).signOutAndReload();
     } catch (e) {
       // signOut() already falls back to a local sign-out, so getting here means
       // even that failed — surface it instead of leaving a dead button.

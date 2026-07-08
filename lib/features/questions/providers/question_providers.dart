@@ -48,6 +48,16 @@ final questionRepositoryProvider = Provider<QuestionRepository>((ref) {
 
 /// Loads the full list of questions once.
 final questionsProvider = FutureProvider<List<Question>>((ref) async {
+  // Hold the first fetch until the session's initial load has resolved, so the
+  // catalog is fetched ONCE with the final identity + premium tier — not once on
+  // the loading placeholder (userId=null, free) and again when the session lands.
+  // That placeholder→final refetch is the launch/login "double reload"; the deck
+  // shows its spinner while we wait. `isLoading` is only ever true during that
+  // first build (refresh() never flips to loading), so this never re-holds —
+  // later identity/premium changes refetch through the repository's own watch.
+  if (ref.watch(sessionProvider.select((s) => s.isLoading))) {
+    return const <Question>[];
+  }
   final repo = ref.watch(questionRepositoryProvider);
   return repo.fetchQuestions();
 });
@@ -137,6 +147,10 @@ final questionIndexProvider = NotifierProvider<QuestionDeckNotifier, int>(
 /// the way `dailyQuestionProvider(DateTime.now())` would (a fresh DateTime is a
 /// fresh family key). This is the free, no-paywall question every user opens to.
 final todaysDailyQuestionProvider = FutureProvider<Question?>((ref) async {
+  // See questionsProvider: wait out the session's first load so the daily is
+  // fetched once with the final identity/premium instead of flashing the
+  // placeholder-identity fetch and reloading the moment the session resolves.
+  if (ref.watch(sessionProvider.select((s) => s.isLoading))) return null;
   final repo = ref.watch(questionRepositoryProvider);
   return repo.fetchDailyQuestion(DateTime.now());
 });

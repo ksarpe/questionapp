@@ -87,6 +87,14 @@ class SessionState {
 /// Built lazily the first time something reads [sessionProvider]; the app reads
 /// it at launch (see `QuestionScreen`) so anonymous sign-in happens up front.
 class SessionNotifier extends AsyncNotifier<SessionState> {
+  /// True while an IN-APP sign-out (Settings) drives its own reload, so the auth
+  /// listener ignores the `signedOut` event it triggers. Without it the sign-out
+  /// would reload twice — once here (awaited so we can leave Settings cleanly)
+  /// and once from the listener — and hit the entitlement network on both. An
+  /// OUT-OF-BAND sign-out (token revocation) leaves this false and is still
+  /// converged by the listener.
+  bool _selfDrivenSignOut = false;
+
   @override
   Future<SessionState> build() {
     _subscribeToAuthChanges();
@@ -122,9 +130,30 @@ class SessionNotifier extends AsyncNotifier<SessionState> {
   void _subscribeToAuthChanges() {
     if (!SupabaseService.isInitialised) return;
     final sub = SupabaseService.client.auth.onAuthStateChange.listen((data) {
-      if (isIdentityChangingAuthEvent(data.event)) refresh();
+      if (!isIdentityChangingAuthEvent(data.event)) return;
+      // An in-app sign-out owns its own reload (see [signOutAndReload]); don't
+      // double up on the `signedOut` it emits.
+      if (_selfDrivenSignOut && data.event == AuthChangeEvent.signedOut) return;
+      refresh();
     });
     ref.onDispose(sub.cancel);
+  }
+
+  /// Signs the user out and reloads into a fresh guest, awaited end-to-end.
+  ///
+  /// The caller (Settings) can therefore leave the screen only once the home
+  /// screen behind it already shows the guest — instead of popping onto the
+  /// stale signed-in view that then visibly reloads in the background. Owns the
+  /// reload itself (suppressing the auth listener's duplicate) so a sign-out
+  /// costs exactly one entitlement reconcile, not two.
+  Future<void> signOutAndReload() async {
+    _selfDrivenSignOut = true;
+    try {
+      await SupabaseService.signOut();
+      await refresh();
+    } finally {
+      _selfDrivenSignOut = false;
+    }
   }
 
   Future<SessionState> _load() async {

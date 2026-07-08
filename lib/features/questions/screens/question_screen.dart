@@ -47,17 +47,22 @@ class QuestionScreen extends ConsumerWidget {
     // saw their daily vote. (userStatsProvider already watches the session, so it
     // refreshes on its own.)
     ref.listen(sessionProvider.select((s) => s.value?.userId), (prev, next) {
-      if (prev != next) {
-        ref.invalidate(questionsProvider);
-        ref.invalidate(todaysDailyQuestionProvider);
-        ref.invalidate(dailyVoteStateProvider);
-        ref.invalidate(smaczkiProvider);
-        // Revealed questions are per-identity and held only in memory — drop them
-        // and snap back to the daily so a new user never inherits the previous
-        // user's feed.
-        ref.read(revealedFeedProvider.notifier).clear();
-        ref.read(questionIndexProvider.notifier).toDaily();
-      }
+      // React only to a genuine identity SWITCH (log in / log out / account
+      // change) — NOT the initial null→guest resolution at launch. Skipping that
+      // first transition is what removes the double reload: the question fetches
+      // already wait for the session to resolve (see todaysDailyQuestionProvider),
+      // so invalidating here on the very same resolution would refetch everything
+      // a second time and flash the deck.
+      if (prev == null || prev == next) return;
+      ref.invalidate(questionsProvider);
+      ref.invalidate(todaysDailyQuestionProvider);
+      ref.invalidate(dailyVoteStateProvider);
+      ref.invalidate(smaczkiProvider);
+      // Revealed questions are per-identity and held only in memory — drop them
+      // and snap back to the daily so a new user never inherits the previous
+      // user's feed.
+      ref.read(revealedFeedProvider.notifier).clear();
+      ref.read(questionIndexProvider.notifier).toDaily();
     });
 
     // Premium walks the whole catalog, so record each question it lands on in the
