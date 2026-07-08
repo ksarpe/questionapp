@@ -84,6 +84,13 @@ dev_dependencies:
   flutter_launcher_icons: ^0.14.4
   flutter_native_splash: ^2.4.8
 
+  # Build-time only: uploads Dart/native debug symbols to Sentry so obfuscated
+  # release crash traces are de-obfuscated (readable file/line names) in the
+  # dashboard. Never runs during `flutter run`; invoke it explicitly with
+  # `dart run sentry_dart_plugin` after an obfuscated release build. Config lives
+  # in the top-level `sentry:` block below. See SENTRY_SETUP.md §5.
+  sentry_dart_plugin: ^3.4.0
+
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
@@ -184,3 +191,38 @@ flutter_native_splash:
   android_12:
     color: "#FF751F"
     image: assets/images/splash_icon_android12.png
+
+# ---------------------------------------------------------------------------
+# Sentry symbol upload (used by `dart run sentry_dart_plugin`, top-level key).
+#
+# Turns obfuscated release crash traces into readable file/line names in the
+# Sentry dashboard. Only runs when you invoke the plugin by hand after an
+# OBFUSCATED release build — never during `flutter run` or a normal build.
+#
+# The org/project slugs are pinned below (they're not secrets), so the ONLY
+# value you supply from the environment is the auth token:
+#   SENTRY_AUTH_TOKEN  🔑 an *organization* auth token (starts `sntrys_`), which
+#                         also auto-selects the EU (.de) region this project lives
+#                         in. Keep it out of git — never commit it.
+#
+# Typical local release + upload (on Windows run `setx SENTRY_AUTH_TOKEN
+# "sntrys_..."` once so every new terminal has it, then just):
+#   flutter build appbundle --dart-define-from-file=env/prod-android.json \
+#     --obfuscate --split-debug-info=build/debug-info
+#   dart run sentry_dart_plugin
+# See SENTRY_SETUP.md §5 for the full walkthrough.
+# ---------------------------------------------------------------------------
+sentry:
+  upload_debug_symbols: true
+  upload_source_maps: false
+  # Don't upload your Dart source to Sentry — only the symbol maps needed to
+  # de-obfuscate stack traces. Keeps source code off a third-party server.
+  upload_sources: false
+  # Don't fail the whole build if symbols are missing (e.g. a non-obfuscated
+  # build) — the app still ships; you just get unresolved traces for that build.
+  ignore_missing: true
+  log_level: info
+  # Non-secret identifiers pinned here so an upload needs only the ONE secret
+  # (SENTRY_AUTH_TOKEN) in the environment — locally and on Codemagic alike.
+  org: akn-software
+  project: debatly

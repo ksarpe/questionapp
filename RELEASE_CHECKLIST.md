@@ -22,7 +22,12 @@ submitting.
 - **Legal URLs** — baked into `AppConfig` → `https://debatly.app/{privacy,terms,delete-account}`,
   surfaced on the Privacy & data screen and the register consent line.
 - **Sentry** — DSN wired in `env/prod-*.json`; Kotlin-2.0 override in
-  `android/build.gradle.kts`. (Symbol upload + a test event still pending — see §8.)
+  `android/build.gradle.kts`. Test event verified reaching the dashboard
+  (200 OK, 2026-07-08). Symbol upload now wired too: `sentry_dart_plugin` in
+  `dev_dependencies` + `sentry:` block in `pubspec.yaml` (org `akn-software` /
+  project `debatly` pinned there), and the Codemagic iOS workflow builds
+  obfuscated + runs the upload — all it needs is the `SENTRY_AUTH_TOKEN` secret
+  (already added to Codemagic 2026-07-08; see §8, opt-in).
 - **Edge functions** — all four deployed (live as `revenue-cat-webhook` note the
   hyphen, `admob-ssv`, `sync-entitlement`, `delete-account`).
 - **Backend** — RLS on every table; consent (GDPR + ATT), local daily reminders,
@@ -130,8 +135,14 @@ Can't be set by a migration.
       linked to account), advertising ID (AdMob), pseudonymous crash data
       (Sentry — `sendDefaultPii=false`, no email/name/IP attached), app
       activity (votes/streaks/favorites in Supabase). No analytics SDK present.
-- [ ] (Recommended) Upload Sentry debug symbols (`SENTRY_AUTH_TOKEN`,
-      `SENTRY_SETUP.md` §5) and verify a test event reaches the dashboard.
+- [x] Verify a Sentry test event reaches the dashboard — done 2026-07-08 (test
+      event ingested, 200 OK).
+- [ ] (Recommended) Enable readable release crash traces. Org/project are pinned
+      in `pubspec.yaml`, so the only thing to supply is a Sentry **org auth
+      token** (`SENTRY_AUTH_TOKEN`). Codemagic (iOS) ✅ already has it. For **local
+      Android** release builds set it once on Windows (`setx SENTRY_AUTH_TOKEN
+      "sntrys_..."`) — without it Android release still ships/reports, just with
+      obfuscated traces. `SENTRY_SETUP.md` §5.
 
 ---
 

@@ -14,6 +14,12 @@
 #      ADMOB_REWARDED_ID_IOS     — iOS-owy rewarded ad unit (ca-app-pub-…/…)
 #      GOOGLE_SERVER_CLIENT_ID   — ten sam web client ID co na Androidzie
 #      SENTRY_DSN                — DSN z Sentry
+#    Opcjonalnie (czytelne, deobfuskowane stack trace w Sentry — patrz SENTRY_SETUP.md §5):
+#      SENTRY_AUTH_TOKEN         — org auth token 'sntrys_…' (Sentry → Settings → Auth Tokens);
+#                                  token organizacyjny sam wybiera region EU (.de). To JEDYNY
+#                                  potrzebny tu sekret — org (akn-software) i project (debatly)
+#                                  są zaszyte w bloku `sentry:` w pubspec.yaml.
+#    Bez SENTRY_AUTH_TOKEN krok wgrywania symboli jest po prostu pomijany (build i tak przechodzi).
 # 4. Start new build → workflow "ios-testflight".
 #
 # Numer builda (CFBundleVersion) bierze się z auto-inkrementującego licznika
@@ -46,9 +52,12 @@ workflows:
         script: xcode-project use-profiles
       - name: Build IPA
         script: |
+          # --obfuscate + --split-debug-info produce the Dart symbol maps that
+          # the Sentry upload step below needs to de-obfuscate release traces.
           flutter build ipa --release \
             --build-number=$BUILD_NUMBER \
             --export-options-plist=/Users/builder/export_options.plist \
+            --obfuscate --split-debug-info=build/debug-info \
             --dart-define=SUPABASE_URL=$SUPABASE_URL \
             --dart-define=SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY \
             --dart-define=REVENUECAT_API_KEY=$REVENUECAT_API_KEY_IOS \
@@ -56,6 +65,16 @@ workflows:
             --dart-define=GOOGLE_SERVER_CLIENT_ID=$GOOGLE_SERVER_CLIENT_ID \
             --dart-define=SENTRY_DSN=$SENTRY_DSN \
             --dart-define=SENTRY_ENVIRONMENT=production
+      - name: Upload debug symbols to Sentry
+        script: |
+          # Skipped automatically until you add SENTRY_AUTH_TOKEN to debatly_secrets,
+          # so a missing token never fails the build. org/project + all other options
+          # come from the top-level `sentry:` block in pubspec.yaml.
+          if [ -z "$SENTRY_AUTH_TOKEN" ]; then
+            echo "SENTRY_AUTH_TOKEN not set — skipping Sentry symbol upload."
+            exit 0
+          fi
+          dart run sentry_dart_plugin
     artifacts:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log

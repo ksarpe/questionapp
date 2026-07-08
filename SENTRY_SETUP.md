@@ -111,14 +111,19 @@ numbers. Upload **debug symbols** so Sentry de-obfuscates them. This is a build
 step, not app code — it never runs during a normal `flutter run`.
 
 1. **Auth token** (different from the DSN): Sentry → **Settings → Auth Tokens** →
-   create one with `project:releases` + `org:read` scope. Export it (and your org
-   / project slugs) in the shell that runs the build — never commit it:
+   **Create New Token**. Prefer an **Organization Auth Token** (its value starts
+   `sntrys_`) — it carries the right scopes for symbol upload *and* auto-selects
+   this project's **EU (`.de`) region**, so you don't have to set `SENTRY_URL`.
+   The org (`akn-software`) and project (`debatly`) slugs are already pinned in
+   the `sentry:` block of `pubspec.yaml`, so the **token is the only thing you
+   supply via the environment** — never commit it. On Windows, set it once,
+   persistently, so every future terminal has it:
 
-   ```bash
-   export SENTRY_AUTH_TOKEN=sntrys_...
-   export SENTRY_ORG=your-org-slug
-   export SENTRY_PROJECT=debatly
+   ```powershell
+   setx SENTRY_AUTH_TOKEN "sntrys_..."   # persists for your Windows user; opens in NEW terminals
    ```
+
+   (bash equivalent: `export SENTRY_AUTH_TOKEN=sntrys_...`)
 
 2. Build with obfuscation + split debug info:
 
@@ -133,9 +138,13 @@ step, not app code — it never runs during a normal `flutter run`.
    dart run sentry_dart_plugin
    ```
 
-The `sentry:` config block in `pubspec.yaml` tells the plugin where the debug
-info lives. (If `sentry_dart_plugin` isn't in `dev_dependencies` yet, add it with
-`flutter pub add --dev sentry_dart_plugin` — see the note at the bottom.)
+`sentry_dart_plugin` is already in `dev_dependencies` and its options live in the
+top-level `sentry:` block of `pubspec.yaml` (upload symbols, don't upload source).
+On **iOS via Codemagic** this is fully automated: the `ios-testflight` workflow
+builds with `--obfuscate --split-debug-info` and runs the upload step for you —
+it just needs `SENTRY_AUTH_TOKEN` added to the `debatly_secrets` env group (org
+and project are pinned in `pubspec.yaml`; the step self-skips until the token is
+present).
 
 ---
 
@@ -222,24 +231,22 @@ With the Developer plan you get these out of the box:
 
 ---
 
-### Note: `sentry_dart_plugin` (symbol upload) is opt-in
+### Note: `sentry_dart_plugin` (symbol upload) is installed & configured
 
-The runtime SDK (`sentry_flutter`) is installed and wired. The **symbol-upload
-plugin** (§5) is a separate dev-only tool. It's intentionally not required for the
-app to build or report errors — add it only when you're ready to ship readable
-release traces:
+The runtime SDK (`sentry_flutter`) is installed and wired, **and** the
+**symbol-upload plugin** is now in `dev_dependencies` with its `sentry:` config
+block in `pubspec.yaml`. It's a dev-only, build-time tool — it never runs during
+`flutter run` or a plain build, only when you (or Codemagic) invoke
+`dart run sentry_dart_plugin` after an obfuscated release build.
 
-```bash
-flutter pub add --dev sentry_dart_plugin
-```
+The only thing left on your side is the **auth token** (§5): supply
+`SENTRY_AUTH_TOKEN` via the environment — locally via `setx` on Windows, on
+Codemagic as an entry in the `debatly_secrets` group. The org (`akn-software`)
+and project (`debatly`) slugs are already pinned in the `sentry:` block, so the
+token is the only thing you provide. Until `SENTRY_AUTH_TOKEN` exists the upload
+simply no-ops (locally you skip the command; the Codemagic step self-skips), so
+nothing breaks in the meantime.
 
-then add to `pubspec.yaml` (top level, not under `flutter:`):
-
-```yaml
-sentry:
-  upload_debug_symbols: true
-  upload_source_maps: false
-  project: debatly          # your project slug
-  org: your-org-slug
-  # auth_token is read from the SENTRY_AUTH_TOKEN env var (don't hard-code it)
-```
+The `sentry:` block is set to upload symbols but **not** your source
+(`upload_sources: false`), and to not fail a build when symbols are absent
+(`ignore_missing: true`).
