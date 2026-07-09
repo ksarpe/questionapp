@@ -1,0 +1,4981 @@
+{
+  "position2_fills": [
+    {
+      "qid": "bb9cd554-c2e7-4ac5-a8d2-4170af1c1ed5",
+      "pl": "Zawsze włączone znaczy zawsze wygodne",
+      "en": "Always-on means always convenient"
+    },
+    {
+      "qid": "d14f8d93-51a9-4205-b33d-4d934704ad11",
+      "pl": "Nazwij to inaczej: gapienie się",
+      "en": "Call it what it is: staring"
+    },
+    {
+      "qid": "db263ba8-84f4-4bdf-b369-2e7249924bad",
+      "pl": "Trzech to po prostu trzech przyjaciół",
+      "en": "Three is just three friends"
+    }
+  ],
+  "position3_additions": [
+    {
+      "qid": "299ccf44-0471-4320-a97f-7bc73e894ca9",
+      "pl": "Zakaz nie usuwa zawodu, tylko ochronę",
+      "en": "A ban removes the safety, not the trade"
+    },
+    {
+      "qid": "57d93dd4-a41f-48cc-8de5-ac2280ea0bd9",
+      "pl": "Cisza to też odpowiedź — tchórzliwa",
+      "en": "Silence is an answer too — a coward's one"
+    },
+    {
+      "qid": "e0734eeb-d0e0-4432-8d37-0bac4257b19f",
+      "pl": "Zazdrość lubi nazywać się sprawiedliwością",
+      "en": "Envy loves to call itself justice"
+    },
+    {
+      "qid": "0d84cbe7-9085-4e16-a6ca-1a43b460b074",
+      "pl": "A twoi rodzice by ją dostali?",
+      "en": "Would your own parents have passed?"
+    },
+    {
+      "qid": "16bece38-eb48-4317-bb73-51b3ceb64b0f",
+      "pl": "Zmęczony lekarz też się myli",
+      "en": "A tired doctor makes mistakes too"
+    },
+    {
+      "qid": "23f0212c-93b8-4ac6-beed-b08694b88f7a",
+      "pl": "Pieszy dotuje twój samochód",
+      "en": "The pedestrian subsidizes your car"
+    },
+    {
+      "qid": "27771fe7-97a1-43bb-9cbd-097428493731",
+      "pl": "Twój kotlet miał kiedyś oczy",
+      "en": "Your steak once had eyes"
+    },
+    {
+      "qid": "3278873d-6d56-4b17-8611-29b8c717b325",
+      "pl": "Norymberga już odpowiedziała",
+      "en": "Nuremberg already answered this"
+    },
+    {
+      "qid": "3787034d-00af-47cd-8161-413071480d3a",
+      "pl": "Uciekasz z planety, którą zaśmieciłeś",
+      "en": "Fleeing the planet you trashed"
+    },
+    {
+      "qid": "3e6018b0-8701-49d0-996a-3cc54aeb2605",
+      "pl": "Miasta były dla ludzi przed autami",
+      "en": "Cities were for people before cars"
+    },
+    {
+      "qid": "55f83d74-90ea-45e0-8af5-41d3860bddaf",
+      "pl": "Za cudze bezrobocie i tak płacisz",
+      "en": "You already pay for their unemployment"
+    },
+    {
+      "qid": "5a11d14b-8587-49a1-a12c-c7a1df4e9e29",
+      "pl": "Odmówisz dziecku zdrowia z zasady?",
+      "en": "Would you deny your child health on principle?"
+    },
+    {
+      "qid": "5f63e9e9-4b46-49dc-9b4d-290d7b936de5",
+      "pl": "Głodni nie zjedzą jego jachtu",
+      "en": "The hungry can't eat his yacht"
+    },
+    {
+      "qid": "64942b79-9416-47ca-a4c1-71eabf70c25c",
+      "pl": "Granica to loteria urodzenia",
+      "en": "A border is a birth lottery"
+    },
+    {
+      "qid": "854248e9-f7f6-403d-9179-60845c107d7c",
+      "pl": "Zabić, by pokazać, że zabijać nie wolno",
+      "en": "Kill to prove that killing is wrong"
+    },
+    {
+      "qid": "8b54aec1-b9a0-41b7-9a2d-766d886cfe50",
+      "pl": "Wysoki też się nie mieści w fotelu",
+      "en": "The tall don't fit the seat either"
+    },
+    {
+      "qid": "9dd0395c-604a-4a17-bbdb-7bd45249aaaa",
+      "pl": "Psu skracamy cierpienie z litości",
+      "en": "We end a dog's pain out of mercy"
+    },
+    {
+      "qid": "a466cde4-fe77-4696-95c5-03ec9531c5a2",
+      "pl": "Krata to krata, choćby złota",
+      "en": "A cage is a cage, even a gilded one"
+    },
+    {
+      "qid": "c1118fa8-c151-40c8-88cb-9d870779d444",
+      "pl": "Frekwencja to nie mądrość",
+      "en": "Turnout isn't wisdom"
+    },
+    {
+      "qid": "d493fe32-6a1f-4a33-9e70-ba2358a0650c",
+      "pl": "Papierosom też mówiliśmy: dorośli decydują",
+      "en": "We said 'adults decide' about cigarettes too"
+    },
+    {
+      "qid": "00ffa4ea-a56b-401c-a7d8-f413bb8c988a",
+      "pl": "Płacisz za metkę, nie za obraz",
+      "en": "You're paying for the label, not the art"
+    },
+    {
+      "qid": "02451f1e-8961-479d-a886-5903f09429ea",
+      "pl": "Znajdziesz dokładnie to, czego szukasz",
+      "en": "You'll find exactly what you're looking for"
+    },
+    {
+      "qid": "0245de6a-fa5a-4351-997d-d1ac64fc5a05",
+      "pl": "Romantyzujesz cudze załamanie",
+      "en": "You're romanticizing someone's breakdown"
+    },
+    {
+      "qid": "0303b05c-a9b7-483b-b4e0-1f50b5ebce7e",
+      "pl": "Dla twojego dobra czy dla twojej ulgi?",
+      "en": "For your good, or for your relief?"
+    },
+    {
+      "qid": "0446cb4d-d2c7-4a32-ae38-cf1e291fd785",
+      "pl": "Ogół nigdy nie płaci — płacą wybrani",
+      "en": "'Everyone' never pays; the chosen few do"
+    },
+    {
+      "qid": "049e8a14-65b7-466a-b613-f84a0abf80b3",
+      "pl": "Zaufanie na dowód to już nie zaufanie",
+      "en": "Trust that needs proof isn't trust"
+    },
+    {
+      "qid": "0a843403-4f90-4cfc-b898-2f5162ebe9a2",
+      "pl": "Zapytaj ofiary o litość",
+      "en": "Ask the victims about mercy"
+    },
+    {
+      "qid": "0cebc5c6-3921-417d-870c-5a354b47c6d5",
+      "pl": "Chronisz jego czy siebie przed prawdą?",
+      "en": "Shielding him, or yourself from the truth?"
+    },
+    {
+      "qid": "0d05b2f0-675e-4523-ba04-3c8b85bf5008",
+      "pl": "Zazdrość mówi o tobie, nie o nim",
+      "en": "Jealousy is about you, not them"
+    },
+    {
+      "qid": "0d6ae136-c2d7-4ada-959d-60b2d50ed694",
+      "pl": "Czasem chcą ucha, nie sędziego",
+      "en": "Sometimes they want an ear, not a judge"
+    },
+    {
+      "qid": "112cceab-efca-46b8-8927-20397dbe9d3a",
+      "pl": "Kopia się obudzi, ty i tak umrzesz",
+      "en": "The copy wakes; you still die"
+    },
+    {
+      "qid": "15c4cf3b-7fc6-4edc-a533-2eab6bc5deba",
+      "pl": "Drugą szansę dajesz sobie, nie jemu",
+      "en": "The second chance is for you, not them"
+    },
+    {
+      "qid": "15dc4795-292a-4b3b-9a8f-c49fa4fe3831",
+      "pl": "Blizna to dowód, że przeżyłeś",
+      "en": "The scar is proof you survived"
+    },
+    {
+      "qid": "17725e28-eb5e-4f79-bb0e-0a513103452b",
+      "pl": "Kochasz ludzkość czy jedną twarz?",
+      "en": "Do you love humanity, or one face?"
+    },
+    {
+      "qid": "18550ea1-ba83-45a5-890b-1b283b2acca0",
+      "pl": "Dość to często przebrana rezygnacja",
+      "en": "'Enough' is often surrender in disguise"
+    },
+    {
+      "qid": "1c00e567-e413-4ffa-aed8-4c1bed2724b8",
+      "pl": "Sprawdź swój czas ekranowy, potem odpowiedz",
+      "en": "Check your screen time, then answer"
+    },
+    {
+      "qid": "1fadcb4d-3cf9-4115-a921-ffb0ec50fbaf",
+      "pl": "Wolni — ale kto wtedy ma maszyny?",
+      "en": "Free — but who owns the machines?"
+    },
+    {
+      "qid": "21bf6ae9-f844-401a-b2b7-77614c7ad418",
+      "pl": "Kto się poświęca, potem to wypomina",
+      "en": "Whoever sacrifices keeps the receipt"
+    },
+    {
+      "qid": "244d8c8f-1d7c-425d-bdb0-9ce6aed77f50",
+      "pl": "Kto oddaje wolność, traci obie",
+      "en": "Trade freedom for safety, lose both"
+    },
+    {
+      "qid": "2762f705-62a1-4333-9710-10335a571bac",
+      "pl": "Bez lajków też oddychasz",
+      "en": "You breathe fine without the likes"
+    },
+    {
+      "qid": "2d56cc13-3aa4-4ec1-b3bd-5fa7ce54bba8",
+      "pl": "Nuda to też cena — płacona codziennie",
+      "en": "Boredom is a price too, paid daily"
+    },
+    {
+      "qid": "2fed91a2-f02a-4784-9b14-16164dfd7655",
+      "pl": "Oni cię nie oddali, gdy byłeś mały",
+      "en": "They didn't outsource you as a baby"
+    },
+    {
+      "qid": "33323a3a-9a28-40f5-91b9-27d55c3fb6fb",
+      "pl": "Nigdy się nie pokłóci — i to problem",
+      "en": "It'll never argue back — that's the problem"
+    },
+    {
+      "qid": "35d39b95-2927-4461-88a4-917fd7ac6f7b",
+      "pl": "Po równo bywa najbardziej niesprawiedliwe",
+      "en": "Equal can be the least fair split"
+    },
+    {
+      "qid": "36fd29cb-ad1a-41ec-a3d7-90ad950921d0",
+      "pl": "Twoja rodzina, cudza sprawiedliwość",
+      "en": "Your family, someone else's justice"
+    },
+    {
+      "qid": "3976b21c-eceb-4e54-a264-9d37605963fa",
+      "pl": "Wszyscy za, aż chodzi o własną wygodę",
+      "en": "Everyone agrees, until it's their comfort"
+    },
+    {
+      "qid": "3ae9a5c1-d0e4-4135-83bd-7e74e92e3891",
+      "pl": "Sukces na pokaz, terapia po cichu",
+      "en": "Success on show, therapy in private"
+    },
+    {
+      "qid": "3c622a6c-05b0-4ffa-8841-46d80e58566b",
+      "pl": "Sława po śmierci grzeje tylko żywych",
+      "en": "Posthumous fame warms only the living"
+    },
+    {
+      "qid": "3cb957dd-29be-448d-8c6f-39c6a3f10363",
+      "pl": "Pacyfizm bywa luksusem bezpiecznych",
+      "en": "Pacifism is a luxury of the safe"
+    },
+    {
+      "qid": "3db0b12c-a7b7-4fc0-ad79-db0c2ffb63c7",
+      "pl": "Marzysz o tym, dopóki tego nie masz",
+      "en": "You crave it only until you have it"
+    },
+    {
+      "qid": "3f66582c-8790-414b-abfd-f8221a61107e",
+      "pl": "Musiałem to najstarsza wymówka",
+      "en": "'I had no choice' is the oldest excuse"
+    },
+    {
+      "qid": "406986a1-57b5-46e6-8a03-1530fd70f161",
+      "pl": "Zemsta w todze wciąż jest zemstą",
+      "en": "Revenge in a robe is still revenge"
+    },
+    {
+      "qid": "44ca00ab-9914-4e00-93a7-da871543b93c",
+      "pl": "Lojalność wobec zła to współudział",
+      "en": "Loyalty to wrong is complicity"
+    },
+    {
+      "qid": "474c1680-71cc-48b1-b67f-fe59f049725d",
+      "pl": "Maszyna dziedziczy uprzedzenia twórcy",
+      "en": "The machine inherits its maker's bias"
+    },
+    {
+      "qid": "48df04da-d22b-4a77-92ca-e29f26d56ca6",
+      "pl": "Kto zaczyna liczyć, już przegrał",
+      "en": "Once you're counting, you've lost"
+    },
+    {
+      "qid": "4bc5e444-b207-4a03-a5d7-08667d78a4e6",
+      "pl": "Głodnemu prawo brzmi jak żart",
+      "en": "To the starving, the law sounds like a joke"
+    },
+    {
+      "qid": "518f83d0-4bd0-482e-b6ec-2610bc8235a9",
+      "pl": "Dziś liczby, jutro ty jesteś tą jedynką",
+      "en": "Today it's the math; tomorrow you're the one"
+    },
+    {
+      "qid": "52e8efef-aee4-4875-ade1-bfe5694bf029",
+      "pl": "Krzyk to porażka, nie metoda",
+      "en": "A raised voice is a defeat, not a method"
+    },
+    {
+      "qid": "5527504f-3435-4b2f-b7ec-720ae8773fe5",
+      "pl": "Dla ofiary jesteś tym jednym czynem",
+      "en": "To the victim, you are that one act"
+    },
+    {
+      "qid": "575cd507-d14e-4216-8e89-94bc58d39a61",
+      "pl": "Sprzedajesz życie, dostajesz oklaski",
+      "en": "You sell a life and collect applause"
+    },
+    {
+      "qid": "579d535f-6f59-40f8-bf68-82b21cd19f9f",
+      "pl": "Odliczanie zabija, zanim śmierć zdąży",
+      "en": "The countdown kills before death does"
+    },
+    {
+      "qid": "5a96b78e-d3e9-44b5-bdb5-1f8d006bfe28",
+      "pl": "Wygoda to nie to samo co miłość",
+      "en": "Comfort isn't the same as love"
+    },
+    {
+      "qid": "5ca746ba-9cf7-4f94-8c73-131a74874307",
+      "pl": "Współczucie dla sprawcy — a dla ofiary?",
+      "en": "Compassion for him — and for her?"
+    },
+    {
+      "qid": "5cc0a51e-4a9e-4d07-809a-d0f9b154edee",
+      "pl": "Idąc po zemstę, kop dwa groby",
+      "en": "Before revenge, dig two graves"
+    },
+    {
+      "qid": "5d224cac-b551-4baa-b77b-cc42e1ee0745",
+      "pl": "Zysk mija, wycięty las nie odrasta",
+      "en": "The profit fades; the forest won't regrow"
+    },
+    {
+      "qid": "5fc9abfa-2e41-4223-88a6-95e8e43cd4d6",
+      "pl": "Kto każe wybierać, już cię zamyka",
+      "en": "Whoever makes you choose is already caging you"
+    },
+    {
+      "qid": "6541e3b7-2e5b-4658-9438-5076e49941ca",
+      "pl": "Papier liczy się dopiero u prawnika",
+      "en": "The paper only matters at the lawyer's"
+    },
+    {
+      "qid": "67f93fc0-7ac7-4334-b4b1-074ae37cb756",
+      "pl": "Nikt nie pyta nienarodzonego o zgodę",
+      "en": "No one asks the unborn for consent"
+    },
+    {
+      "qid": "68e3d717-7120-4b25-baab-e123a30af94a",
+      "pl": "Kłamiesz dla niego czy dla siebie?",
+      "en": "Lying for him, or for yourself?"
+    },
+    {
+      "qid": "6a95a212-c0ec-46f0-a1f6-c36fd90c55b7",
+      "pl": "Kto raz przecieka, przecieka dalej",
+      "en": "A mouth that leaked once leaks again"
+    },
+    {
+      "qid": "6b9529be-05c0-446c-9a58-7d706aca77e4",
+      "pl": "Wybaczenie to twój spokój, nie jego wygrana",
+      "en": "Forgiveness is your peace, not their win"
+    },
+    {
+      "qid": "6d574908-d7af-42a6-a0d1-3dc5c25195f1",
+      "pl": "Święty spokój kupiony na kredyt",
+      "en": "Peace bought on credit"
+    },
+    {
+      "qid": "6db69f39-d7c6-4b37-9e85-a954c927f9f6",
+      "pl": "Spowiedź zrzuca twój ciężar na innych",
+      "en": "Confession dumps your weight onto them"
+    },
+    {
+      "qid": "6eff0771-65de-49c2-82b0-79e9e2bb6e46",
+      "pl": "Miłość mija, prawnicy zostają",
+      "en": "Love fades, lawyers remain"
+    },
+    {
+      "qid": "73f9fec9-df59-43cf-a449-e77a5852a6c0",
+      "pl": "Oszczędzasz jego czy własne sumienie?",
+      "en": "Sparing him, or your own conscience?"
+    },
+    {
+      "qid": "74e30dde-61f9-4995-99ba-9a8a22eaa75d",
+      "pl": "Nieśmiertelny świadek własnej samotności",
+      "en": "An immortal witness to your own loneliness"
+    },
+    {
+      "qid": "7564701c-7620-4ff0-aa6c-27fc46171f01",
+      "pl": "Kara nie nakarmi — ukarze biedę",
+      "en": "Punishment won't feed him; it punishes poverty"
+    },
+    {
+      "qid": "7571e08c-ba0b-46ec-91a7-f03c1a406f55",
+      "pl": "Poprzednie pokolenia zjadły twój kawałek",
+      "en": "Past generations ate your slice too"
+    },
+    {
+      "qid": "773f1b9c-e69b-4abf-8a23-5246c538f474",
+      "pl": "Ci sami ludzie, ten sam finał",
+      "en": "Same two people, same ending"
+    },
+    {
+      "qid": "8089f16c-a7d6-4c3b-9731-9dbeb1f63a8c",
+      "pl": "Krzywdzicielowi wystarczą widzowie",
+      "en": "The abuser only needs an audience"
+    },
+    {
+      "qid": "812addef-6d78-4ab7-9a90-863900bb196e",
+      "pl": "Odwaga cudzymi oszczędnościami jest łatwa",
+      "en": "'Brave' is easy on someone else's savings"
+    },
+    {
+      "qid": "84f4cb83-c27d-42cb-bf44-ef016250ff39",
+      "pl": "Wróciłbyś po trzech dniach",
+      "en": "You'd crawl back in three days"
+    },
+    {
+      "qid": "860a9d78-e404-49da-82e1-dc98fa43f619",
+      "pl": "Nie odróżnisz — i to cię przeraża",
+      "en": "You couldn't tell — and that scares you"
+    },
+    {
+      "qid": "89c2bb8f-0443-41b1-ab9b-c0f5528daa03",
+      "pl": "Dobrowolny napiwek to bajka",
+      "en": "The 'optional' tip is a myth"
+    },
+    {
+      "qid": "8aae5029-c275-4086-b37a-45718d16697b",
+      "pl": "Pod nazwiskiem też leją hejt",
+      "en": "People spew hate under real names too"
+    },
+    {
+      "qid": "8aec2bff-f45c-43b8-b312-a5ce4d472528",
+      "pl": "Kolejka to podatek od biednych",
+      "en": "The queue is a tax on the poor"
+    },
+    {
+      "qid": "8b97b981-a9f2-405f-b95b-2065b23bd9c0",
+      "pl": "Zostajesz z nim czy ze wspólnym kredytem?",
+      "en": "Staying for him, or the shared mortgage?"
+    },
+    {
+      "qid": "9201823c-cf2a-48b6-839d-98bfd8359513",
+      "pl": "Później to najdroższe słowo w życiorysie",
+      "en": "'Later' is the costliest word in a life"
+    },
+    {
+      "qid": "945cd618-3ce8-478e-8059-45673146cdc7",
+      "pl": "Tracisz i kasę, i kumpla",
+      "en": "Lose the money and the friend both"
+    },
+    {
+      "qid": "96eb43da-38e1-4b33-bacc-7763d0fe6de3",
+      "pl": "Prawdy nauczą je inni — brutalniej",
+      "en": "Someone else will teach them, harder"
+    },
+    {
+      "qid": "987a79d9-9c1c-4bd5-9c33-90b1bc614142",
+      "pl": "Szczerość dla twojej ulgi, nie jego dobra",
+      "en": "Honesty for your relief, not their good"
+    },
+    {
+      "qid": "9bcec9bb-419b-4600-99a7-b61916bbd21d",
+      "pl": "Brakuje mówią ci, którym samym brak",
+      "en": "'Something's missing' — said by those who feel it"
+    },
+    {
+      "qid": "9cb73e49-f1f0-4b68-9bf5-185f4df785e3",
+      "pl": "Miłość nie odsiedzi twojego wyroku",
+      "en": "Love won't serve your sentence"
+    },
+    {
+      "qid": "a17f1406-f037-4bfb-a828-474100a296ed",
+      "pl": "Uczysz je, że tak wygląda miłość",
+      "en": "You're teaching them this is what love is"
+    },
+    {
+      "qid": "a1d27017-c8eb-4c99-b171-cb7fd6cc77bb",
+      "pl": "Pochowany sekret wciąż truje żywych",
+      "en": "A buried secret still poisons the living"
+    },
+    {
+      "qid": "a8e84a69-9ee9-42c7-a314-31d2f1bb56d1",
+      "pl": "Nic do ukrycia — do pierwszego wycieku",
+      "en": "'Nothing to hide' — until the first leak"
+    },
+    {
+      "qid": "ad4478d3-8331-46fd-a749-12deb4f9a103",
+      "pl": "Bogaty trup nie wydaje",
+      "en": "A rich corpse spends nothing"
+    },
+    {
+      "qid": "b1f26e52-5c76-46dd-bf70-7dd3edbc5114",
+      "pl": "Twoi dziadkowie zakochali się przez listy",
+      "en": "Your grandparents fell in love by letter"
+    },
+    {
+      "qid": "b354db77-0631-4036-b901-1e17f694c307",
+      "pl": "Milcząc, kryjesz zdrajcę",
+      "en": "Stay silent and you cover for the cheat"
+    },
+    {
+      "qid": "b64a1628-9934-4e5c-b55a-ff588e777f07",
+      "pl": "Zgadnij, kto najbardziej chce zapomnienia",
+      "en": "Guess who wants the forgetting most"
+    },
+    {
+      "qid": "b9e1471c-7d17-4fc1-9863-2249114bfd47",
+      "pl": "Kupujesz historię, nie przedmiot",
+      "en": "You're buying a story, not an object"
+    },
+    {
+      "qid": "b9ea3313-f244-476e-82d9-f12921516024",
+      "pl": "Pasja za pensję zmienia się w obowiązek",
+      "en": "Passion becomes a duty once it pays"
+    },
+    {
+      "qid": "bbc007cf-f459-4d66-96df-dd09b4ff57b8",
+      "pl": "Ten obcy też jest czyimś dzieckiem",
+      "en": "That stranger is someone's child too"
+    },
+    {
+      "qid": "bf0055f9-21a7-4615-940a-1cad65d17ccd",
+      "pl": "Kochasz jego czy swoje wyobrażenie?",
+      "en": "You love them, or your idea of them?"
+    },
+    {
+      "qid": "c3a62fe2-f55f-4d8d-8d76-6e22f58531d9",
+      "pl": "Nikt nie mówi o sobie: dla pieniędzy",
+      "en": "No one admits it's for the money"
+    },
+    {
+      "qid": "c4fbed60-ab48-4f03-831f-0d2ec937e739",
+      "pl": "Wszyscy, których kochasz, i tak się zestarzeją",
+      "en": "Everyone you love still grows old"
+    },
+    {
+      "qid": "c76d0a4e-02e4-4c76-bcb2-29e58b665982",
+      "pl": "Zdrowia nie odkupisz żadnym sukcesem",
+      "en": "No success buys your health back"
+    },
+    {
+      "qid": "c7715dd2-3685-421b-a018-96bddcb60664",
+      "pl": "Najgłośniejsze pary rozstają się w ciszy",
+      "en": "The loudest couples split in silence"
+    },
+    {
+      "qid": "c8f48861-e03e-4009-80fe-126235099979",
+      "pl": "Trzymasz człowieka czy wspomnienie?",
+      "en": "Holding the person, or the memory?"
+    },
+    {
+      "qid": "d002cb6b-dc1d-4220-9df2-276108e06100",
+      "pl": "Ten próg zawsze jest wyżej niż masz",
+      "en": "That threshold is always just above you"
+    },
+    {
+      "qid": "d4ec7814-64c9-44d6-b695-ab52f5e138a9",
+      "pl": "Krew zobowiązuje tylko w jedną stronę?",
+      "en": "Does blood only obligate one way?"
+    },
+    {
+      "qid": "d64bc98c-d637-4bf9-8dba-f911c7ecf294",
+      "pl": "Dług, pod którym się nie podpisywałeś?",
+      "en": "A debt you never signed for?"
+    },
+    {
+      "qid": "d81b1b26-6a24-4f80-9ee0-1035ca8a3047",
+      "pl": "Cudzy sekret staje się twoim ciężarem",
+      "en": "Their secret becomes your burden"
+    },
+    {
+      "qid": "e0c09634-e3a2-4f77-8c70-1cde7de47356",
+      "pl": "Myśli sądzi tylko sumienie",
+      "en": "Only conscience judges a thought"
+    },
+    {
+      "qid": "e2f49168-00ec-41ff-aad2-86ec09ce0740",
+      "pl": "Zakazany owoc smakuje najlepiej",
+      "en": "Forbidden fruit tastes best"
+    },
+    {
+      "qid": "e7fe5afe-d2e0-4474-9c93-20a45f17caea",
+      "pl": "Zmarli nie rozliczają obietnic",
+      "en": "The dead keep no accounts"
+    },
+    {
+      "qid": "ea9f2a4b-0145-4e05-9677-f8941205ed78",
+      "pl": "Chronisz je czy własny komfort?",
+      "en": "Protecting them, or your own comfort?"
+    },
+    {
+      "qid": "ee514625-9f02-4ba7-86f9-a0a3b96dfcb1",
+      "pl": "Jedno z was wciąż ma nadzieję",
+      "en": "One of you is still hoping"
+    },
+    {
+      "qid": "f005102b-30df-4b52-9697-422ce52251c1",
+      "pl": "Twoje selfie, cudza susza",
+      "en": "Your selfie, someone's drought"
+    },
+    {
+      "qid": "f0115cbf-7882-4e22-819c-6d6987d311a4",
+      "pl": "Sam chciałbyś być tym jednym dniem?",
+      "en": "Would you want to be your worst day?"
+    },
+    {
+      "qid": "f0d38a86-b407-4d63-9f96-0bccc7857081",
+      "pl": "To nie liczba, to inne pokolenie",
+      "en": "It's not the number, it's the era"
+    },
+    {
+      "qid": "f1e673d0-39db-4fd8-8da3-2d4c6048d4ee",
+      "pl": "Wybaczenie to ulga twoja, nie jego",
+      "en": "Forgiveness frees you, not them"
+    },
+    {
+      "qid": "f28b94a1-6d1b-4d26-8375-566dc36b8c1e",
+      "pl": "Wystarczająco dobry — dla kogo?",
+      "en": "'Good enough' — for whom?"
+    },
+    {
+      "qid": "f6e053cf-4ff4-41cc-b073-a9506fbc402d",
+      "pl": "Piekło brukowane dobrymi chęciami",
+      "en": "The road to hell is paved with these"
+    },
+    {
+      "qid": "f92381dd-90d4-4437-ab5d-7a2f4086a5a4",
+      "pl": "Bohaterstwo na rozkaz to nie cnota",
+      "en": "Heroism on command isn't virtue"
+    },
+    {
+      "qid": "fe3abcd8-f2d7-43cc-bcb0-cb5d3fd35850",
+      "pl": "Prawda dla ulgi czyjego sumienia?",
+      "en": "The truth — for whose relief?"
+    },
+    {
+      "qid": "04cb8a54-9eeb-4afd-9342-d46ffd8f5aa1",
+      "pl": "Blokada przyznaje, że przegrałeś z sobą",
+      "en": "A lock admits you lost to yourself"
+    },
+    {
+      "qid": "067b7ce6-b861-474e-b3c5-34ea08893292",
+      "pl": "Ambicja to często ucieczka przed sobą",
+      "en": "Ambition is often fleeing yourself"
+    },
+    {
+      "qid": "0987b202-98bb-4586-b44b-f5afaba0d7e3",
+      "pl": "Kara skończona, piętno wieczne?",
+      "en": "Sentence served, stigma forever?"
+    },
+    {
+      "qid": "09e0d16d-aa5c-48f4-bf33-9e6c95f9a354",
+      "pl": "Bez licznika i tak byś się porównywał",
+      "en": "You'd compare anyway, counter or not"
+    },
+    {
+      "qid": "0b30f36c-e6c6-4d00-9278-45b9df8e1a30",
+      "pl": "Wiara z domu to loteria adresu",
+      "en": "Inherited faith is an accident of address"
+    },
+    {
+      "qid": "0c7e3c0f-f862-4c4b-88e2-5964931915fa",
+      "pl": "Trupowi organy już nie posłużą",
+      "en": "A corpse has no use for them"
+    },
+    {
+      "qid": "0cc7b9ae-08d0-4a3d-bd01-2194380f6e1f",
+      "pl": "Obraźliwe często znaczy niewygodne",
+      "en": "'Offensive' often just means 'inconvenient'"
+    },
+    {
+      "qid": "0e9ff46d-a19a-4129-b77c-a6dd7b7c5f83",
+      "pl": "Zdrowie na pokaz to nie zdrowie",
+      "en": "Health for the camera isn't health"
+    },
+    {
+      "qid": "0eb5cdb9-c34c-43dd-b317-367d24aa2124",
+      "pl": "Zawsze dostępny znaczy zawsze do wymiany",
+      "en": "Always available means always replaceable"
+    },
+    {
+      "qid": "0faa86b3-ae65-46c1-9026-0bb03c279141",
+      "pl": "Legalny, bo stary, nie bo bezpieczny",
+      "en": "Legal because it's old, not because it's safe"
+    },
+    {
+      "qid": "150f2136-acfc-43b5-978d-ad407aca64f3",
+      "pl": "Dziś jego poglądy, jutro twoje",
+      "en": "Their opinion today, yours tomorrow"
+    },
+    {
+      "qid": "1942a99a-6dc9-4973-8f72-7c63fb1778bb",
+      "pl": "Zmarły nie zgarnie honorarium",
+      "en": "The dead can't cash the check"
+    },
+    {
+      "qid": "1c64dad7-392a-4ecf-b5c7-54a47edcc31b",
+      "pl": "Odmówiłbyś leku, który tak powstał?",
+      "en": "Would you refuse a cure made this way?"
+    },
+    {
+      "qid": "1eb8f368-d7b6-4f8f-8eb0-d37d1b077d98",
+      "pl": "Tajność pensji chroni tylko szefa",
+      "en": "Pay secrecy protects only the boss"
+    },
+    {
+      "qid": "1f056bfe-b249-4356-bd32-6fb63a3dd515",
+      "pl": "Płacą za pracę, nie za duszę",
+      "en": "They pay for the work, not the soul"
+    },
+    {
+      "qid": "218164b4-d1a4-44c2-a731-3d6df2d9701d",
+      "pl": "Darmowy staż stać tylko bogatych",
+      "en": "Only the rich can afford unpaid"
+    },
+    {
+      "qid": "21e7d90b-c1d5-4c00-8b8d-eaf989460cf7",
+      "pl": "Świnia jest mądrzejsza od twojego psa",
+      "en": "A pig is smarter than your dog"
+    },
+    {
+      "qid": "238ce879-188a-4ed9-a3c9-6f4bbe6c0b1b",
+      "pl": "Nikt nie zarabia miliarda w pojedynkę",
+      "en": "No one earns a billion alone"
+    },
+    {
+      "qid": "2a43d344-370a-472f-b7b3-6cd85940654c",
+      "pl": "Ktoś lepszy zawsze o jedno przesunięcie",
+      "en": "Someone better is always one swipe away"
+    },
+    {
+      "qid": "37435f36-0877-4921-b3fa-87f876fc42cc",
+      "pl": "Uczysz, że trudne znaczy do porzucenia",
+      "en": "You teach it that hard means quit"
+    },
+    {
+      "qid": "39b30358-9728-448b-ad3c-c36cfe3bc62c",
+      "pl": "Start metr od mety to nie wyścig",
+      "en": "Starting at the finish isn't a race"
+    },
+    {
+      "qid": "3a5a5003-be7a-40b4-b047-a1d358ca3d87",
+      "pl": "Zakazany cukierek staje się skarbem",
+      "en": "The banned sweet becomes treasure"
+    },
+    {
+      "qid": "4061f4e5-4be8-4b2c-b673-326768013ac0",
+      "pl": "Tygrys nie zgłosił się na zwierzaka",
+      "en": "The tiger didn't sign up to be a pet"
+    },
+    {
+      "qid": "43a5f8fb-62e6-442d-a856-836e131f98e7",
+      "pl": "Ty po pracy nie robisz nadgodzin gratis",
+      "en": "You wouldn't take unpaid overtime home"
+    },
+    {
+      "qid": "459fe263-b93d-4942-b0ee-d4795efaf910",
+      "pl": "Sprzątaczka też przychodzi codziennie",
+      "en": "The cleaner shows up every day too"
+    },
+    {
+      "qid": "493f7127-261a-44ec-973d-cbf0e5753ec6",
+      "pl": "Dzieci i tak wyczują, gdy jest krucho",
+      "en": "Kids sense when money is tight anyway"
+    },
+    {
+      "qid": "49a38dba-981a-46a1-b6db-dd11b0108aee",
+      "pl": "Sygnalista też straci maskę",
+      "en": "The whistleblower loses their mask too"
+    },
+    {
+      "qid": "4a33cd2f-ee4a-42ac-88a5-2fa576ea5e17",
+      "pl": "Jutro ukarzą twój niezdrowy nawyk",
+      "en": "Tomorrow it's your 'unhealthy' habit"
+    },
+    {
+      "qid": "516e1c09-d845-4057-a797-31e23b1d736c",
+      "pl": "Kalendarz nie wie, kto jeszcze ma siłę",
+      "en": "The calendar doesn't know who's still sharp"
+    },
+    {
+      "qid": "51b89269-ace0-4e67-9674-efbc4171ad12",
+      "pl": "Kawę dzieciom też sprzedajesz bez pytania?",
+      "en": "Do you card kids for coffee too?"
+    },
+    {
+      "qid": "5605b2a6-9488-4ba1-b6f1-f04bbfae26df",
+      "pl": "Autorytet buduje przyznanie się, nie upór",
+      "en": "Owning a mistake builds authority, not stubbornness"
+    },
+    {
+      "qid": "56ed5051-c77c-4650-91f5-681bbf9d369e",
+      "pl": "Dożywotni wyrok po odsiedzeniu wyroku?",
+      "en": "A life sentence after the sentence?"
+    },
+    {
+      "qid": "5ab5a018-bcbd-4293-8540-6bc9ef7c433a",
+      "pl": "Ekran przy stole mówi: jesteś mniej ważny",
+      "en": "A phone at dinner says 'you matter less'"
+    },
+    {
+      "qid": "5f3cc59c-0e82-4d4b-b7a0-1fc99d5848b7",
+      "pl": "Kiedyś sześć dni pracy było świętością",
+      "en": "Six days of work was once 'sacred' too"
+    },
+    {
+      "qid": "60d2d8b9-e311-43fe-8e72-7dd928571494",
+      "pl": "Sam nigdy nie klikniesz w niewygodne",
+      "en": "You'll never click the uncomfortable yourself"
+    },
+    {
+      "qid": "61a2371f-12b9-4302-8928-3bd99ab2e0fc",
+      "pl": "Najbogatszy trup na cmentarzu?",
+      "en": "The richest corpse in the graveyard?"
+    },
+    {
+      "qid": "640b34a4-01c5-48ee-819e-c79e5556337d",
+      "pl": "Wybór pracy po nocach bywa przymusem",
+      "en": "'Choosing' to overwork is often coercion"
+    },
+    {
+      "qid": "65430e26-f9e5-4002-bc4e-ff0aa7037acd",
+      "pl": "Nikt nie oddaje władzy dobrowolnie",
+      "en": "No one gives up power willingly"
+    },
+    {
+      "qid": "6be427ed-054a-459f-84ef-d59b35cecd21",
+      "pl": "Metka krzyczy, bo ty milczysz",
+      "en": "The logo shouts because you don't"
+    },
+    {
+      "qid": "6bea2703-3a4c-4636-b00a-14cc0fb0c017",
+      "pl": "Dajesz mu świat, zanim go uniesie",
+      "en": "You hand it the world before it can carry it"
+    },
+    {
+      "qid": "6c11e1b3-bd78-4914-a7be-6287a657983b",
+      "pl": "Uczysz, że rodzina to współpraca",
+      "en": "You teach that family means pitching in"
+    },
+    {
+      "qid": "6d123f78-7f5d-4615-ab5c-527ca5ff6095",
+      "pl": "Dom i biuro zlewają się w jedno",
+      "en": "Home and office blur into one"
+    },
+    {
+      "qid": "70dbeb19-0e3e-4ea2-93b8-83e47078925a",
+      "pl": "Wspomnienia też blakną — pytaj starszych",
+      "en": "Memories fade too; ask the old"
+    },
+    {
+      "qid": "710c0397-7132-49e7-a9e7-6a5720a4e63e",
+      "pl": "Zdrowa żywność i tak jest droższa",
+      "en": "Healthy food already costs more"
+    },
+    {
+      "qid": "727fbd96-5d40-4991-a5a3-ba967c6ab5f0",
+      "pl": "Za darmo to ty jesteś produktem",
+      "en": "If it's free, you're the product"
+    },
+    {
+      "qid": "739b82e2-7813-475e-9287-8fff8d931b33",
+      "pl": "To ciało dla ciebie czy dla cudzych oczu?",
+      "en": "That body — for you, or for the eyes?"
+    },
+    {
+      "qid": "7521b6b4-6aa7-45fb-bb8f-b850667008d6",
+      "pl": "Pies się chowa, gdy ty się bawisz",
+      "en": "Your dog hides while you celebrate"
+    },
+    {
+      "qid": "768aac89-02f8-4938-9ad4-00e565d2bb3c",
+      "pl": "Realizujesz swoje marzenie cudzym życiem",
+      "en": "You're living your dream through their life"
+    },
+    {
+      "qid": "77194da0-7c23-4dbe-8ba0-de998aa3bb50",
+      "pl": "AI uczy się uprzedzeń z twoich danych",
+      "en": "The AI learns its bias from your data"
+    },
+    {
+      "qid": "7c136405-37cb-4da2-ae03-9c9cbcd69395",
+      "pl": "Ekspert też ma swój światopogląd",
+      "en": "The expert has an agenda too"
+    },
+    {
+      "qid": "7d3dbf0c-7f87-4f35-921f-bf2b142684bb",
+      "pl": "Zaczęło się twarzą w twarz — tak skończ",
+      "en": "It started in person; end it there"
+    },
+    {
+      "qid": "7dfdc5d4-c883-46f9-971e-ed15e017f549",
+      "pl": "Uczą się dla kasy, nie dla wiedzy",
+      "en": "They learn for cash, not for knowledge"
+    },
+    {
+      "qid": "7ea23a4a-dc7b-4031-8d2b-db1a9ce43fb2",
+      "pl": "Firma zwolni cię bez wahania",
+      "en": "The company would drop you in a day"
+    },
+    {
+      "qid": "88c5d7d4-1d12-4c2c-a632-35a58f7c3ac5",
+      "pl": "Uczysz jeść mimo sytości",
+      "en": "You teach eating past 'full'"
+    },
+    {
+      "qid": "896315af-71a4-4aa1-a9a5-49f175708e8f",
+      "pl": "Boisz się, że sam nie odróżnisz",
+      "en": "You're afraid you couldn't tell"
+    },
+    {
+      "qid": "8b41ea13-b28b-4eb8-bbc0-e4e1839c2b29",
+      "pl": "Rok twojego życia na czyj rozkaz?",
+      "en": "A year of your life, on whose orders?"
+    },
+    {
+      "qid": "8bc77bf8-ca6d-4076-a9e3-ec25d0aeb68f",
+      "pl": "Zdjęcia z plaży, rata z odsetkami",
+      "en": "Beach photos, monthly interest"
+    },
+    {
+      "qid": "8c007727-94af-4084-97b9-e030b20a0b55",
+      "pl": "Naturalna hodowla to też fabryka",
+      "en": "'Natural' farming is a factory too"
+    },
+    {
+      "qid": "8cd47f0d-62f3-48b1-b280-48eb374bc907",
+      "pl": "A ty odkładasz swój telefon?",
+      "en": "And do you put your own phone down?"
+    },
+    {
+      "qid": "8dc57b64-27e9-4e48-8c71-a7c534ab4593",
+      "pl": "Eksperyment, na który się nie zgodziło",
+      "en": "An experiment it never agreed to"
+    },
+    {
+      "qid": "91d9aeff-1eab-4d88-aa4f-5a5a943c8e0a",
+      "pl": "Kod zaprogramowany, by cię lubić",
+      "en": "Code programmed to like you"
+    },
+    {
+      "qid": "94c2c449-35e6-4260-9db9-29ead647b2b8",
+      "pl": "Trofeum to cudza głowa na ścianie",
+      "en": "The trophy is a head on your wall"
+    },
+    {
+      "qid": "9a6bffbb-3d7e-48d4-83fa-bc3b52e2a65a",
+      "pl": "Pierwsza prawdziwa porażka zaboli podwójnie",
+      "en": "The first real loss will hurt double"
+    },
+    {
+      "qid": "9bc43037-ebaf-4efc-8ce0-d44d38653fe5",
+      "pl": "Kalkulator zabił umiejętność liczenia?",
+      "en": "Did the calculator kill arithmetic?"
+    },
+    {
+      "qid": "9f1f791b-82d9-4a88-814a-cd61f8e0c345",
+      "pl": "Kupować będą bogaci od biednych",
+      "en": "The rich would buy from the poor"
+    },
+    {
+      "qid": "ad673d95-ff68-4551-bb78-eafece2a14eb",
+      "pl": "Dealer nie sprawdza dowodu ani składu",
+      "en": "A dealer checks neither ID nor purity"
+    },
+    {
+      "qid": "aef88eba-a67c-46c9-9559-802e2e2bf8db",
+      "pl": "Płacą podatki, a głosu nie mają?",
+      "en": "They pay taxes but get no vote?"
+    },
+    {
+      "qid": "b119b387-2736-4cd2-bb32-19f93eadf2e5",
+      "pl": "Algorytm nie chce swojego wyłącznika",
+      "en": "The algorithm doesn't want the off switch"
+    },
+    {
+      "qid": "b12c3ddd-d124-43d6-b188-2f7adb2f0684",
+      "pl": "Robot nie kupi tego, co produkuje",
+      "en": "A robot won't buy what it makes"
+    },
+    {
+      "qid": "b22900cd-14df-439b-bd56-788f7ce82404",
+      "pl": "Ratując zawsze, uczysz bezradności",
+      "en": "Rescue it always, and you teach helplessness"
+    },
+    {
+      "qid": "b4ff0cdc-aba4-43a1-ae74-e105aa443f00",
+      "pl": "Złap raz, a stracisz zaufanie na zawsze",
+      "en": "Caught once, trust gone for good"
+    },
+    {
+      "qid": "b8738440-9a60-43e9-8d59-09226004d64d",
+      "pl": "Twoja szafa też w tym tonie",
+      "en": "Your closet is drowning in it too"
+    },
+    {
+      "qid": "b8c9feb1-c199-4cc0-86ab-5cb526fbbab5",
+      "pl": "Liczba przy deserze karmi tylko wstyd",
+      "en": "A number by dessert feeds only shame"
+    },
+    {
+      "qid": "b963a3de-2388-44c5-8aa0-5e33c940de7c",
+      "pl": "Sam wpuściłeś podsłuch do domu",
+      "en": "You invited the microphone in yourself"
+    },
+    {
+      "qid": "bb378b69-815d-4c5d-ba20-d9ba570fea23",
+      "pl": "Reklama nie zmusza cię do jedzenia",
+      "en": "An ad can't force-feed you"
+    },
+    {
+      "qid": "c05d6e2e-4fa3-4512-9a93-974d89fbd4d9",
+      "pl": "Napiwek to pensja przerzucona na gościa",
+      "en": "Tipping is payroll passed to the guest"
+    },
+    {
+      "qid": "c1f648fa-0dfc-40e5-abba-cebed819189a",
+      "pl": "Głowa pęka ciszej niż noga",
+      "en": "A mind breaks quieter than a leg"
+    },
+    {
+      "qid": "c28c974f-a275-48d3-a734-d99ca49e34c5",
+      "pl": "Ambicja bez snu to szybkie wypalenie",
+      "en": "Ambition without sleep burns out fast"
+    },
+    {
+      "qid": "c3ec4e4b-dd95-4b97-9797-80bc21a7ff85",
+      "pl": "Niepalący nie wybrał tego dymu",
+      "en": "The non-smoker didn't choose your smoke"
+    },
+    {
+      "qid": "c57c28a0-d6d2-40d7-b84c-d7090d00c419",
+      "pl": "Branża zarabia na twoim niezadowoleniu",
+      "en": "The industry profits from your self-hate"
+    },
+    {
+      "qid": "c7ac26cd-1196-42aa-99c8-e61ceefb1896",
+      "pl": "Budujesz mu cyfrowy cień na zawsze",
+      "en": "You're building its digital shadow for life"
+    },
+    {
+      "qid": "d0f54795-1f9a-4e42-834a-7b92c4e3b320",
+      "pl": "Skórzane buty nosisz bez wyrzutów?",
+      "en": "Wearing leather shoes without a flinch?"
+    },
+    {
+      "qid": "d40f8a70-0b7a-4731-9bab-406acaab2af7",
+      "pl": "Fortuna dana za darmo rzadko cieszy",
+      "en": "A fortune never earned rarely satisfies"
+    },
+    {
+      "qid": "df12b6d3-d35a-449a-924b-db9445278fe0",
+      "pl": "Pasja z przymusu umiera pierwsza",
+      "en": "A forced passion dies first"
+    },
+    {
+      "qid": "df2ae5c2-0135-4da1-9c42-08f559c50b21",
+      "pl": "Ostatni z listy zapamięta ją na lata",
+      "en": "The last on the list remembers it for years"
+    },
+    {
+      "qid": "e11f4d4f-b743-49ab-93d3-68ab6406896f",
+      "pl": "Wolisz robota niż własny czas?",
+      "en": "You'd rather a robot than your own time?"
+    },
+    {
+      "qid": "e87c5080-f6d6-41dc-a91d-256b1dedebc4",
+      "pl": "Jeden zabieg rzadko jest ostatni",
+      "en": "One procedure is rarely the last"
+    },
+    {
+      "qid": "eda0e56c-41b1-4559-8e10-e25a0e3b1e81",
+      "pl": "Chronisz jego uczucia czy swoją wygodę?",
+      "en": "Their feelings, or your convenience?"
+    },
+    {
+      "qid": "ee6a410d-357c-4f50-bc24-49d96f883dc2",
+      "pl": "Krewetkę jesz — czym się różni?",
+      "en": "You eat shrimp; what's the difference?"
+    },
+    {
+      "qid": "ef27b58e-0ea9-4211-b5be-ceb9ccffb9e0",
+      "pl": "Głód w ładnym opakowaniu to wciąż głód",
+      "en": "Starvation in nice packaging is still starvation"
+    },
+    {
+      "qid": "f281371c-8f2b-46e5-8188-797480c074dc",
+      "pl": "Waga nie mierzy kompetencji",
+      "en": "The scale doesn't measure competence"
+    },
+    {
+      "qid": "f2b4cb2d-7b98-4ba0-8970-29654cc4823d",
+      "pl": "Praca stworzona na siłę to nie sens",
+      "en": "A made-up job is busywork, not purpose"
+    },
+    {
+      "qid": "f825249e-165a-4be0-9f7e-72829ca56e69",
+      "pl": "Kto nie kupi chipa, zostaje w tyle",
+      "en": "Skip the chip, fall behind"
+    },
+    {
+      "qid": "f903a4a8-b053-47b3-bb00-8cd9026bc541",
+      "pl": "Milczenie kryje przekręt, nie honor",
+      "en": "Silence guards the scam, not honor"
+    },
+    {
+      "qid": "faae17ee-af63-4a4b-9c2f-82cae4259ae5",
+      "pl": "Śledzony dzieciak uczy się ukrywać lepiej",
+      "en": "A tracked kid just learns to hide better"
+    },
+    {
+      "qid": "fecc9d88-049f-419b-9837-3cb26476d151",
+      "pl": "Tabletka tania, terapia droga — zgadnij, co wygrywa",
+      "en": "Pills are cheap, therapy isn't — guess which wins"
+    },
+    {
+      "qid": "fff55253-a360-4d5e-b199-098a693ba48e",
+      "pl": "Nadzór zabija zaufanie, nie lenistwo",
+      "en": "Surveillance kills trust, not slacking"
+    },
+    {
+      "qid": "00f4ba3f-b62b-4e80-8a78-f82da71792d2",
+      "pl": "Wrócisz do życia, które olałeś",
+      "en": "You return to the life you left"
+    },
+    {
+      "qid": "0122e884-25be-489a-a243-cc12ba80a3e7",
+      "pl": "Godzina z tobą czy czek — co pomaga bardziej?",
+      "en": "An hour with you or a check — which helps more?"
+    },
+    {
+      "qid": "012aa897-e789-4e08-b7e5-54bc5c9b1db2",
+      "pl": "Wcześnie wstają też nieszczęśliwi",
+      "en": "The miserable wake up early too"
+    },
+    {
+      "qid": "01d9bbef-56fe-4cb3-92d7-7452eade098d",
+      "pl": "Pożyczka z terminem to test przyjaźni",
+      "en": "A loan with a due date tests the friendship"
+    },
+    {
+      "qid": "0220968b-6648-4c31-a795-14ed2953e95e",
+      "pl": "Kradniesz jutro, by przetrwać dziś",
+      "en": "You borrow from tomorrow to survive today"
+    },
+    {
+      "qid": "047b3061-e975-4cc4-a9ae-1bae31f511e2",
+      "pl": "Zna cię — i sprzedaje tę wiedzę",
+      "en": "It knows you — and sells the knowledge"
+    },
+    {
+      "qid": "04a84a55-fadc-49ef-b011-bafd811c28fe",
+      "pl": "Święta staną się negocjacjami",
+      "en": "The holidays become negotiations"
+    },
+    {
+      "qid": "050b706a-6739-475a-b9a6-2cfec20215be",
+      "pl": "Zwycięzców rzadko pytają o metody",
+      "en": "Winners are rarely asked how"
+    },
+    {
+      "qid": "053d2c7d-51c4-4af4-bbd6-0c751b29311f",
+      "pl": "Kompromis w łóżku to często cicha uraza",
+      "en": "A compromise in bed is often quiet resentment"
+    },
+    {
+      "qid": "05578e3b-161a-495e-8763-496240330612",
+      "pl": "Zdjęcie usuniesz, wspomnienia nie",
+      "en": "Delete the photo, not the memory"
+    },
+    {
+      "qid": "07c1209e-eb9b-4bfb-a7bc-658506464cef",
+      "pl": "Liczba na wadze to nie twoja wartość",
+      "en": "The number isn't your worth"
+    },
+    {
+      "qid": "08040275-5fe3-4a30-acae-2cca190275ac",
+      "pl": "Czekasz na niego z powodu, którego nikt nie pamięta",
+      "en": "You wait on him for a reason no one remembers"
+    },
+    {
+      "qid": "08a86389-aa99-4061-b549-8843b2faf73f",
+      "pl": "Zapominasz, jak wygląda twoja twarz",
+      "en": "You forget what your real face looks like"
+    },
+    {
+      "qid": "09aa5f38-6905-422e-b12f-086231eb571c",
+      "pl": "Ofiara robi z dobra transakcję",
+      "en": "Sacrifice turns good into a transaction"
+    },
+    {
+      "qid": "0a2c6912-d833-4d1c-9109-059cf2c539be",
+      "pl": "Świat nie da medalu za samo przyjście",
+      "en": "The world won't reward just showing up"
+    },
+    {
+      "qid": "0b0711fd-8bff-4206-a6f8-abe19e8383ee",
+      "pl": "Ratunek bywa przebraną kontrolą",
+      "en": "Rescue is sometimes control in disguise"
+    },
+    {
+      "qid": "0d2e7808-0aa9-49f1-ade6-d65ef29f551d",
+      "pl": "Kłamstwo o śmierci boli, gdy pęknie",
+      "en": "A lie about death hurts when it breaks"
+    },
+    {
+      "qid": "0d8112db-69f8-4b0a-ba9a-01a92d8d6da9",
+      "pl": "Zegarek każe biegać, nie serce",
+      "en": "The watch tells you to run, not your heart"
+    },
+    {
+      "qid": "0d84dc1a-0a33-4a91-8d4d-e03c43b180e2",
+      "pl": "Projektanci wiedzą, jak cię przykuć",
+      "en": "The designers know how to hook you"
+    },
+    {
+      "qid": "0e573e33-e62f-4009-ad37-eab49c4aefe4",
+      "pl": "Przedmiot niewinny, uczucie mniej",
+      "en": "The object's innocent; the feeling less so"
+    },
+    {
+      "qid": "0fdb9a97-4e09-440b-93cf-522c2fc06d12",
+      "pl": "Twój lęk to nie jego świat",
+      "en": "Your fear isn't its world"
+    },
+    {
+      "qid": "102eef52-02cb-4057-bc49-97ab0efe7a72",
+      "pl": "Maszyna nie odpowiada za kłamstwo",
+      "en": "A machine answers for no lie"
+    },
+    {
+      "qid": "1109f5ce-de96-4faf-80dd-ead0540362cb",
+      "pl": "Zabawa to nauka, której nie widać",
+      "en": "Play is learning you can't see"
+    },
+    {
+      "qid": "11962158-eb0f-44b2-a393-1757dea565ba",
+      "pl": "Właśnie zrobiłeś z nich plan B",
+      "en": "You just made them your plan B"
+    },
+    {
+      "qid": "13a2352e-e6fb-4118-8b3f-90c8a6c4f692",
+      "pl": "Wsypują go tam, gdzie go nie szukasz",
+      "en": "They hide it where you'd never look"
+    },
+    {
+      "qid": "146086e7-45cd-445c-a04f-af961cd7d085",
+      "pl": "Cisza kupiona zgodą ma swoją cenę",
+      "en": "Peace bought by nodding has a price"
+    },
+    {
+      "qid": "149c384e-54ce-4310-8b34-84e1937265cc",
+      "pl": "Sytość spóźnia się o dwadzieścia minut",
+      "en": "Fullness arrives twenty minutes late"
+    },
+    {
+      "qid": "14a5fbbd-83a3-44cb-aa16-7492eb21b51c",
+      "pl": "Firma nie da ci więcej z dobroci",
+      "en": "The company won't raise you out of kindness"
+    },
+    {
+      "qid": "15190b24-d99d-41ba-aa8f-8cf665f1a57a",
+      "pl": "Uczysz, że ekran to nagroda — i wygrywa",
+      "en": "You teach that screens are a prize — and it wins"
+    },
+    {
+      "qid": "15efa68a-eea9-4870-a286-20fa509cf195",
+      "pl": "Twoje zdjęcie sprzed pięciu lat to też oszustwo",
+      "en": "Your five-year-old photo is a lie too"
+    },
+    {
+      "qid": "15fdaea8-e17e-4961-a27f-5bcc0995b3bd",
+      "pl": "Jeden na tysiąc dojdzie — a reszta?",
+      "en": "One in a thousand makes it — the rest?"
+    },
+    {
+      "qid": "1681e78a-d232-45e9-aa33-0aa54afa7fd7",
+      "pl": "Zatrzymujesz twarz, nie czas",
+      "en": "You freeze the face, not the clock"
+    },
+    {
+      "qid": "17ed929a-f40b-48b4-8912-42666e7ab47f",
+      "pl": "Prawo bywa niesprawiedliwe, zanim się zmieni",
+      "en": "Unjust laws are law until they change"
+    },
+    {
+      "qid": "19499321-12ba-4248-ad3c-2e9f2a20e963",
+      "pl": "Kto się nie targuje, płaci frajerski podatek",
+      "en": "Not haggling is a tax on the polite"
+    },
+    {
+      "qid": "1b9938f7-7a2f-4346-a417-c687509ae7b6",
+      "pl": "Krycie zła robi cię wspólnikiem",
+      "en": "Covering wrong makes you an accomplice"
+    },
+    {
+      "qid": "1b9f48d8-6752-495c-90e6-11af33f9c946",
+      "pl": "Wracasz do tego, od czego uciekłeś",
+      "en": "You're going back to what you fled"
+    },
+    {
+      "qid": "1bdf8e5b-f0d1-47fc-bf15-bd9007e32e2d",
+      "pl": "Kto udaje luz, przeżywa porażkę najgorzej",
+      "en": "Whoever fakes 'just fun' takes the loss hardest"
+    },
+    {
+      "qid": "1bfe41c0-14ef-44f2-ab0d-dd07c1a46e5e",
+      "pl": "Wypalony pomocnik już nikomu nie pomoże",
+      "en": "A burnt-out helper helps no one"
+    },
+    {
+      "qid": "1c808aeb-ec5a-404e-b6dc-6fc1a69cfd25",
+      "pl": "Pomnik nie wie, że stoi",
+      "en": "A monument doesn't know it stands"
+    },
+    {
+      "qid": "1f82d7e4-48da-49bb-92d7-544a7b331598",
+      "pl": "Cenisz to, czego może zabraknąć",
+      "en": "You value what can run out"
+    },
+    {
+      "qid": "1faaf97b-1667-4862-8f69-bfc5efef114e",
+      "pl": "Dobro dla nagrody w niebie to interes",
+      "en": "Goodness for a heavenly reward is a deal"
+    },
+    {
+      "qid": "208d40e6-c120-403f-9eea-34aeef9408f8",
+      "pl": "Przymus zabija to, co miał zaszczepić",
+      "en": "Force kills the very thing it meant to plant"
+    },
+    {
+      "qid": "21242ee3-4925-4cac-a33b-3235ac4928a4",
+      "pl": "Opcje dla ciebie, ślepy zaułek dla nich",
+      "en": "Options for you, a dead end for them"
+    },
+    {
+      "qid": "225526b8-5675-480c-bc06-212f6caed71d",
+      "pl": "Kto zamawia najdrożej, kocha dzielić po równo",
+      "en": "Whoever orders most loves splitting evenly"
+    },
+    {
+      "qid": "244e48d2-400c-4fe5-9e28-777b8be0e39b",
+      "pl": "Zemsta myli się częściej niż sąd",
+      "en": "Vigilantes get it wrong more than courts"
+    },
+    {
+      "qid": "25637ec6-1dbc-4a45-bf2c-0544286aac0a",
+      "pl": "Sprzedajesz życie za lajki obcych",
+      "en": "You trade your life for strangers' likes"
+    },
+    {
+      "qid": "25a8a6f5-509b-43da-a048-6e40b3b12f31",
+      "pl": "Ta sama mechanika co automat w kasynie",
+      "en": "Same mechanic as a casino slot"
+    },
+    {
+      "qid": "266bb28e-d396-49f3-ae76-cb580a3a8b05",
+      "pl": "Kto zgarnia kasę — dziecko czy rodzic?",
+      "en": "Who pockets the cash — the kid or the parent?"
+    },
+    {
+      "qid": "2897f138-119f-4e6d-85bb-56446d1785d8",
+      "pl": "Mówi jej to, czego nie mówi tobie",
+      "en": "It gets the words you don't"
+    },
+    {
+      "qid": "291e9092-bb5b-4a63-b58d-30ad01ae4753",
+      "pl": "Już sprzedają twoje dane — bez działki dla ciebie",
+      "en": "They already sell your data — you get nothing"
+    },
+    {
+      "qid": "2a83256a-f148-4ea2-a605-77ec23f5396d",
+      "pl": "Tonący nie uratuje tonącego",
+      "en": "A drowning man saves no one"
+    },
+    {
+      "qid": "2b04c3dd-a179-405f-a358-e452f889f745",
+      "pl": "Kolega z podwórka i tak im powie",
+      "en": "The kid next door will tell them anyway"
+    },
+    {
+      "qid": "2bf22fc7-41ed-4749-ac7f-598a6f87660e",
+      "pl": "Oszczędzasz na czynszu, płacisz prywatnością",
+      "en": "You save on rent, pay in privacy"
+    },
+    {
+      "qid": "2cae755a-2e0b-4e1f-bb4b-24bb84b09eef",
+      "pl": "Prawdziwie bogaci nie muszą krzyczeć",
+      "en": "The truly rich don't need to shout"
+    },
+    {
+      "qid": "2e5b5233-a995-4d9a-9513-234f898d004f",
+      "pl": "Pierwsza decyzja dnia to: odkładam",
+      "en": "Your first choice of the day is 'later'"
+    },
+    {
+      "qid": "2f01e0ef-c23b-445a-9f90-c140b8d7fa8f",
+      "pl": "Zamknięte drzwi to nie zamknięte serce",
+      "en": "A locked door isn't a locked heart"
+    },
+    {
+      "qid": "2f9470e7-83e8-4d59-8410-d36b5772def5",
+      "pl": "Wziąłeś go dla siebie czy dla niego?",
+      "en": "You got it for you, or for it?"
+    },
+    {
+      "qid": "306cf406-c1b1-47a9-8c6c-8c3fc24b2452",
+      "pl": "Powiesz raz i tak wróci do niego",
+      "en": "Say it once and they'll go back anyway"
+    },
+    {
+      "qid": "3205f50b-ed69-4021-b7e0-c9c89addce20",
+      "pl": "Cukier jest w chlebie, sosie, wszędzie",
+      "en": "Sugar hides in bread, sauce, everything"
+    },
+    {
+      "qid": "321472c7-3e52-4836-9c57-ecec8ded2c20",
+      "pl": "Ostatnie miejsce, gdzie jesteś sam",
+      "en": "The last place you're truly alone"
+    },
+    {
+      "qid": "343b207e-f821-41dc-ab83-120fbe2dfde8",
+      "pl": "Wolny — i zależny od każdego klienta",
+      "en": "Free — and at every client's mercy"
+    },
+    {
+      "qid": "3557c1e1-5c30-4397-b565-6e1cfd52982f",
+      "pl": "Cisza o pensjach służy tylko firmie",
+      "en": "Salary silence serves only the company"
+    },
+    {
+      "qid": "35cb3c30-dafa-4fae-9032-772dbd51a3d2",
+      "pl": "Internet nie zna słowa: dawno temu",
+      "en": "The internet doesn't know 'long ago'"
+    },
+    {
+      "qid": "3692c25d-264f-446a-baa7-80ab204393f7",
+      "pl": "Dojrzałość czy zapasowe wyjście?",
+      "en": "Maturity, or a spare exit?"
+    },
+    {
+      "qid": "36b67b22-d0f5-4e87-a382-9003e58f775c",
+      "pl": "Uczysz, że silniejszy ma rację",
+      "en": "You teach that the stronger one wins"
+    },
+    {
+      "qid": "37a00851-59ec-4581-a106-cc7e71d58cf8",
+      "pl": "Mięsożerca też narzuca dziecku dietę",
+      "en": "The meat-eater imposes a diet too"
+    },
+    {
+      "qid": "37b2074d-9d9e-4e8b-b4fe-46733efc68f9",
+      "pl": "Fałszywe liczby zdobywają prawdziwe kontrakty",
+      "en": "Fake numbers win real contracts"
+    },
+    {
+      "qid": "37bb73fe-e02f-4fb8-87ce-533feafdf686",
+      "pl": "Zmuszony do gam, znienawidzi muzykę",
+      "en": "Forced through scales, it'll hate music"
+    },
+    {
+      "qid": "38524108-1cf9-4fdd-9729-eba3f5b8fe41",
+      "pl": "Zazdrość nazywa cudzą pracę zabawą",
+      "en": "Envy calls someone's work 'just playing'"
+    },
+    {
+      "qid": "38fc2fe2-4dce-4871-892d-f20cef2b5bbf",
+      "pl": "Zostaw go w innym pokoju — sprawdź się",
+      "en": "Leave it in another room — then judge"
+    },
+    {
+      "qid": "39010bfe-77d9-4dbe-b26b-773c348165f7",
+      "pl": "Lalka uczy opieki — czego się boisz?",
+      "en": "A doll teaches care — what's the fear?"
+    },
+    {
+      "qid": "3987e035-7d8c-4700-84e2-10a099672743",
+      "pl": "Zero procent, sto procent pokusy",
+      "en": "Zero interest, full temptation"
+    },
+    {
+      "qid": "39a6adbb-ed63-40de-9c80-c7083e798fd6",
+      "pl": "Za tę sumę uratowałbyś więcej istnień",
+      "en": "That sum could save far more lives"
+    },
+    {
+      "qid": "39ed09d3-3c70-4981-89b0-913201e093a2",
+      "pl": "Uczysz je przepraszać, nie żałować",
+      "en": "You teach it to say sorry, not to feel it"
+    },
+    {
+      "qid": "3d9f64b4-a4f5-4d12-b389-699870c19e18",
+      "pl": "Wybaczasz dla siebie, nie dla niego",
+      "en": "You forgive for you, not for them"
+    },
+    {
+      "qid": "3e61b8d0-76cc-4564-b47c-3fa08c8d5d0b",
+      "pl": "Kto liczy prezenty, już nie daje",
+      "en": "Whoever counts gifts isn't giving"
+    },
+    {
+      "qid": "3f47055a-8af7-48d0-9258-84ac46951f9f",
+      "pl": "Ekran kusi wszystkim oprócz nauki",
+      "en": "A screen tempts with everything but the lesson"
+    },
+    {
+      "qid": "4136eed0-9962-43a7-b443-fda38826ad88",
+      "pl": "Cheat to słowo złodzieja",
+      "en": "'Cheat' is a thief's word"
+    },
+    {
+      "qid": "425a6c8e-2075-49b3-b709-185d1432efaf",
+      "pl": "Jutro twoja twarz mówi, czego nie powiedziałeś",
+      "en": "Tomorrow it's your face saying what you never said"
+    },
+    {
+      "qid": "430df1ac-91da-454d-a77d-c89889b19146",
+      "pl": "Mówią to ci, którzy nie spróbowali",
+      "en": "Said by those who never tried"
+    },
+    {
+      "qid": "4321b34a-4f98-4194-bd87-f3c69306a959",
+      "pl": "Dane o tętnie mają wartość — dla kogoś",
+      "en": "Your heartbeat is data — for someone"
+    },
+    {
+      "qid": "44aa3257-cee9-4b41-9576-d17417193f15",
+      "pl": "Ty też nie pożyczasz auta na żądanie",
+      "en": "You wouldn't lend your car on demand"
+    },
+    {
+      "qid": "4507f969-b014-4bf3-8a7c-ee1cc7216a73",
+      "pl": "Twoje hobby stało się drugą pracą",
+      "en": "Your hobby became a second job"
+    },
+    {
+      "qid": "457efe46-3d30-46cc-8610-0678e8110c8e",
+      "pl": "Zazdrość mówi o twoim lęku, nie o nich",
+      "en": "Jealousy speaks of your fear, not them"
+    },
+    {
+      "qid": "48b92470-f2a3-45e0-9f28-9a03509229ed",
+      "pl": "Nazywasz tchórzostwo roztropnością",
+      "en": "You call cowardice 'prudence'"
+    },
+    {
+      "qid": "48ccd4dc-a917-4058-af56-4f5f1c6921d0",
+      "pl": "Nawet dobry uczynek karmi twoje ego",
+      "en": "Even a good deed feeds your ego"
+    },
+    {
+      "qid": "4b175586-0a09-4955-adb8-630ed00b70e1",
+      "pl": "Dziecko w bańce boi się wszystkiego",
+      "en": "A bubble-wrapped kid fears everything"
+    },
+    {
+      "qid": "4b7ea130-d8b0-4ea4-a824-6d7bf9a7e4fb",
+      "pl": "Wybrałeś ich — trzymaj się wyboru",
+      "en": "You chose them — stand by the choice"
+    },
+    {
+      "qid": "4bd18d1f-22bf-46df-b004-91a46ffa824e",
+      "pl": "To wychowanie czy klonowanie?",
+      "en": "Is that raising, or cloning?"
+    },
+    {
+      "qid": "4d813042-0757-40c0-9388-ae852d43c11b",
+      "pl": "Brak etykiety zwykle chroni jedną stronę",
+      "en": "No label usually protects one side"
+    },
+    {
+      "qid": "4fd60085-8127-4c9f-90d7-75512a632908",
+      "pl": "Dłużej żyć, by dłużej brać pigułki?",
+      "en": "Live longer just to take more pills?"
+    },
+    {
+      "qid": "525784cf-e611-431b-8579-b7a4fa6f907f",
+      "pl": "Wina bez czynu niczego nie karmi",
+      "en": "Guilt without action feeds no one"
+    },
+    {
+      "qid": "5307207e-fa56-4066-930a-fb287458a97c",
+      "pl": "Nie wybierze tego, czego nie zna",
+      "en": "You can't choose what you've never met"
+    },
+    {
+      "qid": "5354f609-8e87-4926-8ca7-19079f837a0c",
+      "pl": "Serce nie sługa, ale przyjaźń ma granice",
+      "en": "The heart is free; friendship has lines"
+    },
+    {
+      "qid": "53aea1a4-b346-4eb1-8e71-22a507844501",
+      "pl": "Robiłbyś to, gdyby nikt nie patrzył?",
+      "en": "Would you still, if no one could see?"
+    },
+    {
+      "qid": "55e461ba-b00c-4d8a-b577-1a53770d0c15",
+      "pl": "Zwierzyłeś się już botowi?",
+      "en": "You already confided in a bot?"
+    },
+    {
+      "qid": "5742276f-2547-4069-9cb1-9e3849cc9bf2",
+      "pl": "Równo to nie zawsze sprawiedliwie",
+      "en": "Equal isn't always fair"
+    },
+    {
+      "qid": "57e8c47d-4321-486b-a764-70ff5d86fc1e",
+      "pl": "Na trzeźwo poznasz, kto to twoi ludzie",
+      "en": "Sober, you learn who your people are"
+    },
+    {
+      "qid": "589fbfde-a1da-4158-9775-83c72c927c1c",
+      "pl": "Głodnemu obojętne, czemu dostał chleb",
+      "en": "The hungry don't care why you gave"
+    },
+    {
+      "qid": "5992809f-85aa-4cac-860b-4770663c6b97",
+      "pl": "Mądry boi się spróbować trudniejszego",
+      "en": "The 'smart' kid fears the harder task"
+    },
+    {
+      "qid": "5bd9a980-cf4d-41e2-939b-5755921f1b4a",
+      "pl": "Jedno zdanie kosztuje mniej niż cisza",
+      "en": "One sentence costs less than silence"
+    },
+    {
+      "qid": "5d6fe76d-334b-4160-8b38-d3e766c9e1dd",
+      "pl": "Zwyczajne to alibi dla strachu",
+      "en": "'Ordinary' is fear's alibi"
+    },
+    {
+      "qid": "5eae3cd4-4120-41f2-8cc8-382464802762",
+      "pl": "Zasuwasz dla cudzego bogactwa",
+      "en": "You hustle for someone else's fortune"
+    },
+    {
+      "qid": "60e12b25-ed5b-43ad-bfa4-7588c5153ff9",
+      "pl": "Bystry umysł w świecie samych obcych",
+      "en": "A sharp mind in a world of strangers"
+    },
+    {
+      "qid": "61185cde-051b-4686-bc35-1db7b533f5dd",
+      "pl": "Cichy prezent i tak zostawia cichy żal",
+      "en": "A quiet gift still leaves a quiet grudge"
+    },
+    {
+      "qid": "611b33b3-9a8a-4a68-9e33-589da4452364",
+      "pl": "Robiłbyś to przy partnerze?",
+      "en": "Would you do it with your partner watching?"
+    },
+    {
+      "qid": "646b3e43-1bc3-4cea-a02c-43c87a33f88c",
+      "pl": "Nadstawianie policzka słabo działa na placu zabaw",
+      "en": "Turning the cheek rarely works on the playground"
+    },
+    {
+      "qid": "651edaf0-8763-4bf4-a44b-93da699a569e",
+      "pl": "Zostaną razem — ty zostaniesz z opinią",
+      "en": "They'll stay together; you'll keep the verdict"
+    },
+    {
+      "qid": "652f4d70-4c1b-4864-b799-1db3ea9898b0",
+      "pl": "Ciało to nie tabela z wynikami",
+      "en": "The body isn't a spreadsheet"
+    },
+    {
+      "qid": "65bda3ae-bd1c-4ea6-b66e-6c64df813c3b",
+      "pl": "Raj bez ryzyka to złota klatka",
+      "en": "A risk-free heaven is a golden cage"
+    },
+    {
+      "qid": "65cee7c1-3e53-4f8d-80fc-0ae863231417",
+      "pl": "Wina to twój szef w twojej głowie",
+      "en": "Guilt is your boss in your head"
+    },
+    {
+      "qid": "6629c7c4-5f77-43c6-9026-52a2ab29fb75",
+      "pl": "Wiek to nie to samo co mądrość",
+      "en": "Age isn't the same as wisdom"
+    },
+    {
+      "qid": "6734fd1b-a3d7-40b4-a854-5317647899b9",
+      "pl": "Obcego nie wpuścisz drzwiami — a ekranem?",
+      "en": "You'd stop a stranger at the door, not the screen?"
+    },
+    {
+      "qid": "67a65eff-a5d4-4a90-8846-cbc7d891c774",
+      "pl": "Lubiany przez wszystkich, znany przez nikogo",
+      "en": "Liked by all means truly known by none"
+    },
+    {
+      "qid": "6859c462-8a50-4fc1-9e14-6af69586f798",
+      "pl": "Walka z czasem to wojna zawsze przegrana",
+      "en": "Fighting time is a war you always lose"
+    },
+    {
+      "qid": "68e09d0a-bfb6-43f3-ac1b-59fe09dd2c33",
+      "pl": "Ciało budzi się samo — nie dajesz mu szansy",
+      "en": "Your body wakes itself; you don't let it"
+    },
+    {
+      "qid": "69d6ba84-e33b-4ff4-8d82-3acf69835863",
+      "pl": "Ciągła ucieczka to też nawyk",
+      "en": "Always fleeing is a habit too"
+    },
+    {
+      "qid": "6b27f7ec-5e2b-4e57-a152-14501dc45142",
+      "pl": "Wolny czas bez pieniędzy bywa więzieniem",
+      "en": "Free time with no money is its own cell"
+    },
+    {
+      "qid": "6bce7b67-9cd9-4ca9-a977-59d8bd4f3ef1",
+      "pl": "Kupujesz cudze wow, płacisz swoim spokojem",
+      "en": "You buy their 'wow' with your own peace"
+    },
+    {
+      "qid": "6c53b79c-d322-4958-9d52-24a3dce28086",
+      "pl": "Awans zostaje, ludzie się rozchodzą",
+      "en": "The promotion stays; the people drift"
+    },
+    {
+      "qid": "6c6c6c67-82f1-4136-8d64-0e25acccd557",
+      "pl": "Dziecko pod kloszem nie nauczy się upadać",
+      "en": "A watched child never learns to fall"
+    },
+    {
+      "qid": "6cddca48-4ccf-4597-99b4-6f2d370f7472",
+      "pl": "Świat nagradza wynik, nie chęci",
+      "en": "The world rewards results, not effort"
+    },
+    {
+      "qid": "6d225fe1-5897-48a8-b9c0-3deb27f27398",
+      "pl": "Twój komfort kończy się na cudzych kolanach",
+      "en": "Your comfort ends at the next knees"
+    },
+    {
+      "qid": "6e47e94b-b2e9-460f-8920-2c6dab655096",
+      "pl": "Profil przeżyje ciebie — kto go dostanie?",
+      "en": "Your profile outlives you — who gets it?"
+    },
+    {
+      "qid": "6eb1f7f0-40ee-4cdb-a5b0-d5e2c884a523",
+      "pl": "Każde pokolenie mówiło: nie ten czas",
+      "en": "Every generation said 'not this time'"
+    },
+    {
+      "qid": "70c32aa4-24b6-4409-9e70-f76c36e6efed",
+      "pl": "Uczysz, że warzywa to kara, deser to nagroda",
+      "en": "You teach that veg is punishment, sweets the prize"
+    },
+    {
+      "qid": "714d7c4b-5e91-4a90-862d-2e1b694f0306",
+      "pl": "Twój bezpieczny plan to plan banku",
+      "en": "Your 'safe' plan is the bank's plan"
+    },
+    {
+      "qid": "73899fa1-76f1-4dc2-becf-0a73b489cfca",
+      "pl": "Tłumiony smutek nie znika — czeka",
+      "en": "Suppressed sadness doesn't leave; it waits"
+    },
+    {
+      "qid": "73b498d2-6188-4fd1-939f-1b1d132f2283",
+      "pl": "AI nie spojrzy ci w oczy z wyrokiem",
+      "en": "AI won't look you in the eye with the verdict"
+    },
+    {
+      "qid": "74f7beae-da0f-4891-8fdf-a5eac6dfa84c",
+      "pl": "Napiwek zawsze to nie napiwek, to podatek",
+      "en": "A guaranteed tip isn't a tip; it's a tax"
+    },
+    {
+      "qid": "797bd000-16af-4fff-965c-518f384f0da7",
+      "pl": "Pierwsza wypłata uczy więcej niż wykład",
+      "en": "A first paycheck teaches more than a lecture"
+    },
+    {
+      "qid": "7a7c1313-2301-465b-9d1a-ca8c45c7ea45",
+      "pl": "Mój talerz nic nie zmieni — mówią miliardy",
+      "en": "'My plate won't matter' — say the billions"
+    },
+    {
+      "qid": "80907274-bacf-42e7-9038-4b2553fd193a",
+      "pl": "Za ekranem odwaga jest tania",
+      "en": "Courage is cheap behind a screen"
+    },
+    {
+      "qid": "810ea3d5-1e9a-4149-84bf-b64ad2b89517",
+      "pl": "Wygoda dziś, teczka na ciebie jutro",
+      "en": "Convenience now, a file on you later"
+    },
+    {
+      "qid": "815a2758-5746-49b3-a834-388e4c1f7631",
+      "pl": "Zmarnowane kieszonkowe to tania lekcja",
+      "en": "Wasted pocket money is a cheap lesson"
+    },
+    {
+      "qid": "81afc3b1-5f05-40d8-b8d8-b0ebd8ef492a",
+      "pl": "Cierpienie w modnym opakowaniu wciąż boli",
+      "en": "Suffering in a trendy wrapper still hurts"
+    },
+    {
+      "qid": "82129f65-e2df-46b8-a517-bce40faa141b",
+      "pl": "Usuń to guzik, nie obietnica",
+      "en": "'Delete' is a button, not a promise"
+    },
+    {
+      "qid": "823262ba-1c39-45d0-95a4-4d71946598ae",
+      "pl": "Liczy się gość, nie ciasto",
+      "en": "It's the guest that counts, not the cake"
+    },
+    {
+      "qid": "8418b9d2-d6fc-492f-9c76-90d8251ebef1",
+      "pl": "Nie każde uczucie trzeba wygadać",
+      "en": "Not every feeling needs an audience"
+    },
+    {
+      "qid": "857618af-6afa-4dd1-a17e-038a5dda53bf",
+      "pl": "Znikasz, by uniknąć niezręcznego pa",
+      "en": "You vanish to dodge the awkward goodbye"
+    },
+    {
+      "qid": "85a487d4-fa41-418f-bfe5-b9b554c4a0d4",
+      "pl": "Uczysz dziecko, że ocenę się wykłóca",
+      "en": "You teach the kid grades are for arguing"
+    },
+    {
+      "qid": "888ab900-32b3-49a6-a1bd-764fd2c2dac3",
+      "pl": "Milczący tłum tworzą pojedynczy tchórze",
+      "en": "A silent crowd is made of single cowards"
+    },
+    {
+      "qid": "8897d5f1-02f1-4026-878f-734a5329a1b4",
+      "pl": "Wieczne ratowanie uczy, że ktoś zawsze zapłaci",
+      "en": "Endless rescue teaches someone always pays"
+    },
+    {
+      "qid": "8a68f872-1cd6-4094-a3c0-6fdd12c04f89",
+      "pl": "Po równo dzieli pieniądze, nie miłość",
+      "en": "Equal splits the money, not the love"
+    },
+    {
+      "qid": "8ab1d765-e41b-4710-8f77-98a1004d9414",
+      "pl": "Bankomat to nie przyjaciel",
+      "en": "A cash machine isn't a friend"
+    },
+    {
+      "qid": "8abaa183-9d36-441f-bd12-e4fb1e2cce86",
+      "pl": "Naiwność to nie to samo co dobroć",
+      "en": "Naivety isn't the same as kindness"
+    },
+    {
+      "qid": "8ace3238-9a3d-4f28-8b9e-30a5e609b951",
+      "pl": "Poznasz jego wersję PR, nie jego",
+      "en": "You'll meet the PR version, not the person"
+    },
+    {
+      "qid": "8aea226e-a754-46c0-9f52-648f6701338c",
+      "pl": "Zdadzą test i zapomną wszystko",
+      "en": "They'll pass the test and forget it all"
+    },
+    {
+      "qid": "8b1fe774-0728-4de6-97d1-8fcefedf5569",
+      "pl": "Strach to nie przegrać — to nie zauważyć",
+      "en": "The fear isn't losing; it's not noticing"
+    },
+    {
+      "qid": "8bb89650-4998-4b4e-bbc7-551ec3acf582",
+      "pl": "Zostawiasz go, by kelner nie pomyślał źle",
+      "en": "You leave it so the waiter won't think ill"
+    },
+    {
+      "qid": "8d8a3afd-057e-4855-8fe6-8a53d4a3c553",
+      "pl": "Liczy się, że komuś posłuży",
+      "en": "What matters is it serves someone"
+    },
+    {
+      "qid": "903d6382-8dc4-4ccf-9d59-30ce3adc5800",
+      "pl": "Podpora, bez której nie wstaniesz, to kula",
+      "en": "A crutch you can't stand without is still a crutch"
+    },
+    {
+      "qid": "90eb692b-a480-4937-9313-16075f7a1b0b",
+      "pl": "Na szczycie drabiny często wieje chłodem",
+      "en": "The top of the ladder is often cold"
+    },
+    {
+      "qid": "919f9474-6318-4031-a5ee-db2105408057",
+      "pl": "Nazwa się zmienia, satysfakcja ta sama",
+      "en": "The name changes; the satisfaction doesn't"
+    },
+    {
+      "qid": "939c15a3-8890-4997-9915-182babdecd9c",
+      "pl": "Szansa to nie dożywotni dług",
+      "en": "A chance isn't a lifetime debt"
+    },
+    {
+      "qid": "93a19e42-6ea3-4853-9224-c00ae277801e",
+      "pl": "Rynek zdrowia sprzedaje głównie lęk",
+      "en": "The wellness aisle mostly sells fear"
+    },
+    {
+      "qid": "93e66801-81a0-4c78-8420-886ec632a387",
+      "pl": "Urodzić się w dobrym miejscu to też szczęście",
+      "en": "Being born in the right place is luck too"
+    },
+    {
+      "qid": "94aed95e-7bcd-4767-8f99-8f487aced91a",
+      "pl": "Milczenie to też odpowiedź — na nie",
+      "en": "Staying silent is an answer too — a no"
+    },
+    {
+      "qid": "95cd379d-e03e-4243-bc76-9bbc7a9feca8",
+      "pl": "Kasyna nie budują się z wygranych graczy",
+      "en": "Casinos aren't built on winners"
+    },
+    {
+      "qid": "982c3dea-2c26-4771-8a18-bdcf92f66fdc",
+      "pl": "Zajęty to często ucieczka od siebie",
+      "en": "'Busy' is often fleeing yourself"
+    },
+    {
+      "qid": "9b348a54-667d-4084-9385-76a3a959702b",
+      "pl": "Kto płaci, czasem czuje, że kupił",
+      "en": "Whoever pays sometimes feels they bought"
+    },
+    {
+      "qid": "9b71543b-bd3a-431f-91e2-5e2e5b429c67",
+      "pl": "Ten, kto patrzy, decyduje, co jest zbrodnią",
+      "en": "Whoever watches decides what's a crime"
+    },
+    {
+      "qid": "9c76dcda-ceeb-40cf-a86a-185743d2b928",
+      "pl": "Płacisz za nie też miejscem i czasem",
+      "en": "You pay for them in space and time too"
+    },
+    {
+      "qid": "9ca7f743-3772-461f-8fc1-c0bafb29a2d1",
+      "pl": "Nadmiar to worek, który sam dźwigasz",
+      "en": "Excess is a sack you carry yourself"
+    },
+    {
+      "qid": "9d7a6658-cd8f-4e77-be09-b12250168634",
+      "pl": "Walczysz silną wolą z armią inżynierów",
+      "en": "Your willpower vs. an army of engineers"
+    },
+    {
+      "qid": "9e796cbb-08fd-4ff7-8f66-ea8b5e4f87d8",
+      "pl": "Sekret przed partnerem sam odpowiada na pytanie",
+      "en": "A secret from your partner answers it"
+    },
+    {
+      "qid": "9fde18ec-0bf7-42cf-802d-044fdf678478",
+      "pl": "Dorośli też nie potrafią odłożyć telefonu",
+      "en": "Adults can't put theirs down either"
+    },
+    {
+      "qid": "a2acd328-3100-4c94-8635-dee4e34abfc6",
+      "pl": "Auto serwisujesz, zanim się zepsuje",
+      "en": "You service the car before it breaks"
+    },
+    {
+      "qid": "a35f5b1b-28a8-4a1b-85e2-2988c98fa14d",
+      "pl": "Rozmawiasz z echem, nie z osobą",
+      "en": "You're talking to an echo, not a person"
+    },
+    {
+      "qid": "a3661ac8-922b-42d5-a1b5-63f31a0dd6bb",
+      "pl": "Pieniądz to dobry sługa, zły cel",
+      "en": "Money is a fine servant, a poor goal"
+    },
+    {
+      "qid": "a3e47ec1-0ba7-4185-9bc4-075ac8f05066",
+      "pl": "Wkrótce mam to na wideo nic nie znaczy",
+      "en": "Soon 'I have it on video' means nothing"
+    },
+    {
+      "qid": "a5d5f23d-7a1a-48dd-959d-913c4dfb9d31",
+      "pl": "Szczerość dla twojej ulgi, jego rana",
+      "en": "Honesty for your relief, their wound"
+    },
+    {
+      "qid": "a78807bf-f775-4055-8bf4-714aed7750c4",
+      "pl": "Kara karze sprawcę, nie leczy ofiary",
+      "en": "Punishment punishes; it doesn't heal"
+    },
+    {
+      "qid": "a804169f-9045-4a8d-9578-cc69a6438dd8",
+      "pl": "Prawdziwych przyjaciół poznasz po pudłach",
+      "en": "You learn who your friends are by the boxes"
+    },
+    {
+      "qid": "aa76d989-ab98-48f7-9cd6-08e195eafb38",
+      "pl": "Pieniądze psują przyjaciół szybciej niż wrogów",
+      "en": "Money spoils friends faster than foes"
+    },
+    {
+      "qid": "aaa4ca07-058f-4971-bc1e-46b336a75d5b",
+      "pl": "Gotowy finansowo nie jest nikt nigdy",
+      "en": "No one is ever 'financially ready'"
+    },
+    {
+      "qid": "abf82a91-aca6-473e-b315-fee7ffa1637a",
+      "pl": "Mógłbyś urosnąć bez tej rany?",
+      "en": "Could you have grown without the wound?"
+    },
+    {
+      "qid": "acb5cc1f-e697-4cdc-a99d-957f5b3ea47d",
+      "pl": "Skąpiec umiera bogaty i sam",
+      "en": "The miser dies rich and alone"
+    },
+    {
+      "qid": "ad75972d-1304-4058-b237-cddd2714eded",
+      "pl": "Liczba nie mówi, jak kochasz",
+      "en": "A number says nothing about how you love"
+    },
+    {
+      "qid": "ae9f59d8-2977-44ea-bc1a-3459ae2264ce",
+      "pl": "Ból nie zna gatunku",
+      "en": "Pain doesn't check the species"
+    },
+    {
+      "qid": "afd2253b-0a8b-48b6-9c2d-43709456a674",
+      "pl": "Zostawiasz go z rówieśnikami czy z etykietą?",
+      "en": "You hold him back with peers, or with a label?"
+    },
+    {
+      "qid": "afd85002-d565-4993-98da-659dbb8db132",
+      "pl": "Kara bez świadka łatwo staje się nadużyciem",
+      "en": "Punishment with no witness slides into abuse"
+    },
+    {
+      "qid": "b01c047b-38d4-4312-957c-1b036518b6b5",
+      "pl": "Adrenalina na receptę też się nudzi",
+      "en": "Even prescribed thrills get boring"
+    },
+    {
+      "qid": "b0218385-a780-4782-91a5-219d6caa3029",
+      "pl": "Ból to posłaniec, nie wróg",
+      "en": "Pain is a messenger, not an enemy"
+    },
+    {
+      "qid": "b066747b-a310-495d-87c2-22e68f6ef690",
+      "pl": "Jedzenie stało się arkuszem",
+      "en": "Eating became a spreadsheet"
+    },
+    {
+      "qid": "b0f652db-73c9-45e8-9da5-c30d29d6ea7a",
+      "pl": "Tak samo czasem znaczy ślepo na różnice",
+      "en": "'Same' can mean blind to the difference"
+    },
+    {
+      "qid": "b283445b-e820-4843-b039-fac5108f00f4",
+      "pl": "Uczysz je ścigać się z rodziną",
+      "en": "You teach it to race its own family"
+    },
+    {
+      "qid": "b3a20f43-0175-4337-a3aa-e6c6325fa16b",
+      "pl": "Pierwsze spotkanie zdemaskuje filtr",
+      "en": "The first date will unmask the filter"
+    },
+    {
+      "qid": "b3fdc708-0e62-47fe-b485-9b3ffd9e7320",
+      "pl": "Trzymasz je przy życiu dla siebie?",
+      "en": "Are you keeping it alive for you?"
+    },
+    {
+      "qid": "b4873701-b8bf-4c7c-848f-9a04718a0f3e",
+      "pl": "Szachy to sport, a myślenie to nie pot",
+      "en": "Chess is a sport, and it's no sweat either"
+    },
+    {
+      "qid": "b4d4798f-d858-4b63-8d09-37431cb87f6d",
+      "pl": "Dyscyplina, której nienawidzisz, długo nie trwa",
+      "en": "Discipline you hate won't last long"
+    },
+    {
+      "qid": "b67e2300-c3c4-46cb-aec1-5a43e4c5fb5d",
+      "pl": "Płacisz za wspomnienia gości, nie swoje",
+      "en": "You pay for the guests' memories, not yours"
+    },
+    {
+      "qid": "b704fe80-1cb2-4a91-8dba-92a9669bd0cd",
+      "pl": "Uchylone drzwi to zaproszenie",
+      "en": "A door left ajar is an invitation"
+    },
+    {
+      "qid": "b7575803-21f7-47d1-b068-432d239f7ea4",
+      "pl": "Świat pracy jest mały i pamiętliwy",
+      "en": "The industry is small and remembers"
+    },
+    {
+      "qid": "b8f586e8-f776-4aa5-8f42-9c0e88702b2c",
+      "pl": "Ręka pamięta to, czego klawisz nie",
+      "en": "The hand remembers what the key forgets"
+    },
+    {
+      "qid": "b9ccce16-4045-416d-a611-012acc36c2ed",
+      "pl": "Darmowe wybaczenie bywa zaproszeniem do powtórki",
+      "en": "Free forgiveness can invite a repeat"
+    },
+    {
+      "qid": "b9e89b77-3bcd-4098-8209-c7d9d2b7751f",
+      "pl": "Sens dany z góry to sens pożyczony",
+      "en": "Meaning handed down is meaning borrowed"
+    },
+    {
+      "qid": "ba40e3be-b739-4cb3-b861-073653384b60",
+      "pl": "Restauracja nie czyni cię gorszym człowiekiem",
+      "en": "A restaurant doesn't make you a worse person"
+    },
+    {
+      "qid": "bc8f0a85-e46c-48ae-8840-7f39b96a1780",
+      "pl": "Wzruszysz się, nie wiedząc, kto to napisał",
+      "en": "You'll tear up not knowing who wrote it"
+    },
+    {
+      "qid": "bd37f7b6-e56a-4b53-ab98-bfc8e48d0a85",
+      "pl": "Nienawiść do siebie nikogo długo nie motywuje",
+      "en": "Self-hate never motivated anyone for long"
+    },
+    {
+      "qid": "bd9a73a9-f7a1-4ad2-bcc6-046b79fa875c",
+      "pl": "Okrucieństwo na sucho wchodzi w nawyk",
+      "en": "Cruelty with no cost becomes a habit"
+    },
+    {
+      "qid": "c0e3f63c-682a-4a57-83db-fbe3c998bce1",
+      "pl": "Wybrałeś ekran nad żywego człowieka",
+      "en": "You chose the screen over a living person"
+    },
+    {
+      "qid": "c2000cd7-d26c-4c4a-b52a-eee70975e749",
+      "pl": "Poduszka na wypadek — czego?",
+      "en": "A cushion for — what, exactly?"
+    },
+    {
+      "qid": "c26f3c96-acb0-404c-97f5-203ec7c8d860",
+      "pl": "Zmywanie nie ma płci",
+      "en": "The dishes don't have a gender"
+    },
+    {
+      "qid": "c38110ee-965f-45ad-9641-1b15521a566c",
+      "pl": "Zaproszenie z cennikiem?",
+      "en": "An invitation with a price list?"
+    },
+    {
+      "qid": "c3ba6de4-d539-44b7-9d78-e3542f8bcbc3",
+      "pl": "Nudne mówią ci, którzy nie zaznali spokoju",
+      "en": "'Boring' — said by those who never had peace"
+    },
+    {
+      "qid": "c3bf47e9-e170-4bce-9929-17c798882f2f",
+      "pl": "Ja albo on to już kontrola",
+      "en": "'Me or them' is already control"
+    },
+    {
+      "qid": "c3d626ba-e7b3-4c66-8c18-14b095ce7d47",
+      "pl": "Cudza zasada w twojej sypialni",
+      "en": "Someone else's rule in your bedroom"
+    },
+    {
+      "qid": "c4b907db-a5bb-479c-98c5-8de4a699793f",
+      "pl": "Zakaz robi z chłopaka bohatera",
+      "en": "A ban turns him into a hero"
+    },
+    {
+      "qid": "c4f87280-fa80-4cb6-9367-a640c393762a",
+      "pl": "Uczysz, że nudę leczy się ekranem",
+      "en": "You teach that boredom is cured by a screen"
+    },
+    {
+      "qid": "c5aada6a-4ca2-40b3-9486-520b7a39b3cc",
+      "pl": "Adrenalina dla ciebie, żałoba dla nich",
+      "en": "The thrill is yours; the grief is theirs"
+    },
+    {
+      "qid": "c6bb4459-efab-4873-bdd2-d981d9a54942",
+      "pl": "Sam chciałbyś odpowiadać za swoje 15 lat?",
+      "en": "Would you answer for your fifteen-year-old self?"
+    },
+    {
+      "qid": "c8151f9f-5e0f-424a-a049-e829e9ad2922",
+      "pl": "Wspólny czynsz to nie wspólna przyszłość",
+      "en": "Shared rent isn't a shared future"
+    },
+    {
+      "qid": "c8f78afb-a595-4120-b1bb-be35e60e65d5",
+      "pl": "Wyspane dziecko to spokojniejszy dom",
+      "en": "A rested child is a calmer house"
+    },
+    {
+      "qid": "cd7a42e5-45fc-4287-bf49-d3aba6aa6592",
+      "pl": "Dzieci mierzą się z życiem, którego nie ma",
+      "en": "Kids measure up to a life that isn't real"
+    },
+    {
+      "qid": "ceee3d9a-3101-4f6f-9f6d-3dded15bc35e",
+      "pl": "Twoja obecność staje się jego kulą",
+      "en": "Your presence becomes its crutch"
+    },
+    {
+      "qid": "cf3b89e9-0110-469c-b9b4-bc2541dd3f6b",
+      "pl": "Nastolatki gonią twarz, której nikt nie ma",
+      "en": "Teens chase a face no one actually has"
+    },
+    {
+      "qid": "d12a4aa7-4a7d-4c03-9305-f7dc77dcf21a",
+      "pl": "Kupujesz rasowego, kundel czeka na śmierć",
+      "en": "You buy a purebred; a mutt waits to die"
+    },
+    {
+      "qid": "d1b05aa8-d69e-4bbc-a23b-7ca82cc5478c",
+      "pl": "Robot się nie trzęsie, ale i nie improwizuje",
+      "en": "A robot doesn't shake — or improvise"
+    },
+    {
+      "qid": "d1b266a6-38ba-4d08-ac63-c1579aca7f7b",
+      "pl": "Jeśli nie umiesz odłożyć — masz odpowiedź",
+      "en": "If you can't unplug, you have your answer"
+    },
+    {
+      "qid": "d29bdf7c-888b-41e5-8708-57f42b62aef6",
+      "pl": "Żyjesz dla widowni, której nie zobaczysz",
+      "en": "You live for an audience you'll never see"
+    },
+    {
+      "qid": "d2ad6dce-7992-4365-8c30-cc9445064ae8",
+      "pl": "Twoje marzenie, ich rata na karcie",
+      "en": "Your dream, their credit-card bill"
+    },
+    {
+      "qid": "d5caf4ba-203b-4b13-8d76-7c0e0396ad96",
+      "pl": "Otwarty często znaczy, że jedno tego chciało",
+      "en": "'Open' often means only one of them wanted it"
+    },
+    {
+      "qid": "d9f9e804-d2f2-44b0-b95e-14b38c615533",
+      "pl": "Twój dzień, twoje zasady — i twoje żale",
+      "en": "Your day, your rules — and your fallout"
+    },
+    {
+      "qid": "d9ffce96-6129-40a6-b894-77abbea9cdf9",
+      "pl": "Kto napisał AI, ten wie o tobie wszystko",
+      "en": "Whoever wrote it knows everything about you"
+    },
+    {
+      "qid": "dc1bc716-2f21-4b5c-b6e4-1293dc906d19",
+      "pl": "Deadline zabija to, co robiłeś dla przyjemności",
+      "en": "A deadline kills what you did for fun"
+    },
+    {
+      "qid": "dcccffaf-164e-44ef-b554-f94baf31f4ea",
+      "pl": "Obecność z obowiązku każdy wyczuje",
+      "en": "Attendance out of duty always shows"
+    },
+    {
+      "qid": "ded7fbd4-cde2-40f1-ad11-7ddb294b2cf0",
+      "pl": "Bezpieczne oszczędności zjada inflacja po cichu",
+      "en": "Inflation quietly eats the 'safe' savings"
+    },
+    {
+      "qid": "df0ad2de-5fc0-42be-9bc2-815b6a7849a6",
+      "pl": "Zależność finansowa to cicha smycz",
+      "en": "Financial dependence is a quiet leash"
+    },
+    {
+      "qid": "df649239-a030-48d9-83f6-65460ec68911",
+      "pl": "Pusta głowa z Wi-Fi wciąż jest pusta",
+      "en": "An empty head with Wi-Fi is still empty"
+    },
+    {
+      "qid": "dfb15a34-5194-40ef-bd07-eb31c16df300",
+      "pl": "Poznasz go, gdy dzielicie łazienkę",
+      "en": "You know them once you share a bathroom"
+    },
+    {
+      "qid": "e17cec74-71a9-4909-871f-794b7aefc050",
+      "pl": "Twoje nazwisko zostaje na tej robocie",
+      "en": "Your name stays on that work"
+    },
+    {
+      "qid": "e243292f-b932-4077-a4c5-3a8a8b2ff7c9",
+      "pl": "Lojalność wobec winnego to zdrada ofiary",
+      "en": "Loyalty to the guilty betrays the victim"
+    },
+    {
+      "qid": "e324fb73-07dd-463a-ac66-fe5e414e2006",
+      "pl": "Fory na start bywają kotwicą",
+      "en": "A head start can become an anchor"
+    },
+    {
+      "qid": "e3d4ac40-3a87-4be6-91bb-0f4450965ff2",
+      "pl": "Kto rozgłasza dobro, sprzedaje wizerunek",
+      "en": "Broadcasting your good deed sells an image"
+    },
+    {
+      "qid": "e402a38e-633f-42cc-8251-7756c0400019",
+      "pl": "Dodajesz lata, odejmujesz dni",
+      "en": "You add years and subtract days"
+    },
+    {
+      "qid": "e5f1cbd8-05b2-4719-b713-891e0776e5ce",
+      "pl": "Zasada dla dzieci, a rodzic scrolluje dalej",
+      "en": "A rule for the kids while the parent scrolls on"
+    },
+    {
+      "qid": "e68bf239-e098-4daf-966d-fd758766dca6",
+      "pl": "Pusty dzban nikomu nie naleje",
+      "en": "An empty jug pours for no one"
+    },
+    {
+      "qid": "e70ba262-7e76-46c1-b1b2-6013a58601dd",
+      "pl": "Miłość jest ślepa, rodzina bywa nie",
+      "en": "Love is blind; family sometimes isn't"
+    },
+    {
+      "qid": "ea238fb4-1f03-440b-8d06-379901ca4e1e",
+      "pl": "Płacisz, by ktoś mógł zaglądać do domu",
+      "en": "You pay to let someone watch your home"
+    },
+    {
+      "qid": "ec645746-b016-4516-9c4b-41af1c3e10d5",
+      "pl": "Kara samego siebie nikomu nie wynagradza",
+      "en": "Punishing yourself repays no one"
+    },
+    {
+      "qid": "ec97c70f-efb4-4bc1-bef7-3c608ac9f34a",
+      "pl": "Odcinek za odcinkiem, a rano nienawidzisz siebie",
+      "en": "One more episode, and you hate yourself by dawn"
+    },
+    {
+      "qid": "ececca63-ddd3-4871-a5c1-83f6a3ff6c95",
+      "pl": "Wielkie zbrodnie zaczynały się od trochę",
+      "en": "Great crimes began with 'just a little'"
+    },
+    {
+      "qid": "ed7e6483-0492-4cb6-b4d6-505667facadd",
+      "pl": "Kupiłbyś auto, które by cię poświęciło?",
+      "en": "Would you buy a car that would sacrifice you?"
+    },
+    {
+      "qid": "ef1799be-5bfb-440e-bdfe-350c5a450cb3",
+      "pl": "Uczysz, że ciało ustępuje przed grzecznością",
+      "en": "You teach that its body yields to manners"
+    },
+    {
+      "qid": "f2316df7-aa82-4869-85f2-5a3fe4af3e3b",
+      "pl": "Romantyzujesz cierpienie z bezpiecznej kanapy",
+      "en": "You romanticize struggle from a comfy couch"
+    },
+    {
+      "qid": "f4a84686-4852-4f70-ba9c-ce08519cb086",
+      "pl": "Najtaniej wychodzi ten, kto liczy cudzy grosz",
+      "en": "The cheapest are cheap with others' coins"
+    },
+    {
+      "qid": "f625c08f-64a8-4197-a635-a210fc987cf0",
+      "pl": "Kalendarz pokazuje, co naprawdę ważne",
+      "en": "A calendar shows what really matters"
+    },
+    {
+      "qid": "f6d666e5-eadf-4d2b-9037-5b45f0e95a9d",
+      "pl": "Bunt w ubraniu to najłagodniejszy bunt",
+      "en": "Rebelling through clothes is the gentlest rebellion"
+    },
+    {
+      "qid": "f74f3cac-b191-4a33-90bd-b905c341a71f",
+      "pl": "Przymusowa oszczędność uczy tylko buntu",
+      "en": "Forced saving teaches only resentment"
+    },
+    {
+      "qid": "f8ca38b7-514d-4879-88db-0bee62c47aab",
+      "pl": "Założy drugie konto, którego nie znajdziesz",
+      "en": "They'll make the account you'll never find"
+    },
+    {
+      "qid": "f9533f20-6a7b-470f-8722-f9ab095a2ed5",
+      "pl": "Tradycja, której nikt nie pamięta po co",
+      "en": "A tradition no one remembers the reason for"
+    },
+    {
+      "qid": "f95f292b-26cb-45b9-bf75-735df6860465",
+      "pl": "Skończona z obowiązku nic ci nie da",
+      "en": "Finished out of duty gives you nothing"
+    },
+    {
+      "qid": "fad2aefd-e9d2-41c3-915d-cc0efe8e3c56",
+      "pl": "Nie przyjdzie do szpitala przez łącze",
+      "en": "It can't visit the hospital over Wi-Fi"
+    },
+    {
+      "qid": "fb6eadc9-694f-4692-8ac7-9a90574b77d1",
+      "pl": "Zapomnieć to nie wybaczyć — to stracić czujność",
+      "en": "Forgetting isn't forgiving; it's dropping your guard"
+    },
+    {
+      "qid": "fc21613d-bbeb-44d5-8dd9-c70f49b59599",
+      "pl": "Bez drogi umiejętność nie ma korzeni",
+      "en": "With no journey, a skill has no roots"
+    },
+    {
+      "qid": "fc687cb0-2f69-4197-b78d-210a671b5c28",
+      "pl": "Tabu wokół cen służy tym, którzy zawyżają",
+      "en": "The price taboo protects those who overcharge"
+    },
+    {
+      "qid": "fc6f0a3c-823d-4f75-a297-f6663e594a2a",
+      "pl": "Ofierze obojętny motyw, boli tak samo",
+      "en": "The victim doesn't care why; it hurts the same"
+    },
+    {
+      "qid": "fca22e3b-02a5-44a5-9e75-828afb059441",
+      "pl": "Bez rywala i tak sobie odpuścisz",
+      "en": "With no rival, you'll let yourself off"
+    },
+    {
+      "qid": "0145b20a-9712-4a1a-bb3f-161d9c95dae2",
+      "pl": "Ważne nie czy, ale jak się kłócicie",
+      "en": "It's not whether you fight, but how"
+    },
+    {
+      "qid": "016b91dd-fa80-4899-94d0-8848b9043500",
+      "pl": "Banknot bez twarzy, ale nie bez właściciela",
+      "en": "A faceless note still had an owner"
+    },
+    {
+      "qid": "025ca657-ba32-4b53-8c78-15077d8e9e45",
+      "pl": "Darmowa przysługa najszybciej niszczy przyjaźń",
+      "en": "A free favor sours a friendship fastest"
+    },
+    {
+      "qid": "02aa559b-1fe5-417c-9e98-fe2fcf671f22",
+      "pl": "Niektórych rzeczy o rodzinie lepiej nie wiedzieć",
+      "en": "Some family truths are better unknown"
+    },
+    {
+      "qid": "042e19ca-778b-40a0-bec8-8f00358fe4ba",
+      "pl": "Rozpieszczają, bo nie oni sprzątają bałagan",
+      "en": "They spoil because they don't clean up after"
+    },
+    {
+      "qid": "04ca9179-d021-49e9-932c-48038c76b7ca",
+      "pl": "Osobne adresy z czasem to osobne życia",
+      "en": "Separate homes drift into separate lives"
+    },
+    {
+      "qid": "09731586-b88c-41c8-8cf1-ed82f35e88d1",
+      "pl": "Poznasz sekret i już go nie oddasz",
+      "en": "You'll learn the secret and can't give it back"
+    },
+    {
+      "qid": "09988e50-5ea9-4f73-80de-a3a09986f4ab",
+      "pl": "Milcząc, godzisz się na to zachowanie",
+      "en": "Staying silent, you consent to it"
+    },
+    {
+      "qid": "09fa3aba-692e-4f5f-a941-82ad0eb16c98",
+      "pl": "Lista gości z poczucia winy to nie przyjęcie",
+      "en": "A guest list built on guilt isn't a party"
+    },
+    {
+      "qid": "0b04cce4-28a3-45b8-9dc0-92abaa2d3c3e",
+      "pl": "To tylko maszyna mówiono o wielu istotach",
+      "en": "'It's just a machine' has been said before"
+    },
+    {
+      "qid": "0d3ace6b-e176-4e00-9cbf-72392068bbc4",
+      "pl": "Dwóch złodziei to nie sprawiedliwość",
+      "en": "Two thieves don't make justice"
+    },
+    {
+      "qid": "1013db88-4683-40f3-82b5-2188920bc976",
+      "pl": "Chowali je przed tobą nie bez powodu",
+      "en": "They hid them from you for a reason"
+    },
+    {
+      "qid": "15011519-df22-4e83-84d6-4be52c22c56b",
+      "pl": "Wszyscy grają w tę grę — i wszyscy wiedzą",
+      "en": "Everyone plays this game, and everyone knows"
+    },
+    {
+      "qid": "183920c5-8215-4e8d-aab2-a3f5d855c6c7",
+      "pl": "Poślubiasz osobę, którą on dopiero będzie",
+      "en": "You marry who they'll become, not who they are"
+    },
+    {
+      "qid": "1b98f1ff-8c76-4a16-a520-50ee8262a150",
+      "pl": "Czekasz na iskrę czy tłumaczysz jej brak?",
+      "en": "Waiting for a spark, or excusing its absence?"
+    },
+    {
+      "qid": "1c14c2d8-dc77-46a1-a189-7329f75019a3",
+      "pl": "Szlafrok też był w cenie — weźmiesz?",
+      "en": "The robe was 'included' too — taking that?"
+    },
+    {
+      "qid": "1d0d388a-9d5e-4e8e-bc77-72886433e6c5",
+      "pl": "Dziedzictwo bywa pozłacaną klatką",
+      "en": "A legacy can be a gilded cage"
+    },
+    {
+      "qid": "1d2dc7e1-34d0-4f6c-9b4e-a66ddc6aa444",
+      "pl": "Głupia obietnica dotrzymana to dwa błędy",
+      "en": "A foolish promise kept is two mistakes"
+    },
+    {
+      "qid": "1d62d46b-2f2d-4f41-80de-a630bb065740",
+      "pl": "Podzielona uwaga to podzielona miłość",
+      "en": "Split attention is split love"
+    },
+    {
+      "qid": "2003a419-90e7-49b1-a4fa-4d119ef052f8",
+      "pl": "Kto nie umie wybrać, nie ma nikogo bliskiego",
+      "en": "Rank no one and you're close to no one"
+    },
+    {
+      "qid": "20dbf12a-1b01-42a7-8a12-5efa846dd9f0",
+      "pl": "Kto oszukuje sam ze sobą, oszuka i innych",
+      "en": "Cheat when alone, and you'll cheat with others"
+    },
+    {
+      "qid": "230990d1-7746-4c9d-a46f-c87302b9c97b",
+      "pl": "Krzyk to nie szczerość, to brak kontroli",
+      "en": "Shouting isn't honesty; it's losing control"
+    },
+    {
+      "qid": "25d0c411-a76a-4cd0-bb92-31818e930d66",
+      "pl": "Ból mija, blizna na duszy nie",
+      "en": "The pain ends; the scar on the soul doesn't"
+    },
+    {
+      "qid": "26f8fe11-8d6e-412d-9057-edc899af6418",
+      "pl": "Do wódki za młody, do celi w sam raz?",
+      "en": "Too young to drink, old enough to jail?"
+    },
+    {
+      "qid": "290fd57b-b838-4183-8af4-71c95542cb34",
+      "pl": "Start z długiem to nie równe szanse",
+      "en": "Starting in debt isn't a level start"
+    },
+    {
+      "qid": "29d606bb-c5bf-4869-8cda-bd6c883afb1c",
+      "pl": "Para, która o sobie zapomni, przestaje być parą",
+      "en": "A couple that forgets itself stops being one"
+    },
+    {
+      "qid": "2a008e4f-12f7-4aff-991e-fcc202dbf757",
+      "pl": "Gość na tydzień to gość, na miesiąc to lokator",
+      "en": "A week is a guest; a month is a tenant"
+    },
+    {
+      "qid": "2a577655-3e0a-49ab-986b-df8b0cb1a4c4",
+      "pl": "Większość życzliwości to litościwe kłamstwa",
+      "en": "Most kindness is merciful lies"
+    },
+    {
+      "qid": "2f4f772c-361a-4374-9833-5d004a5fa51a",
+      "pl": "Brakuje mówią ci, którzy jej mają za dużo",
+      "en": "'Something's missing' — said by the over-loved"
+    },
+    {
+      "qid": "326e0ef7-b138-4472-b981-921eec601257",
+      "pl": "Uniewinniony nie odzyska nazwiska",
+      "en": "The acquitted never get their name back"
+    },
+    {
+      "qid": "34ca43d9-af15-48e5-9973-995c8c3412b6",
+      "pl": "Darmowy dom uczy, że świat jest za darmo",
+      "en": "A free home teaches the world is free"
+    },
+    {
+      "qid": "3503d263-4c9c-4e4c-9932-07d57f8c4a85",
+      "pl": "Nowy człowiek to plaster, nie lekarstwo",
+      "en": "A new person is a bandage, not a cure"
+    },
+    {
+      "qid": "359108e8-d19f-483e-b106-0a98e70ed83f",
+      "pl": "Klaszczesz, aż to twój syn dostaje",
+      "en": "You cheer until it's your kid in the ring"
+    },
+    {
+      "qid": "35b85aec-8185-4e6d-bc6e-d39d0e6f9271",
+      "pl": "Nieważne mówisz, aż nikt nie zadzwoni",
+      "en": "'It doesn't matter' — until no one calls"
+    },
+    {
+      "qid": "360166bf-fbb3-4de4-a0ec-a2820bde6dc3",
+      "pl": "Wyrażasz siebie na cudzej metryce",
+      "en": "You express yourself on someone else's ID"
+    },
+    {
+      "qid": "3ab394f4-f819-4386-9424-40496c1e5da4",
+      "pl": "Nikt nie przyzna się do prawdziwej odpowiedzi",
+      "en": "No one will admit their real answer"
+    },
+    {
+      "qid": "3af35b32-f545-428b-8429-be3289e919d6",
+      "pl": "List można przemyśleć, twarz zdradza od razu",
+      "en": "A letter is drafted; a face gives you away"
+    },
+    {
+      "qid": "3b6ed1dc-917a-4abd-9ae3-a3350d4c0cd5",
+      "pl": "Neutralny traci obu, gdy się pogodzą",
+      "en": "The neutral one loses both when they make up"
+    },
+    {
+      "qid": "3d409cbf-f14c-4ff3-b6d8-e2d684a68ebb",
+      "pl": "Samotny w związku to gorsza samotność",
+      "en": "Lonely together is the worse kind of lonely"
+    },
+    {
+      "qid": "3ed946ef-049a-4430-aa5d-f9ab68cd1276",
+      "pl": "Niespodzianka fajna, dopóki nie musisz odmówić",
+      "en": "A surprise is sweet until you must say no"
+    },
+    {
+      "qid": "4274fa9f-a611-496b-a37c-0335bfb97547",
+      "pl": "Osobne konta to cicha polisa na rozwód",
+      "en": "Separate accounts are a quiet divorce policy"
+    },
+    {
+      "qid": "47afec7c-a985-4bd9-970f-4886a423ca0f",
+      "pl": "Czasem to oszczędność, czasem strach przed startem",
+      "en": "Sometimes it's saving, sometimes fear of leaving"
+    },
+    {
+      "qid": "496e5d10-62b5-4891-932f-f2c2c79f8cfb",
+      "pl": "Za wcześnie to punktualność bez wyczucia",
+      "en": "Too early is punctuality with no tact"
+    },
+    {
+      "qid": "4eb63992-02c1-474a-a7e9-cf3463578813",
+      "pl": "Wyciszasz jego chwalenie się, nie jego",
+      "en": "You mute the bragging, not the person"
+    },
+    {
+      "qid": "4fe50e94-f67d-406f-9808-74e214a32b13",
+      "pl": "Przyjaźń kończy się przy pierwszej ocenie rocznej",
+      "en": "It ends at the first performance review"
+    },
+    {
+      "qid": "574cb512-4c1b-4a41-96a2-c1c0cd5cac92",
+      "pl": "Kropka na mapie to nie zaufanie",
+      "en": "A dot on a map isn't trust"
+    },
+    {
+      "qid": "59ad8d8b-c692-42dc-a051-a083535ff6dc",
+      "pl": "Tak mam znaczy: twój czas mniej wart",
+      "en": "'That's just me' means your time counts less"
+    },
+    {
+      "qid": "5a5655c8-e3a7-40d0-be87-2dd60cca76bc",
+      "pl": "Krew to przypadek, przyjaźń to wybór",
+      "en": "Blood is chance; friendship is chosen"
+    },
+    {
+      "qid": "5c1564fb-79f1-4e6d-9aa1-40c5950ed5c2",
+      "pl": "Czas nie zmywa krwi z rąk",
+      "en": "Time doesn't wash blood off the hands"
+    },
+    {
+      "qid": "5ea7d3ec-614e-45d8-a172-9510c7312a6c",
+      "pl": "Ktoś sprzedaje wodę tonącym",
+      "en": "Someone sells water to the drowning"
+    },
+    {
+      "qid": "5f701e61-63f0-4282-b96e-e6b794b86351",
+      "pl": "Pijany kierowca miał szczęście, nie rację",
+      "en": "The drunk who missed was lucky, not right"
+    },
+    {
+      "qid": "5fec28a5-0a4a-4c7c-bc4a-eaed8ec0cd37",
+      "pl": "Zmęczony brzmi lepiej niż nie chcę",
+      "en": "'I'm tired' sounds better than 'I don't want to'"
+    },
+    {
+      "qid": "62e7980a-894b-44bc-8339-0f4e2710770f",
+      "pl": "Zniżasz się do jego poziomu i tracisz przewagę",
+      "en": "You sink to their level and lose the high ground"
+    },
+    {
+      "qid": "6394fb20-b60c-49ba-b303-53b1a42a5854",
+      "pl": "Jedno z dwojga zwykle by zaryzykowało",
+      "en": "One of the two would usually risk it"
+    },
+    {
+      "qid": "65d27eda-38ec-4af8-8907-feec04ace3fb",
+      "pl": "Rzucasz prawdę i znikasz, on zostaje z gruzami",
+      "en": "Drop the truth and vanish; they keep the rubble"
+    },
+    {
+      "qid": "67752e62-566e-40b5-9672-f022865cda6c",
+      "pl": "Twoja emerytura to jego liceum",
+      "en": "Your retirement is their high school"
+    },
+    {
+      "qid": "67a5ea42-e833-4fce-8cf1-e3dd07275fb8",
+      "pl": "Zastawiasz pułapkę i nazywasz to troską",
+      "en": "You set a trap and call it caring"
+    },
+    {
+      "qid": "6c446521-55ea-4a1d-a03f-20e5a8d185c1",
+      "pl": "Ciało wybaczysz szybciej niż serce",
+      "en": "You'll forgive the body faster than the heart"
+    },
+    {
+      "qid": "6f255059-4740-4d5c-a862-8a8e74a109f6",
+      "pl": "Zerwiesz, a on zostaje przy biurku obok",
+      "en": "You break up; they stay at the next desk"
+    },
+    {
+      "qid": "71050e1b-038e-4857-a0a9-8f0d50ecb0af",
+      "pl": "Wszyscy tak robią to alibi tłumu",
+      "en": "'Everyone does it' is the mob's alibi"
+    },
+    {
+      "qid": "71fa587e-485f-4a6d-861c-87bb0f4b0b1a",
+      "pl": "Charakter to to, co robisz, gdy nikt nie patrzy",
+      "en": "Character is what you do unwatched"
+    },
+    {
+      "qid": "74dd3544-752d-42a8-90d5-f478c8ea4f3f",
+      "pl": "Kompan od piwa znika przy pierwszym kłopocie",
+      "en": "A drinking buddy vanishes at the first crisis"
+    },
+    {
+      "qid": "77df1ffa-8f7d-47a3-bb85-88f245f01a56",
+      "pl": "Ukryta śmierć straszy bardziej niż widziana",
+      "en": "Death hidden scares more than death seen"
+    },
+    {
+      "qid": "7adb04ce-2a0f-4792-a47c-3b30515585b5",
+      "pl": "Milcząc o jego wartościach, zgadzasz się z nimi",
+      "en": "Silent on their values, you endorse them"
+    },
+    {
+      "qid": "7cfd7b14-ae0f-4080-8afa-f02527982444",
+      "pl": "Stała kwota to dla bogacza cena za wygodę",
+      "en": "A flat fine is just a rich man's convenience fee"
+    },
+    {
+      "qid": "7dc5db30-839f-4d14-8eec-030cc5886c95",
+      "pl": "Autorytet się zdobywa, nie dziedziczy przez ślub",
+      "en": "Authority is earned, not married into"
+    },
+    {
+      "qid": "7e8a142f-5e4b-43a6-bf8e-aeadfebb729c",
+      "pl": "Torturowany powie cokolwiek, byle przestać",
+      "en": "The tortured say anything to make it stop"
+    },
+    {
+      "qid": "7fdb6c85-23e8-47be-856d-224111532583",
+      "pl": "Jak bronisz go za oczy, tak mówisz o innych",
+      "en": "How you defend them shows how you'd speak of others"
+    },
+    {
+      "qid": "8004d847-efe0-4bf2-9d77-3b853fefa3d8",
+      "pl": "Rozpieszczają twoim kosztem",
+      "en": "They spoil at someone else's cost — yours"
+    },
+    {
+      "qid": "826525c7-9d59-4327-9e98-fb347284427f",
+      "pl": "Milczenie o pieniądzach nie usuwa pieniędzy",
+      "en": "Silence about money doesn't remove the money"
+    },
+    {
+      "qid": "83286336-efa8-4c58-9691-b8ba7256ae78",
+      "pl": "Za podróbką często stoi praca dzieci",
+      "en": "Behind the fake is often child labor"
+    },
+    {
+      "qid": "88a4c160-0cc2-47c7-8611-96268faef632",
+      "pl": "Uśmiech do rywala, nóż w kieszeni",
+      "en": "Smile at your rival, knife in your pocket"
+    },
+    {
+      "qid": "89c1e70f-370c-4e00-9405-331ea1cf9e40",
+      "pl": "Ta wiara uspokaja sumienie szczęściarzy",
+      "en": "Believing it soothes the lucky ones' conscience"
+    },
+    {
+      "qid": "8bbe89f3-b725-40a8-8fda-031aad5e494f",
+      "pl": "Usłyszysz i już nie odsłyszysz",
+      "en": "You'll hear it and never unhear it"
+    },
+    {
+      "qid": "9041da9c-f0e9-4084-8b41-4fa2e18d00c3",
+      "pl": "Uczciwy tylko, gdy stać cię być nieuczciwym",
+      "en": "Honest only when you could get away with it"
+    },
+    {
+      "qid": "96a4efd0-648f-40da-a6cd-4890ad94149f",
+      "pl": "Wolność dla starca, dożywocie dla ofiary",
+      "en": "Freedom for the old man, a life sentence for the victim"
+    },
+    {
+      "qid": "9de27eec-05cf-4cf3-8954-7772df29dead",
+      "pl": "Cisza zostawia go z pytaniem na zawsze",
+      "en": "Silence leaves them with the question forever"
+    },
+    {
+      "qid": "a0dc56a5-bcda-4bc5-a54e-3eb7e7db1387",
+      "pl": "Kto raz łamie prawo dla dobra, złamie i dla siebie",
+      "en": "Break the law for good once, and next time for yourself"
+    },
+    {
+      "qid": "a3d9b084-3d4f-4a61-9dae-bdcc08e7efff",
+      "pl": "Uprzedź gości, nie zaskakuj ich w progu",
+      "en": "Warn the guests; don't ambush them at the door"
+    },
+    {
+      "qid": "a470b3d1-fb39-47a7-8f76-db29dcc8affb",
+      "pl": "Tak pod presją tłumu nie zawsze znaczy tak",
+      "en": "A crowd-pressured 'yes' isn't always a yes"
+    },
+    {
+      "qid": "a6472189-e97c-42da-99cc-13323a75e8c6",
+      "pl": "Wspólna metryka to nie wspólna dusza",
+      "en": "A shared surname isn't a shared soul"
+    },
+    {
+      "qid": "ab61a64d-ea56-41d0-aa41-e9292fb5b04d",
+      "pl": "Prezent z paragonem to nie prezent",
+      "en": "A gift with an invoice isn't a gift"
+    },
+    {
+      "qid": "ad436399-1cde-4ba8-8cd4-586c0e523c42",
+      "pl": "Fałszywa pochwała psuje wartość prawdziwej",
+      "en": "A fake compliment cheapens the real ones"
+    },
+    {
+      "qid": "ad93ff0f-fe2b-49d5-a5ea-f30f301cb742",
+      "pl": "Będą cię przeciągać na swoją stronę",
+      "en": "Both will tug you to their side"
+    },
+    {
+      "qid": "aeee8de8-27e1-44dd-8be0-e80132b4b8d2",
+      "pl": "Wypalony rodzic w domu to nie ideał",
+      "en": "A burnt-out parent at home isn't the ideal"
+    },
+    {
+      "qid": "b2cdbe75-089f-4324-9d45-9079eac80b9c",
+      "pl": "Odgrzewane rzadko smakuje jak świeże",
+      "en": "Reheated rarely tastes fresh"
+    },
+    {
+      "qid": "b48abfd0-2602-40b2-b7ec-0f73b384382d",
+      "pl": "Gdybyś musiał sam, jadłbyś mniej",
+      "en": "If you had to, you'd eat less of it"
+    },
+    {
+      "qid": "b491345a-4ee0-49ce-badd-3ff784f52253",
+      "pl": "Nie wybrałeś przewagi, ale wybierasz, jak jej użyć",
+      "en": "You didn't choose it, but you choose how to use it"
+    },
+    {
+      "qid": "b49d42f0-e441-4a12-b320-86cc5b891dea",
+      "pl": "Ta jedyna to wymówka, by przestać próbować",
+      "en": "'The one' is an excuse to stop trying"
+    },
+    {
+      "qid": "b5fddc6b-9ace-42f7-b3c0-80c88992c38b",
+      "pl": "Twój pośpiech nie bije cudzego",
+      "en": "Your rush isn't more urgent than theirs"
+    },
+    {
+      "qid": "b666cdbd-3956-4fd8-805a-fb4cb0385ed4",
+      "pl": "Karać za wychowanie czy za urodzenie?",
+      "en": "Punish the parenting, or the birth?"
+    },
+    {
+      "qid": "b6f3f5d1-eb59-4aa8-b5cf-1e4f2909ed5c",
+      "pl": "Osobno raz, potem osobno zawsze?",
+      "en": "Apart once, then apart always?"
+    },
+    {
+      "qid": "b7139359-3b20-40c0-ab17-b2880077887e",
+      "pl": "Pogodę omawia się, nim zaufa duszy",
+      "en": "You discuss the weather before you trust the soul"
+    },
+    {
+      "qid": "b8028b59-c592-4e05-b83d-d87955f4ce10",
+      "pl": "Kredyt to też czynsz — płacony bankowi",
+      "en": "A mortgage is rent too — paid to the bank"
+    },
+    {
+      "qid": "bbf0a758-8b1f-4ab0-8c01-043b544ad64e",
+      "pl": "Dziecku brakuje rodzica, przyjaciół znajdzie samo",
+      "en": "A kid needs a parent; friends it finds itself"
+    },
+    {
+      "qid": "bd0311f7-08aa-4bd0-b2c1-37ac91452c37",
+      "pl": "Papier, czy to, że on nie chce na stałe?",
+      "en": "The paper, or that they won't commit?"
+    },
+    {
+      "qid": "bd06e709-f2a2-4148-84db-61bb5821c575",
+      "pl": "Poglądy przy śniadaniu przestają być abstrakcją",
+      "en": "Views at the breakfast table stop being abstract"
+    },
+    {
+      "qid": "c13c5312-6db7-4f88-b4c0-e23b91d77759",
+      "pl": "Spowiadasz się dla swojej ulgi, nie jego",
+      "en": "You confess for your relief, not their good"
+    },
+    {
+      "qid": "c1c86351-e71e-45f6-9254-519fa6b3f073",
+      "pl": "Reputacja to nie immunitet",
+      "en": "A good name isn't immunity"
+    },
+    {
+      "qid": "c5c145e0-952d-40ac-90c4-376b85f6b95f",
+      "pl": "Rodzeństwo bywa też dożywotnią rywalizacją",
+      "en": "Siblings can be a lifelong rivalry too"
+    },
+    {
+      "qid": "c9a981b4-b128-4ed1-b33a-81d775572c74",
+      "pl": "Kto plotkuje z tobą, plotkuje o tobie",
+      "en": "Whoever gossips with you gossips about you"
+    },
+    {
+      "qid": "ca94ee28-4bae-429f-826f-368f4eefc492",
+      "pl": "Wspólny stół w milczeniu to nie bliskość",
+      "en": "A shared table in silence isn't closeness"
+    },
+    {
+      "qid": "cca9fee9-e87f-4859-98d5-e81ccd55be2b",
+      "pl": "Jackpot nie zmienia charakteru — obnaża go",
+      "en": "A jackpot doesn't change you; it exposes you"
+    },
+    {
+      "qid": "d57624e6-b901-4055-b905-35d5fc135af9",
+      "pl": "Natura to często wygodna wymówka",
+      "en": "'Nature' is often a convenient excuse"
+    },
+    {
+      "qid": "d752385d-1ff6-4c0b-8ee8-b1871dabb672",
+      "pl": "Uprzejma obietnica bez daty to grzeczne kłamstwo",
+      "en": "A polite promise with no date is a polite lie"
+    },
+    {
+      "qid": "d8b7568c-2282-434d-a73d-09fca80f3ec0",
+      "pl": "Cichy zakup to cicha nieufność",
+      "en": "A secret purchase is a quiet distrust"
+    },
+    {
+      "qid": "da014df1-cc11-48d9-a0c9-41df545e49fa",
+      "pl": "Żadna tradycja nie warta twojej psychiki",
+      "en": "No tradition is worth your sanity"
+    },
+    {
+      "qid": "dfcd5e34-7c10-4bab-a3b0-b5c9d140c967",
+      "pl": "Dobry związek, w którym milczycie, jest martwy",
+      "en": "A 'good' relationship you're silent in is dead"
+    },
+    {
+      "qid": "e1245db1-10a5-4b6b-a177-a845aef9c87d",
+      "pl": "Grzeczność to zwykle drobne kłamstwa",
+      "en": "Politeness is mostly small lies"
+    },
+    {
+      "qid": "e1ce4566-c89d-4632-a6a9-480ee7d7a43f",
+      "pl": "Niewidziana krzywda to wciąż krzywda",
+      "en": "Unseen harm is still harm"
+    },
+    {
+      "qid": "e3b31915-201a-4999-8820-063b6d18a8e4",
+      "pl": "Zakochałeś się w wyobrażeniu, nie w człowieku",
+      "en": "You fell for an idea, not a person"
+    },
+    {
+      "qid": "e4c4fd65-a7fd-4289-a403-ed1b2be96d4a",
+      "pl": "Najlepszy przyjaciel to nie to samo co kochanek",
+      "en": "A best friend isn't the same as a lover"
+    },
+    {
+      "qid": "e661c104-f6d3-49cd-b6d0-351cbf929317",
+      "pl": "Twoja spontaniczność to cudzy nieposprzątany salon",
+      "en": "Your spontaneity is their unvacuumed living room"
+    },
+    {
+      "qid": "e6bae5e1-abc8-421f-be33-0245527750b5",
+      "pl": "Akceptuj mnie bywa wymówką, by się nie zmieniać",
+      "en": "'Accept me' can be an excuse to never grow"
+    },
+    {
+      "qid": "e6ddeb6d-4f77-4278-8151-dde276b41324",
+      "pl": "Ta sama zbrodnia, inna kara zależnie od ofiary?",
+      "en": "Same crime, different sentence by victim?"
+    },
+    {
+      "qid": "ebb1f6d1-2a4a-4cd3-ac8a-62fa0f6f2ad8",
+      "pl": "Kluczyki dziś czy cudzy wypadek jutro?",
+      "en": "The keys today, or someone's crash tomorrow?"
+    },
+    {
+      "qid": "f0d94311-206b-46d4-8e75-cde866c9a852",
+      "pl": "Pociąg gaśnie, dusza zostaje — u jednych",
+      "en": "Attraction fades, the soul stays — for some"
+    },
+    {
+      "qid": "f141e7dc-57c1-4eea-9d9c-353ef17428d8",
+      "pl": "Hipokryta psuje też dobro, które głosi",
+      "en": "The hypocrite poisons the good he preaches too"
+    },
+    {
+      "qid": "f66fcdaf-cf33-4231-b562-0f734374ec80",
+      "pl": "Cokolwiek to nie to samo co cokolwiek za darmo",
+      "en": "'Anything' isn't the same as 'anything easily'"
+    },
+    {
+      "qid": "f67f1701-879b-4583-9ada-811e3067817a",
+      "pl": "Zemsta zaczyna się tam, gdzie kończy obrona",
+      "en": "Revenge begins where defense ends"
+    },
+    {
+      "qid": "f9de71d8-32da-457f-abbd-75687c4420af",
+      "pl": "Niedokończona kłótnia budzi się z tobą",
+      "en": "An unfinished fight wakes up with you"
+    },
+    {
+      "qid": "fb11c0a0-22ef-479b-bee9-b83b3ad5ddbe",
+      "pl": "Przerwa to zwykle miękkie lądowanie zrywającego",
+      "en": "A break is usually the dumper's soft landing"
+    },
+    {
+      "qid": "fb1eaaeb-52eb-453e-a37c-abd5a11c5932",
+      "pl": "Aż jeden z dziesięciu skrzywdzi kogoś ci bliskiego",
+      "en": "Until one of the ten hurts someone you love"
+    },
+    {
+      "qid": "fb20305a-6d4a-41e6-bb81-5ccdb886018d",
+      "pl": "My nie mamy tajemnic — z cudzej tajemnicy",
+      "en": "'We have no secrets' — using someone else's"
+    },
+    {
+      "qid": "ff0078b6-c11f-40d9-8b15-8925ac1fd4d7",
+      "pl": "Chrapanie zniszczyło więcej nocy niż zdrada",
+      "en": "Snoring has ruined more nights than affairs"
+    },
+    {
+      "qid": "0799d16c-1190-414e-bb15-47d4fc1b11f9",
+      "pl": "Lepszy średnio nie znaczy lepszy dla każdego",
+      "en": "Better on average isn't better for everyone"
+    },
+    {
+      "qid": "0c203d0a-b96a-4a5c-9626-72474b5bfefe",
+      "pl": "Nie tworzysz wartości, tylko blokujesz dostęp",
+      "en": "You add no value; you just block the door"
+    },
+    {
+      "qid": "11ef1b20-2a2d-4919-803b-0d4b1a4d9cab",
+      "pl": "Boisz się ciszy, bo coś w niej usłyszysz",
+      "en": "You fear silence because you'd hear something"
+    },
+    {
+      "qid": "13acd8d7-0f24-4e13-8819-ecf504824069",
+      "pl": "Liczysz grosze, a tracisz duże pieniądze",
+      "en": "You count pennies and miss the big leaks"
+    },
+    {
+      "qid": "144b0fce-4346-4a2a-8c2e-6a149f955287",
+      "pl": "Uczy znosić stres, nie usuwać jego źródła",
+      "en": "It teaches you to endure stress, not remove its cause"
+    },
+    {
+      "qid": "1632a454-1e85-494c-a147-e61f1850d7a6",
+      "pl": "Nikt nie dostał instrukcji przy narodzinach",
+      "en": "No one got the manual at birth"
+    },
+    {
+      "qid": "1ac184ba-5d97-4cd3-a3ba-c0d0ecd0b1d6",
+      "pl": "Dla wszystkich znaczy zwykle: w naszym muzeum",
+      "en": "'For everyone' usually means in our museum"
+    },
+    {
+      "qid": "1beae3f0-7d54-40c5-90d6-ec5fe6684b16",
+      "pl": "Rozmawiasz inaczej, gdy wiesz, że idzie na taśmę",
+      "en": "People speak differently when the tape rolls"
+    },
+    {
+      "qid": "1dbc36e1-f86c-43d3-92e2-f0e2fa33b7bf",
+      "pl": "Guz nie boli, dopóki nie jest za późno",
+      "en": "A tumor doesn't hurt until it's too late"
+    },
+    {
+      "qid": "1e3714e5-1694-45d3-a40a-9f6c1d18b289",
+      "pl": "Odbierasz im szansę na pożegnanie",
+      "en": "You rob them of the chance to say goodbye"
+    },
+    {
+      "qid": "1ec13e47-12b3-409a-9b3a-236811c1024a",
+      "pl": "Władza nie psuje — odkrywa, kim byłeś",
+      "en": "Power doesn't corrupt; it reveals"
+    },
+    {
+      "qid": "20b278b9-5d77-45ae-8bc3-1b90e493d4d1",
+      "pl": "Kręgosłup nie czyta twojego stanowiska",
+      "en": "A spine doesn't read your job title"
+    },
+    {
+      "qid": "20f21008-5948-46ea-8da3-70f01104f91b",
+      "pl": "Taniej dla firmy, drożej dla zwolnionych",
+      "en": "Cheaper for the store, costlier for the fired"
+    },
+    {
+      "qid": "216a719b-6e13-40bc-a529-2ed1fb7c8f81",
+      "pl": "Znasz koniec Titanica, a i tak boli",
+      "en": "You know how Titanic ends; it still stings"
+    },
+    {
+      "qid": "23481bfe-1ac9-46e0-b93b-adcfbced9d3d",
+      "pl": "Umrzesz w blaszance milion kilometrów od domu",
+      "en": "You'd die in a can a million miles from home"
+    },
+    {
+      "qid": "26263240-518f-4153-b9b2-ca8fb747120b",
+      "pl": "Wszędzie w domu znaczy nigdzie u siebie",
+      "en": "At home everywhere means at home nowhere"
+    },
+    {
+      "qid": "2709dc4f-916a-4e71-8f39-bfdc2c1c97cb",
+      "pl": "Wskrzeszasz mamuta, gdy giną dzisiejsze gatunki",
+      "en": "You revive the mammoth while today's species die"
+    },
+    {
+      "qid": "2950d1f5-5844-444e-8ca3-6c516b321d77",
+      "pl": "Kto klnie co drugie słowo, nie ma czym uderzyć",
+      "en": "Swear every other word and it stops landing"
+    },
+    {
+      "qid": "2a4f4eb5-d0d8-43bf-a00f-d1c98955749a",
+      "pl": "Łatwo oddać nerkę w teorii",
+      "en": "It's easy to donate a kidney in theory"
+    },
+    {
+      "qid": "2de2eecb-ce26-4089-892b-20e544fea324",
+      "pl": "Bez przyjaciół w pracy zostaje sama praca",
+      "en": "With no work friends, it's just work"
+    },
+    {
+      "qid": "3135cc77-14be-4818-b3c6-03d9bba7cebf",
+      "pl": "Kłamstwo w CV wyjdzie pierwszego dnia",
+      "en": "A CV lie surfaces on day one"
+    },
+    {
+      "qid": "3631474c-cbdc-49f2-a3eb-2ff542b79f3d",
+      "pl": "Płacą za dostępność, nie tylko za wynik",
+      "en": "They pay for your availability, not just output"
+    },
+    {
+      "qid": "3828a2ab-2124-47a8-afce-151da95158a1",
+      "pl": "Ślepy głos to rzut monetą o twój kraj",
+      "en": "A blind vote is a coin toss for your country"
+    },
+    {
+      "qid": "39bd0268-fac1-40c9-a72f-7128c5b84be4",
+      "pl": "Płacisz latami za papier, który mniej znaczy",
+      "en": "Years of debt for a paper that means less"
+    },
+    {
+      "qid": "3ef40b09-7423-40f9-a059-53b6680e1e54",
+      "pl": "Rodzina nie każe robić nadgodzin za darmo",
+      "en": "Family doesn't ask for unpaid overtime"
+    },
+    {
+      "qid": "413fc998-2b25-46d5-9e24-0a96b263b9d5",
+      "pl": "Kartę zablokujesz, ręki nie odczepisz",
+      "en": "You can freeze a card; not your hand"
+    },
+    {
+      "qid": "45cbaf5e-93b7-4aa3-ae80-22627cac1f75",
+      "pl": "Cudzy koszmar staje się twoją poranną kawą",
+      "en": "Someone's nightmare becomes your morning coffee"
+    },
+    {
+      "qid": "46f5cbf0-519e-45a9-915c-22f14fcc64c5",
+      "pl": "Nagrywasz chwilę, której nie przeżywasz",
+      "en": "You film a moment you're not living"
+    },
+    {
+      "qid": "485d9bb9-0d83-42df-a03c-5232ee5ad1b1",
+      "pl": "Bezwstyd mówią ci, którzy bali się prosić",
+      "en": "'Shameless' — said by those too proud to ask"
+    },
+    {
+      "qid": "4d395dc7-c802-4bdd-9eca-11db068166f4",
+      "pl": "Pomoc bez końca to opóźniona dorosłość",
+      "en": "Endless help is delayed adulthood"
+    },
+    {
+      "qid": "4e7832e2-4c29-4f3f-b623-2505bdfcc9d9",
+      "pl": "Wykonywałem rozkazy nie uratuje statku",
+      "en": "'Just following orders' won't save the ship"
+    },
+    {
+      "qid": "50e1e09f-4f3e-43dd-b996-3e6156fbc222",
+      "pl": "Reklamy też cię śledzą — kto kogo okrada?",
+      "en": "The ads track you too — who's robbing whom?"
+    },
+    {
+      "qid": "51d2f5ee-5e70-42d9-a3fc-7e294f91272d",
+      "pl": "Korporacja nie zauważy, montażysta owszem",
+      "en": "The studio won't notice; the editor will"
+    },
+    {
+      "qid": "57ce9fe6-67d3-4611-9c2e-7851411be60e",
+      "pl": "Cierpisz z powodu nieszczęścia, które nie nadeszło",
+      "en": "You suffer a disaster that never comes"
+    },
+    {
+      "qid": "57d5cbd4-3867-486e-bdf6-e05745632f55",
+      "pl": "Publiczna ulica to nie zgoda na twój obiektyw",
+      "en": "A public street isn't consent to your lens"
+    },
+    {
+      "qid": "59b75d2e-3ddf-4820-adab-6264b2b00794",
+      "pl": "Prestiż nie smakuje, gdy jesteś spłukany",
+      "en": "Prestige tastes bad when you're broke"
+    },
+    {
+      "qid": "5dfa359f-8132-4482-9971-3acee44c4323",
+      "pl": "Cisza wsi nudzi po trzech tygodniach",
+      "en": "Country quiet bores you in three weeks"
+    },
+    {
+      "qid": "5f3ab678-5a27-435c-a4ef-639311591645",
+      "pl": "Głodny nie zatrzyma się przy obrazie",
+      "en": "The starving don't stop for paintings"
+    },
+    {
+      "qid": "60de6c89-a62a-4c1a-be12-5373bb53b958",
+      "pl": "Kto broni tego, czego nigdy nie zobaczył?",
+      "en": "Who protects what they'll never see?"
+    },
+    {
+      "qid": "6409ca56-e73d-42a3-bbfe-13b92ae9d28d",
+      "pl": "Świętowanie z cudzego portfela to nie prezent",
+      "en": "Celebrating on their wallet isn't a gift"
+    },
+    {
+      "qid": "6481c22c-925b-4715-9eea-232392ee6b4a",
+      "pl": "Sprzedasz odpoczynek raz, a firma będzie oczekiwać",
+      "en": "Sell your rest once and it becomes expected"
+    },
+    {
+      "qid": "64a7474e-ae72-40fc-ab9d-80ef6d6cd032",
+      "pl": "Nie pokocha cię, ale i nie zdradzi",
+      "en": "It won't love you — or leave you"
+    },
+    {
+      "qid": "69cb4878-0c56-4121-ab9c-99f8a30853c7",
+      "pl": "Motyle w brzuchu nie płacą rachunków",
+      "en": "Butterflies don't pay the bills"
+    },
+    {
+      "qid": "6a5957bd-b4cd-4966-9d75-ef0ed26fd180",
+      "pl": "Twój talent buduje to, czym gardzisz",
+      "en": "Your talent builds what you despise"
+    },
+    {
+      "qid": "6aec2e85-424d-48fc-bbe1-d0ece0670582",
+      "pl": "Nie każdy zły dzień potrzebuje diagnozy",
+      "en": "Not every bad day needs a diagnosis"
+    },
+    {
+      "qid": "6bfe0bae-bf02-49f2-a7c6-181930e1c8f5",
+      "pl": "Uśmiech na siłę to żałoba na później",
+      "en": "A forced smile just postpones the grief"
+    },
+    {
+      "qid": "6c2eba48-4180-4f69-b963-fa7717d79489",
+      "pl": "Nikt nie widzi, więc nikt nie liczy",
+      "en": "No one sees, so no one counts"
+    },
+    {
+      "qid": "6ef197e4-9e08-4830-afaf-3453ce8861c1",
+      "pl": "Kto nie umie się nakarmić, jest zależny",
+      "en": "An adult who can't feed themselves is dependent"
+    },
+    {
+      "qid": "73a4b8af-6218-4ad7-ac78-b214d1202e77",
+      "pl": "Uzdrowienie kłamstwem podważa każde następne słowo",
+      "en": "Healing by a lie taints every next word"
+    },
+    {
+      "qid": "768fa565-a819-4c71-b75c-766b6d15bfc4",
+      "pl": "Kto szuka sensu w pracy, łatwiej daje się wykorzystać",
+      "en": "Seek meaning at work and you're easier to exploit"
+    },
+    {
+      "qid": "78f7cf87-c17f-4830-bf5d-b9e981671746",
+      "pl": "Życie bez żali bywa życiem bez ryzyka",
+      "en": "A life with no regrets can be a life with no risk"
+    },
+    {
+      "qid": "7ac2b850-d9f1-4e97-b4ec-5378b3711524",
+      "pl": "Perfekcjonizm to lęk w garniturze",
+      "en": "Perfectionism is fear in a suit"
+    },
+    {
+      "qid": "7b49f88d-8dce-4b49-9dee-015fa0a158ae",
+      "pl": "Ten sam basen widać w każdym kraju",
+      "en": "The same pool looks alike in every country"
+    },
+    {
+      "qid": "7f810215-61c7-45c9-88e4-0aefed8d2254",
+      "pl": "Turysta na chwilę, mieszkaniec na zawsze",
+      "en": "You visit for a week; they live it"
+    },
+    {
+      "qid": "8370b87b-abc3-4f74-9411-8bd4f002fd29",
+      "pl": "Jeden czek nie ugasi rodzinnej zazdrości",
+      "en": "One check won't quiet the family envy"
+    },
+    {
+      "qid": "84072c08-4884-4c9c-88e9-d650ff5bf598",
+      "pl": "Wielka ryba w małym stawie przestaje rosnąć",
+      "en": "A big fish in a small pond stops growing"
+    },
+    {
+      "qid": "84cf7494-ead3-4c21-8193-3fc221ec2059",
+      "pl": "Instynkt to uprzedzenie w ładnym płaszczu",
+      "en": "Instinct is prejudice in a nice coat"
+    },
+    {
+      "qid": "85715093-650a-46ae-8077-0904e4e7a935",
+      "pl": "Kto decyduje, czyje lata są więcej warte?",
+      "en": "Who decides whose years count more?"
+    },
+    {
+      "qid": "85952a68-d1ba-4fe9-9a66-b263a4e3043c",
+      "pl": "Uroczy zabójca to wciąż zabójca",
+      "en": "An adorable killer is still a killer"
+    },
+    {
+      "qid": "88e1fd57-de94-4901-a5de-0af952a7c884",
+      "pl": "Wprost do ręki — a jeśli pójdzie na wódkę?",
+      "en": "Straight to the hand — but what if it buys vodka?"
+    },
+    {
+      "qid": "8911acb6-b05f-4d8f-b07a-7890a9c56d7a",
+      "pl": "Do rana śpisz z sierścią i pchłami",
+      "en": "You share the sheets with fur and fleas"
+    },
+    {
+      "qid": "8d538079-2705-4dfb-a64e-d4b9fccceab9",
+      "pl": "Zdrowszy dziś, lepszy jutro — kto stawia granicę?",
+      "en": "'Healthier' today, 'better' tomorrow — who draws the line?"
+    },
+    {
+      "qid": "8d796ffe-c3da-47a9-9cf4-b0cd5fd8046e",
+      "pl": "Tysiąc zdjęć, ani jednego wspomnienia",
+      "en": "A thousand photos, not one memory"
+    },
+    {
+      "qid": "8efcc1fb-3d42-4777-9119-1cc8ca38e758",
+      "pl": "Bez gotówki jeden klik zablokuje twoje pieniądze",
+      "en": "Cashless, one click can freeze your money"
+    },
+    {
+      "qid": "91175581-1fd0-4a26-97f8-9574063cc40c",
+      "pl": "Gotówka mówi: nie chciało mi się myśleć",
+      "en": "Cash says: I didn't bother to think"
+    },
+    {
+      "qid": "9252c3d5-708b-4b16-afde-057483272104",
+      "pl": "Sens dorabiamy po fakcie, by mniej bolało",
+      "en": "We invent the reason after, to hurt less"
+    },
+    {
+      "qid": "96263303-3192-45b1-9b83-a7500021affa",
+      "pl": "Twój heroizm to cudze zwolnienie za tydzień",
+      "en": "Your heroics are their sick leave next week"
+    },
+    {
+      "qid": "98108840-ef5c-4392-8228-1d3aae9b2bf7",
+      "pl": "Wieczne nagranie to wieczny sędzia",
+      "en": "A permanent recording is a permanent judge"
+    },
+    {
+      "qid": "994ceda1-126b-4993-abae-2b711c99f119",
+      "pl": "Poprawiasz zmarłego, którego nie zapytasz",
+      "en": "You overrule a dead person who can't answer"
+    },
+    {
+      "qid": "9c13f95f-4b11-452f-b07d-09cb3dcc44b1",
+      "pl": "Szczerość, którą wykorzystają przy zwolnieniach",
+      "en": "Honesty they'll use at the first layoffs"
+    },
+    {
+      "qid": "9d445eaf-65fb-4297-94f3-6d98d71c3f5e",
+      "pl": "Milcząc, pracujesz za dwóch za darmo",
+      "en": "Stay silent and you work for two, for free"
+    },
+    {
+      "qid": "9f6f19cd-013c-4db2-ba4f-02a52a13baa2",
+      "pl": "Kto rano wstaje to slogan, nie nauka",
+      "en": "'Early bird' is a slogan, not science"
+    },
+    {
+      "qid": "a5a5c83a-8b1c-4023-bd4e-ae18c6d5e751",
+      "pl": "Decyzja pod gwiazdy to decyzja na chybił trafił",
+      "en": "Deciding by the stars is deciding by chance"
+    },
+    {
+      "qid": "a6e40955-c384-417f-9511-4ccd10783619",
+      "pl": "Jedna rozładowana bateria i nie wiesz, gdzie jesteś",
+      "en": "One dead battery and you're lost"
+    },
+    {
+      "qid": "a81e62c5-bc8d-4b4a-a40a-3438d85af403",
+      "pl": "Szanowany, ale samotny — taki układ?",
+      "en": "Respected but alone — is that the trade?"
+    },
+    {
+      "qid": "aab7f5b7-0a64-45a1-8052-260523474723",
+      "pl": "Zły szef zamieni marzenie w koszmar",
+      "en": "A bad boss turns the dream into a nightmare"
+    },
+    {
+      "qid": "ad5df2ff-8674-4ab5-8136-37a41e8dd1e5",
+      "pl": "Zawsze tak robiliśmy to nie argument",
+      "en": "'We've always done it' is not a reason"
+    },
+    {
+      "qid": "ade1ce86-d909-40f1-abec-837deb8e2c3b",
+      "pl": "Pająk zjadał komary, których nienawidzisz",
+      "en": "That spider ate the mosquitoes you hate"
+    },
+    {
+      "qid": "b046c69e-5baa-4bbe-bc99-5e717f1aa1ad",
+      "pl": "Kupując dzieło, płacisz twórcy",
+      "en": "Buy the art and you pay the monster"
+    },
+    {
+      "qid": "b193511b-fae5-4ede-91f6-7fc7cd53c974",
+      "pl": "Jeśli AI mówi to lepiej — czyje to uczucie?",
+      "en": "If the AI says it better, whose feeling is it?"
+    },
+    {
+      "qid": "b1d5b385-15d5-4ae1-a305-33c1ef85f17f",
+      "pl": "Nawet ta odpowiedź może nie być twoja",
+      "en": "Even this answer might not be yours"
+    },
+    {
+      "qid": "b299ff9d-dbf5-4901-a9f9-bfe47fd80709",
+      "pl": "Śmierć nie zmazuje tego, co zrobili żywym",
+      "en": "Death doesn't erase what they did to the living"
+    },
+    {
+      "qid": "ba5d1571-7092-4420-bf2b-33ef70219f68",
+      "pl": "Ukrywasz odczyt, by nie musieć odpowiadać",
+      "en": "You hide the read so you don't have to reply"
+    },
+    {
+      "qid": "bab19e3b-a192-4cc0-a404-b8fb0d77bc03",
+      "pl": "Twoje awokado przeleciało dalej niż ty",
+      "en": "Your avocado flew farther than you ever will"
+    },
+    {
+      "qid": "bd31b6c8-5b0a-4272-b62f-15eb6dd1d46e",
+      "pl": "Bez bólu nie zauważysz, że się palisz",
+      "en": "With no pain, you won't feel yourself burning"
+    },
+    {
+      "qid": "bedd65ae-b295-4d65-86c8-6397385d5a38",
+      "pl": "Kto wyznacza granicę żartu — ranny czy tłum?",
+      "en": "Who draws the line — the hurt, or the crowd?"
+    },
+    {
+      "qid": "bf68fff5-0a93-4cc8-89d3-4598e749c416",
+      "pl": "Wybrał ten tatuaż — coś ci mówi",
+      "en": "They chose that ink — it does tell you something"
+    },
+    {
+      "qid": "bfb17319-1dbb-4f09-8748-d8f6b91e11d0",
+      "pl": "Bilet lotniczy to nie to samo co mądrość",
+      "en": "A plane ticket isn't the same as wisdom"
+    },
+    {
+      "qid": "c17225f8-c70b-4a03-b5b7-ab156afefa04",
+      "pl": "Wiedza bez lekarstwa to tylko wyrok",
+      "en": "Knowledge with no cure is just a sentence"
+    },
+    {
+      "qid": "c21571d4-8e27-451a-9f27-4a967ec8fe84",
+      "pl": "Szczery przegrywa z tym, kto ładnie kłamie",
+      "en": "The honest lose to the one who lies well"
+    },
+    {
+      "qid": "c2d30b5a-a69a-4f80-9f02-8faf202cbaac",
+      "pl": "Wygrywasz spór, tracisz wieczór",
+      "en": "You win the argument, lose the evening"
+    },
+    {
+      "qid": "c3a23d16-eaff-4620-a236-2f541ec89c21",
+      "pl": "Babcia też komuś zmieniła przepis",
+      "en": "Grandma changed someone's recipe too"
+    },
+    {
+      "qid": "c5e8c488-d800-4a02-95ad-fa29bb554dfa",
+      "pl": "Choroba czy nie — wyjść musisz sam",
+      "en": "Illness or not, you climb out alone"
+    },
+    {
+      "qid": "c6f8dffe-4b13-4d60-a38e-a4592f391e1e",
+      "pl": "Sprzedają ci spokój, na którym zarabiają",
+      "en": "They sell you a calm they profit from"
+    },
+    {
+      "qid": "c7207bee-de67-4632-bb3e-afe354a3fb35",
+      "pl": "Śmiej się, aż twoja wpadka trafi do sieci",
+      "en": "Laugh until your fail goes viral"
+    },
+    {
+      "qid": "c75b1299-428f-4ede-a8b7-762c2b57c956",
+      "pl": "Dziecko musiałoby się truć, by marzyć o medalu",
+      "en": "A kid would have to dope to dream of gold"
+    },
+    {
+      "qid": "c7fba7c5-d4c0-4013-827b-694f1fe3409d",
+      "pl": "Zmieniłem się to często reklama przed nawrotem",
+      "en": "'I've changed' is often an ad before the relapse"
+    },
+    {
+      "qid": "c9e1232c-3719-4030-ba5b-1f7500bc2008",
+      "pl": "Pomnik nie wspomina o ofiarach",
+      "en": "The statue leaves out the victims"
+    },
+    {
+      "qid": "c9fe7c50-ab87-4e26-8fdf-9d8badeb2913",
+      "pl": "Klub zmienia graczy, a ty masz być wierny?",
+      "en": "The club swaps its players; you must stay loyal?"
+    },
+    {
+      "qid": "cb867236-141b-4487-94f5-ebf978afc04b",
+      "pl": "Wiadomości sprzedają strach na doby",
+      "en": "The news sells fear by the hour"
+    },
+    {
+      "qid": "cd093aac-2979-4cad-b678-0a7fda3f5872",
+      "pl": "Boisz się talerza — a co z resztą życia?",
+      "en": "You fear a plate — what about the rest of life?"
+    },
+    {
+      "qid": "ce8d2a6a-8e76-4bcb-9020-a24655ba8d5a",
+      "pl": "Dobrowolnie przy braku innych opcji to fikcja",
+      "en": "'Freely' with no other option is a fiction"
+    },
+    {
+      "qid": "d0f42db8-785c-4a4b-9a36-e671e8b22b73",
+      "pl": "Awansują cię z tego, co umiesz robić",
+      "en": "You get promoted out of what you're good at"
+    },
+    {
+      "qid": "d35712e2-2666-4a05-9184-5332323f330a",
+      "pl": "Uciekniesz od wszystkich prócz siebie",
+      "en": "You escape everyone but yourself"
+    },
+    {
+      "qid": "d6ebf7dc-83f0-4de0-98f6-5ecd094b95c4",
+      "pl": "Twoja bułka odbiera im strach przed autem",
+      "en": "Your bread strips their fear of the road"
+    },
+    {
+      "qid": "d6f3c8b0-e895-4bcb-89fd-838082825280",
+      "pl": "Kawą maskujemy to, co naprawiłaby drzemka",
+      "en": "We mask with coffee what a nap would fix"
+    },
+    {
+      "qid": "d71f8984-8ea7-436e-a2fd-836fae33c0e4",
+      "pl": "Dług wobec przypadku to nie dług",
+      "en": "A debt to an accident isn't a debt"
+    },
+    {
+      "qid": "dae679cc-991f-46d6-a1c5-566a811e06e6",
+      "pl": "Zawsze znajdzie się bogatszy sąsiad",
+      "en": "There's always a richer neighbor"
+    },
+    {
+      "qid": "dbf2b0c2-ec9e-40e1-95ef-8e1167c5bdbe",
+      "pl": "Specjalista tonie, gdy jego branża znika",
+      "en": "The specialist sinks when the field dies"
+    },
+    {
+      "qid": "dbf70431-99e8-4042-b27f-efed710d7fbe",
+      "pl": "Płacisz wiecznie za coś, co nigdy nie jest twoje",
+      "en": "You pay forever for what's never yours"
+    },
+    {
+      "qid": "decb78a5-6c35-402d-a823-4944d3e0e2b6",
+      "pl": "Kto nie płacze, często wybucha inaczej",
+      "en": "Those who never cry erupt some other way"
+    },
+    {
+      "qid": "e242df4f-f58f-4a17-83a3-6fd202105348",
+      "pl": "Wybierz szczęście łatwo mówić z pełnym brzuchem",
+      "en": "'Choose happiness' is easy on a full stomach"
+    },
+    {
+      "qid": "e3dd906d-0513-4dff-9809-1f6083bdf681",
+      "pl": "Chwalisz efekt, który mógł być chorobą",
+      "en": "You praise a result that could be an illness"
+    },
+    {
+      "qid": "e41e2dea-d0e8-4a57-912b-21e911f67999",
+      "pl": "Bezpieczne wakacje to wakacje bez zaskoczeń",
+      "en": "A safe holiday is a holiday with no surprises"
+    },
+    {
+      "qid": "e436137b-9d6d-4033-907e-c1d1cc5480e4",
+      "pl": "Znikną komary, głodują ptaki, które je jedzą",
+      "en": "Kill the mosquito, starve the birds that eat it"
+    },
+    {
+      "qid": "e993f9fa-cc26-423a-b8f5-37d40cf2d310",
+      "pl": "W domu film to tło do telefonu",
+      "en": "At home the film is background to your phone"
+    },
+    {
+      "qid": "ea57ca51-2196-481c-9ef9-7372a4e33d1d",
+      "pl": "Kręcisz, gdy mógłbyś pomóc",
+      "en": "You film when you could help"
+    },
+    {
+      "qid": "ebbc39fe-7f77-4a9e-8ba7-b63cad6adc1c",
+      "pl": "Kto decyduje, co jest wysokie? Ci na górze",
+      "en": "Who decides 'high art'? Usually those on top"
+    },
+    {
+      "qid": "ed5c7fcf-499e-4133-803d-34bc3fd1ddb6",
+      "pl": "Głosówki nie przeskanujesz wzrokiem",
+      "en": "You can't skim a voice note"
+    },
+    {
+      "qid": "edd7401b-4d2d-43ac-ab1a-609041dd7813",
+      "pl": "Sztuka na cudzej ścianie to cudzy koszt sprzątania",
+      "en": "'Art' on their wall is their cleanup bill"
+    },
+    {
+      "qid": "f27b0638-bb16-4e8e-aa60-20d3e5f32331",
+      "pl": "Paliwo, które trawi silnik od środka",
+      "en": "Fuel that eats the engine from within"
+    },
+    {
+      "qid": "f30a1323-aa9f-4ea8-ac47-cc5fbba2d105",
+      "pl": "Powiedziałbyś tak, znając każdy ból z góry?",
+      "en": "Yes — knowing every pain in advance?"
+    },
+    {
+      "qid": "f73128cf-3302-4dd8-9461-9a35dc569145",
+      "pl": "Wina konsumenta to ulubiona bajka koncernów",
+      "en": "'Consumer guilt' is the polluter's favorite tale"
+    },
+    {
+      "qid": "f77aebe4-bd44-47c4-ae4b-5c930941dcd8",
+      "pl": "Ta zniżka dla ciebie to jego obiad",
+      "en": "The cut you save is his dinner"
+    },
+    {
+      "qid": "f99ffcdb-2edc-4bac-839f-deefe684964c",
+      "pl": "Bez strachu wejdziesz prosto pod auto",
+      "en": "With no fear, you'd walk into traffic"
+    },
+    {
+      "qid": "00d969dc-ba8e-4970-a4a0-5ba174052ccb",
+      "pl": "Kto mniej kocha, ten rządzi związkiem",
+      "en": "Whoever loves less runs the relationship"
+    },
+    {
+      "qid": "0112dde5-e816-4ed1-b2fd-2b9bee6c635b",
+      "pl": "Znajomi zapamiętają jego winę dłużej niż ty",
+      "en": "Your friends remember their fault longer than you do"
+    },
+    {
+      "qid": "01922977-4af0-4958-b43a-25a9c2c725d1",
+      "pl": "Nosisz cudzy towar i oddajesz zużyty",
+      "en": "You wear their stock and return it used"
+    },
+    {
+      "qid": "033b7ebe-bb07-4d90-a59e-8c5ebe76204b",
+      "pl": "Nie wyznasz — i tak stracisz go po cichu",
+      "en": "Say nothing and you lose them quietly anyway"
+    },
+    {
+      "qid": "03d9bc79-a9ba-4634-b3a9-c9a1da52ba7b",
+      "pl": "Każdy tak robi to alibi każdego układu",
+      "en": "'Everyone does it' excuses every rigged game"
+    },
+    {
+      "qid": "043a138a-941c-466e-a366-57f9195c1030",
+      "pl": "Nosisz je codziennie, oni tylko wybrali",
+      "en": "You wear it daily; they only picked it"
+    },
+    {
+      "qid": "04a28993-3e6a-451f-9fef-4fd6bc7d006d",
+      "pl": "Możesz usłyszeć coś, czego nie cofniesz",
+      "en": "You might hear what you can't unhear"
+    },
+    {
+      "qid": "04d06e74-bab1-4311-ae47-b3370a48567f",
+      "pl": "Kupujesz czas — jeśli robisz z nim coś więcej niż nic",
+      "en": "You buy time — if you use it for more than nothing"
+    },
+    {
+      "qid": "0bfed230-2483-451a-ab72-8c506361d15b",
+      "pl": "Obcy sąsiad nie pomoże, gdy cię zaleje",
+      "en": "A stranger next door won't help when you flood"
+    },
+    {
+      "qid": "10f5dcae-e920-46d3-a128-10a61287caf9",
+      "pl": "Dzieci wciąż mają tych dziadków",
+      "en": "The kids still have those grandparents"
+    },
+    {
+      "qid": "120e0496-c2a7-40bd-8656-2a8157bf9235",
+      "pl": "Milczysz teraz, wybuchniesz za rok",
+      "en": "Swallow it now, erupt in a year"
+    },
+    {
+      "qid": "1488c33f-e736-4b66-b7e5-f483705e077a",
+      "pl": "Dziecko to nie sequel ciebie",
+      "en": "A child isn't a sequel of you"
+    },
+    {
+      "qid": "190935a8-1f7c-4e5b-89de-99e9be4ee1c7",
+      "pl": "Wygoda dziś, martwe osiedle jutro",
+      "en": "Convenience now, a dead street later"
+    },
+    {
+      "qid": "1a70dabc-1867-481e-b435-32b9fcde6771",
+      "pl": "Hojność bez kosztu to porządki, nie dar",
+      "en": "Costless giving is decluttering, not charity"
+    },
+    {
+      "qid": "1af7d72c-bb3b-4584-a185-65783bfd8fdc",
+      "pl": "Decydujesz za nich, kiedy mają się dowiedzieć",
+      "en": "You decide for them when they get to know"
+    },
+    {
+      "qid": "1cce1527-55e2-47f1-a434-401e0442e7d1",
+      "pl": "Kupować książki i czytać to dwa hobby",
+      "en": "Buying books and reading books are two hobbies"
+    },
+    {
+      "qid": "1cf2e6df-365c-40d0-b8c3-157184852e87",
+      "pl": "Nie naprawisz znaczy: kup nowe co dwa lata",
+      "en": "'Can't fix it' means: buy a new one every two years"
+    },
+    {
+      "qid": "242f76e6-a585-4c50-a71e-f4bc39f85164",
+      "pl": "Naginana tradycja to w końcu tylko wspomnienie",
+      "en": "A tradition bent enough is just a memory"
+    },
+    {
+      "qid": "28ca3573-b027-44d6-8856-fa85f9803252",
+      "pl": "Wygodna wymówka dla każdego bałaganiarza",
+      "en": "A comfy excuse for every slob"
+    },
+    {
+      "qid": "2b6e7460-ef6e-46d0-8b3e-5eec705ee223",
+      "pl": "Ciało prosi o kanapę, nie o formę",
+      "en": "The body begs for the couch, not fitness"
+    },
+    {
+      "qid": "2b80e965-11e8-4059-8e78-b257e2c1af01",
+      "pl": "Kto bierze bez pytania, bierze też w życiu",
+      "en": "Whoever grabs it uninvited grabs elsewhere too"
+    },
+    {
+      "qid": "2dfeb0e1-aae7-4c0c-b370-b8f586870e8b",
+      "pl": "Szczera nieuprzejmość to często zwykłe chamstwo",
+      "en": "'Honest rudeness' is often just being rude"
+    },
+    {
+      "qid": "2e49d45b-940d-4a89-a657-5cf0252bdbd9",
+      "pl": "Zrobiłbyś to przyjacielowi w twarz?",
+      "en": "Would you do it to your friend's face?"
+    },
+    {
+      "qid": "2f7dc8d1-e4f7-4ec9-8c33-7a5d0e51d027",
+      "pl": "Odwaga wyjścia tania, gdy nie zależysz od pensji",
+      "en": "Walking out is easy when you don't need the paycheck"
+    },
+    {
+      "qid": "30810951-7228-47c7-b567-11ffa42e6bc7",
+      "pl": "Ekspert robi robotę, szef zgarnia bonus",
+      "en": "The expert does the work; the boss takes the bonus"
+    },
+    {
+      "qid": "31563c48-5b46-4132-840b-3a95b9c25a11",
+      "pl": "Klaszczesz, że nie spadliście — niska poprzeczka",
+      "en": "You clap for not crashing — low bar"
+    },
+    {
+      "qid": "36e9d936-6f94-45dd-b75e-c457273a11bb",
+      "pl": "Poznają cię prawdziwszego, niż chciałeś być",
+      "en": "They'll meet a truer you than you showed"
+    },
+    {
+      "qid": "3a62eefa-65bb-4dc6-95ed-e50b6341e215",
+      "pl": "Psują się celowo, byś kupił drugi raz",
+      "en": "Built to break so you buy it twice"
+    },
+    {
+      "qid": "42edd9fc-d54a-4123-94d6-ecfe35ba9807",
+      "pl": "Zwrot z tej inwestycji to zwykle same odsetki",
+      "en": "The return on that 'investment' is usually just interest"
+    },
+    {
+      "qid": "4567a5da-a4d3-4d59-b759-2c579e672709",
+      "pl": "Rozmawiasz z jedynym, kto naprawdę słucha",
+      "en": "You talk to the only one who really listens"
+    },
+    {
+      "qid": "4a2ad90b-9680-44f0-a2af-18b1bb940520",
+      "pl": "Kto tam pracował, inaczej traktuje kelnera",
+      "en": "Whoever's worked the till treats the waiter differently"
+    },
+    {
+      "qid": "4bbcfc87-ee7a-4641-8ba0-55317d7b6d21",
+      "pl": "Zbrodnia bawi, aż dotknie kogoś twojego",
+      "en": "Crime entertains until it touches your own"
+    },
+    {
+      "qid": "4fd56c59-879d-41aa-add9-34ac66785d6b",
+      "pl": "Wysłuchać to nie to samo co dać scenę",
+      "en": "A hearing isn't the same as a stage"
+    },
+    {
+      "qid": "5b3e9dd9-6e04-49cc-9e27-0555a099c5c8",
+      "pl": "Podpis pod skargą bywa zaproszeniem do zemsty",
+      "en": "A signed complaint can invite revenge"
+    },
+    {
+      "qid": "5bdcf331-bd6f-4686-bc15-7d927d443b27",
+      "pl": "Jego dług, twoja pensja, gdy zniknie",
+      "en": "Their loan becomes your paycheck if they vanish"
+    },
+    {
+      "qid": "5e189d64-9881-45c3-afcc-d7557779676f",
+      "pl": "Nikt nie sprawdza, jak zachorowałeś na grypę",
+      "en": "No one checks how you caught the flu either"
+    },
+    {
+      "qid": "610034f8-a6ba-470a-8732-4df4ead13cab",
+      "pl": "Tata też palił brzmi jak zielone światło",
+      "en": "'Dad did it too' sounds like a green light"
+    },
+    {
+      "qid": "6936d4fa-cebb-488f-98d0-b4630d68e7fe",
+      "pl": "Odgradzasz się od świata, by nie zauważyć nikogo",
+      "en": "You wall out the world to notice no one"
+    },
+    {
+      "qid": "6e65162c-e16b-4983-a648-c0628c742984",
+      "pl": "Znasz fabułę, nie dotarłeś do sensu",
+      "en": "You know the plot, not the point"
+    },
+    {
+      "qid": "6efc88f5-0b5d-42f3-a150-0804a1f1c564",
+      "pl": "Umierasz sto razy w głowie, raz naprawdę",
+      "en": "You die a hundred deaths in your head"
+    },
+    {
+      "qid": "77e571f5-42d7-4382-9a71-d42be8c5ebdd",
+      "pl": "Słuchawki na uszach to głośne nie",
+      "en": "Headphones on are a loud 'no'"
+    },
+    {
+      "qid": "789a4f7d-42f2-41dd-a732-fb7f9da879d9",
+      "pl": "Kto był tylko pracą, po niej jest nikim",
+      "en": "Whoever was only their job becomes no one after"
+    },
+    {
+      "qid": "79ac58cc-37b5-40ab-ad58-5ffecb31663c",
+      "pl": "Twoja reakcja może zaostrzyć to w domu",
+      "en": "Your reaction may make it worse at home"
+    },
+    {
+      "qid": "79c4daae-f485-40e4-8e2a-43c17e2594b0",
+      "pl": "Niezastąpiony nigdy nie awansuje",
+      "en": "The irreplaceable never get promoted"
+    },
+    {
+      "qid": "7a7ae81b-5e95-4780-a8f2-deef6d74c306",
+      "pl": "Sentyment nie spłaci rachunków",
+      "en": "Sentiment won't pay the bills"
+    },
+    {
+      "qid": "7c70b3f4-d1b5-4956-a624-1b1ee7e1c379",
+      "pl": "Nie wszystko musi się zwracać w gotówce",
+      "en": "Not everything must pay back in cash"
+    },
+    {
+      "qid": "7c8369b8-065c-470e-b5c7-cb6ecc02c16b",
+      "pl": "Poprawiasz, by błysnąć, nie by pomóc",
+      "en": "You correct to shine, not to help"
+    },
+    {
+      "qid": "7fde4f2d-b522-400e-8760-9332abe4486b",
+      "pl": "Obejrzane szybciej, zapomniane szybciej",
+      "en": "Watched twice as fast, forgotten twice as fast"
+    },
+    {
+      "qid": "81daf510-2f8a-40ef-ba0c-bca1838db5d8",
+      "pl": "Firma podniesie cenę tym, którzy nie oszukują",
+      "en": "The company raises prices on those who don't cheat"
+    },
+    {
+      "qid": "81fa382a-35a0-476c-90eb-57383b6159f7",
+      "pl": "Pieniądz zdejmuje maskę, na którą cię nie było stać",
+      "en": "Money removes the mask you couldn't afford"
+    },
+    {
+      "qid": "842344a3-ee9f-4243-a561-97bbd46f0404",
+      "pl": "Reszta korzystała z wygranych oszusta",
+      "en": "The rest enjoyed the cheater's wins"
+    },
+    {
+      "qid": "854dfbb2-dfc6-4e43-bd6e-477898269801",
+      "pl": "Ulga dla portfela, cios dla tego, kto lubi dawać",
+      "en": "Relief for the wallet, a blow to the giver"
+    },
+    {
+      "qid": "868e181d-638f-4473-8c43-b26ce9abe7f1",
+      "pl": "Znaleźć to nie zasłużyć, komu się należy",
+      "en": "Finding isn't the same as earning who it belongs to"
+    },
+    {
+      "qid": "87877972-c051-4145-a61d-5fd727af9677",
+      "pl": "Pusty talerz to prośba o dokładkę",
+      "en": "An empty plate begs for seconds"
+    },
+    {
+      "qid": "8e6be412-c00d-447c-8be0-2f61b0066935",
+      "pl": "Burzysz działające, by postawić modne",
+      "en": "You raze the working to build the trendy"
+    },
+    {
+      "qid": "8f1aeb86-31f3-4088-a3dc-6196d609b18a",
+      "pl": "Płacisz teraz smakiem, jutro żołądkiem",
+      "en": "You pay in flavor now, in stomach later"
+    },
+    {
+      "qid": "91314ad4-dfd3-405f-9b7a-e2351630edff",
+      "pl": "Firma milczy nie dla ciebie, lecz przez prawników",
+      "en": "The company stays silent for its lawyers, not you"
+    },
+    {
+      "qid": "91dac52b-7ff7-48e4-b914-4f6e217685bf",
+      "pl": "Okrutne więzienie tworzy okrutnych ludzi",
+      "en": "A cruel prison makes crueler people"
+    },
+    {
+      "qid": "932e0f56-0858-46b7-b01d-eaa5773c4bb1",
+      "pl": "Rabat na niepotrzebne to sto procent straty",
+      "en": "A discount on what you don't need is a full loss"
+    },
+    {
+      "qid": "953f3615-a290-4dd0-8fc9-94499ede19b8",
+      "pl": "Dłużnik nie powie szefowi nie",
+      "en": "A debtor can't say 'no' to the boss"
+    },
+    {
+      "qid": "95d12ee3-cfdd-4e2c-9e02-d2d28c3d3d7a",
+      "pl": "Zwykle to człowiek złamał granicę pierwszy",
+      "en": "Usually the human crossed the line first"
+    },
+    {
+      "qid": "967c8816-099a-43cf-a885-f360731e8656",
+      "pl": "Zmieściłeś całe życie w rzeczy do zgubienia",
+      "en": "You put your whole life in a thing you can lose"
+    },
+    {
+      "qid": "978c57b8-3661-4261-a6bf-775d8e2fc45a",
+      "pl": "Wieczne po co czasem tylko hamuje",
+      "en": "An endless 'why?' sometimes just stalls"
+    },
+    {
+      "qid": "982bbbb6-92eb-4217-868a-25f5bb2d4f29",
+      "pl": "Nie umiesz odpocząć, bo ciągle jesteś do dyspozycji",
+      "en": "You can't rest because you're always on call"
+    },
+    {
+      "qid": "9d881f58-1820-410b-bde4-e664e124bd32",
+      "pl": "Płacisz krocie, by oglądać scenę przez cudzy telefon",
+      "en": "You pay a fortune to watch it through someone's phone"
+    },
+    {
+      "qid": "5b3f8dfc-ca8e-4182-8084-e2b84492fe60",
+      "pl": "Ścinasz życie, by ozdobić stół",
+      "en": "You cut a life to decorate a table"
+    },
+    {
+      "qid": "5ba50285-51ee-4395-a231-3561db52cc2a",
+      "pl": "Krew idzie do chorego, dane na sprzedaż",
+      "en": "Blood goes to the sick; data goes to sale"
+    },
+    {
+      "qid": "5c176a94-bf66-43be-8790-d63a62a67a13",
+      "pl": "Milczysz, bo okazja kusi bardziej niż uczciwość",
+      "en": "You stay quiet because the bargain beats the ethics"
+    },
+    {
+      "qid": "5ed0dbe3-cd3e-49e9-a179-cac0cd0f674a",
+      "pl": "Ktoś chętnie wybierze za ciebie",
+      "en": "Someone's happy to choose for you"
+    },
+    {
+      "qid": "603ee35f-7d92-4b13-821f-2ef1ef1efeff",
+      "pl": "Cieszysz się karą czy cudzym cierpieniem?",
+      "en": "Glad for the justice, or the pain?"
+    },
+    {
+      "qid": "620474ee-8d84-4db8-a8d9-128bf5ecde39",
+      "pl": "Wystarczy to często wymówka dla lenistwa",
+      "en": "'Good enough' is often laziness's alibi"
+    },
+    {
+      "qid": "6317d6de-2087-4d38-88eb-ca01f43767a8",
+      "pl": "Pluszak nie osądza, ludzie tak",
+      "en": "The plush toy doesn't judge; people do"
+    },
+    {
+      "qid": "663a0807-632f-4ac5-a384-8322e6ed55a5",
+      "pl": "Za rok nie pamiętasz, skąd ta figurka",
+      "en": "In a year you won't recall where that trinket's from"
+    },
+    {
+      "qid": "664e20cb-f0cf-4ebd-8b1a-00aa2de55bb6",
+      "pl": "Policz, ilu przyjaciół z pracy zostało po odejściu",
+      "en": "Count the work 'friends' left after you quit"
+    },
+    {
+      "qid": "6727f4ae-3ad9-4dec-a7cb-dac78f20bb5e",
+      "pl": "Wtedy przestępca najpierw robi dziecko",
+      "en": "Then the criminal has a child first"
+    },
+    {
+      "qid": "689a7e91-94f5-4d31-bb6d-3997d49a39fb",
+      "pl": "Sam przy stole poznasz, czy się lubisz",
+      "en": "Alone at the table, you learn if you like your own company"
+    },
+    {
+      "qid": "6bf164a2-631a-4ed6-9f1b-69d8f21d81ab",
+      "pl": "Antypatia bez powodu to twój problem, nie jego",
+      "en": "Dislike with no reason is your problem, not theirs"
+    },
+    {
+      "qid": "6d95c0df-5f9a-40b9-b31d-58d2b01eef18",
+      "pl": "Cudza drzemka to nie twoja odpowiedzialność",
+      "en": "Their nap isn't your responsibility"
+    },
+    {
+      "qid": "728f8750-94d4-4c59-a764-8111ef18d416",
+      "pl": "Kochasz naturę wygodną, resztę tępisz",
+      "en": "You love the convenient nature and swat the rest"
+    },
+    {
+      "qid": "7b45bc16-7077-4daf-8a14-8910fc341003",
+      "pl": "Wydatki bogatych to czyjaś pensja",
+      "en": "The rich man's spending is someone's wage"
+    },
+    {
+      "qid": "7b9105a4-1308-4e54-9648-2548aecf4133",
+      "pl": "Zmarnowany talent to cicha strata dla wszystkich",
+      "en": "Wasted talent is a quiet loss for everyone"
+    },
+    {
+      "qid": "7bedeb6a-55ec-4ff3-9d25-42d4654671de",
+      "pl": "Twój pomidor kosztuje więcej niż w sklepie",
+      "en": "Your tomato costs more than the shop's"
+    },
+    {
+      "qid": "808a33d4-9d47-49d5-93ce-5632394c1c7b",
+      "pl": "Sam ze sobą łatwo uwierzyć we własne kłamstwa",
+      "en": "Alone, it's easy to believe your own lies"
+    },
+    {
+      "qid": "80b95b7a-591e-40ef-83f3-2108b4ba9391",
+      "pl": "Wspólne wspomnienia to nie wspólne dziś",
+      "en": "Shared memories aren't a shared today"
+    },
+    {
+      "qid": "8107da3b-beaa-4b7b-81c6-98e106a6aa86",
+      "pl": "Nie wiedziałem ratuje raz, nie zawsze",
+      "en": "'I didn't know' works once, not always"
+    },
+    {
+      "qid": "81e40acc-4f6e-44c7-a895-4971f34f6c6c",
+      "pl": "Sam widzisz więcej, ale nie masz z kim wspominać",
+      "en": "Alone you see more, but share it with no one"
+    },
+    {
+      "qid": "83f022cd-8f44-4bfd-960c-b7ef58d00eeb",
+      "pl": "Nic nowego mówią ci, którzy nic nie tworzą",
+      "en": "'Nothing's new' — said by those who make nothing"
+    },
+    {
+      "qid": "85daeade-c582-4e61-b19e-1d3eca1a5d30",
+      "pl": "Świat brudzą ci, którzy myślą: to nie moje",
+      "en": "The world's littered by 'not my job' thinking"
+    },
+    {
+      "qid": "86465249-cdc4-4e56-b9f2-a32ba0624c53",
+      "pl": "Płaczesz nad fikcją, a nad życiem się wstrzymujesz?",
+      "en": "You cry at fiction but hold it in for life?"
+    },
+    {
+      "qid": "881ecff9-7402-4151-80e2-7cf3cbdddcb7",
+      "pl": "Twój plus jeden je z cudzego talerza",
+      "en": "Your plus-one eats off someone else's plate"
+    },
+    {
+      "qid": "88bf5f56-5597-4ee5-8888-0e21dd9f8379",
+      "pl": "Poświęcenie łatwe, gdy wiąże też sąsiada",
+      "en": "Sacrifice is easy when it binds the neighbor too"
+    },
+    {
+      "qid": "8a7a363a-cdbf-4a0c-b614-4e574b01f098",
+      "pl": "Nie rozumiem bywa winą widza, nie dzieła",
+      "en": "'I don't get it' is sometimes on you, not the art"
+    },
+    {
+      "qid": "8b18bb34-3bd4-420f-accc-c2b3b8da469a",
+      "pl": "Należy mi się opróżnia kasę dla naprawdę potrzebujących",
+      "en": "'I qualify' drains the fund for those who need it"
+    },
+    {
+      "qid": "8b81a5cd-b43b-4799-8f11-b4116ae85e9f",
+      "pl": "Kto zawodzi siebie, zawiedzie i innych",
+      "en": "Fail yourself and you'll fail others too"
+    },
+    {
+      "qid": "8d72267a-784f-4830-bde3-34d381b2ad31",
+      "pl": "Wchodzisz z jednym objawem, wychodzisz z pięcioma",
+      "en": "You go in with one symptom, leave with five diseases"
+    },
+    {
+      "qid": "8da0f2f4-e793-441c-a37e-05a5e946876a",
+      "pl": "Płaczesz nad gatunkiem, jedząc kolejny do wymarcia",
+      "en": "You mourn one species over a plate of the next"
+    },
+    {
+      "qid": "967423a8-85d2-408b-b3f9-8b10a1911792",
+      "pl": "Zawsze pierwszy przeprasza — drugi uczy się bezkarności",
+      "en": "Always sorry first teaches the other they can't lose"
+    },
+    {
+      "qid": "969582a8-d82e-40af-b4dc-1e3bf5d81489",
+      "pl": "Może to weekend jest przereklamowany",
+      "en": "Maybe the weekend is the overrated part"
+    },
+    {
+      "qid": "97e13569-2bab-4ba5-8ee2-a71420a36bfe",
+      "pl": "Używane też bywa wymówką, by kupować więcej",
+      "en": "'Secondhand' can excuse buying even more"
+    },
+    {
+      "qid": "9d8bae03-3256-47eb-9069-f2da43eb2dac",
+      "pl": "Osobne światy z czasem robią się obce",
+      "en": "Separate worlds slowly grow into strangers"
+    },
+    {
+      "qid": "a8096fc6-7c14-4a4e-a944-9a923c48c24c",
+      "pl": "Wyjazd też bywa ucieczką, nie odwagą",
+      "en": "Leaving can be flight, not courage"
+    },
+    {
+      "qid": "a8db6c87-9cb9-4884-8270-7ffa32181d01",
+      "pl": "Dorosły ma mniej czasu i więcej masek",
+      "en": "Adults have less time and more masks"
+    },
+    {
+      "qid": "a9f5d390-84cf-4692-9490-06e8642be60d",
+      "pl": "Grządka ukoi nerwy, nie wyleczy traumy",
+      "en": "A garden bed soothes nerves, not trauma"
+    },
+    {
+      "qid": "aa1bb598-cd39-4c4c-b23a-8bc100eed0f3",
+      "pl": "Wygrana za kasę to przegrana z samym sobą",
+      "en": "A bought win is a loss to yourself"
+    },
+    {
+      "qid": "ab2bb157-e70a-4bd5-9d91-49f2bf553d32",
+      "pl": "Pomoc czasem mówi: nie wierzę, że dasz radę",
+      "en": "Help can say: I don't think you can manage"
+    },
+    {
+      "qid": "adaffab2-d892-431a-931d-81e8881852bb",
+      "pl": "Internet nie zapomni, portfel się opróżni",
+      "en": "The internet won't forget; the money runs out"
+    },
+    {
+      "qid": "aeeebdbb-bd2c-43dd-955d-4c1f931234e8",
+      "pl": "Gospodarz spędził dzień, ty pięć minut przy zlewie",
+      "en": "The host spent a day cooking; you'd spend five minutes"
+    },
+    {
+      "qid": "b15ecec3-247c-42dd-bce2-fc6823ca8c0b",
+      "pl": "Pierwsza prośba o pożyczkę pokaże prawdę",
+      "en": "The first loan request will show the truth"
+    },
+    {
+      "qid": "b3063c81-8080-40e6-96a8-fd659977ba08",
+      "pl": "Płacisz, by odzyskać coś, co miałeś za darmo",
+      "en": "You pay to get back what was once free"
+    },
+    {
+      "qid": "b9b0a4a0-232a-4bab-acc0-e8a2197b86bf",
+      "pl": "Czasem prześpij się znaczy: nigdy nie zdecyduj",
+      "en": "Sometimes 'sleep on it' means never decide"
+    },
+    {
+      "qid": "bb9cd554-c2e7-4ac5-a8d2-4170af1c1ed5",
+      "pl": "Bez wyłącznika ktoś inny decyduje, kiedy działasz",
+      "en": "With no off switch, someone else decides when you run"
+    },
+    {
+      "qid": "bcfe1b17-05af-4d91-9ce4-8cc156dd6140",
+      "pl": "Publiczne przeprosiny bywają przedstawieniem dla widowni",
+      "en": "A public apology is often a show for the crowd"
+    },
+    {
+      "qid": "bd9d1893-193b-47c6-85a2-b604b64f1dc1",
+      "pl": "Godziny koszenia, by nikt po nim nie chodził",
+      "en": "Hours of mowing for a lawn no one walks on"
+    },
+    {
+      "qid": "c1909efa-47f7-4f55-9400-45173b659456",
+      "pl": "I tak nigdy nie otworzysz tego zdjęcia",
+      "en": "You'll never open that photo again anyway"
+    },
+    {
+      "qid": "ca544ed2-8694-4f8b-83de-dded107222f8",
+      "pl": "Kicz to często sztuka, której nie lubią krytycy",
+      "en": "'Kitsch' is often the art critics don't like"
+    },
+    {
+      "qid": "cc82a0ca-804d-421c-a798-7bafcf730fef",
+      "pl": "Nudzą się tylko ci, którzy nie mają pasji",
+      "en": "Only the passionless get bored"
+    },
+    {
+      "qid": "d0229a15-34ab-46f3-85a1-8021a035801b",
+      "pl": "Marzenie bez planu to tylko życzenie",
+      "en": "A dream with no plan is just a wish"
+    },
+    {
+      "qid": "d14f8d93-51a9-4205-b33d-4d934704ad11",
+      "pl": "A gdyby ktoś tak patrzył na ciebie?",
+      "en": "What if someone stared at you?"
+    },
+    {
+      "qid": "d29914e1-efe0-4ccd-a584-5ef2a2093750",
+      "pl": "Buntujesz się dokładnie jak inni buntownicy",
+      "en": "You rebel exactly like every other rebel"
+    },
+    {
+      "qid": "d6bcc3bc-b751-404a-a716-0ded454f0de3",
+      "pl": "Ich świat już nie istnieje",
+      "en": "The world they knew is gone"
+    },
+    {
+      "qid": "d9e56493-a0da-4af7-8003-95b744fc55fc",
+      "pl": "Płacisz za naturę, żeby jej nie poczuć",
+      "en": "You pay for nature, then wall it out"
+    },
+    {
+      "qid": "db263ba8-84f4-4bdf-b369-2e7249924bad",
+      "pl": "Sprawdź, kto zaprasza, gdy jesteście we dwoje",
+      "en": "Notice who's invited when it's just two"
+    },
+    {
+      "qid": "dba1081b-8d91-4903-b6a6-e894439a200b",
+      "pl": "Nie zapłacisz — i kolejny etat zniknie",
+      "en": "Don't pay, and the next job vanishes"
+    },
+    {
+      "qid": "dc7b39fe-f60d-464e-a667-fbf11cfee941",
+      "pl": "Idealny sen w gorszym zdrowiu to zły interes",
+      "en": "Perfect sleep in worse health is a bad trade"
+    },
+    {
+      "qid": "dcba631e-762c-47cd-8dc3-93e215818f76",
+      "pl": "Dwie godziny dziennie to miesiąc życia rocznie",
+      "en": "Two hours a day is a month of life a year"
+    },
+    {
+      "qid": "dd18f4d5-7e27-4878-85e2-7d64efc2bec2",
+      "pl": "Dzika zieleń pięknie brzmi, póki to nie twoja ulica",
+      "en": "Wild green sounds nice, until it's your street"
+    },
+    {
+      "qid": "e01539d1-423d-4acd-90f8-fced3ac87850",
+      "pl": "Oglądasz świat, którego przez ekran nie ratujesz",
+      "en": "You watch a world a screen won't save"
+    },
+    {
+      "qid": "e0896fa1-12ac-47e8-bc6d-8368401a8ea3",
+      "pl": "Sto powiadomień, zero prawdziwej rozmowy",
+      "en": "A hundred notifications, not one real talk"
+    },
+    {
+      "qid": "e1eb77cc-c04a-4f37-bd13-8064f542600d",
+      "pl": "Bez zdrady tłumacza znałbyś tylko swój język",
+      "en": "Without the translator's 'betrayal', you'd know one tongue"
+    },
+    {
+      "qid": "e2d9ad87-2c5f-49cd-a4f7-d363d0c5174c",
+      "pl": "Ekranu się nie przytuli",
+      "en": "You can't hug a screen"
+    },
+    {
+      "qid": "e6d5eb05-92ba-404c-8452-f6a316cb7a96",
+      "pl": "Dziecko i tak spotka smutek — pytanie, kiedy",
+      "en": "The child meets sadness anyway; only when is the question"
+    },
+    {
+      "qid": "e8be4cbf-09a5-486f-9592-3f0a01d99c1c",
+      "pl": "Tylko żartowałem to tarcza tchórza",
+      "en": "'Just joking' is a coward's shield"
+    },
+    {
+      "qid": "e9580e42-36ca-405a-b5e2-1a10eda8ae3d",
+      "pl": "Playlista smutku to komfortowe grzęźnięcie",
+      "en": "A sad playlist is comfortable wallowing"
+    },
+    {
+      "qid": "ea3224b5-6feb-4bc7-92fe-90cda1f218c9",
+      "pl": "Zdradzony sekret mówi, kim ty jesteś",
+      "en": "A leaked secret reveals you, not them"
+    },
+    {
+      "qid": "ea4322c5-ba07-44ce-a93d-0e02b248fc76",
+      "pl": "Nucisz melodię, ale płaczesz przez słowa",
+      "en": "You hum the tune, but the words make you cry"
+    },
+    {
+      "qid": "ef342a96-08b0-4b51-9e35-e133325463e2",
+      "pl": "Najwięcej czasu kradniesz sobie sam",
+      "en": "You steal the most time from yourself"
+    },
+    {
+      "qid": "f01ab1e9-46e2-41d5-b2c9-98321eeaea56",
+      "pl": "Na rozgłosie nikt się jeszcze nie najadł",
+      "en": "No one ever ate on exposure"
+    },
+    {
+      "qid": "f0b9d5b4-f941-4e18-b2db-d72b0a68fd31",
+      "pl": "Gonisz, byle nie stanąć i nie pomyśleć",
+      "en": "You run so you never stop and think"
+    },
+    {
+      "qid": "f2816085-f7e3-4e33-b42a-c947366ec947",
+      "pl": "Złamana obietnica uczy, że słowo nic nie znaczy",
+      "en": "A broken promise teaches a kid that words are cheap"
+    },
+    {
+      "qid": "f4e87e50-7e4b-429d-9990-6ffc16442bb2",
+      "pl": "Wygoda, która wie o tobie więcej niż ty",
+      "en": "Convenience that knows you better than you do"
+    },
+    {
+      "qid": "f5ed6a22-fdad-424b-8a7c-1d796e8a7f63",
+      "pl": "Oszczędzasz decyzję, tracisz kawałek siebie",
+      "en": "You save a decision, lose a bit of yourself"
+    },
+    {
+      "qid": "f6202779-75af-42bf-8807-6e2fd7438541",
+      "pl": "Wyścig po przeżycia to praca w przebraniu urlopu",
+      "en": "Chasing 'experiences' is work dressed as rest"
+    },
+    {
+      "qid": "f803ace0-4095-4f83-aba1-e6dd8d35fa03",
+      "pl": "Kto decyduje, co obraża — dziś ty, jutro oni",
+      "en": "Who decides what offends — you today, them tomorrow"
+    },
+    {
+      "qid": "fb49d79a-02cf-4b97-963d-0a6fb79714bc",
+      "pl": "Wiedza schowana umiera razem z tobą",
+      "en": "Knowledge hoarded dies with you"
+    },
+    {
+      "qid": "fc3edab2-5f71-4aa9-8843-769fd1cea561",
+      "pl": "Dziękuję za wszystko znaczy dziękuję za nic",
+      "en": "'Thanks' for everything means thanks for nothing"
+    },
+    {
+      "qid": "fe4303b4-f486-4cfe-a432-bf913164b5fe",
+      "pl": "Kartę zastrzeżesz, twarzy nie odwołasz",
+      "en": "You can cancel a card; not your face"
+    },
+    {
+      "qid": "fff0489b-0003-4a0c-b77e-ad6064423dd5",
+      "pl": "Open space sprzedaje energię, oszczędza na ścianach",
+      "en": "Open plan sells 'energy', saves on walls"
+    },
+    {
+      "qid": "119b8d8c-c632-4bf7-a1a7-b11d8a8169b2",
+      "pl": "Bez testamentu decyzję podejmą inni za ciebie",
+      "en": "With no will, others decide for you"
+    },
+    {
+      "qid": "1c720059-efaa-4f46-9cc0-32e17316e188",
+      "pl": "Ciągłe odpuszczanie hoduje cichą urazę",
+      "en": "Always caving breeds quiet resentment"
+    },
+    {
+      "qid": "26e486fa-69a2-4235-8409-a11cdc446046",
+      "pl": "Chcesz dla niego lepiej, nie tak samo",
+      "en": "You want better for them, not the same"
+    },
+    {
+      "qid": "4dbbb0fd-66c4-43ed-8100-aaa508730949",
+      "pl": "Gdy hobby staje się pracą, przestaje być ucieczką",
+      "en": "Once a hobby becomes work, it stops being an escape"
+    },
+    {
+      "qid": "5324392b-6ee3-4581-b567-a20f3fae8ee2",
+      "pl": "Głos to nie to samo co decyzja",
+      "en": "A voice isn't the same as a vote"
+    },
+    {
+      "qid": "6ac80494-cf8b-4275-a970-803d7ba1f486",
+      "pl": "Zaufasz kodowi, którego nigdy nie zobaczysz",
+      "en": "You'd trust code you'll never see"
+    },
+    {
+      "qid": "7ffbed14-3a16-4811-8fa7-f10b1a6ba8d6",
+      "pl": "Prawda o pieniądzach uczy, ale i straszy",
+      "en": "Money truth teaches — and scares"
+    },
+    {
+      "qid": "80639910-8e56-4dea-9d85-9d3cd2bc03b8",
+      "pl": "Firma to logo, koledzy to ludzie",
+      "en": "The company is a logo; your coworkers are people"
+    },
+    {
+      "qid": "871ae119-0b90-404e-a4bc-838ca0a4d3b7",
+      "pl": "Nie znasz człowieka, póki nie widzisz jego zlewu",
+      "en": "You don't know someone till you see their sink"
+    },
+    {
+      "qid": "98a7be46-518b-48fe-8ba1-9f36ab3cb28e",
+      "pl": "Kochasz tę pracę to najtańsza podwyżka",
+      "en": "'You love this job' is the cheapest raise"
+    },
+    {
+      "qid": "a11ed0b6-816d-45cd-9dd2-9ef41e993621",
+      "pl": "Dumny z przypadku, jakbyś na niego zapracował",
+      "en": "Proud of an accident, as if you earned it"
+    },
+    {
+      "qid": "b4a36dfc-101f-4a66-b2fe-a9c82feeb6b0",
+      "pl": "Sklep zbiera pochwały za twoje grosze",
+      "en": "The store takes the credit for your pennies"
+    },
+    {
+      "qid": "b5da072b-24e2-4298-9c5e-96dad6994bc3",
+      "pl": "Kto zapełnia każdą ciszę, boi się, co w niej słychać",
+      "en": "Whoever fills every silence fears what it says"
+    },
+    {
+      "qid": "cf47de09-91a5-4d29-a675-b4bb239cc68f",
+      "pl": "Wybaczając katu, odwracasz się od ofiary",
+      "en": "Pardon the cruel and you turn from the kind"
+    },
+    {
+      "qid": "dfa9af10-6460-44d0-b97a-3f0bc64739c1",
+      "pl": "Oceniasz duszę po algorytmie, który ją karmi",
+      "en": "You judge a soul by the algorithm feeding it"
+    },
+    {
+      "qid": "ecad5eaf-a542-48b2-8e01-c144eeca7212",
+      "pl": "Deszcz to wymówka, nie powód",
+      "en": "The rain is an excuse, not a reason"
+    },
+    {
+      "qid": "ee0e3aeb-08d6-403b-bf05-1d226e010d6a",
+      "pl": "Wrócisz i zobaczysz, że to nie ono zmalało",
+      "en": "Go back and find it shrank — or you grew"
+    },
+    {
+      "qid": "9dcaaba8-bf8a-4ca9-a8ad-98251de3be97",
+      "pl": "Darmowe muzeum, opłacone z twoich podatków",
+      "en": "A free museum, funded by your taxes"
+    },
+    {
+      "qid": "9e612283-ce96-4566-85e5-ac1c7db2a9b0",
+      "pl": "Obcy cię nie znał, on cię wybrał",
+      "en": "A stranger didn't know you; they chose you"
+    },
+    {
+      "qid": "a3812e42-dfd0-4f23-8633-c5f2d93b6ada",
+      "pl": "Kochasz papier czy tylko nawyk?",
+      "en": "You love the paper, or just the habit?"
+    },
+    {
+      "qid": "a3b99e21-2528-4d97-8159-57db8b543816",
+      "pl": "Kamera mierzy pozory, nie pracę",
+      "en": "A camera measures the look, not the work"
+    },
+    {
+      "qid": "a44ab29a-95f1-46b9-bf02-d4dbf469b6eb",
+      "pl": "Zdrowie z poczucia winy szybko się kończy",
+      "en": "Health from guilt doesn't last"
+    },
+    {
+      "qid": "a744323e-5107-498a-a3f4-f4c2eaf59130",
+      "pl": "Wstyd wmówili ci ci, co gardzą twoim gustem",
+      "en": "The shame was taught by those who mock your taste"
+    },
+    {
+      "qid": "a7948e23-2da9-43d1-b95d-f9edf051bcf1",
+      "pl": "Pięć dni strachu za dwa dni ulgi",
+      "en": "Five days of dread for two of relief"
+    },
+    {
+      "qid": "a8dc1794-fb74-4626-88c4-3ef833befe1b",
+      "pl": "Zdrowy, ale każdy posiłek to obowiązek",
+      "en": "Healthy, but every meal is a chore"
+    },
+    {
+      "qid": "a91f8cab-3ede-4341-9a8a-c92bb99c4593",
+      "pl": "Znane nie da ci nowego ciebie",
+      "en": "The familiar won't give you a new you"
+    },
+    {
+      "qid": "aacff73a-42ad-4bf9-92d3-40917db66d69",
+      "pl": "Znasz imię, nie znasz człowieka",
+      "en": "You'd know the name, not the person"
+    },
+    {
+      "qid": "abd8ae51-bf6c-4ff3-a560-ae1b640c896a",
+      "pl": "Zapamiętasz bajkę dłużej niż wykład",
+      "en": "You'll remember the story longer than the lecture"
+    },
+    {
+      "qid": "ad5ac74e-6b62-4480-b46e-2a2d173b795e",
+      "pl": "Zgoda z lufą przy głowie to nie zgoda",
+      "en": "A yes at gunpoint isn't a yes"
+    },
+    {
+      "qid": "ae55bf9c-0af6-416b-82fa-624c4f722438",
+      "pl": "Szlachetność łatwo deklarować w teorii",
+      "en": "Nobility is easy to declare in theory"
+    },
+    {
+      "qid": "b104e6a8-04dd-4e48-bef6-943e0f0ec35a",
+      "pl": "Równo dla wszystkich to nagroda dla leniwych",
+      "en": "Equal for all rewards the coasters"
+    },
+    {
+      "qid": "b7a26c3c-e0d6-466d-88af-52f36da31654",
+      "pl": "Spóźnialski geniusz i tak każe na siebie czekać",
+      "en": "A brilliant latecomer still makes you wait"
+    },
+    {
+      "qid": "b7bca986-131f-4293-b59a-7600e72a0909",
+      "pl": "Ubranko i wózek to twoja potrzeba, nie jego",
+      "en": "The outfit and stroller are your need, not its"
+    },
+    {
+      "qid": "b87ac3fc-210c-4f54-93f4-fdd45bdf42ad",
+      "pl": "Bez planu dryfujesz tam, gdzie zaniesie prąd",
+      "en": "With no plan, you drift where the current takes you"
+    },
+    {
+      "qid": "b8c39abb-9a72-4888-9ac4-37fbc874dbc8",
+      "pl": "Romantyzujesz ból, bo już go przeżyłeś",
+      "en": "You romanticize pain you've already survived"
+    },
+    {
+      "qid": "b95957d2-180f-46e2-a7ac-bc0a7d1f52ba",
+      "pl": "Najlepiej żałuje ten, kto boi się wyroku",
+      "en": "The best remorse comes with a looming sentence"
+    },
+    {
+      "qid": "bb4e4efc-1e27-46a9-be1e-ee70a0b8d76f",
+      "pl": "Książka lepsza mówią ci, co ją czytali",
+      "en": "'The book's better' — said mostly by those who read it"
+    },
+    {
+      "qid": "c06941b9-3075-4f7d-9239-49459d890b12",
+      "pl": "Cytowanie klasyków to nie to samo co mądrość",
+      "en": "Quoting classics isn't the same as wisdom"
+    },
+    {
+      "qid": "c20db688-4bdb-423c-a525-ee365af447ae",
+      "pl": "Za nisko zbyt długo i etykieta przyrasta",
+      "en": "Too low too long and the label sticks"
+    },
+    {
+      "qid": "c5f8d056-ee4e-4c87-ab5c-92f7a37ed52c",
+      "pl": "Twój gest może krzyczeć: wyglądasz staro",
+      "en": "Your gesture can shout: you look old"
+    },
+    {
+      "qid": "c5fd35c7-93d4-47b9-b148-26828b9efaca",
+      "pl": "Entuzjazm bez wiedzy to szybki wypadek",
+      "en": "Enthusiasm with no skill is a fast crash"
+    },
+    {
+      "qid": "ca0d4287-c37f-41e3-8319-d6076e04858f",
+      "pl": "Nawet ukrywany faworyt zostawia ślad",
+      "en": "Even a hidden favorite leaves a mark"
+    },
+    {
+      "qid": "cac7e931-3d6a-4f7c-a8c5-cbdded9baaeb",
+      "pl": "Trudno kochać ściany, które chcesz drożej sprzedać",
+      "en": "Hard to love walls you want to sell high"
+    },
+    {
+      "qid": "cdc1d51e-4477-401b-a8fb-460f4b6df1f5",
+      "pl": "Ucieczka przed rodziną czy ucieczka do siebie?",
+      "en": "Fleeing the family, or fleeing to each other?"
+    },
+    {
+      "qid": "ceb4be50-405f-4e46-8ff0-fb963bd4f18f",
+      "pl": "Nowy numerek modelu, ta sama codzienność",
+      "en": "A new model number, the same daily life"
+    },
+    {
+      "qid": "cfa552aa-fc3f-433b-8124-f69f7b74297f",
+      "pl": "Sztywna zasada krzywdzi tego, kto nie pasuje",
+      "en": "A rigid rule harms whoever doesn't fit"
+    },
+    {
+      "qid": "d084f378-926e-45b3-8227-6a51c9a06a46",
+      "pl": "Wypiłeś dobrowolnie — zgadzasz się na skutki",
+      "en": "You drank by choice — you own the outcome"
+    },
+    {
+      "qid": "d2e8d529-b9b5-4ae8-91b7-f50a1ebe4cd6",
+      "pl": "Bronisz dzieciństwa, nie filmu",
+      "en": "You're defending your childhood, not the film"
+    },
+    {
+      "qid": "d4bdc7be-d214-4d4e-bfed-ba1e88b787a4",
+      "pl": "Miłość na tabelce przestaje być miłością",
+      "en": "Love in a spreadsheet stops being love"
+    },
+    {
+      "qid": "d56af368-1c3d-4762-9377-5d4269a27282",
+      "pl": "Umiar w truciźnie to wciąż trucizna",
+      "en": "Moderate poison is still poison"
+    },
+    {
+      "qid": "d7287d9c-298f-41ce-b35e-af2b840d38c8",
+      "pl": "Prawdę można powiedzieć bez krwi",
+      "en": "You can tell the truth without drawing blood"
+    },
+    {
+      "qid": "d78c4b57-1e97-415c-bb52-8f6c73c9cbf6",
+      "pl": "Oddasz wszystko i zostaniesz na łasce dzieci",
+      "en": "Give it all and you're at their mercy"
+    },
+    {
+      "qid": "d7fb67f6-5dab-4598-966d-51c4fce86561",
+      "pl": "Im więcej zarabiasz, tym drożej odejść",
+      "en": "The more you earn, the pricier it is to leave"
+    },
+    {
+      "qid": "d8084a49-053d-4c24-b551-0641cbbefa01",
+      "pl": "Kradniesz sen, którego jutro pożałujesz",
+      "en": "You steal sleep you'll regret tomorrow"
+    },
+    {
+      "qid": "d90b8030-002f-4e2b-a3fa-e284d21c3c0d",
+      "pl": "Dziś ty na górze, jutro patrzysz z dołu",
+      "en": "You're on top today, watching from below tomorrow"
+    },
+    {
+      "qid": "da42fcab-6688-468e-8db5-3698af198b07",
+      "pl": "Widziałbyś prawdę, na którą nie jesteś gotów",
+      "en": "You'd see a truth you're not ready for"
+    },
+    {
+      "qid": "dab8dd41-b4a0-475a-ae28-b748d8bc04b8",
+      "pl": "Twoja uprzejmość stała się ich telefonem awaryjnym",
+      "en": "Your favor became their emergency hotline"
+    },
+    {
+      "qid": "dca96994-9de0-4a00-b9aa-3e6f7636ce19",
+      "pl": "Serce bije jak przy biegu — to nie sport?",
+      "en": "The heart pounds like a sprint — not a sport?"
+    },
+    {
+      "qid": "df4ee062-8f72-40d7-90c9-b70caa23893c",
+      "pl": "Kupujesz nastrój, który mija przy kasie",
+      "en": "You buy a mood that fades at the register"
+    },
+    {
+      "qid": "e0fdf1a3-2103-45b7-b9cc-6b9327623c9a",
+      "pl": "Uśmiech dziś, ta sama pomyłka za rok",
+      "en": "A smile now, the same miss next year"
+    },
+    {
+      "qid": "e2551641-6197-4736-bc19-20194c50d16d",
+      "pl": "Twój śmiech mówi żartownisiowi: mów dalej",
+      "en": "Your laugh tells them: keep going"
+    },
+    {
+      "qid": "e428c03e-671a-4397-889b-fbe252ffdddc",
+      "pl": "Uczysz, że dorosły nigdy nie płacze",
+      "en": "You teach that grown-ups never cry"
+    },
+    {
+      "qid": "e821933a-9c00-4468-acdb-7236fcb21d37",
+      "pl": "Algorytm nie poczuje za ciebie",
+      "en": "The algorithm won't feel it for you"
+    },
+    {
+      "qid": "e8c2ba33-57b1-4c1b-b464-6bd792f60687",
+      "pl": "Bez rytuału wielka chwila mija jak każda inna",
+      "en": "With no ritual, the big moment passes like any other"
+    },
+    {
+      "qid": "ead948de-5036-401f-8762-d034a770ab34",
+      "pl": "Wracasz do problemów, które sam zostawiłeś",
+      "en": "You return to the problems you left"
+    },
+    {
+      "qid": "ed1e9566-7199-4723-89cf-03ed0e439d18",
+      "pl": "Dziś na winnym, jutro na tobie",
+      "en": "On the guilty today, on you tomorrow"
+    },
+    {
+      "qid": "f04aac0e-2156-4971-b3b2-7b03b923d028",
+      "pl": "Twardy chłopiec to często milczący mężczyzna",
+      "en": "A tough boy is often a silent man"
+    },
+    {
+      "qid": "f0cdbc0b-47ad-4638-a33e-a0a20bf4c5f9",
+      "pl": "Dwie te same wady, nikt ich nie zrównoważy",
+      "en": "The same flaws twice, no one to balance them"
+    },
+    {
+      "qid": "f2cc84d6-53e6-4d97-9fae-d14c01ec496f",
+      "pl": "Podziw łatwiej trzymać z daleka",
+      "en": "Admiration keeps better at a distance"
+    },
+    {
+      "qid": "f70090da-c809-4495-86e4-ee4db3d9e826",
+      "pl": "Bierzesz poradę sklepu, kupujesz gdzie indziej",
+      "en": "You use the shop's help and buy elsewhere"
+    },
+    {
+      "qid": "f72d3e65-095c-499b-a972-f880787d7f81",
+      "pl": "Płacisz też za metkę, nie tylko za jakość",
+      "en": "You pay for the label, not just the quality"
+    },
+    {
+      "qid": "fdfd239b-f6c4-485c-bbdb-d40d5f6394a3",
+      "pl": "Ciągłe wyrzeczenie to cicha uraza w drodze",
+      "en": "Endless self-denial breeds quiet resentment"
+    },
+    {
+      "qid": "fedb8e94-4b26-4bad-b52b-da1efc37f358",
+      "pl": "Wolisz oryginał czy udajesz konesera?",
+      "en": "You prefer the original, or just play the connoisseur?"
+    },
+    {
+      "qid": "05c9b265-3f98-467b-bbca-3af1c51e1ab4",
+      "pl": "Płacisz drobne, by dalej robić to samo",
+      "en": "You pay a little to keep doing the same"
+    },
+    {
+      "qid": "08211ec2-c9dd-419c-9baa-5d0ee879f510",
+      "pl": "Poznasz odpowiedź i już jej nie odzobaczysz",
+      "en": "You'll get the answer and can't unknow it"
+    },
+    {
+      "qid": "08e058c2-f2d1-46e3-a507-cc927064ca68",
+      "pl": "Cudzy szacunek to marna waluta",
+      "en": "Other people's respect is a poor currency"
+    },
+    {
+      "qid": "0a700d15-f20d-42c1-b6fe-3e687734d23d",
+      "pl": "W drużynie łatwiej ukryć własne lenistwo",
+      "en": "In a team it's easier to hide your own slack"
+    },
+    {
+      "qid": "0ae68f07-eec1-4b77-b542-4ccbd813a894",
+      "pl": "Hotel ratuje przyjaźń przed poranną kuchnią",
+      "en": "A hotel saves the friendship from breakfast"
+    },
+    {
+      "qid": "0b48efe8-c066-46cc-8f52-7c649e958289",
+      "pl": "Widziane bez odpowiedzi mówi więcej niż cisza",
+      "en": "'Seen' with no reply says more than silence"
+    },
+    {
+      "qid": "0bf3777c-422c-46d4-a9ab-1c5b5d6727f8",
+      "pl": "Ruch, który znienawidzisz, rzucisz w miesiąc",
+      "en": "Exercise you hate, you'll quit in a month"
+    },
+    {
+      "qid": "0cae6a80-cf77-4b16-97c7-9607525c15d7",
+      "pl": "Kto pójdzie do sądu w imieniu rzeki?",
+      "en": "Who goes to court on the river's behalf?"
+    },
+    {
+      "qid": "10f6e134-fed8-4711-931f-25afaa44cd34",
+      "pl": "Milczysz, żeby chronić siebie",
+      "en": "You stay silent to protect yourself"
+    },
+    {
+      "qid": "11a6329f-492f-4af2-88aa-345016b443d6",
+      "pl": "Kto zawsze dzwoni, kiedyś przestanie",
+      "en": "Whoever always calls will one day stop"
+    },
+    {
+      "qid": "12cb7f67-6ff5-4da7-a7ed-6306d66be824",
+      "pl": "Okładkę zaprojektowano, by cię zwieść",
+      "en": "The cover was designed to fool you"
+    },
+    {
+      "qid": "1334f6cc-2113-498b-9eb0-49e6ca365736",
+      "pl": "Kto się ciągle kłania, zapomina, jak stać prosto",
+      "en": "Bow enough and you forget how to stand"
+    },
+    {
+      "qid": "144aa97d-99d7-4f60-b8df-6fa16872f348",
+      "pl": "Wolność bez granic to też chaos",
+      "en": "Freedom with no limits is just chaos"
+    },
+    {
+      "qid": "146edf06-a4f1-42c2-9667-6625aa3abb0e",
+      "pl": "Czasem nie ma czego rozumieć — to blef",
+      "en": "Sometimes there's nothing to get — it's a bluff"
+    },
+    {
+      "qid": "1707506b-9809-483a-a6a5-7c92577aefad",
+      "pl": "Wyrzucasz, bo wiesz, że dokupisz",
+      "en": "You toss it because you know you can rebuy"
+    },
+    {
+      "qid": "17bc3fc0-0d2f-447d-8176-0d61f2219db5",
+      "pl": "Powiesz mu, a zacznie liczyć twoją energię",
+      "en": "Tell them, and they'll start counting your energy"
+    },
+    {
+      "qid": "1d30d24c-0ccb-4822-8dde-92ae390228e1",
+      "pl": "Urok w służbie celu to broń, nie dar",
+      "en": "Charm with an agenda is a weapon, not a gift"
+    },
+    {
+      "qid": "23bdace2-50ad-4bb1-91d2-ec21120cd669",
+      "pl": "Dzwonisz, gdy źle — a gdy dobrze?",
+      "en": "You call when it's bad — and when it's good?"
+    },
+    {
+      "qid": "2491fbe9-f165-4331-962e-038b308b8dab",
+      "pl": "Rzut monetą zwalnia cię z myślenia",
+      "en": "A coin toss excuses you from thinking"
+    },
+    {
+      "qid": "250ad385-dd05-45cc-9281-78c3cac849ce",
+      "pl": "Poznałeś folder biura podróży, nie kraj",
+      "en": "You met the brochure, not the country"
+    },
+    {
+      "qid": "27e77f1d-b1ee-436e-a248-df812c8fe0ff",
+      "pl": "Powtarzasz ból, zamiast go przeżyć i puścić",
+      "en": "You rehearse the pain instead of letting it go"
+    },
+    {
+      "qid": "2956c9ed-11f1-41fe-8b89-bdb313aab42f",
+      "pl": "Gdy on zniknie, znika też twój cały świat",
+      "en": "If they go, your whole world goes with them"
+    },
+    {
+      "qid": "31103edd-0a9f-4942-a91d-7e0f40956914",
+      "pl": "Nie wszystko musisz robić na medal",
+      "en": "Not everything has to be for a medal"
+    },
+    {
+      "qid": "33b7f4e0-9de3-4772-b96a-1860cfbb76f5",
+      "pl": "Usłyszeć to nie to samo co podsłuchiwać",
+      "en": "Overhearing isn't the same as eavesdropping"
+    },
+    {
+      "qid": "3db106ab-aa44-4d60-980b-83742690bf69",
+      "pl": "Najgorsze pokazujesz tym, którzy nie odejdą",
+      "en": "You show your worst to those who won't leave"
+    },
+    {
+      "qid": "3e5bfa40-2e2d-4a1c-8aba-c1e29c46983c",
+      "pl": "Głodnemu obojętne, czemu dostał chleb",
+      "en": "The hungry don't care why you fed them"
+    },
+    {
+      "qid": "3f87c8e2-727f-4fb5-86b0-fc9684843ee2",
+      "pl": "Zazdrościsz komuś, kogo już dawno nie ma",
+      "en": "You envy someone who's long gone"
+    },
+    {
+      "qid": "40008db0-317d-4f50-98d4-a65d8bf713c7",
+      "pl": "Obcy chwali obrazek, przyjaciel zna prawdę",
+      "en": "A stranger praises the picture; a friend knows the truth"
+    },
+    {
+      "qid": "431709f8-4c20-4f88-bce5-062dedf71646",
+      "pl": "Nazwisko na billboardzie to zaproszenie dla naciągaczy",
+      "en": "A name on a billboard invites the vultures"
+    },
+    {
+      "qid": "459bcb33-4d62-4eab-9c55-354ee531145c",
+      "pl": "Pierwszy wspólny rachunek pokaże, kto się zmienił",
+      "en": "The first shared bill shows who changed"
+    },
+    {
+      "qid": "47548eb6-5b93-4c87-b9c1-b5e130fd8605",
+      "pl": "Zapomniany dług pamięta ten, kto pożyczył",
+      "en": "A forgotten debt is remembered by the lender"
+    },
+    {
+      "qid": "485f569e-92d1-48b4-9c9b-b1c51b0d5711",
+      "pl": "Siedzenie na płocie i tak wspiera silniejszego",
+      "en": "Sitting on the fence still helps the stronger side"
+    },
+    {
+      "qid": "4a6c389a-89ff-48e3-8ab6-896cc36be10b",
+      "pl": "Skrót omija to, co miało cię zmienić",
+      "en": "The shortcut skips what was meant to change you"
+    },
+    {
+      "qid": "4b2aaee9-0e85-49bb-81df-c455af6f8280",
+      "pl": "Cudza opinia wchodzi, nim zdążysz mieć własną",
+      "en": "Someone's take lands before you form your own"
+    },
+    {
+      "qid": "4d66b959-eaa3-4c55-b905-3d9c5f7e13b2",
+      "pl": "Za drogi prezent każe czuć się dłużnikiem",
+      "en": "Too pricey a gift makes you feel indebted"
+    },
+    {
+      "qid": "5017ef33-7df4-425c-8d37-3ac320b61641",
+      "pl": "Pocieszasz jego czy własne sumienie?",
+      "en": "Comforting them, or your own conscience?"
+    },
+    {
+      "qid": "5045737a-c3f6-49eb-938a-2b37b95d7034",
+      "pl": "Zero po dwóch ranach to wciąż dwie rany",
+      "en": "Zero after two wounds is still two wounds"
+    },
+    {
+      "qid": "526b82ba-01ba-4ea5-8b48-ada08a88fcdc",
+      "pl": "Cokolwiek powie, zostanie z nim na całe życie",
+      "en": "Whatever it says stays for a lifetime"
+    },
+    {
+      "qid": "59396fb0-0a4e-4680-b237-63cb1a8e321a",
+      "pl": "Bez planu weekend przeciekasz przez telefon",
+      "en": "With no plan, the weekend leaks into your phone"
+    },
+    {
+      "qid": "5aca2e66-6247-45fe-bd2b-ea4e590407f6",
+      "pl": "Puste morze to też cena twojego obiadu",
+      "en": "An empty sea is the price of your dinner too"
+    }
+  ]
+}

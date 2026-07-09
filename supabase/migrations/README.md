@@ -18,6 +18,16 @@ SQL in this folder for reference.
 
 ## Known gaps between this folder and prod (as of 2026-07-09)
 
+- `20260709160000_spicy_third_smaczek.sql` (adds a PRO-gated third "pod włos"
+  smaczek to 992 questions + backfills position 2 for 3 questions) was applied
+  to prod NOT as a single remote migration but as **4 chunked `execute_sql`
+  batches** (the full VALUES list was too large for one MCP call). The reference
+  file here is the complete, idempotent version — treat it as the source of
+  truth. Every INSERT is guarded by `ON CONFLICT (question_id, position) DO
+  NOTHING`, so re-running is a no-op. Verified live: positions 1/2/3 = 1000 each,
+  0 questions with <3 active smaczki, 0 smaczki missing a pl/en translation.
+
+
 - `20260709120000_polish_copy_editing_pass.sql` (PL copy-editing pass, 61
   guarded UPDATEs) was applied via MCP as remote version `20260709120114`. The
   SQL sent to MCP had a hand-paste typo in the LAST statement's guard
