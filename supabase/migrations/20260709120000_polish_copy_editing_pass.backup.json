@@ -1,0 +1,368 @@
+[
+  {
+    "qid": "e0734eeb-d0e0-4432-8d37-0bac4257b19f",
+    "field": "pl",
+    "old": "Czy miliarderzy powinni być bardziej opodatkowani?",
+    "new": "Czy miliarderzy powinni płacić wyższe podatki?"
+  },
+  {
+    "qid": "0d84cbe7-9085-4e16-a6ca-1a43b460b074",
+    "field": "pl",
+    "old": "Czy ludzie powinni potrzebować licencji, zanim będą mogli mieć dzieci?",
+    "new": "Czy do posiadania dzieci powinna być wymagana licencja?"
+  },
+  {
+    "qid": "16bece38-eb48-4317-bb73-51b3ceb64b0f",
+    "field": "pl",
+    "old": "Czy sztuczna inteligencja powinna móc podejmować decyzje medyczne na temat życia i śmierci?",
+    "new": "Czy sztuczna inteligencja powinna móc podejmować decyzje o życiu i śmierci pacjentów?"
+  },
+  {
+    "qid": "27771fe7-97a1-43bb-9cbd-097428493731",
+    "field": "pl",
+    "old": "Czy jedzenie mięsa jest moralnie złe, skoro dostępne jest jedzenie roślinne?",
+    "new": "Czy jedzenie mięsa jest moralnie złe, skoro można jeść roślinnie?"
+  },
+  {
+    "qid": "5f63e9e9-4b46-49dc-9b4d-290d7b936de5",
+    "field": "pl",
+    "old": "Czy powinno być możliwe zostanie miliarderem, podczas gdy inni głodują?",
+    "new": "Czy to w porządku, że jedni zostają miliarderami, gdy inni głodują?"
+  },
+  {
+    "qid": "15dc4795-292a-4b3b-9a8f-c49fa4fe3831",
+    "field": "pl",
+    "old": "Gdybyś mógł usunąć swoje najbardziej bolesne wspomnienie, powinieneś?",
+    "new": "Gdybyś mógł wymazać swoje najboleśniejsze wspomnienie, czy powinieneś to zrobić?"
+  },
+  {
+    "qid": "2fed91a2-f02a-4784-9b14-16164dfd7655",
+    "field": "pl",
+    "old": "Czy to złe oddać starszego rodzica do domu opieki?",
+    "new": "Czy oddanie starszego rodzica do domu opieki jest czymś złym?"
+  },
+  {
+    "qid": "3ae9a5c1-d0e4-4135-83bd-7e74e92e3891",
+    "field": "pl",
+    "old": "Czy surowi rodzice wychowują bardziej udane dzieci?",
+    "new": "Czy dzieci surowych rodziców osiągają w życiu więcej?"
+  },
+  {
+    "qid": "3f66582c-8790-414b-abfd-f8221a61107e",
+    "field": "pl",
+    "old": "Czy ktoś jest winny, wykonując rozkazy, które uważał za złe?",
+    "new": "Czy winny jest ten, kto wykonał rozkaz, wiedząc, że jest zły?"
+  },
+  {
+    "qid": "4bc5e444-b207-4a03-a5d7-08667d78a4e6",
+    "field": "pl",
+    "old": "Czy łamanie zasad, by nakarmić głodującą rodzinę, jest złem?",
+    "new": "Czy łamanie zasad, by nakarmić głodującą rodzinę, jest czymś złym?"
+  },
+  {
+    "qid": "52e8efef-aee4-4875-ade1-bfe5694bf029",
+    "field": "pl",
+    "old": "Czy rodzic ma kiedykolwiek rację, podnosząc głos na dziecko?",
+    "new": "Czy rodzic może słusznie podnieść głos na dziecko?"
+  },
+  {
+    "qid": "579d535f-6f59-40f8-bf68-82b21cd19f9f",
+    "field": "pl",
+    "old": "Gdybyś mógł poznać dokładny dzień swojej śmierci, chciałbyś go znać?",
+    "new": "Gdybyś mógł się dowiedzieć, którego dnia umrzesz, chciałbyś to wiedzieć?"
+  },
+  {
+    "qid": "0cebc5c6-3921-417d-870c-5a354b47c6d5",
+    "field": "pl",
+    "old": "Czy wydałbyś członka rodziny, który popełnił ciężki czyn?",
+    "new": "Czy wydałbyś członka rodziny, który popełnił poważne przestępstwo?"
+  },
+  {
+    "qid": "6eff0771-65de-49c2-82b0-79e9e2bb6e46",
+    "field": "pl",
+    "old": "Czy żądanie intercyzy zdradza brak prawdziwej miłości?",
+    "new": "Czy intercyza kłóci się z prawdziwą miłością?"
+  },
+  {
+    "qid": "96eb43da-38e1-4b33-bacc-7763d0fe6de3",
+    "field": "pl",
+    "old": "Czy to złe, by opowiadać dzieciom pocieszające kłamstwa o świecie?",
+    "new": "Czy opowiadanie dzieciom pocieszających kłamstw o świecie jest złe?"
+  },
+  {
+    "qid": "9cb73e49-f1f0-4b68-9bf5-185f4df785e3",
+    "field": "pl",
+    "old": "Czy przyznałbyś się do winy, której nie popełniłeś, by chronić kogoś, kogo kochasz?",
+    "new": "Czy wziąłbyś na siebie przestępstwo, którego nie popełniłeś, by chronić ukochaną osobę?"
+  },
+  {
+    "qid": "57d93dd4-a41f-48cc-8de5-ac2280ea0bd9",
+    "field": "pl",
+    "old": "Czy można „zghostować\" kogoś, z kim randkujesz od 3 miesięcy?",
+    "new": "Czy można zniknąć bez słowa po trzech miesiącach randkowania?"
+  },
+  {
+    "qid": "57d93dd4-a41f-48cc-8de5-ac2280ea0bd9",
+    "field": "s1_pl",
+    "old": "Byliście już intymni?",
+    "new": "Było między wami coś więcej?"
+  },
+  {
+    "qid": "23f0212c-93b8-4ac6-beed-b08694b88f7a",
+    "field": "s1_pl",
+    "old": "Towary jadą drogami?",
+    "new": "Towary też jadą tymi drogami"
+  },
+  {
+    "qid": "27771fe7-97a1-43bb-9cbd-097428493731",
+    "field": "s2_pl",
+    "old": "A ubodzy rolnicy?",
+    "new": "Z czego będą żyć rolnicy?"
+  },
+  {
+    "qid": "3278873d-6d56-4b17-8611-29b8c717b325",
+    "field": "s2_pl",
+    "old": "Rozpad dyscypliny?",
+    "new": "Dyscyplina się posypie?"
+  },
+  {
+    "qid": "64942b79-9416-47ca-a4c1-71eabf70c25c",
+    "field": "s1_pl",
+    "old": "Wydolność usług?",
+    "new": "Szpitale i szkoły to udźwigną?"
+  },
+  {
+    "qid": "64942b79-9416-47ca-a4c1-71eabf70c25c",
+    "field": "s2_pl",
+    "old": "Kontrola przestępców?",
+    "new": "Jak odsiać przestępców?"
+  },
+  {
+    "qid": "8b54aec1-b9a0-41b7-9a2d-766d886cfe50",
+    "field": "s2_pl",
+    "old": "A choroba?",
+    "new": "A jeśli to choroba?"
+  },
+  {
+    "qid": "c1118fa8-c151-40c8-88cb-9d870779d444",
+    "field": "s2_pl",
+    "old": "Niedoinformowani głosują?",
+    "new": "Głosowanie na ślepo?"
+  },
+  {
+    "qid": "049e8a14-65b7-466a-b613-f84a0abf80b3",
+    "field": "s2_pl",
+    "old": "Wciąż masz siebie",
+    "new": "Związek to nie fuzja"
+  },
+  {
+    "qid": "15dc4795-292a-4b3b-9a8f-c49fa4fe3831",
+    "field": "s2_pl",
+    "old": "To uczyniło cię tobą",
+    "new": "Bez niego nie byłbyś sobą"
+  },
+  {
+    "qid": "17725e28-eb5e-4f79-bb0e-0a513103452b",
+    "field": "s1_pl",
+    "old": "Jedna twarz nad tłumem?",
+    "new": "Jedno życie kontra miliony?"
+  },
+  {
+    "qid": "406986a1-57b5-46e6-8a03-1530fd70f161",
+    "field": "s2_pl",
+    "old": "Nas też pociąga w dół?",
+    "new": "Równamy w dół?"
+  },
+  {
+    "qid": "474c1680-71cc-48b1-b67f-fe59f049725d",
+    "field": "s1_pl",
+    "old": "Bez uprzedzeń, bez wyjątków",
+    "new": "Bez uprzedzeń, bez znajomości"
+  },
+  {
+    "qid": "4bc5e444-b207-4a03-a5d7-08667d78a4e6",
+    "field": "s2_pl",
+    "old": "Zasady nagną się dla każdego?",
+    "new": "A jeśli każdy tak zacznie?"
+  },
+  {
+    "qid": "579d535f-6f59-40f8-bf68-82b21cd19f9f",
+    "field": "s2_pl",
+    "old": "Zegar, którego nie odgonisz",
+    "new": "Tego zegara się nie odzobaczy"
+  },
+  {
+    "qid": "6541e3b7-2e5b-4658-9438-5076e49941ca",
+    "field": "s2_pl",
+    "old": "Obietnica, która trzyma",
+    "new": "Obietnica, która coś znaczy"
+  },
+  {
+    "qid": "68e3d717-7120-4b25-baab-e123a30af94a",
+    "field": "s2_pl",
+    "old": "Odebrać im pożegnanie?",
+    "new": "Odebrać mu pożegnanie?"
+  },
+  {
+    "qid": "6b9529be-05c0-446c-9a58-7d706aca77e4",
+    "field": "s2_pl",
+    "old": "Puszczasz im płazem?",
+    "new": "Puszczasz to płazem?"
+  },
+  {
+    "qid": "6db69f39-d7c6-4b37-9e85-a954c927f9f6",
+    "field": "s1_pl",
+    "old": "Sumienie żąda?",
+    "new": "Tego żąda sumienie?"
+  },
+  {
+    "qid": "6eff0771-65de-49c2-82b0-79e9e2bb6e46",
+    "field": "s1_pl",
+    "old": "Planujesz porażkę?",
+    "new": "Zakładasz porażkę?"
+  },
+  {
+    "qid": "74e30dde-61f9-4995-99ba-9a8a22eaa75d",
+    "field": "s2_pl",
+    "old": "Pochować wszystkich, kogo kochasz?",
+    "new": "Pochować wszystkich, których kochasz?"
+  },
+  {
+    "qid": "773f1b9c-e69b-4abf-8a23-5246c538f474",
+    "field": "s2_pl",
+    "old": "Wzorce wracają",
+    "new": "Stare schematy wracają"
+  },
+  {
+    "qid": "8b97b981-a9f2-405f-b95b-2065b23bd9c0",
+    "field": "s2_pl",
+    "old": "Raz złamane zaufanie",
+    "new": "Złamanego zaufania nie skleisz"
+  },
+  {
+    "qid": "945cd618-3ce8-478e-8059-45673146cdc7",
+    "field": "s1_pl",
+    "old": "Przyjaciel pomoże",
+    "new": "Od czego są przyjaciele?"
+  },
+  {
+    "qid": "b1f26e52-5c76-46dd-bf70-7dd3edbc5114",
+    "field": "s2_pl",
+    "old": "To po prostu nowa droga",
+    "new": "Poznać się można wszędzie"
+  },
+  {
+    "qid": "b354db77-0631-4036-b901-1e17f694c307",
+    "field": "s2_pl",
+    "old": "Posłaniec zawsze winny?",
+    "new": "Zabić posłańca?"
+  },
+  {
+    "qid": "2fed91a2-f02a-4784-9b14-16164dfd7655",
+    "field": "s1_pl",
+    "old": "Lepsza opieka na miejscu?",
+    "new": "Tam opieka będzie lepsza?"
+  },
+  {
+    "qid": "3f66582c-8790-414b-abfd-f8221a61107e",
+    "field": "s2_pl",
+    "old": "Wiedziałeś swoje",
+    "new": "Wiedziałeś, że to złe"
+  },
+  {
+    "qid": "89c2bb8f-0443-41b1-ab9b-c0f5528daa03",
+    "field": "s1_en",
+    "old": "Their life, their call",
+    "new": "Fair pay for staff, always"
+  },
+  {
+    "qid": "89c2bb8f-0443-41b1-ab9b-c0f5528daa03",
+    "field": "s1_pl",
+    "old": "Ich życie, ich wybór",
+    "new": "Obsługa zawsze dostanie swoje"
+  },
+  {
+    "qid": "89c2bb8f-0443-41b1-ab9b-c0f5528daa03",
+    "field": "s2_en",
+    "old": "Care means speaking up?",
+    "new": "A tip must be earned"
+  },
+  {
+    "qid": "89c2bb8f-0443-41b1-ab9b-c0f5528daa03",
+    "field": "s2_pl",
+    "old": "Troska to odwaga mówić?",
+    "new": "Na napiwek trzeba zasłużyć"
+  },
+  {
+    "qid": "b9e1471c-7d17-4fc1-9863-2249114bfd47",
+    "field": "pl",
+    "old": "Czy rzecz robiona powoli ręką jest warta więcej niż idealna z masowej produkcji?",
+    "new": "Czy rzecz robiona powoli, ręcznie, jest warta więcej niż idealny produkt z masowej produkcji?"
+  },
+  {
+    "qid": "c4fbed60-ab48-4f03-831f-0d2ec937e739",
+    "field": "pl",
+    "old": "Gdybyś mógł na zawsze zostać fizycznie trzydziestolatkiem, powinieneś?",
+    "new": "Gdybyś mógł na zawsze pozostać fizycznie trzydziestolatkiem, czy byś chciał?"
+  },
+  {
+    "qid": "d64bc98c-d637-4bf9-8dba-f911c7ecf294",
+    "field": "pl",
+    "old": "Czy dorosłe dzieci są winne opiekę starzejącym się rodzicom?",
+    "new": "Czy dorosłe dzieci mają obowiązek opiekować się starzejącymi się rodzicami?"
+  },
+  {
+    "qid": "0eb5cdb9-c34c-43dd-b317-367d24aa2124",
+    "field": "pl",
+    "old": "Czy pracownik powinien mieć prawo olać wszystkie wiadomości z pracy po godzinach?",
+    "new": "Czy pracownik powinien mieć prawo ignorować wszystkie wiadomości z pracy po godzinach?"
+  },
+  {
+    "qid": "640b34a4-01c5-48ee-819e-c79e5556337d",
+    "field": "s2_pl",
+    "old": "Daj mi haratać, jeśli chcę",
+    "new": "Chcę zasuwać — moja sprawa"
+  },
+  {
+    "qid": "c1f648fa-0dfc-40e5-abba-cebed819189a",
+    "field": "s2_pl",
+    "old": "Łatwa wymówka, żeby olać pracę",
+    "new": "Łatwa wymówka, żeby urwać się z pracy"
+  },
+  {
+    "qid": "e11f4d4f-b743-49ab-93d3-68ab6406896f",
+    "field": "pl",
+    "old": "Czy zaufałbyś robotowi jako głównemu opiekunowi twojego starego rodzica?",
+    "new": "Czy zaufałbyś robotowi jako głównemu opiekunowi twojego starszego rodzica?"
+  },
+  {
+    "qid": "4136eed0-9962-43a7-b443-fda38826ad88",
+    "field": "pl",
+    "old": "Czy dni na luzie to mądra część zdrowej diety?",
+    "new": "Czy dni z odstępstwem to mądra część zdrowej diety?"
+  },
+  {
+    "qid": "6859c462-8a50-4fc1-9e14-6af69586f798",
+    "field": "s1_pl",
+    "old": "Zmarszczki się zasługuje?",
+    "new": "Na zmarszczki się zasługuje?"
+  },
+  {
+    "qid": "b283445b-e820-4843-b039-fac5108f00f4",
+    "field": "pl",
+    "old": "Czy powinieneś porównywać dziecko do bardziej udanego rodzeństwa?",
+    "new": "Czy powinieneś porównywać dziecko z bardziej udanym rodzeństwem?"
+  },
+  {
+    "qid": "290fd57b-b838-4183-8af4-71c95542cb34",
+    "field": "pl",
+    "old": "Czy rodzice są winni dzieciom pomoc w opłaceniu edukacji?",
+    "new": "Czy rodzice mają obowiązek pomóc dzieciom w opłaceniu edukacji?"
+  },
+  {
+    "qid": "6317d6de-2087-4d38-88eb-ca01f43767a8",
+    "field": "pl",
+    "old": "Czy dorosły śpiący z pluszakiem z dzieciństwa nie ma czego ukrywać?",
+    "new": "Czy dorosły śpiący z pluszakiem z dzieciństwa nie ma nic do ukrycia?"
+  }
+]

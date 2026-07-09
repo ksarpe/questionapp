@@ -16,7 +16,17 @@ remote history doesn't know these versions) and fail or duplicate seeds. Apply
 new changes the same way as before (MCP / SQL editor) and drop a copy of the
 SQL in this folder for reference.
 
-## Known gaps between this folder and prod (as of 2026-07-02)
+## Known gaps between this folder and prod (as of 2026-07-09)
+
+- `20260709120000_polish_copy_editing_pass.sql` (PL copy-editing pass, 61
+  guarded UPDATEs) was applied via MCP as remote version `20260709120114`. The
+  SQL sent to MCP had a hand-paste typo in the LAST statement's guard
+  (`…nie ma czego ukrycia?` instead of the real prior text `…nie ma czego
+  ukrywać?`), so that one row was a no-op remotely; it was then fixed by a
+  standalone `execute_sql`. The reference file in this folder has the CORRECT
+  guard and is fully idempotent — treat it, not the recorded remote statements,
+  as the accurate copy. All 61 edits verified live on prod.
+
 
 - **Two applied seed migrations exist ONLY in remote history**, not as files
   here: `seed_global_dilemmas_batch_2` (98 questions, version 20260627071251)
