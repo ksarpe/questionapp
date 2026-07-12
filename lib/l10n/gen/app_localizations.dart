@@ -1424,18 +1424,6 @@ abstract class AppLocalizations {
   /// **'One sharp question a day — and everything around it.'**
   String get onboardingWelcomeBody;
 
-  /// No description provided for @onboardingDailyTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Daily question'**
-  String get onboardingDailyTitle;
-
-  /// No description provided for @onboardingDailyBody.
-  ///
-  /// In en, this message translates to:
-  /// **'Every day brings a new free question to vote on and sit with.'**
-  String get onboardingDailyBody;
-
   /// No description provided for @onboardingTasteKicker.
   ///
   /// In en, this message translates to:
@@ -1465,6 +1453,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Continue'**
   String get onboardingTasteContinue;
+
+  /// No description provided for @onboardingTasteSmaczekIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Every question also comes with talking points that deepen the conversation. Like this one:'**
+  String get onboardingTasteSmaczekIntro;
+
+  /// No description provided for @onboardingTasteSmaczek.
+  ///
+  /// In en, this message translates to:
+  /// **'Psychologists talk about “micro-cheating” — hundreds of small secrets and hidden messages. One night or a thousand whispers: which is harder to forgive?'**
+  String get onboardingTasteSmaczek;
 
   /// No description provided for @onboardingChoiceTitle.
   ///

@@ -808,13 +808,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'One sharp question a day — and everything around it.';
 
   @override
-  String get onboardingDailyTitle => 'Daily question';
-
-  @override
-  String get onboardingDailyBody =>
-      'Every day brings a new free question to vote on and sit with.';
-
-  @override
   String get onboardingTasteKicker => 'YOUR TURN';
 
   @override
@@ -829,6 +822,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get onboardingTasteContinue => 'Continue';
+
+  @override
+  String get onboardingTasteSmaczekIntro =>
+      'Every question also comes with talking points that deepen the conversation. Like this one:';
+
+  @override
+  String get onboardingTasteSmaczek =>
+      'Psychologists talk about “micro-cheating” — hundreds of small secrets and hidden messages. One night or a thousand whispers: which is harder to forgive?';
 
   @override
   String get onboardingChoiceTitle => 'How do you want to start?';

@@ -41,11 +41,10 @@ void main() {
     await tester.tap(finder);
   }
 
-  // Walks welcome → daily → the taste-vote page via the bottom "Next" CTA.
+  // Walks welcome → the taste-vote page via the bottom "Next" CTA. The vote is
+  // deliberately one swipe from the welcome card — nothing stands before the aha.
   Future<void> reachVotePage(WidgetTester tester) async {
-    await tester.tap(find.text('Dalej')); // welcome → daily
-    await settlePage(tester);
-    await tester.tap(find.text('Dalej')); // daily → taste vote
+    await tester.tap(find.text('Dalej')); // welcome → taste vote
     await settlePage(tester);
   }
 
@@ -71,6 +70,10 @@ void main() {
     expect(find.text('VS'), findsOneWidget);
     expect(find.byIcon(Icons.check_rounded), findsOneWidget);
     expect(find.text('Jesteś z większością. 🙌'), findsOneWidget);
+
+    // The post-vote payoff also teases one real smaczek for this question —
+    // the depth pillar shown, not described.
+    expect(find.textContaining('mikrozdradach'), findsOneWidget);
   });
 
   testWidgets('voting NIE lands the user in the minority', (tester) async {

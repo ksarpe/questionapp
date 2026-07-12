@@ -5,16 +5,16 @@ import '../../../core/theme/app_theme.dart';
 import '../../account/screens/auth_screen.dart';
 import '../widgets/onboarding_choice_card.dart';
 import '../widgets/onboarding_dots.dart';
-import '../widgets/onboarding_glyph_bubble.dart';
 import '../widgets/onboarding_intro_card.dart';
 import '../widgets/onboarding_notifications_card.dart';
 import '../widgets/onboarding_primary_button.dart';
 import '../widgets/spark_logo.dart';
 import '../widgets/taste_vote_card.dart';
 
-/// The first-launch tutorial: a swipeable deck that welcomes the user, walks
-/// through the headline features (daily, streak, unlocks, tidbits) and ends on
-/// the account choice — start anonymously, or sign in to keep progress.
+/// The first-launch tutorial: a swipeable deck that welcomes the user, lands
+/// them straight on a real question to vote on (with a taste of the smaczki
+/// behind it), asks for the daily reminder, and ends on the account choice —
+/// start anonymously, or sign in to keep progress.
 ///
 /// It owns no persistence; reaching the end (via either choice) calls [onFinish],
 /// and `AppEntry` records that the tutorial is done and swaps in the live app.
@@ -73,22 +73,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
 
-    // A deliberately short funnel: a warm welcome, ONE feature card (the daily),
-    // then the real moment — a juicy question to actually vote on. The taste card
-    // is the aha; everything before it is kept brief so the user reaches it fast.
+    // A deliberately short funnel: a warm welcome, then straight into the real
+    // moment — a juicy question to actually vote on. The taste card is the aha;
+    // one swipe is all it takes to reach it (the welcome copy already carries
+    // the "one question a day" pitch, so no feature card stands in the way).
     final introCards = <Widget>[
       OnboardingIntroCard(
         glyph: const SparkLogo(size: 52),
         title: l10n.onboardingWelcomeTitle,
         body: l10n.onboardingWelcomeBody,
-      ),
-      OnboardingIntroCard(
-        glyph: const OnboardingGlyphBubble(
-          icon: Icons.wb_sunny_rounded,
-          color: AppTheme.spark,
-        ),
-        title: l10n.onboardingDailyTitle,
-        body: l10n.onboardingDailyBody,
       ),
     ];
 

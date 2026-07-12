@@ -92,6 +92,21 @@ class _TasteVoteCardState extends State<TasteVoteCard> {
                           ),
                         ),
                         const SizedBox(height: 24),
+                        // Ride the post-vote high with a taste of the second
+                        // value pillar: one real smaczek for this very question,
+                        // in the same visual language as the in-app panel.
+                        Text(
+                          l10n.onboardingTasteSmaczekIntro,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: context.colors.subtle,
+                            fontSize: 14,
+                            height: 1.4,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        _SmaczekTeaser(text: l10n.onboardingTasteSmaczek),
+                        const SizedBox(height: 24),
                         OnboardingPrimaryButton(
                           label: l10n.onboardingTasteContinue,
                           onPressed: widget.onContinue,
@@ -114,4 +129,58 @@ class _TasteVoteCardState extends State<TasteVoteCard> {
   /// only when their side is the larger one.
   bool _isMajority(int choice) =>
       choice == VoteResult.yes ? _yesPct >= _noPct : _noPct > _yesPct;
+}
+
+/// A single smaczek shown right after the taste vote — same look as the cards
+/// in the in-app smaczki panel (accent surface, numbered orange dot), so the
+/// first encounter with the app's depth already wears its real face.
+class _SmaczekTeaser extends StatelessWidget {
+  const _SmaczekTeaser({required this.text});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      decoration: BoxDecoration(
+        color: context.colors.accent,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 26,
+            height: 26,
+            alignment: Alignment.center,
+            decoration: const BoxDecoration(
+              color: AppTheme.spark,
+              shape: BoxShape.circle,
+            ),
+            child: Text(
+              '1',
+              style: TextStyle(
+                color: context.colors.ink,
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              text,
+              style: TextStyle(
+                color: context.colors.ink,
+                fontSize: 15,
+                height: 1.4,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

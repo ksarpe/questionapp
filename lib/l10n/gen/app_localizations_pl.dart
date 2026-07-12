@@ -827,13 +827,6 @@ class AppLocalizationsPl extends AppLocalizations {
       'Jedno mocne pytanie dziennie — i wszystko, co je otacza.';
 
   @override
-  String get onboardingDailyTitle => 'Pytanie dnia';
-
-  @override
-  String get onboardingDailyBody =>
-      'Każdego dnia nowe darmowe pytanie — zagłosuj i zatrzymaj się przy nim na chwilę.';
-
-  @override
   String get onboardingTasteKicker => 'TWÓJ RUCH';
 
   @override
@@ -848,6 +841,14 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get onboardingTasteContinue => 'Dalej';
+
+  @override
+  String get onboardingTasteSmaczekIntro =>
+      'Do każdego pytania dostajesz też argumenty, które pogłębiają rozmowę. Na przykład:';
+
+  @override
+  String get onboardingTasteSmaczek =>
+      'Psychologowie mówią o „mikrozdradach” — setkach drobnych sekretów i ukrytych wiadomości. Jedna noc czy tysiąc szeptów: co trudniej wybaczyć?';
 
   @override
   String get onboardingChoiceTitle => 'Jak chcesz zacząć?';
