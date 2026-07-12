@@ -100,8 +100,11 @@ placeholder.
 
 ### 4. Supabase Auth (dashboard toggles) ☁️
 Can't be set by a migration.
-- [ ] **Leaked-password protection ON** (Sign In → Passwords) — still flagged by
-      the security advisor.
+- [ ] ~~**Leaked-password protection ON**~~ — NOT AVAILABLE on the free plan
+      (HaveIBeenPwned check is a Supabase Pro feature). The security advisor
+      will keep flagging it; ignore until/unless the project moves to Pro.
+      Free-plan mitigation instead: set a **minimum password length** (≥8)
+      under Auth → Sign In / Providers → Passwords.
 
 ### 5. Sign-in providers ☁️📱
 - [ ] **Apple (iOS, required by App Store 4.8)** — enable *Sign in with Apple* on
