@@ -11,6 +11,9 @@
   "purchaseRestored": "Zakup przywrócony.",
   "purchaseRestoredCelebrate": "Zakup przywrócony. 🎉",
   "noPreviousPurchase": "Nie znaleziono wcześniejszego zakupu.",
+  "restoreSignInTitle": "Przywrócić zakup?",
+  "restoreSignInBody": "Jeśli kupiłeś PRO będąc zalogowanym na konto, zaloguj się na nie — PRO i wszystkie Twoje dane wrócą automatycznie.",
+  "restoreOnThisDevice": "Przywróć na tym urządzeniu",
   "goPro": "Przejdź na PRO",
 
   "signIn": "Zaloguj się",

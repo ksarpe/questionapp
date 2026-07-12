@@ -39,6 +39,16 @@ class AppLocalizationsPl extends AppLocalizations {
   String get noPreviousPurchase => 'Nie znaleziono wcześniejszego zakupu.';
 
   @override
+  String get restoreSignInTitle => 'Przywrócić zakup?';
+
+  @override
+  String get restoreSignInBody =>
+      'Jeśli kupiłeś PRO będąc zalogowanym na konto, zaloguj się na nie — PRO i wszystkie Twoje dane wrócą automatycznie.';
+
+  @override
+  String get restoreOnThisDevice => 'Przywróć na tym urządzeniu';
+
+  @override
   String get goPro => 'Przejdź na PRO';
 
   @override

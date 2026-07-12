@@ -14,6 +14,7 @@ import '../../../services/reminder_scheduler.dart';
 import '../../../services/supabase_service.dart';
 import '../../account/providers/session_providers.dart';
 import '../../account/screens/auth_screen.dart';
+import '../../account/widgets/restore_sign_in_prompt.dart';
 import '../../questions/providers/favorites_providers.dart';
 import '../providers/app_info_provider.dart';
 import '../providers/reminder_providers.dart';
@@ -211,6 +212,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
   }
 
   Future<void> _restorePurchases() async {
+    // Settings is account-only today, so the guest chooser inside
+    // confirmGuestRestore never fires here — the guard is a safety net in case
+    // this screen ever opens for a guest (the paywall restore is the live path).
+    if (!await confirmGuestRestore(context, ref)) return;
+    if (!mounted) return;
     final restored = await PurchasesService.restorePurchases();
     if (!mounted) return;
     if (restored) {

@@ -158,6 +158,24 @@ abstract class AppLocalizations {
   /// **'No previous purchase found.'**
   String get noPreviousPurchase;
 
+  /// No description provided for @restoreSignInTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore purchase?'**
+  String get restoreSignInTitle;
+
+  /// No description provided for @restoreSignInBody.
+  ///
+  /// In en, this message translates to:
+  /// **'If you bought PRO while signed in to an account, sign in to it — PRO and all your data will come back automatically.'**
+  String get restoreSignInBody;
+
+  /// No description provided for @restoreOnThisDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore on this device'**
+  String get restoreOnThisDevice;
+
   /// No description provided for @goPro.
   ///
   /// In en, this message translates to:

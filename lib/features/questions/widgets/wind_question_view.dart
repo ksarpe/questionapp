@@ -9,6 +9,7 @@ import '../../../services/purchases_service.dart';
 import '../../../services/supabase_service.dart';
 import '../../account/providers/session_providers.dart';
 import '../../account/providers/stats_providers.dart';
+import '../../account/widgets/restore_sign_in_prompt.dart';
 import '../../account/widgets/save_pro_prompt.dart';
 import '../../monetization/providers/monetization_providers.dart';
 import '../providers/question_providers.dart';
@@ -553,8 +554,15 @@ class _WindQuestionViewState extends ConsumerState<WindQuestionView>
   /// already bought PRO (reinstalled, or a guest now on a fresh anonymous
   /// identity) so they aren't charged twice. Surfaced on the paywall because the
   /// other restore lives in Settings, which a guest can't reach.
+  ///
+  /// For a guest the restore is gated behind [confirmGuestRestore]: if the
+  /// purchase was made on a real account, signing in brings PRO and the data
+  /// back together, while a store restore would transfer the entitlement onto
+  /// this empty anonymous identity.
   Future<void> _restorePurchases() async {
     if (_unlocking || _revealing) return;
+    if (!await confirmGuestRestore(context, ref)) return;
+    if (!mounted) return;
     setState(() => _unlocking = true);
 
     final restored = await PurchasesService.restorePurchases();
