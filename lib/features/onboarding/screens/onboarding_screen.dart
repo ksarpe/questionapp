@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/locale/l10n_extension.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../services/analytics.dart';
 import '../../account/screens/auth_screen.dart';
 import '../widgets/onboarding_choice_card.dart';
 import '../widgets/onboarding_dots.dart';
@@ -38,10 +39,37 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   /// at this index.
   int _introCount = 0;
 
+  /// Funnel steps already reported, so swiping back and forth doesn't re-count
+  /// a page as "reached" twice.
+  final Set<String> _loggedSteps = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _logStep('onboarding_started');
+  }
+
   @override
   void dispose() {
     _controller.dispose();
     super.dispose();
+  }
+
+  void _logStep(String event, [Map<String, Object?> props = const {}]) {
+    if (_loggedSteps.add(event)) Analytics.log(event, props);
+  }
+
+  /// Reports reaching a page, by its position in the deck. The welcome card is
+  /// covered by `onboarding_started`; the interactive pages are the funnel.
+  void _onPageChanged(int i) {
+    setState(() => _index = i);
+    if (i == _introCount) {
+      _logStep('onboarding_choice_shown');
+    } else if (i == _introCount - 1) {
+      _logStep('onboarding_notify_shown');
+    } else if (i == _introCount - 2) {
+      _logStep('onboarding_taste_shown');
+    }
   }
 
   bool get _isChoicePage => _index >= _introCount;
@@ -55,6 +83,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   /// "Skip" jumps straight to the account-choice card (the last page).
   void _skip() {
+    Analytics.log('onboarding_skipped', {'from_page': _index});
     _controller.animateToPage(
       _introCount,
       duration: const Duration(milliseconds: 380),
@@ -63,10 +92,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   Future<void> _signIn() async {
+    _logStep('onboarding_finished', {'path': 'sign_in'});
     // The sheet handles its own success/cancel; either way the tutorial is done
     // afterwards, so land the user on the daily.
     await showAuthSheet(context);
     if (mounted) widget.onFinish();
+  }
+
+  void _startAnonymous() {
+    _logStep('onboarding_finished', {'path': 'anonymous'});
+    widget.onFinish();
   }
 
   @override
@@ -136,13 +171,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 Expanded(
                   child: PageView(
                     controller: _controller,
-                    onPageChanged: (i) => setState(() => _index = i),
+                    onPageChanged: _onPageChanged,
                     children: [
                       ...introCards,
                       votePage,
                       notifyPage,
                       OnboardingChoiceCard(
-                        onStartAnonymous: widget.onFinish,
+                        onStartAnonymous: _startAnonymous,
                         onSignIn: _signIn,
                       ),
                     ],

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../core/locale/l10n_extension.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../data/models/vote_result.dart';
+import '../../../services/analytics.dart';
 import '../../questions/widgets/styled_question_text.dart';
 import '../../questions/widgets/vote_visuals.dart';
 import 'onboarding_primary_button.dart';
@@ -37,7 +38,12 @@ class _TasteVoteCardState extends State<TasteVoteCard> {
   /// The user's pick, or null before they vote.
   int? _choice;
 
-  void _onVote(int choice) => setState(() => _choice = choice);
+  void _onVote(int choice) {
+    setState(() => _choice = choice);
+    Analytics.log('onboarding_taste_voted', {
+      'choice': choice == VoteResult.yes ? 'tak' : 'nie',
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

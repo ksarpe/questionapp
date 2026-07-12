@@ -8,6 +8,7 @@ import '../../../core/network/network_error.dart';
 import '../../../data/models/rank.dart';
 import '../../../data/models/vote_result.dart';
 import '../../../l10n/gen/app_localizations.dart';
+import '../../../services/analytics.dart';
 import '../../../services/reminder_scheduler.dart';
 import '../../account/providers/session_providers.dart';
 import '../../account/providers/stats_providers.dart';
@@ -51,6 +52,11 @@ class _DailyVotePanelState extends ConsumerState<DailyVotePanel> {
           .read(questionRepositoryProvider)
           .castDailyVote(widget.questionId, choice);
       if (!mounted) return;
+      // Activation, the step the onboarding funnel drives toward: a real,
+      // counting vote on the daily.
+      Analytics.log('daily_vote_cast', {
+        'choice': choice == VoteResult.yes ? 'tak' : 'nie',
+      });
       // The vote may have moved the streak — refresh the top chip.
       ref.invalidate(userStatsProvider);
       // Persist the "already voted" state into the (non-autoDispose) provider, not

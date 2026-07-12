@@ -11,6 +11,7 @@ import 'core/monitoring/monitoring.dart';
 import 'features/settings/providers/reminder_providers.dart';
 import 'l10n/gen/app_localizations.dart';
 import 'services/ads_service.dart';
+import 'services/analytics.dart';
 import 'services/consent_service.dart';
 import 'services/notification_service.dart';
 import 'services/purchases_service.dart';
@@ -53,6 +54,11 @@ Future<void> _startApp() async {
   // needs the instance. It's a first-party Flutter plugin (unlikely to be the
   // R8 casualty), so we let it run unguarded rather than fabricate a fake store.
   final prefs = await SharedPreferences.getInstance();
+
+  // Resolve (or mint) the pseudonymous install id for product analytics —
+  // synchronous, so it can't delay startup, and before the first screens so
+  // even the earliest events (onboarding funnel) carry it.
+  Analytics.init(prefs);
 
   // Initialise the SDKs the first screens actually read: Supabase backs the
   // question repository, RevenueCat gates premium. Guarded + bounded so a hang

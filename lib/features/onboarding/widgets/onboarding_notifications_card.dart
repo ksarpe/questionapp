@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/locale/app_locale.dart' show sharedPreferencesProvider;
 import '../../../core/locale/l10n_extension.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../services/analytics.dart';
 import '../../../services/notification_service.dart';
 import '../../../services/reminder_scheduler.dart';
 import '../../settings/providers/reminder_providers.dart';
@@ -46,6 +47,9 @@ class _OnboardingNotificationsCardState
     try {
       var granted = await NotificationService.areNotificationsEnabled();
       if (!granted) granted = await NotificationService.requestPermission();
+      // The tap is the opt-in intent; `granted` records what the OS prompt did
+      // with it — the gap between the two is the funnel number that matters.
+      Analytics.log('onboarding_notify_enabled', {'granted': granted});
       if (granted) {
         await ref.read(reminderControllerProvider.notifier).setEnabled(true);
         await rescheduleReminderLoop(
@@ -56,6 +60,11 @@ class _OnboardingNotificationsCardState
     } finally {
       if (mounted) widget.onContinue();
     }
+  }
+
+  void _decline() {
+    Analytics.log('onboarding_notify_declined');
+    widget.onContinue();
   }
 
   @override
@@ -109,7 +118,7 @@ class _OnboardingNotificationsCardState
                 ),
           const SizedBox(height: 8),
           TextButton(
-            onPressed: _busy ? null : widget.onContinue,
+            onPressed: _busy ? null : _decline,
             style: TextButton.styleFrom(foregroundColor: context.colors.subtle),
             child: Text(l10n.onboardingNotifySkip),
           ),
