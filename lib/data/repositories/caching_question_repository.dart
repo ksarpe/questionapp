@@ -1,10 +1,10 @@
 import '../../core/network/network_error.dart';
 import '../../services/question_cache.dart';
-import '../models/daily_history_entry.dart';
 import '../models/question.dart';
 import '../models/rank.dart';
 import '../models/smaczek.dart';
 import '../models/user_stats.dart';
+import '../models/vote_history_entry.dart';
 import '../models/vote_result.dart';
 import 'question_repository.dart';
 
@@ -156,22 +156,26 @@ class CachingQuestionRepository implements QuestionRepository {
   // surfaces a "you're offline" message — we deliberately do NOT queue.
 
   @override
-  Future<({String id, String teaser})?> peekNextQuestion() =>
-      inner.peekNextQuestion();
+  Future<({String id, String teaser})?> peekNextQuestion({
+    List<String> excludeIds = const [],
+  }) => inner.peekNextQuestion(excludeIds: excludeIds);
 
   @override
-  Future<Question?> revealAdQuestion({String? questionId}) =>
-      inner.revealAdQuestion(questionId: questionId);
+  Future<Question?> revealAdQuestion({
+    String? questionId,
+    List<String> excludeIds = const [],
+  }) => inner.revealAdQuestion(questionId: questionId, excludeIds: excludeIds);
 
   @override
-  Future<Question?> revealFreeQuestion() => inner.revealFreeQuestion();
+  Future<Question?> revealFreeQuestion({List<String> excludeIds = const []}) =>
+      inner.revealFreeQuestion(excludeIds: excludeIds);
 
   // The history's vote tallies are live (they keep changing) and premium-gated,
   // so it goes straight to the server every open rather than serving a stale
   // cache; offline it throws and the sheet shows its retry state.
   @override
-  Future<List<DailyHistoryEntry>> fetchDailyHistory() =>
-      inner.fetchDailyHistory();
+  Future<List<VoteHistoryEntry>> fetchVoteHistory() =>
+      inner.fetchVoteHistory();
 
   // ---- Daily vote state (cache-fallback for the user's OWN vote) -------------
 

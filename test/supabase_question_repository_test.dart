@@ -316,32 +316,29 @@ void main() {
     );
   });
 
-  group('fetchDailyHistory', () {
-    test(
-      'maps past dailies with their split and sends the local date',
-      () async {
-        final history = await repo('''
+  group('fetchVoteHistory', () {
+    test('maps voted questions with their split and the vote time', () async {
+      final history = await repo('''
         [{
           "question_id": "q1", "category": "money", "question_text": "Było?",
-          "publish_date": "2026-06-20", "yes_count": 30, "no_count": 12, "my_choice": 1
+          "voted_at": "2026-07-10T18:42:07+00:00",
+          "yes_count": 30, "no_count": 12, "my_choice": 1
         }]
-      ''').fetchDailyHistory();
+      ''').fetchVoteHistory();
 
-        expect(capturedUrl.path, endsWith('/rpc/get_daily_history'));
-        expect(capturedBody['p_locale'], 'pl');
-        expect(capturedBody['p_date'], matches(RegExp(r'^\d{4}-\d{2}-\d{2}$')));
-        final entry = history.single;
-        expect(entry.questionId, 'q1');
-        expect(entry.publishDate, DateTime(2026, 6, 20));
-        expect(entry.votes.yesCount, 30);
-        expect(entry.votes.myChoice, 1);
-      },
-    );
+      expect(capturedUrl.path, endsWith('/rpc/get_vote_history'));
+      expect(capturedBody['p_locale'], 'pl');
+      final entry = history.single;
+      expect(entry.questionId, 'q1');
+      expect(entry.votedAt, DateTime.utc(2026, 7, 10, 18, 42, 7));
+      expect(entry.votes.yesCount, 30);
+      expect(entry.votes.myChoice, 1);
+    });
 
     test(
       'returns an empty list for a non-premium caller (zero rows)',
       () async {
-        expect(await repo('[]').fetchDailyHistory(), isEmpty);
+        expect(await repo('[]').fetchVoteHistory(), isEmpty);
       },
     );
   });

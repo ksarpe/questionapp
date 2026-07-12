@@ -7,7 +7,6 @@ import '../../../core/theme/app_theme.dart';
 import '../../account/providers/session_providers.dart';
 import '../providers/question_providers.dart';
 import '../providers/swipe_hint_providers.dart';
-import 'daily_badge.dart';
 import 'daily_vote_panel.dart';
 import 'go_deeper_button.dart';
 import 'history_screen.dart';
@@ -31,6 +30,11 @@ class QuestionBody extends ConsumerWidget {
     // The daily is where the streak is earned, so its overlay carries the binary
     // vote panel (TAK/NIE → community split). Other readable questions don't.
     final isDaily = ref.watch(isShowingDailyProvider);
+
+    // The "back to the free question" escape hatch is only meaningful to a free
+    // user: premium has no paywall to escape and its feed just wraps, so "start"
+    // is meaningless there. Used to hide _BackToDailyButton for premium below.
+    final isPremium = ref.watch(isPremiumProvider);
 
     // On the reveal slot the paywall / "no more questions" body carries its own
     // visible "back to daily" link, so suppress the faint bottom one here to
@@ -57,10 +61,10 @@ class QuestionBody extends ConsumerWidget {
       ref.watch(smaczkiProvider(questionId));
     }
 
-    // Centred group: the "Daily" badge, the question, and — on the daily — the
-    // TAK/NIE vote right beneath the question, so the buttons sit by the question
-    // rather than pinned to the screen bottom. Only the swipe hint + "go deeper"
-    // stay in the bottom overlay (readable questions only).
+    // Centred group: the question, and — under every readable one — the TAK/NIE
+    // vote right beneath it, so the buttons sit by the question rather than
+    // pinned to the screen bottom. Only the swipe hint + "go deeper" stay in the
+    // bottom overlay (readable questions only).
     return Stack(
       children: [
         Positioned.fill(
@@ -70,45 +74,41 @@ class QuestionBody extends ConsumerWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // Self-hiding "Daily" pill, sitting just above the question.
-                  const DailyBadge(),
-                  if (isDaily) const SizedBox(height: 18),
-                  // Stable key: the conditional SizedBox above shifts this
-                  // widget's position in the Column when `isDaily` flips, which
-                  // would otherwise rebuild it with a fresh State and drop its
-                  // in-memory state (the peeked teaser). The key preserves it.
+                  // Stable key so an unrelated rebuild (the vote panel below
+                  // appearing/disappearing, a sibling toggling) doesn't rebuild
+                  // this with a fresh State and drop its in-memory state (the
+                  // peeked teaser).
                   const WindQuestionView(key: ValueKey('wind_question_view')),
-                  // Vote on the daily — builds the streak and reveals the
-                  // community split. Keyed by (user, id) so it resets both when
-                  // swiping to a new question and when the account changes.
-                  if (isDaily && isReadable && questionId != null) ...[
+                  // Vote under EVERY readable question — casting reveals the
+                  // community split, the feed's core hook. Keyed by (user, id) so
+                  // it resets both when swiping to a new question and when the
+                  // account changes. `isDaily` gates the streak/reminder side
+                  // effects to the daily anchor (the server keeps streak
+                  // daily-only regardless).
+                  if (isReadable && questionId != null) ...[
                     const SizedBox(height: 28),
                     DailyVotePanel(
                       key: ValueKey('${userId ?? ''}:$questionId'),
                       questionId: questionId,
+                      isDaily: isDaily,
                     ),
                   ],
                   // A visible share pill sitting right under the question (and
-                  // under the vote panel on the daily), so it's an obvious
-                  // action rather than the faint icon it used to be down in the
-                  // bottom overlay. Readable questions only — never a teaser. On
-                  // the daily it's paired with the "Historia" pill, the quick way
-                  // into the PRO history of past dailies + how people voted.
+                  // under its vote panel), so it's an obvious action rather
+                  // than the faint icon it used to be down in the bottom
+                  // overlay. Readable questions only — never a teaser. Paired
+                  // with the "Historia" pill — every question is votable now,
+                  // so the PRO history of your votes is one tap away anywhere.
                   if (isReadable && questionId != null) ...[
                     const SizedBox(height: 24),
-                    if (isDaily)
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          ShareQuestionButton(
-                            questionText: current.questionText,
-                          ),
-                          const SizedBox(width: 12),
-                          const HistoryButton(),
-                        ],
-                      )
-                    else
-                      ShareQuestionButton(questionText: current.questionText),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ShareQuestionButton(questionText: current.questionText),
+                        const SizedBox(width: 12),
+                        const HistoryButton(),
+                      ],
+                    ),
                   ],
                 ],
               ),
@@ -145,10 +145,14 @@ class QuestionBody extends ConsumerWidget {
                         onTap: () => showSmaczkiSheet(context, questionId),
                       ),
                     ],
-                    if (!isDaily) ...[
+                    // Free-only: the escape hatch back to the free question.
+                    // Premium has no paywall to escape and its feed wraps, so a
+                    // "back to start" is meaningless — hide it entirely.
+                    if (!isDaily && !isPremium) ...[
                       if (isReadable && questionId != null)
                         const SizedBox(height: 12),
                       _BackToDailyButton(
+                        label: context.l10n.backToFreeQuestion,
                         onTap: () =>
                             ref.read(questionIndexProvider.notifier).toDaily(),
                       ),
@@ -175,12 +179,14 @@ class QuestionBody extends ConsumerWidget {
   }
 }
 
-/// A borderless "← Daily" link pinned at the bottom of the screen, shown only
-/// when the user has swiped off the daily. Tapping it returns to today's free
-/// daily question — the escape hatch from a locked pool teaser.
+/// A borderless link pinned at the bottom of the screen, shown only when a FREE
+/// user has swiped off the first question — the escape hatch from a locked pool
+/// teaser back to the free question. Hidden for premium (no paywall to escape,
+/// and its wrapping feed has no meaningful "start").
 class _BackToDailyButton extends StatelessWidget {
-  const _BackToDailyButton({required this.onTap});
+  const _BackToDailyButton({required this.label, required this.onTap});
 
+  final String label;
   final VoidCallback onTap;
 
   @override
@@ -189,7 +195,7 @@ class _BackToDailyButton extends StatelessWidget {
       onPressed: onTap,
       icon: Icon(Icons.arrow_back, size: 18, color: context.colors.subtle),
       label: Text(
-        context.l10n.dailyShort,
+        label,
         style: TextStyle(
           color: context.colors.subtle,
           fontSize: 14,

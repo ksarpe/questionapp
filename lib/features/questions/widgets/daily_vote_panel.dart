@@ -18,19 +18,33 @@ import '../../settings/providers/review_providers.dart';
 import '../providers/question_providers.dart';
 import 'vote_visuals.dart';
 
-/// The binary (TAK / NIE) vote shown under the daily question.
+/// The binary (TAK / NIE) vote shown under a question.
 ///
-/// Before voting it shows the two buttons; voting on the daily advances the
-/// user's streak server-side. After voting it shows the community split as two
-/// bars with the user's own side highlighted. Give it a `ValueKey(questionId)`
-/// so swiping to a new question resets its local state.
+/// Before voting it shows the two buttons; after voting it shows the community
+/// split as two bars with the user's own side highlighted. Give it a
+/// `ValueKey(questionId)` so swiping to a new question resets its local state.
+///
+/// Shown under EVERY readable question, not only the daily — unlocking a
+/// question and seeing how the crowd voted is the core feed hook. The daily is
+/// still special in one way: it's where the streak is earned, so the
+/// streak/reminder/review side effects only run when [isDaily] is true. A vote
+/// on any other feed question just records + reveals the split (the server also
+/// keeps the streak daily-only, so this gating is belt-and-suspenders).
 ///
 /// Guests see the buttons too, but may neither vote nor see the community split:
 /// tapping either side sends them to the sign-in sheet instead of casting a vote.
 class DailyVotePanel extends ConsumerStatefulWidget {
-  const DailyVotePanel({required this.questionId, super.key});
+  const DailyVotePanel({
+    required this.questionId,
+    this.isDaily = false,
+    super.key,
+  });
 
   final String questionId;
+
+  /// True only for today's daily question (the streak anchor). Drives the
+  /// daily-only after-vote side effects; false for every other feed question.
+  final bool isDaily;
 
   @override
   ConsumerState<DailyVotePanel> createState() => _DailyVotePanelState();
@@ -52,23 +66,29 @@ class _DailyVotePanelState extends ConsumerState<DailyVotePanel> {
           .read(questionRepositoryProvider)
           .castDailyVote(widget.questionId, choice);
       if (!mounted) return;
-      // Activation, the step the onboarding funnel drives toward: a real,
-      // counting vote on the daily.
-      Analytics.log('daily_vote_cast', {
-        'choice': choice == VoteResult.yes ? 'tak' : 'nie',
-      });
-      // The vote may have moved the streak — refresh the top chip.
-      ref.invalidate(userStatsProvider);
+      final choiceLabel = choice == VoteResult.yes ? 'tak' : 'nie';
       // Persist the "already voted" state into the (non-autoDispose) provider, not
       // just this widget's `_local`. The panel unmounts when the user swipes off
-      // the daily, discarding `_local`; without this, returning to the daily would
+      // the question, discarding `_local`; without this, returning to it would
       // re-read the provider's STALE pre-vote value and show the buttons again,
       // letting the user "vote" a second time. Invalidating forces a refetch of the
       // server's post-vote state (myChoice set → result bars on the next mount).
       ref.invalidate(dailyVoteStateProvider(widget.questionId));
       setState(() => _local = result);
-      await _refreshReminderAfterVote(result, l10n);
-      await _maybeAskForReview();
+
+      if (widget.isDaily) {
+        // Activation, the step the onboarding funnel drives toward: a real,
+        // counting vote on the daily (the streak anchor).
+        Analytics.log('daily_vote_cast', {'choice': choiceLabel});
+        // The vote may have moved the streak — refresh the top chip.
+        ref.invalidate(userStatsProvider);
+        await _refreshReminderAfterVote(result, l10n);
+        await _maybeAskForReview();
+      } else {
+        // A vote on a feed question: it counts + reveals the split, but earns no
+        // streak (server-side too), so skip the streak/reminder/review upkeep.
+        Analytics.log('question_vote_cast', {'choice': choiceLabel});
+      }
     } catch (e) {
       if (!mounted) return;
       // Offline gets the calmer "no connection" line — the vote isn't lost, it
@@ -82,8 +102,8 @@ class _DailyVotePanelState extends ConsumerState<DailyVotePanel> {
     }
   }
 
-  /// Now that today's daily is answered, refresh the reminder loop (this panel
-  /// only renders under the daily, so a vote here is always today's daily).
+  /// Now that today's daily is answered, refresh the reminder loop (only called
+  /// on the daily path — `isDaily` — so a vote here is always today's daily).
   /// Stamps the local vote date — plus the share who disagreed with this vote,
   /// for the "X% disagreed with you today" nudge — then re-arms the loop, which
   /// now picks a post-vote message for today's slot instead of a "go vote" one.

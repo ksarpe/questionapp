@@ -7,9 +7,9 @@ import '../../../core/feedback/app_toast.dart';
 import '../../../core/locale/l10n_extension.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../data/models/smaczek.dart';
-import '../../../services/purchases_service.dart';
 import '../../account/providers/session_providers.dart';
 import '../../account/widgets/save_pro_prompt.dart';
+import '../../paywall/pro_paywall_sheet.dart';
 import '../providers/question_providers.dart';
 
 /// Opens the "Smaczki" panel as a modal sheet that slides up from the bottom.
@@ -47,7 +47,7 @@ class _SmaczkiSheetState extends ConsumerState<_SmaczkiSheet> {
   Future<void> _getPremium() async {
     setState(() => _busy = true);
 
-    final purchased = await PurchasesService.presentPaywall();
+    final purchased = await showProPaywall(context);
     if (!mounted) return;
 
     if (purchased) {

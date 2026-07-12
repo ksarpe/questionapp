@@ -377,7 +377,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsRemindersSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'A reminder about the daily question'**
+  /// **'A daily reminder to vote'**
   String get settingsRemindersSubtitle;
 
   /// No description provided for @settingsReminderTime.
@@ -401,7 +401,7 @@ abstract class AppLocalizations {
   /// No description provided for @notificationDailyTitle.
   ///
   /// In en, this message translates to:
-  /// **'Today\'s question is waiting 🔥'**
+  /// **'New questions are waiting 🔥'**
   String get notificationDailyTitle;
 
   /// No description provided for @notificationDailyBody.
@@ -425,7 +425,7 @@ abstract class AppLocalizations {
   /// No description provided for @notifNudgeTitle2.
   ///
   /// In en, this message translates to:
-  /// **'Today\'s question 🤔'**
+  /// **'Cast your vote today 🤔'**
   String get notifNudgeTitle2;
 
   /// No description provided for @notifNudgeBody2.
@@ -695,7 +695,7 @@ abstract class AppLocalizations {
   /// No description provided for @historySubtitle.
   ///
   /// In en, this message translates to:
-  /// **'See how people voted on the daily questions you answered.'**
+  /// **'Every question you voted on, with how people voted.'**
   String get historySubtitle;
 
   /// No description provided for @historyLabel.
@@ -719,7 +719,7 @@ abstract class AppLocalizations {
   /// No description provided for @historyEmptyBody.
   ///
   /// In en, this message translates to:
-  /// **'Vote on a daily question and it will show up here.'**
+  /// **'Vote on a question and it will show up here.'**
   String get historyEmptyBody;
 
   /// No description provided for @historyLoadError.
@@ -737,7 +737,7 @@ abstract class AppLocalizations {
   /// No description provided for @historyPremiumBody.
   ///
   /// In en, this message translates to:
-  /// **'Go PRO to look back at the daily questions you voted on and see how others voted.'**
+  /// **'Go PRO to look back at every question you voted on and see how others voted.'**
   String get historyPremiumBody;
 
   /// No description provided for @historyNoVotes.
@@ -827,7 +827,7 @@ abstract class AppLocalizations {
   /// No description provided for @privacyDataActivityBody.
   ///
   /// In en, this message translates to:
-  /// **'Your daily votes, streak and rank, used to power the daily question and your progress.'**
+  /// **'Your votes, streak and rank, used to power your questions and progress.'**
   String get privacyDataActivityBody;
 
   /// No description provided for @privacyDataPurchasesTitle.
@@ -1082,12 +1082,6 @@ abstract class AppLocalizations {
   /// **'Swipe to see the next question'**
   String get swipeHint;
 
-  /// No description provided for @dailyShort.
-  ///
-  /// In en, this message translates to:
-  /// **'Daily'**
-  String get dailyShort;
-
   /// No description provided for @loadErrorTitle.
   ///
   /// In en, this message translates to:
@@ -1123,12 +1117,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'GO DEEPER'**
   String get goDeeper;
-
-  /// No description provided for @dailyBadge.
-  ///
-  /// In en, this message translates to:
-  /// **'DAILY'**
-  String get dailyBadge;
 
   /// No description provided for @shareLabel.
   ///
@@ -1235,14 +1223,14 @@ abstract class AppLocalizations {
   /// No description provided for @noMoreBody.
   ///
   /// In en, this message translates to:
-  /// **'Come back tomorrow for a new daily question — or go PRO to read without limits.'**
+  /// **'Come back tomorrow for new questions — or go PRO to read without limits.'**
   String get noMoreBody;
 
-  /// No description provided for @backToDailyQuestion.
+  /// No description provided for @backToFreeQuestion.
   ///
   /// In en, this message translates to:
-  /// **'Back to the daily question'**
-  String get backToDailyQuestion;
+  /// **'Back to the free question'**
+  String get backToFreeQuestion;
 
   /// No description provided for @nextQuestionWaiting.
   ///
@@ -1255,6 +1243,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Watch an ad to reveal a new question.'**
   String get watchAdToReveal;
+
+  /// No description provided for @orSignInFreeQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Or sign in to get one free question.'**
+  String get orSignInFreeQuestion;
 
   /// No description provided for @unlockWithAd.
   ///
@@ -1505,7 +1499,7 @@ abstract class AppLocalizations {
   /// No description provided for @onboardingNotifyTitle.
   ///
   /// In en, this message translates to:
-  /// **'Never miss the daily question'**
+  /// **'Never miss a new question'**
   String get onboardingNotifyTitle;
 
   /// No description provided for @onboardingNotifyBody.
@@ -1525,6 +1519,132 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Not now'**
   String get onboardingNotifySkip;
+
+  /// No description provided for @paywallTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock every question and vote'**
+  String get paywallTitle;
+
+  /// No description provided for @paywallBenefitUnlimitedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlimited questions'**
+  String get paywallBenefitUnlimitedTitle;
+
+  /// No description provided for @paywallBenefitUnlimitedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse the whole library of 1000 questions — no daily limits, no waiting.'**
+  String get paywallBenefitUnlimitedBody;
+
+  /// No description provided for @paywallBenefitNoAdsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Zero ads'**
+  String get paywallBenefitNoAdsTitle;
+
+  /// No description provided for @paywallBenefitNoAdsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'No rewarded ads, no interruptions — just the next question.'**
+  String get paywallBenefitNoAdsBody;
+
+  /// No description provided for @paywallBenefitSmaczkiTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Arguments for every question'**
+  String get paywallBenefitSmaczkiTitle;
+
+  /// No description provided for @paywallBenefitSmaczkiBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock all the talking points that deepen the conversation.'**
+  String get paywallBenefitSmaczkiBody;
+
+  /// No description provided for @paywallBenefitFavoritesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorites & voting history'**
+  String get paywallBenefitFavoritesTitle;
+
+  /// No description provided for @paywallBenefitFavoritesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Save the best questions and look back at every vote you\'ve cast.'**
+  String get paywallBenefitFavoritesBody;
+
+  /// No description provided for @paywallLifetime.
+  ///
+  /// In en, this message translates to:
+  /// **'Lifetime'**
+  String get paywallLifetime;
+
+  /// No description provided for @paywallAnnual.
+  ///
+  /// In en, this message translates to:
+  /// **'Yearly'**
+  String get paywallAnnual;
+
+  /// No description provided for @paywallMonthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly'**
+  String get paywallMonthly;
+
+  /// No description provided for @paywallWeekly.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly'**
+  String get paywallWeekly;
+
+  /// No description provided for @paywallPerMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'/mo'**
+  String get paywallPerMonth;
+
+  /// No description provided for @paywallBestValue.
+  ///
+  /// In en, this message translates to:
+  /// **'BEST VALUE'**
+  String get paywallBestValue;
+
+  /// No description provided for @paywallCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock full access'**
+  String get paywallCta;
+
+  /// No description provided for @paywallLifetimeNote.
+  ///
+  /// In en, this message translates to:
+  /// **'One-time payment — yours forever'**
+  String get paywallLifetimeNote;
+
+  /// No description provided for @paywallSubscriptionNote.
+  ///
+  /// In en, this message translates to:
+  /// **'No commitment, cancel anytime'**
+  String get paywallSubscriptionNote;
+
+  /// No description provided for @paywallLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load the offers. Check your connection and try again.'**
+  String get paywallLoadError;
+
+  /// No description provided for @paywallTermsLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms'**
+  String get paywallTermsLink;
+
+  /// No description provided for @paywallPrivacyLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy'**
+  String get paywallPrivacyLink;
 }
 
 class _AppLocalizationsDelegate

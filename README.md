@@ -179,8 +179,11 @@ gracefully when SDK keys are absent, so it still runs against mock data.
   ad. The reward is captured authoritatively inside the service (decoupled from
   the ad-dismiss callback) and a live session is ensured before the RPC, so a
   watched ad never resolves to a generic error.
-- **Premium.** RevenueCat drives the paywall and a Supabase edge function
+- **Premium.** RevenueCat handles billing; the paywall itself is in-app
+  ([`ProPaywallSheet`](lib/features/paywall/pro_paywall_sheet.dart)) — packages
+  and localized prices come live from the current RevenueCat offering, the
+  purchase goes through `Purchases.purchase`. A Supabase edge function
   (`revenue-cat-webhook`) reflects entitlement changes onto `profiles.is_premium`
-  (the flag the RLS gate reads). Restore-purchases is reachable from both
-  Settings and the reveal-slot paywall (the latter for guests, who can't open
-  Settings).
+  (the flag the RLS gate reads). Restore-purchases is reachable from Settings,
+  the paywall sheet and the reveal-slot paywall (the latter two for guests, who
+  can't open Settings).

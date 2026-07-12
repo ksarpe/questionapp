@@ -5,19 +5,19 @@ import '../../../core/feedback/app_toast.dart';
 import '../../../core/locale/l10n_extension.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/sub_screen_chrome.dart';
-import '../../../data/models/daily_history_entry.dart';
+import '../../../data/models/vote_history_entry.dart';
 import '../../../data/models/vote_result.dart';
-import '../../../services/purchases_service.dart';
 import '../../account/providers/session_providers.dart';
+import '../../paywall/pro_paywall_sheet.dart';
 import '../providers/question_providers.dart';
 
 /// Gold accent for the PRO upsell, matching the "go Premium" hooks elsewhere.
 const Color _kGold = Color(0xFFFFC857);
 
-/// Opens the PRO "question history": a full-screen table of every PAST daily
-/// question and how the community voted, so a user who missed a day can still
-/// catch up. Pushed as a sub-screen (title + X to close) so it matches the
-/// Favorites screen rather than sliding up as a drag sheet.
+/// Opens the PRO "question history": a full-screen table of every question the
+/// user voted on and how the community voted, so a past vote's split is never
+/// lost once the feed moves on. Pushed as a sub-screen (title + X to close) so
+/// it matches the Favorites screen rather than sliding up as a drag sheet.
 ///
 /// The screen gates itself: premium sees the history, everyone else sees a PRO
 /// upsell — so it's safe to open from anywhere without a premium check up front.
@@ -27,9 +27,9 @@ Future<void> openHistory(BuildContext context) {
   ).push(MaterialPageRoute<void>(builder: (_) => const HistoryScreen()));
 }
 
-/// Full-screen PRO history of past dailies. Mirrors the Favorites screen: a
+/// Full-screen PRO history of the user's votes. Mirrors the Favorites screen: a
 /// [TopGlow], a [SubScreenHeader] (title + close), then the body — the premium
-/// list of past questions, or the PRO upsell for everyone else.
+/// list of voted questions, or the PRO upsell for everyone else.
 class HistoryScreen extends ConsumerWidget {
   const HistoryScreen({super.key});
 
@@ -74,7 +74,7 @@ class HistoryScreen extends ConsumerWidget {
   }
 }
 
-/// The premium view: a short subtitle, then the list of past dailies (or a
+/// The premium view: a short subtitle, then the list of voted questions (or a
 /// loading / error / empty state). The list itself doesn't scroll — the screen's
 /// outer [SingleChildScrollView] does — so rows are laid out as a plain Column.
 class _HistoryBody extends ConsumerWidget {
@@ -82,7 +82,7 @@ class _HistoryBody extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final historyAsync = ref.watch(dailyHistoryProvider);
+    final historyAsync = ref.watch(voteHistoryProvider);
     final lang = Localizations.localeOf(context).languageCode;
 
     return Column(
@@ -106,7 +106,7 @@ class _HistoryBody extends ConsumerWidget {
             icon: Icons.cloud_off_rounded,
             title: context.l10n.historyLoadError,
             action: TextButton(
-              onPressed: () => ref.invalidate(dailyHistoryProvider),
+              onPressed: () => ref.invalidate(voteHistoryProvider),
               child: Text(context.l10n.tryAgain),
             ),
           ),
@@ -134,11 +134,12 @@ class _HistoryBody extends ConsumerWidget {
   }
 }
 
-/// One history row: the date it ran, the question text, and the community split.
+/// One history row: when the user voted, the question text, and the community
+/// split.
 class _HistoryRow extends StatelessWidget {
   const _HistoryRow({required this.entry, required this.lang});
 
-  final DailyHistoryEntry entry;
+  final VoteHistoryEntry entry;
   final String lang;
 
   @override
@@ -161,7 +162,7 @@ class _HistoryRow extends StatelessWidget {
               ),
               const SizedBox(width: 6),
               Text(
-                _formatDate(entry.publishDate, lang),
+                _formatDate(entry.votedAt, lang),
                 style: TextStyle(
                   color: context.colors.subtle,
                   fontSize: 12,
@@ -380,7 +381,7 @@ class _HistoryUpsellState extends ConsumerState<_HistoryUpsell> {
     if (_opening) return;
     setState(() => _opening = true);
     try {
-      final purchased = await PurchasesService.presentPaywall();
+      final purchased = await showProPaywall(context);
       if (!mounted) return;
       if (purchased) {
         await ref.read(sessionProvider.notifier).refresh();
@@ -492,9 +493,9 @@ class _GoProButton extends StatelessWidget {
 }
 
 /// A quiet outlined "Historia" pill, sized and styled to sit next to the share
-/// pill under the daily question. Opens [openHistory]; the screen itself gates
-/// premium, so this is shown to everyone on the daily (free users land on the
-/// PRO upsell).
+/// pill under every readable question. Opens [openHistory]; the screen itself
+/// gates premium, so this is shown to everyone (free users land on the PRO
+/// upsell).
 class HistoryButton extends StatelessWidget {
   const HistoryButton({super.key});
 

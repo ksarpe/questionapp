@@ -153,7 +153,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsReminders => 'Reminders';
 
   @override
-  String get settingsRemindersSubtitle => 'A reminder about the daily question';
+  String get settingsRemindersSubtitle => 'A daily reminder to vote';
 
   @override
   String get settingsReminderTime => 'Reminder time';
@@ -166,7 +166,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get remindersOpenSettings => 'Open settings';
 
   @override
-  String get notificationDailyTitle => 'Today\'s question is waiting 🔥';
+  String get notificationDailyTitle => 'New questions are waiting 🔥';
 
   @override
   String get notificationDailyBody =>
@@ -180,7 +180,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Today\'s question splits the room. Which side are you on?';
 
   @override
-  String get notifNudgeTitle2 => 'Today\'s question 🤔';
+  String get notifNudgeTitle2 => 'Cast your vote today 🤔';
 
   @override
   String get notifNudgeBody2 => 'Plenty of people disagree today. Do you?';
@@ -331,7 +331,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get historySubtitle =>
-      'See how people voted on the daily questions you answered.';
+      'Every question you voted on, with how people voted.';
 
   @override
   String get historyLabel => 'History';
@@ -343,8 +343,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get historyEmptyTitle => 'Nothing here yet';
 
   @override
-  String get historyEmptyBody =>
-      'Vote on a daily question and it will show up here.';
+  String get historyEmptyBody => 'Vote on a question and it will show up here.';
 
   @override
   String get historyLoadError => 'Couldn\'t load the history.';
@@ -354,7 +353,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get historyPremiumBody =>
-      'Go PRO to look back at the daily questions you voted on and see how others voted.';
+      'Go PRO to look back at every question you voted on and see how others voted.';
 
   @override
   String get historyNoVotes => 'No votes';
@@ -405,7 +404,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get privacyDataActivityBody =>
-      'Your daily votes, streak and rank, used to power the daily question and your progress.';
+      'Your votes, streak and rank, used to power your questions and progress.';
 
   @override
   String get privacyDataPurchasesTitle => 'Purchases';
@@ -567,9 +566,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get swipeHint => 'Swipe to see the next question';
 
   @override
-  String get dailyShort => 'Daily';
-
-  @override
   String get loadErrorTitle => 'Couldn\'t load questions';
 
   @override
@@ -586,9 +582,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get goDeeper => 'GO DEEPER';
-
-  @override
-  String get dailyBadge => 'DAILY';
 
   @override
   String get shareLabel => 'Share';
@@ -655,16 +648,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noMoreBody =>
-      'Come back tomorrow for a new daily question — or go PRO to read without limits.';
+      'Come back tomorrow for new questions — or go PRO to read without limits.';
 
   @override
-  String get backToDailyQuestion => 'Back to the daily question';
+  String get backToFreeQuestion => 'Back to the free question';
 
   @override
   String get nextQuestionWaiting => 'The next question is waiting';
 
   @override
   String get watchAdToReveal => 'Watch an ad to reveal a new question.';
+
+  @override
+  String get orSignInFreeQuestion => 'Or sign in to get one free question.';
 
   @override
   String get unlockWithAd => 'Unlock with an ad';
@@ -851,7 +847,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get onboardingStartAnonHint => 'With some limits';
 
   @override
-  String get onboardingNotifyTitle => 'Never miss the daily question';
+  String get onboardingNotifyTitle => 'Never miss a new question';
 
   @override
   String get onboardingNotifyBody =>
@@ -862,4 +858,72 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get onboardingNotifySkip => 'Not now';
+
+  @override
+  String get paywallTitle => 'Unlock every question and vote';
+
+  @override
+  String get paywallBenefitUnlimitedTitle => 'Unlimited questions';
+
+  @override
+  String get paywallBenefitUnlimitedBody =>
+      'Browse the whole library of 1000 questions — no daily limits, no waiting.';
+
+  @override
+  String get paywallBenefitNoAdsTitle => 'Zero ads';
+
+  @override
+  String get paywallBenefitNoAdsBody =>
+      'No rewarded ads, no interruptions — just the next question.';
+
+  @override
+  String get paywallBenefitSmaczkiTitle => 'Arguments for every question';
+
+  @override
+  String get paywallBenefitSmaczkiBody =>
+      'Unlock all the talking points that deepen the conversation.';
+
+  @override
+  String get paywallBenefitFavoritesTitle => 'Favorites & voting history';
+
+  @override
+  String get paywallBenefitFavoritesBody =>
+      'Save the best questions and look back at every vote you\'ve cast.';
+
+  @override
+  String get paywallLifetime => 'Lifetime';
+
+  @override
+  String get paywallAnnual => 'Yearly';
+
+  @override
+  String get paywallMonthly => 'Monthly';
+
+  @override
+  String get paywallWeekly => 'Weekly';
+
+  @override
+  String get paywallPerMonth => '/mo';
+
+  @override
+  String get paywallBestValue => 'BEST VALUE';
+
+  @override
+  String get paywallCta => 'Unlock full access';
+
+  @override
+  String get paywallLifetimeNote => 'One-time payment — yours forever';
+
+  @override
+  String get paywallSubscriptionNote => 'No commitment, cancel anytime';
+
+  @override
+  String get paywallLoadError =>
+      'Couldn\'t load the offers. Check your connection and try again.';
+
+  @override
+  String get paywallTermsLink => 'Terms';
+
+  @override
+  String get paywallPrivacyLink => 'Privacy';
 }

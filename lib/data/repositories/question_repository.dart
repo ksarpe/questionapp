@@ -3,11 +3,11 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../core/monitoring/monitoring.dart';
 import '../../services/supabase_service.dart';
 import '../mock/mock_questions.dart';
-import '../models/daily_history_entry.dart';
 import '../models/question.dart';
 import '../models/rank.dart';
 import '../models/smaczek.dart';
 import '../models/user_stats.dart';
+import '../models/vote_history_entry.dart';
 import '../models/vote_result.dart';
 
 /// Abstraction over the source of questions.
@@ -26,22 +26,33 @@ abstract class QuestionRepository {
   /// them all. See [Smaczek].
   Future<List<Smaczek>> fetchSmaczki(String questionId);
 
-  /// Peeks the next UNSEEN question's teaser WITHOUT revealing it — the paywall
+  /// Peeks the next UNVOTED question's teaser WITHOUT revealing it — the paywall
   /// bait. Returns its id (echo back to [revealAdQuestion] so the ad reveals the
   /// teased question) and the first two words of its text. No text, not marked
   /// seen. Null when nothing eligible is left.
-  Future<({String id, String teaser})?> peekNextQuestion();
+  ///
+  /// [excludeIds] are this session's already-revealed ids: the pool is "not
+  /// voted", so a shown-but-unvoted question is still eligible — passing the
+  /// session's ids keeps the teaser off a question already on screen this session.
+  Future<({String id, String teaser})?> peekNextQuestion({
+    List<String> excludeIds = const [],
+  });
 
   /// Reveals the next UNSEEN question after a rewarded ad.
   ///
   /// Pass [questionId] (from [peekNextQuestion]) to reveal exactly the teased
-  /// question; the server validates it is still eligible and otherwise picks a
-  /// random one so the watched ad is never wasted. Records the reveal in the
-  /// seen-memory (`question_seen`) so it never repeats, and returns it WITH text.
-  /// The reveal is ephemeral: the gate no longer grants this text later, so the
-  /// caller must keep the returned question in session memory. Returns null when
-  /// the user has seen everything eligible. Available to guests too.
-  Future<Question?> revealAdQuestion({String? questionId});
+  /// question; the server validates it is still eligible (active, not today's
+  /// daily, NOT YET VOTED) and otherwise picks a random unvoted one so the watched
+  /// ad is never wasted. Records the reveal in `question_seen` (the "shown" signal
+  /// the smaczki + vote gates read) and returns it WITH text. The reveal is
+  /// ephemeral: the gate no longer grants this text later, so the caller must keep
+  /// the returned question in session memory. [excludeIds] skip this session's
+  /// already-revealed ids on the random pick. Returns null when the user has voted
+  /// on everything eligible. Available to guests too.
+  Future<Question?> revealAdQuestion({
+    String? questionId,
+    List<String> excludeIds = const [],
+  });
 
   /// Syncs and returns the user's engagement state (streak, free-unlock
   /// credits, rank).
@@ -66,11 +77,12 @@ abstract class QuestionRepository {
   /// Reveals the next UNSEEN question paid with the daily free credit instead of
   /// an ad (real accounts only, once per day).
   ///
-  /// Same server-side pick + seen-memory record as [revealAdQuestion], but
-  /// charges one credit — only on a successful reveal. Returns the revealed
-  /// question, or null when nothing eligible is left (no charge). Throws when
-  /// there is no credit, the user is premium, or the user is a guest.
-  Future<Question?> revealFreeQuestion();
+  /// Same server-side pick (unvoted pool) + seen record as [revealAdQuestion], but
+  /// charges one credit — only on a successful reveal. [excludeIds] skip this
+  /// session's already-revealed ids. Returns the revealed question, or null when
+  /// nothing eligible is left (no charge). Throws when there is no credit, the
+  /// user is premium, or the user is a guest.
+  Future<Question?> revealFreeQuestion({List<String> excludeIds = const []});
 
   /// The full rank ladder (ordered by tier), for the rank sheet.
   Future<List<Rank>> fetchRanks();
@@ -107,14 +119,14 @@ abstract class QuestionRepository {
   /// never locked placeholders. For the favorites screen in Settings.
   Future<List<Question>> fetchFavoriteQuestions();
 
-  /// Every PAST daily question with its community TAK/NIE split, newest first —
-  /// the PRO "question history".
+  /// Every question the caller VOTED on with its community TAK/NIE split,
+  /// newest vote first — the PRO "question history" (the user's voting record).
   ///
   /// Premium-only: a free user / guest gets an EMPTY list (the server returns no
-  /// rows; the client shows a PRO upsell instead of an error). Past days only —
-  /// today's still-votable daily and the pre-filled future calendar are excluded
-  /// server-side. See the `get_daily_history` RPC.
-  Future<List<DailyHistoryEntry>> fetchDailyHistory();
+  /// rows; the client shows a PRO upsell instead of an error). Votes are the
+  /// gate — a question the user merely saw but never voted on has no row. See
+  /// the `get_vote_history` RPC.
+  Future<List<VoteHistoryEntry>> fetchVoteHistory();
 }
 
 /// Default implementation backed by the in-memory mock list.
@@ -171,7 +183,9 @@ class MockQuestionRepository implements QuestionRepository {
   }
 
   @override
-  Future<({String id, String teaser})?> peekNextQuestion() async {
+  Future<({String id, String teaser})?> peekNextQuestion({
+    List<String> excludeIds = const [],
+  }) async {
     await Future.delayed(const Duration(milliseconds: 150));
     if (kMockQuestions.length < 2) return null;
     final pick =
@@ -186,7 +200,10 @@ class MockQuestionRepository implements QuestionRepository {
   }
 
   @override
-  Future<Question?> revealAdQuestion({String? questionId}) async {
+  Future<Question?> revealAdQuestion({
+    String? questionId,
+    List<String> excludeIds = const [],
+  }) async {
     await Future.delayed(const Duration(milliseconds: 200));
     // Offline preview: reveal the requested mock question (or a random pool one).
     // No real seen-memory in mock mode, so this can repeat — fine for a dev
@@ -238,7 +255,7 @@ class MockQuestionRepository implements QuestionRepository {
   }
 
   @override
-  Future<Question?> revealFreeQuestion() async {
+  Future<Question?> revealFreeQuestion({List<String> excludeIds = const []}) async {
     await Future.delayed(const Duration(milliseconds: 200));
     // Offline preview: same as the ad reveal — the credit accounting is
     // server-side, so mock just hands back a readable pool question.
@@ -279,22 +296,22 @@ class MockQuestionRepository implements QuestionRepository {
   }
 
   @override
-  Future<List<DailyHistoryEntry>> fetchDailyHistory() async {
+  Future<List<VoteHistoryEntry>> fetchVoteHistory() async {
     await Future.delayed(const Duration(milliseconds: 250));
-    // Offline preview: fabricate a handful of past dailies from the pool so the
-    // history sheet renders with plausible splits. The real premium gate +
+    // Offline preview: fabricate a handful of voted questions from the pool so
+    // the history screen renders with plausible splits. The real premium gate +
     // tallies live server-side; mock mode always shows the "has data" view.
-    final today = DateTime.now();
+    final now = DateTime.now();
     final source = kMockQuestions.length > 6
         ? kMockQuestions.sublist(1, 7)
         : kMockQuestions;
     return [
       for (var i = 0; i < source.length; i++)
-        DailyHistoryEntry(
+        VoteHistoryEntry(
           questionId: source[i].id,
           category: source[i].category,
           questionText: source[i].questionText,
-          publishDate: DateTime(today.year, today.month, today.day - i - 1),
+          votedAt: now.subtract(Duration(hours: 3 + i * 11)),
           votes: VoteResult(
             yesCount: 40 + (i * 13) % 55,
             noCount: 20 + (i * 7) % 45,
@@ -388,12 +405,19 @@ class SupabaseQuestionRepository implements QuestionRepository {
   }
 
   @override
-  Future<({String id, String teaser})?> peekNextQuestion() async {
-    // SECURITY DEFINER RPC: previews the next unseen pick's teaser without
-    // revealing it (no text, not marked seen). Empty = nothing left.
+  Future<({String id, String teaser})?> peekNextQuestion({
+    List<String> excludeIds = const [],
+  }) async {
+    // SECURITY DEFINER RPC: previews the next UNVOTED pick's teaser without
+    // revealing it (no text, not marked seen). Empty = nothing left. p_exclude_ids
+    // keeps the teaser off a question already revealed this session.
     final data = await _db.rpc(
       'peek_next_question',
-      params: {'p_locale': locale, 'p_date': _dateOnly(DateTime.now())},
+      params: {
+        'p_locale': locale,
+        'p_date': _dateOnly(DateTime.now()),
+        'p_exclude_ids': excludeIds,
+      },
     );
     final rows = (data as List).cast<Map<String, dynamic>>();
     if (rows.isEmpty) return null;
@@ -402,16 +426,21 @@ class SupabaseQuestionRepository implements QuestionRepository {
   }
 
   @override
-  Future<Question?> revealAdQuestion({String? questionId}) async {
+  Future<Question?> revealAdQuestion({
+    String? questionId,
+    List<String> excludeIds = const [],
+  }) async {
     // SECURITY DEFINER RPC: reveals the peeked question (when still eligible) or
-    // a random unseen, non-premium, non-daily one, records it in question_seen,
-    // and returns it WITH text. Empty result = nothing unseen left.
+    // a random UNVOTED, non-daily one, records it in question_seen, and returns it
+    // WITH text. Empty result = nothing unvoted left. p_exclude_ids skips this
+    // session's already-revealed ids on the random pick.
     final data = await _db.rpc(
       'reveal_ad_question',
       params: {
         'p_locale': locale,
         'p_date': _dateOnly(DateTime.now()),
         'p_question_id': ?questionId,
+        'p_exclude_ids': excludeIds,
       },
     );
     final rows = (data as List).cast<Map<String, dynamic>>();
@@ -465,13 +494,17 @@ class SupabaseQuestionRepository implements QuestionRepository {
   }
 
   @override
-  Future<Question?> revealFreeQuestion() async {
-    // SECURITY DEFINER RPC: same pick as reveal_ad_question but charges one
-    // daily credit (real accounts only). Empty result = nothing unseen left
+  Future<Question?> revealFreeQuestion({List<String> excludeIds = const []}) async {
+    // SECURITY DEFINER RPC: same pick as reveal_ad_question (unvoted pool) but
+    // charges one daily credit (real accounts only). Empty result = nothing left
     // (no charge). Throws on no-credit / premium / guest — the caller surfaces it.
     final data = await _db.rpc(
       'reveal_free_question',
-      params: {'p_locale': locale, 'p_date': _dateOnly(DateTime.now())},
+      params: {
+        'p_locale': locale,
+        'p_date': _dateOnly(DateTime.now()),
+        'p_exclude_ids': excludeIds,
+      },
     );
     final rows = (data as List).cast<Map<String, dynamic>>();
     if (rows.isEmpty) return null;
@@ -546,18 +579,15 @@ class SupabaseQuestionRepository implements QuestionRepository {
   }
 
   @override
-  Future<List<DailyHistoryEntry>> fetchDailyHistory() async {
-    // SECURITY DEFINER RPC: returns past dailies (newest first) with the
-    // community vote split, gating on premium server-side — a non-premium caller
-    // simply gets zero rows. Pass the device's local date so "past" honours the
-    // user's timezone (clamped to the UTC clock server-side).
-    final data = await _db.rpc(
-      'get_daily_history',
-      params: {'p_locale': locale, 'p_date': _dateOnly(DateTime.now())},
-    );
+  Future<List<VoteHistoryEntry>> fetchVoteHistory() async {
+    // SECURITY DEFINER RPC: returns every question the caller voted on (newest
+    // vote first) with the live community split, gating on premium server-side
+    // — a non-premium caller simply gets zero rows. No date param: the row's
+    // date is the vote's own timestamp, rendered locally by the client.
+    final data = await _db.rpc('get_vote_history', params: {'p_locale': locale});
     return (data as List)
         .cast<Map<String, dynamic>>()
-        .map(DailyHistoryEntry.fromJson)
+        .map(VoteHistoryEntry.fromJson)
         .toList();
   }
 

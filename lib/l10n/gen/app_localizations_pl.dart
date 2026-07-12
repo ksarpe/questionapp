@@ -153,7 +153,8 @@ class AppLocalizationsPl extends AppLocalizations {
   String get settingsReminders => 'Przypomnienia';
 
   @override
-  String get settingsRemindersSubtitle => 'Przypomnienie o codziennym pytaniu';
+  String get settingsRemindersSubtitle =>
+      'Codzienne przypomnienie, by zagłosować';
 
   @override
   String get settingsReminderTime => 'Godzina przypomnienia';
@@ -166,7 +167,7 @@ class AppLocalizationsPl extends AppLocalizations {
   String get remindersOpenSettings => 'Otwórz ustawienia';
 
   @override
-  String get notificationDailyTitle => 'Pytanie dnia czeka 🔥';
+  String get notificationDailyTitle => 'Nowe pytania czekają 🔥';
 
   @override
   String get notificationDailyBody => 'Oddaj głos i przedłuż swoją serię.';
@@ -179,7 +180,7 @@ class AppLocalizationsPl extends AppLocalizations {
       'Dzisiejsze pytanie dzieli ludzi. Po której jesteś stronie?';
 
   @override
-  String get notifNudgeTitle2 => 'Pytanie dnia 🤔';
+  String get notifNudgeTitle2 => 'Zagłosuj dziś 🤔';
 
   @override
   String get notifNudgeBody2 => 'Wiele osób się dziś nie zgadza. A Ty?';
@@ -330,7 +331,7 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get historySubtitle =>
-      'Zobacz, jak głosowano w pytaniach dnia, na które oddałeś głos.';
+      'Wszystkie pytania, na które oddałeś głos — razem z wynikami głosowania.';
 
   @override
   String get historyLabel => 'Historia';
@@ -342,8 +343,7 @@ class AppLocalizationsPl extends AppLocalizations {
   String get historyEmptyTitle => 'Brak historii';
 
   @override
-  String get historyEmptyBody =>
-      'Zagłosuj w pytaniu dnia, a pojawi się ono tutaj.';
+  String get historyEmptyBody => 'Zagłosuj na pytanie, a pojawi się ono tutaj.';
 
   @override
   String get historyLoadError => 'Nie udało się wczytać historii.';
@@ -353,7 +353,7 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get historyPremiumBody =>
-      'Przejdź na PRO, aby wracać do pytań dnia, na które zagłosowałeś, i zobaczyć, jak głosowali inni.';
+      'Przejdź na PRO, aby wracać do pytań, na które zagłosowałeś, i zobaczyć, jak głosowali inni.';
 
   @override
   String get historyNoVotes => 'Brak głosów';
@@ -404,7 +404,7 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get privacyDataActivityBody =>
-      'Twoje codzienne głosy, passa i ranga — napędzają pytanie dnia i Twoje postępy.';
+      'Twoje głosy, passa i ranga — napędzają Twoje pytania i postępy.';
 
   @override
   String get privacyDataPurchasesTitle => 'Zakupy';
@@ -570,9 +570,6 @@ class AppLocalizationsPl extends AppLocalizations {
   String get swipeHint => 'Przesuń, aby zobaczyć następne pytanie';
 
   @override
-  String get dailyShort => 'Pytanie dnia';
-
-  @override
   String get loadErrorTitle => 'Nie udało się załadować pytań';
 
   @override
@@ -590,9 +587,6 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get goDeeper => 'WEJDŹ GŁĘBIEJ';
-
-  @override
-  String get dailyBadge => 'PYTANIE DNIA';
 
   @override
   String get shareLabel => 'Udostępnij';
@@ -662,16 +656,20 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get noMoreBody =>
-      'Wróć jutro po nowe pytanie dnia — albo przejdź na PRO, by czytać bez limitu.';
+      'Wróć jutro po nowe pytania — albo przejdź na PRO, by czytać bez limitu.';
 
   @override
-  String get backToDailyQuestion => 'Wróć do pytania dnia';
+  String get backToFreeQuestion => 'Wróć do darmowego pytania';
 
   @override
   String get nextQuestionWaiting => 'Kolejne pytanie czeka';
 
   @override
   String get watchAdToReveal => 'Obejrzyj reklamę, aby odsłonić nowe pytanie.';
+
+  @override
+  String get orSignInFreeQuestion =>
+      'Albo zaloguj się po jedno darmowe pytanie.';
 
   @override
   String get unlockWithAd => 'Odblokuj reklamą';
@@ -870,7 +868,7 @@ class AppLocalizationsPl extends AppLocalizations {
   String get onboardingStartAnonHint => 'Z pewnymi ograniczeniami';
 
   @override
-  String get onboardingNotifyTitle => 'Nie przegap pytania dnia';
+  String get onboardingNotifyTitle => 'Nie przegap nowych pytań';
 
   @override
   String get onboardingNotifyBody =>
@@ -881,4 +879,73 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get onboardingNotifySkip => 'Nie teraz';
+
+  @override
+  String get paywallTitle => 'Zyskaj dostęp do wszystkich pytań i głosów';
+
+  @override
+  String get paywallBenefitUnlimitedTitle => 'Nieograniczone pytania';
+
+  @override
+  String get paywallBenefitUnlimitedBody =>
+      'Czytaj całą bibliotekę 1000 pytań — bez dziennych limitów i czekania.';
+
+  @override
+  String get paywallBenefitNoAdsTitle => 'Zero reklam';
+
+  @override
+  String get paywallBenefitNoAdsBody =>
+      'Bez reklam z nagrodami, bez przerywników — tylko kolejne pytanie.';
+
+  @override
+  String get paywallBenefitSmaczkiTitle => 'Argumenty do każdego pytania';
+
+  @override
+  String get paywallBenefitSmaczkiBody =>
+      'Odblokuj wszystkie tematy do dyskusji, które pogłębiają rozmowę.';
+
+  @override
+  String get paywallBenefitFavoritesTitle => 'Ulubione i historia głosów';
+
+  @override
+  String get paywallBenefitFavoritesBody =>
+      'Zapisuj najlepsze pytania i wracaj do każdego oddanego głosu.';
+
+  @override
+  String get paywallLifetime => 'Dożywotni';
+
+  @override
+  String get paywallAnnual => 'Roczny';
+
+  @override
+  String get paywallMonthly => 'Miesięczny';
+
+  @override
+  String get paywallWeekly => 'Tygodniowy';
+
+  @override
+  String get paywallPerMonth => '/mies.';
+
+  @override
+  String get paywallBestValue => 'NAJLEPSZA OFERTA';
+
+  @override
+  String get paywallCta => 'Odblokuj pełny dostęp';
+
+  @override
+  String get paywallLifetimeNote => 'Jedna płatność — na zawsze';
+
+  @override
+  String get paywallSubscriptionNote =>
+      'Bez zobowiązań — anulujesz w każdej chwili';
+
+  @override
+  String get paywallLoadError =>
+      'Nie udało się wczytać oferty. Sprawdź połączenie i spróbuj ponownie.';
+
+  @override
+  String get paywallTermsLink => 'Regulamin';
+
+  @override
+  String get paywallPrivacyLink => 'Prywatność';
 }

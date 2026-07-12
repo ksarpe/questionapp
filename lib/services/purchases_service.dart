@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart' show PlatformException;
 import 'package:purchases_flutter/purchases_flutter.dart';
-import 'package:purchases_ui_flutter/purchases_ui_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../core/config/app_config.dart';
@@ -226,37 +226,83 @@ class PurchasesService {
     }
   }
 
-  /// Presents the RevenueCat-hosted paywall — the one designed in the dashboard
-  /// and attached to the current offering — and reports whether the user ended
-  /// up with the premium entitlement (bought or restored).
+  /// Loads the packages attached to the current offering, for the in-app
+  /// paywall sheet. Sorted "recommended first" (lifetime, then longer
+  /// subscriptions before shorter ones) so the sheet can preselect index 0.
   ///
-  /// A cancelled / dismissed paywall is a quiet `false`, not an error.
-  static Future<bool> presentPaywall() async {
+  /// An unconfigured RevenueCat (dev build without an API key) or an empty
+  /// offering is an EXPECTED state, not an exceptional one — it comes back as
+  /// an empty list, which the paywall renders as its retry state. Only real
+  /// failures (network, store) surface as errors from `getOfferings`.
+  static Future<List<Package>> paywallPackages() async {
     if (!_configured) {
-      debugPrint('PurchasesService: not configured — cannot show paywall.');
-      return false;
+      debugPrint('PurchasesService: not configured — no paywall packages.');
+      return const <Package>[];
     }
+    final offerings = await Purchases.getOfferings();
+    final packages =
+        offerings.current?.availablePackages ?? const <Package>[];
+    return [...packages]
+      ..sort((a, b) => _packageRank(a.packageType) - _packageRank(b.packageType));
+  }
+
+  static int _packageRank(PackageType type) {
+    switch (type) {
+      case PackageType.lifetime:
+        return 0;
+      case PackageType.annual:
+        return 1;
+      case PackageType.sixMonth:
+        return 2;
+      case PackageType.threeMonth:
+        return 3;
+      case PackageType.twoMonth:
+        return 4;
+      case PackageType.monthly:
+        return 5;
+      case PackageType.weekly:
+        return 6;
+      case PackageType.custom:
+      case PackageType.unknown:
+        return 7;
+    }
+  }
+
+  /// Purchases [package] (launched from the in-app paywall sheet) and reports
+  /// whether the premium entitlement is active afterwards.
+  ///
+  /// A user-cancelled purchase is a quiet `false`, not an error.
+  static Future<bool> purchase(Package package) async {
+    if (!_configured) return false;
     try {
-      final result = await RevenueCatUI.presentPaywall();
+      await Purchases.purchase(PurchaseParams.package(package));
       // Leave a trail of how the paywall resolved — invaluable when a later
       // "I paid but I'm still free" report comes in.
       Monitoring.addBreadcrumb(
-        'Paywall result: ${result.name}',
+        'Paywall purchase completed: ${package.identifier}',
         category: 'purchases',
       );
-      switch (result) {
-        case PaywallResult.purchased:
-        case PaywallResult.restored:
-          // The entitlement is the source of truth — re-check it rather than
-          // trusting the result alone.
-          return await isPremium();
-        case PaywallResult.cancelled:
-        case PaywallResult.error:
-        case PaywallResult.notPresented:
-          return false;
+      // The entitlement is the source of truth — re-check it rather than
+      // trusting the purchase call alone.
+      return await isPremium();
+    } on PlatformException catch (e, st) {
+      final code = PurchasesErrorHelper.getErrorCode(e);
+      if (code == PurchasesErrorCode.purchaseCancelledError) {
+        Monitoring.addBreadcrumb(
+          'Paywall purchase cancelled',
+          category: 'purchases',
+        );
+        return false;
       }
+      debugPrint('PurchasesService.purchase failed: $e');
+      await Monitoring.captureException(
+        e,
+        stackTrace: st,
+        feature: 'purchases',
+      );
+      return false;
     } catch (e, st) {
-      debugPrint('PurchasesService.presentPaywall failed: $e');
+      debugPrint('PurchasesService.purchase failed: $e');
       await Monitoring.captureException(
         e,
         stackTrace: st,

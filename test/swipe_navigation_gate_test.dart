@@ -154,20 +154,25 @@ class _RevealRepo extends MockQuestionRepository {
   int _n = 0;
 
   @override
-  Future<({String id, String teaser})?> peekNextQuestion() async {
+  Future<({String id, String teaser})?> peekNextQuestion({
+    List<String> excludeIds = const [],
+  }) async {
     peeks++;
     return (id: 'peek$peeks', teaser: 'Czy coś');
   }
 
   @override
-  Future<Question?> revealFreeQuestion() async {
+  Future<Question?> revealFreeQuestion({List<String> excludeIds = const []}) async {
     freeReveals++;
     _n++;
     return Question(id: 'free$_n', category: 'C', questionText: 'Free $_n?');
   }
 
   @override
-  Future<Question?> revealAdQuestion({String? questionId}) async {
+  Future<Question?> revealAdQuestion({
+    String? questionId,
+    List<String> excludeIds = const [],
+  }) async {
     adReveals++;
     _n++;
     return Question(

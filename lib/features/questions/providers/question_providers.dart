@@ -3,9 +3,9 @@ import 'dart:math';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/locale/app_locale.dart';
-import '../../../data/models/daily_history_entry.dart';
 import '../../../data/models/question.dart';
 import '../../../data/models/smaczek.dart';
+import '../../../data/models/vote_history_entry.dart';
 import '../../../data/models/vote_result.dart';
 import '../../../data/repositories/caching_question_repository.dart';
 import '../../../data/repositories/question_repository.dart';
@@ -170,17 +170,17 @@ final dailyVoteStateProvider = FutureProvider.family<VoteResult, String>((
   return repo.getDailyVoteState(questionId);
 });
 
-/// The PRO "question history": every PAST daily question with its community vote
-/// split, newest first. Empty for non-premium (the RPC returns no rows; the
-/// sheet shows a PRO upsell).
+/// The PRO "question history": every question the user voted on with its
+/// community vote split, newest vote first. Empty for non-premium (the RPC
+/// returns no rows; the screen shows a PRO upsell).
 ///
-/// autoDispose so each open of the history sheet pulls a fresh snapshot — the
+/// autoDispose so each open of the history screen pulls a fresh snapshot — the
 /// tallies keep moving — and nothing lingers in memory after it closes. The repo
 /// it watches already carries the active locale, so switching language refetches.
-final dailyHistoryProvider =
-    FutureProvider.autoDispose<List<DailyHistoryEntry>>((ref) async {
+final voteHistoryProvider =
+    FutureProvider.autoDispose<List<VoteHistoryEntry>>((ref) async {
       final repo = ref.watch(questionRepositoryProvider);
-      return repo.fetchDailyHistory();
+      return repo.fetchVoteHistory();
     });
 
 /// A shuffle seed fixed once per app launch.

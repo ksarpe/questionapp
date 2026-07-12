@@ -15,6 +15,7 @@ import '../../../services/supabase_service.dart';
 import '../../account/providers/session_providers.dart';
 import '../../account/screens/auth_screen.dart';
 import '../../account/widgets/restore_sign_in_prompt.dart';
+import '../../paywall/pro_paywall_sheet.dart';
 import '../../questions/providers/favorites_providers.dart';
 import '../providers/app_info_provider.dart';
 import '../providers/reminder_providers.dart';
@@ -180,10 +181,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
 
   // ---- Actions ---------------------------------------------------------------
 
-  /// Shows the RevenueCat paywall, then refreshes the session so the gate sees
+  /// Shows the PRO paywall, then refreshes the session so the gate sees
   /// the upgrade immediately.
   Future<void> _openPaywall() async {
-    final purchased = await PurchasesService.presentPaywall();
+    final purchased = await showProPaywall(context);
     if (!mounted) return;
     if (purchased) {
       await ref.read(sessionProvider.notifier).refresh();

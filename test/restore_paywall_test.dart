@@ -149,6 +149,8 @@ void main() {
 /// Minimal repo: a teaser to peek, no reveals expected on this path.
 class _RevealRepo extends MockQuestionRepository {
   @override
-  Future<({String id, String teaser})?> peekNextQuestion() async =>
+  Future<({String id, String teaser})?> peekNextQuestion({
+    List<String> excludeIds = const [],
+  }) async =>
       (id: 'peek', teaser: 'Czy coś');
 }

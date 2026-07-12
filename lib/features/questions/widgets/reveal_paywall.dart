@@ -16,6 +16,7 @@ class RevealPaywall extends StatelessWidget {
     required this.onBackToDaily,
     required this.onRestore,
     required this.busy,
+    this.onSignIn,
     this.teaser,
   });
 
@@ -24,6 +25,11 @@ class RevealPaywall extends StatelessWidget {
   final VoidCallback onBackToDaily;
   final VoidCallback onRestore;
   final bool busy;
+
+  /// Opens the sign-in sheet. Only passed for GUESTS — signing in earns the
+  /// daily free-unlock credit (auto-spent on the next swipe), so the hint under
+  /// the ad line is pointless for a user who already has an account.
+  final VoidCallback? onSignIn;
 
   /// First couple of words of the next question (from `peek_next_question`),
   /// teased above the CTAs. Falls back to a generic line when absent.
@@ -53,6 +59,26 @@ class RevealPaywall extends StatelessWidget {
           textAlign: TextAlign.center,
           style: TextStyle(color: context.colors.subtle, fontSize: 14),
         ),
+        if (onSignIn != null) ...[
+          const SizedBox(height: 2),
+          TextButton(
+            onPressed: busy ? null : onSignIn,
+            style: TextButton.styleFrom(
+              foregroundColor: context.colors.subtle,
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              minimumSize: Size.zero,
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              textStyle: const TextStyle(
+                fontSize: 14,
+                decoration: TextDecoration.underline,
+              ),
+            ),
+            child: Text(
+              context.l10n.orSignInFreeQuestion,
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ],
         const SizedBox(height: 32),
         ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 320),

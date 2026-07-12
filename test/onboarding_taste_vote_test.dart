@@ -99,7 +99,7 @@ void main() {
     await tapText(tester, 'Dalej');
     await settlePage(tester);
 
-    expect(find.text('Nie przegap pytania dnia'), findsOneWidget);
+    expect(find.text('Nie przegap nowych pytań'), findsOneWidget);
     expect(find.text('Włącz przypomnienia'), findsOneWidget);
     expect(find.text('Zacznij anonimowo'), findsNothing);
 

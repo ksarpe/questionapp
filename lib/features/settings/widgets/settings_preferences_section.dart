@@ -9,7 +9,7 @@ import 'settings_toggle_row.dart';
 
 /// The "App settings" card: the daily-reminder toggle (and time row when on),
 /// the language and appearance pickers, the premium offline download, the
-/// favorites list and the history of past dailies.
+/// favorites list and the history of the user's votes.
 ///
 /// The owning [SettingsScreen] keeps the reminder/picker state and logic; this
 /// widget is the visual section and forwards taps back up through its callbacks.
@@ -110,7 +110,7 @@ class SettingsPreferencesSection extends StatelessWidget {
               ),
             ],
 
-            // The PRO history of past dailies + how people voted.
+            // The PRO history of the user's votes + how people voted.
             // Shown to everyone; the screen gates premium itself,
             // so a free user lands on the PRO upsell inside it.
             const SettingsRowDivider(),

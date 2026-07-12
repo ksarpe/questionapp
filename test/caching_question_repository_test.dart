@@ -1,10 +1,10 @@
 import 'dart:io';
 
-import 'package:debatly/data/models/daily_history_entry.dart';
 import 'package:debatly/data/models/question.dart';
 import 'package:debatly/data/models/rank.dart';
 import 'package:debatly/data/models/smaczek.dart';
 import 'package:debatly/data/models/user_stats.dart';
+import 'package:debatly/data/models/vote_history_entry.dart';
 import 'package:debatly/data/models/vote_result.dart';
 import 'package:debatly/data/repositories/caching_question_repository.dart';
 import 'package:debatly/data/repositories/question_repository.dart';
@@ -241,15 +241,21 @@ class _FakeRepo implements QuestionRepository {
       _read(favoriteQuestions);
 
   @override
-  Future<({String id, String teaser})?> peekNextQuestion() =>
+  Future<({String id, String teaser})?> peekNextQuestion({
+    List<String> excludeIds = const [],
+  }) =>
       throw UnimplementedError();
 
   @override
-  Future<Question?> revealAdQuestion({String? questionId}) =>
+  Future<Question?> revealAdQuestion({
+    String? questionId,
+    List<String> excludeIds = const [],
+  }) =>
       throw UnimplementedError();
 
   @override
-  Future<Question?> revealFreeQuestion() => throw UnimplementedError();
+  Future<Question?> revealFreeQuestion({List<String> excludeIds = const []}) =>
+      throw UnimplementedError();
 
   @override
   Future<VoteResult> getDailyVoteState(String questionId) async =>
@@ -266,6 +272,6 @@ class _FakeRepo implements QuestionRepository {
   Future<bool> toggleFavorite(String questionId) => throw UnimplementedError();
 
   @override
-  Future<List<DailyHistoryEntry>> fetchDailyHistory() =>
+  Future<List<VoteHistoryEntry>> fetchVoteHistory() =>
       throw UnimplementedError();
 }

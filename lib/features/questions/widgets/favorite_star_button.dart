@@ -7,8 +7,8 @@ import '../../../core/feedback/app_toast.dart';
 import '../../../core/locale/l10n_extension.dart';
 import '../../../core/network/network_error.dart';
 import '../../../core/theme/app_theme.dart';
-import '../../../services/purchases_service.dart';
 import '../../account/providers/session_providers.dart';
+import '../../paywall/pro_paywall_sheet.dart';
 import '../providers/favorites_providers.dart';
 
 /// Gold accent for the favorite star, matching the "go Premium" upsell elsewhere.
@@ -112,13 +112,13 @@ class _FavoriteStarButtonState extends ConsumerState<FavoriteStarButton>
     }
   }
 
-  /// Shows the RevenueCat paywall, then refreshes the session so a purchase
+  /// Shows the PRO paywall, then refreshes the session so a purchase
   /// flips premium immediately and the next tap actually saves.
   Future<void> _openPaywall() async {
     if (_opening) return;
     setState(() => _opening = true);
     try {
-      final purchased = await PurchasesService.presentPaywall();
+      final purchased = await showProPaywall(context);
       if (!mounted) return;
       if (purchased) {
         await ref.read(sessionProvider.notifier).refresh();

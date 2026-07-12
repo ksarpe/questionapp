@@ -1,9 +1,9 @@
 import 'package:debatly/core/locale/app_locale.dart';
-import 'package:debatly/data/models/daily_history_entry.dart';
 import 'package:debatly/data/models/question.dart';
 import 'package:debatly/data/models/rank.dart';
 import 'package:debatly/data/models/smaczek.dart';
 import 'package:debatly/data/models/user_stats.dart';
+import 'package:debatly/data/models/vote_history_entry.dart';
 import 'package:debatly/data/models/vote_result.dart';
 import 'package:debatly/data/repositories/question_repository.dart';
 import 'package:debatly/features/questions/providers/question_providers.dart';
@@ -110,13 +110,19 @@ class _FakeRepo implements QuestionRepository {
   Future<UserStats?> syncUserState() async => null;
 
   @override
-  Future<({String id, String teaser})?> peekNextQuestion() async => null;
+  Future<({String id, String teaser})?> peekNextQuestion({
+    List<String> excludeIds = const [],
+  }) async => null;
 
   @override
-  Future<Question?> revealAdQuestion({String? questionId}) async => null;
+  Future<Question?> revealAdQuestion({
+    String? questionId,
+    List<String> excludeIds = const [],
+  }) async => null;
 
   @override
-  Future<Question?> revealFreeQuestion() async => null;
+  Future<Question?> revealFreeQuestion({List<String> excludeIds = const []}) async =>
+      null;
 
   @override
   Future<VoteResult> getDailyVoteState(String questionId) async =>
@@ -133,5 +139,5 @@ class _FakeRepo implements QuestionRepository {
   Future<bool> toggleFavorite(String questionId) async => false;
 
   @override
-  Future<List<DailyHistoryEntry>> fetchDailyHistory() async => const [];
+  Future<List<VoteHistoryEntry>> fetchVoteHistory() async => const [];
 }

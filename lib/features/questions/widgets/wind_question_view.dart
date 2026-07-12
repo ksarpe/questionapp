@@ -9,9 +9,11 @@ import '../../../services/purchases_service.dart';
 import '../../../services/supabase_service.dart';
 import '../../account/providers/session_providers.dart';
 import '../../account/providers/stats_providers.dart';
+import '../../account/screens/auth_screen.dart';
 import '../../account/widgets/restore_sign_in_prompt.dart';
 import '../../account/widgets/save_pro_prompt.dart';
 import '../../monetization/providers/monetization_providers.dart';
+import '../../paywall/pro_paywall_sheet.dart';
 import '../providers/question_providers.dart';
 import '../providers/swipe_hint_providers.dart';
 import 'falling_words_text.dart';
@@ -205,7 +207,7 @@ class _WindQuestionViewState extends ConsumerState<WindQuestionView>
         _pendingRevealDone = false;
         final reveal = ref
             .read(questionRepositoryProvider)
-            .revealFreeQuestion();
+            .revealFreeQuestion(excludeIds: _sessionRevealedIds());
         _pendingReveal = reveal;
         // Record the outcome as it arrives so the post-animation step can skip
         // the spinner when the reveal already won the race against the animation.
@@ -290,12 +292,21 @@ class _WindQuestionViewState extends ConsumerState<WindQuestionView>
     _startPeek();
   }
 
+  /// This session's already-revealed question ids. The reveal pool is "not voted"
+  /// (see reveal_pool_by_vote), so a shown-but-unvoted question stays eligible —
+  /// passing these keeps a peek/reveal off a question already on screen this
+  /// session (no wasted ad on a duplicate).
+  List<String> _sessionRevealedIds() =>
+      ref.read(revealedFeedProvider).map((q) => q.id).toList();
+
   /// Fires a peek and resolves it into [_peeked] whenever it lands — even if no
   /// one is awaiting (the eager prefetch case). Stores the future in [_peekFuture]
   /// so a concurrent swipe reuses it. A null result (ran out) is left for
   /// [_peekNext] / the slot to turn into the "no more" state.
   Future<({String id, String teaser})?> _startPeek() {
-    final future = ref.read(questionRepositoryProvider).peekNextQuestion();
+    final future = ref
+        .read(questionRepositoryProvider)
+        .peekNextQuestion(excludeIds: _sessionRevealedIds());
     _peekFuture = future;
     future
         .then((peeked) {
@@ -369,9 +380,10 @@ class _WindQuestionViewState extends ConsumerState<WindQuestionView>
   /// user has run out for now.
   Future<void> _reveal({required bool viaAd, String? questionId}) {
     final repo = ref.read(questionRepositoryProvider);
+    final excludeIds = _sessionRevealedIds();
     final future = viaAd
-        ? repo.revealAdQuestion(questionId: questionId)
-        : repo.revealFreeQuestion();
+        ? repo.revealAdQuestion(questionId: questionId, excludeIds: excludeIds)
+        : repo.revealFreeQuestion(excludeIds: excludeIds);
     return _applyReveal(future, viaAd: viaAd);
   }
 
@@ -519,13 +531,13 @@ class _WindQuestionViewState extends ConsumerState<WindQuestionView>
     await _reveal(viaAd: true, questionId: _peeked?.id);
   }
 
-  /// Opens the RevenueCat paywall. On a completed purchase the session is
+  /// Opens the PRO paywall. On a completed purchase the session is
   /// refreshed so the deck switches to the full premium catalog.
   Future<void> _goPremium() async {
     if (_unlocking) return;
     setState(() => _unlocking = true);
 
-    final purchased = await PurchasesService.presentPaywall();
+    final purchased = await showProPaywall(context);
     if (!mounted) return;
 
     if (purchased) {
@@ -639,12 +651,19 @@ class _WindQuestionViewState extends ConsumerState<WindQuestionView>
       } else if (_exhausted) {
         child = NoMoreQuestions(onBackToDaily: _backToDaily);
       } else {
+        // Guests only: signing in earns the daily free-unlock credit, so the
+        // paywall offers the sign-in path next to the ad. A signed-in user
+        // holding the credit never even sees this paywall (auto-reveal).
+        final hasAccount = ref.watch(
+          sessionProvider.select((s) => s.value?.hasAccount ?? false),
+        );
         child = RevealPaywall(
           teaser: _peeked?.teaser,
           onWatchAd: _watchAdReveal,
           onGetPremium: _goPremium,
           onBackToDaily: _backToDaily,
           onRestore: _restorePurchases,
+          onSignIn: hasAccount ? null : () => showAuthSheet(context),
           busy: _unlocking,
         );
       }

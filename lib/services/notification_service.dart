@@ -39,9 +39,9 @@ class NotificationService {
   static const int _maxLoopDays = 14;
 
   static const String _channelId = 'daily_reminder';
-  static const String _channelName = 'Daily question';
+  static const String _channelName = 'Questions';
   static const String _channelDescription =
-      'A daily nudge to answer the question of the day.';
+      'A daily nudge to vote on new questions.';
 
   /// Initialises the plugin and the timezone database. Safe to call once at
   /// startup; subsequent calls no-op.
