@@ -14,11 +14,14 @@ submitting.
 - **App identity** — name **"Debatly"** on Android + iOS; launcher icons + splash
   generated from `assets/images/`.
 - **AdMob App IDs** — real ids in both `AndroidManifest.xml` and iOS `Info.plist`.
-- **Question content** — 732 questions, each EN + PL (seed batches 4+5 added
-  250 on 2026-07-03); daily calendar pre-filled through **2028-06-18**
-  (verified in prod 2026-07-03: continuous, one question per day, every
-  question scheduled exactly once — so the calendar AND the supply of
-  never-seen questions run out together; top up content before then).
+- **Question content** — 1000 questions, each EN + PL (2000 translations) +
+  3 smaczki each (3000); daily calendar pre-filled through **2029-03-13**
+  (verified in prod 2026-07-13: 1000 continuous days, one question per day,
+  every question scheduled exactly once, 974 days of runway from today — so
+  the calendar AND the supply of never-seen questions run out together; top
+  up content before then). `questions.is_premium` = 0 catalog-wide (unlock
+  wall gone). `question_vote_seeds` = 1000 rows, all `seed_total=0` (no cold-
+  start seed curated yet → zero behaviour change until the USER fills them).
 - **Legal URLs** — baked into `AppConfig` → `https://debatly.app/{privacy,terms,delete-account}`,
   surfaced on the Privacy & data screen and the register consent line.
 - **Sentry** — DSN wired in `env/prod-*.json`; Kotlin-2.0 override in
@@ -62,6 +65,20 @@ submitting.
   instantly.
 
 ---
+
+## ✅ Verified green 2026-07-13 (code + backend)
+
+Pre-release re-check on v**1.0.4**: `dart format` clean, `flutter analyze
+--fatal-infos` clean, **183 tests pass**, working tree pushed to `master`.
+Prod backend: 4 edge functions ACTIVE incl. **`revenue-cat-webhook` v6** (the
+non-uuid/deleted-user 500-loop fix); content 1000 Qs / 2000 translations / 3000
+smaczki, calendar to 2029-03-13; analytics live (`app_events` + `onboarding_funnel`
++ `paywall_funnel` views on prod). Prod env keys REAL on both platforms (RC
+`goog_`/`appl_`, AdMob rewarded, Supabase, Google, Sentry) — no placeholders.
+Security advisors: only the by-design set (service-role tables w/o policy,
+`SECURITY DEFINER` RPCs, anonymous sign-in, leaked-password = Pro-only). Empirical
+gaps still open below: `billing_events=0` (webhook never received a real event),
+`ad_reward_events=1` (SSV ≥3-ad test not completed), `subscriptions=0`.
 
 ## 🔴 Blockers — must do before you can ship
 
@@ -115,12 +132,10 @@ Can't be set by a migration.
 - [ ] Paste the delete-account URL into the Play **Data safety** deletion field.
 
 ### 7. iOS build 📱
-- [ ] Add an app-level **Privacy Manifest** (`ios/Runner/PrivacyInfo.xcprivacy`) —
-      none exists yet. Apple requires it because `shared_preferences` (and
-      possibly `package_info_plus`) touch "required reason" APIs (UserDefaults).
-      Third-party pods (Google Mobile Ads, RevenueCat) ship their own manifests;
-      this is the app's *own* declaration, still missing. Can cause a warning or
-      rejection at submission if skipped.
+- [x] App-level **Privacy Manifest** (`ios/Runner/PrivacyInfo.xcprivacy`) — added
+      2026-07-07 (present in repo). Declares the app's own "required reason" API
+      use (`shared_preferences`/`package_info_plus` → UserDefaults). Third-party
+      pods (Google Mobile Ads, RevenueCat) ship their own.
 - [ ] `pod install` on a Mac (ATT + local-notifications plugins), then archive in
       Xcode. (Checked 2026-07-01: `IPHONEOS_DEPLOYMENT_TARGET=13.0` is sufficient
       for every current plugin incl. RevenueCat/AdMob's native pods — no bump
