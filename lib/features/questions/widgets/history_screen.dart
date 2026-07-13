@@ -170,11 +170,6 @@ class _HistoryRow extends StatelessWidget {
                   letterSpacing: 0.3,
                 ),
               ),
-              const Spacer(),
-              Text(
-                context.l10n.votesCount(entry.votes.total),
-                style: TextStyle(color: context.colors.subtle, fontSize: 11),
-              ),
             ],
           ),
           const SizedBox(height: 10),
