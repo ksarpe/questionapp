@@ -103,15 +103,11 @@ placeholder.
       function returns 200.
 
 ### 3. AdMob ☁️📱
-- [ ] **SSV callback URL (required)** on the rewarded unit →
-      `https://<project-ref>.functions.supabase.co/admob-ssv`. Without it, no free
-      reveal-by-ad ever validates.
-  - ⚠️ **Test past 2 reveals before sign-off.** `reveal_ad_question`'s grace
-    limit (`c_grace = 2`) is a **lifetime** allowance, not per-day. If SSV is
-    misconfigured, the first 2 ad-unlocks per user succeed anyway (masking the
-    problem), then every one after fails with a generic error. QA must watch
-    ≥3 ads on one test account and confirm the 3rd unlocks before declaring
-    the SSV wiring good.
+- [x] **SSV callback URL** on the rewarded unit → `admob-ssv`. **Verified end-to-end
+      2026-07-13**: one test account (`f1f94a57…`) watched 4 rewarded ads, all
+      landed in `ad_reward_events` with `verified=true` — i.e. past the lifetime
+      grace (`c_grace=2`), so the 3rd/4th unlocks were backed by real SSV, not
+      the masking grace. SSV wiring confirmed good.
 - [ ] Create a **GDPR consent message** (and an iOS **ATT** message) in the
       Privacy & messaging section — without them the consent form is blank.
 
