@@ -178,11 +178,12 @@ final dailyVoteStateProvider = FutureProvider.family<VoteResult, String>((
 /// autoDispose so each open of the history screen pulls a fresh snapshot — the
 /// tallies keep moving — and nothing lingers in memory after it closes. The repo
 /// it watches already carries the active locale, so switching language refetches.
-final voteHistoryProvider =
-    FutureProvider.autoDispose<List<VoteHistoryEntry>>((ref) async {
-      final repo = ref.watch(questionRepositoryProvider);
-      return repo.fetchVoteHistory();
-    });
+final voteHistoryProvider = FutureProvider.autoDispose<List<VoteHistoryEntry>>((
+  ref,
+) async {
+  final repo = ref.watch(questionRepositoryProvider);
+  return repo.fetchVoteHistory();
+});
 
 /// A shuffle seed fixed once per app launch.
 ///

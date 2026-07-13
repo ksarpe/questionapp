@@ -256,7 +256,9 @@ class MockQuestionRepository implements QuestionRepository {
   }
 
   @override
-  Future<Question?> revealFreeQuestion({List<String> excludeIds = const []}) async {
+  Future<Question?> revealFreeQuestion({
+    List<String> excludeIds = const [],
+  }) async {
     await Future.delayed(const Duration(milliseconds: 200));
     // Offline preview: same as the ad reveal — the credit accounting is
     // server-side, so mock just hands back a readable pool question.
@@ -497,7 +499,9 @@ class SupabaseQuestionRepository implements QuestionRepository {
   }
 
   @override
-  Future<Question?> revealFreeQuestion({List<String> excludeIds = const []}) async {
+  Future<Question?> revealFreeQuestion({
+    List<String> excludeIds = const [],
+  }) async {
     // SECURITY DEFINER RPC: same pick as reveal_ad_question (unvoted pool) but
     // charges one daily credit (real accounts only). Empty result = nothing left
     // (no charge). Throws on no-credit / premium / guest — the caller surfaces it.
@@ -587,7 +591,10 @@ class SupabaseQuestionRepository implements QuestionRepository {
     // vote first) with the live community split, gating on premium server-side
     // — a non-premium caller simply gets zero rows. No date param: the row's
     // date is the vote's own timestamp, rendered locally by the client.
-    final data = await _db.rpc('get_vote_history', params: {'p_locale': locale});
+    final data = await _db.rpc(
+      'get_vote_history',
+      params: {'p_locale': locale},
+    );
     return (data as List)
         .cast<Map<String, dynamic>>()
         .map(VoteHistoryEntry.fromJson)

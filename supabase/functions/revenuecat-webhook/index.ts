@@ -76,6 +76,17 @@ const REVOKING_TYPES = ["EXPIRATION", "SUBSCRIPTION_PAUSED"];
 // Statuses meaning auto-renew is off or at risk, for `subscriptions.will_renew`.
 const NON_RENEWING_STATUSES = ["CANCELLATION", "BILLING_ISSUE", ...REVOKING_TYPES];
 
+// Only Supabase auth uids (uuids) can be written to `subscriptions.user_id` /
+// `billing_events.user_id` (uuid columns, FK -> auth.users). RevenueCat also
+// sends its own identities — `$RCAnonymousID:…` aliases (purchase/restore
+// before `Purchases.logIn`, and the transferred_from side of TRANSFER events)
+// and arbitrary ids on dashboard test events. Writing those raises a uuid-cast
+// error, the function 500s, and RevenueCat retries the same event forever.
+// Such identities have no profile to grant anyway, so they are skipped.
+const UUID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const isSupabaseUid = (s: string): boolean => UUID_RE.test(s);
+
 Deno.serve(async (req) => {
   if (req.method !== "POST") {
     return new Response("Method not allowed", { status: 405 });
@@ -119,12 +130,19 @@ Deno.serve(async (req) => {
   // concurrent duplicate delivery may lose the unique-constraint race here;
   // that 23505 is benign because the state writes are idempotent.
   const logEvent = async (markerUserId: string | null) => {
-    const { error } = await supabase.from("billing_events").insert({
-      event_id: event.id,
-      user_id: markerUserId,
-      type: event.type,
-      payload: body,
-    });
+    const insert = (uid: string | null) =>
+      supabase.from("billing_events").insert({
+        event_id: event.id,
+        user_id: uid,
+        type: event.type,
+        payload: body,
+      });
+    let { error } = await insert(markerUserId);
+    // 23503: marker user was deleted from auth.users — keep the audit row
+    // (and the idempotency marker) without the FK.
+    if (error?.code === "23503" && markerUserId !== null) {
+      ({ error } = await insert(null));
+    }
     if (error && error.code !== "23505") {
       console.error("billing_events insert failed:", error);
     }
@@ -155,7 +173,17 @@ Deno.serve(async (req) => {
       will_renew: isActive && !NON_RENEWING_STATUSES.includes(statusType),
       updated_at: new Date().toISOString(),
     }, { onConflict: "user_id,entitlement" });
-    if (subErr) throw new Error(`subscriptions upsert: ${subErr.message}`);
+    if (subErr) {
+      // 23503: the auth user no longer exists (account deleted via
+      // delete-account while the store subscription keeps emitting events).
+      // There is nothing left to grant or revoke — ack instead of putting
+      // RevenueCat into a permanent 500/retry loop.
+      if (subErr.code === "23503") {
+        console.warn(`user ${uid} gone (account deleted) — skipping ${statusType}`);
+        return;
+      }
+      throw new Error(`subscriptions upsert: ${subErr.message}`);
+    }
 
     if (touchesPremium) {
       // Write the STORE source only — `apply_store_entitlement` recomputes the
@@ -178,8 +206,10 @@ Deno.serve(async (req) => {
       // app_user_id — so we must REVOKE the losers and GRANT the gainers. The
       // old code keyed on app_user_id (undefined here) and left the previous
       // owner premium forever; this is the anon-guest → real-account path.
-      const from: string[] = event.transferred_from ?? [];
-      const to: string[] = event.transferred_to ?? [];
+      // The losing side of a guest→account transfer is usually a
+      // `$RCAnonymousID:…` alias — not a Supabase uid, nothing to revoke.
+      const from = (event.transferred_from ?? []).filter(isSupabaseUid);
+      const to = (event.transferred_to ?? []).filter(isSupabaseUid);
       const toActive = expiresMs ? expiresMs > Date.now() : true;
       for (const uid of from) await applyState(uid, false, "TRANSFER");
       for (const uid of to) await applyState(uid, toActive, "TRANSFER");
@@ -192,6 +222,15 @@ Deno.serve(async (req) => {
     if (!userId) {
       await logEvent(null);
       return new Response("OK (no app_user_id)", { status: 200 });
+    }
+    if (!isSupabaseUid(userId)) {
+      // `$RCAnonymousID:…` (purchase/restore before Purchases.logIn) or a
+      // dashboard test event — no Supabase user to grant. A later TRANSFER
+      // moves the entitlement onto the real uid; sync-entitlement also
+      // reconciles on app start.
+      console.warn(`non-supabase app_user_id ${userId} — recorded, not applied`);
+      await logEvent(null);
+      return new Response("OK (non-supabase identity)", { status: 200 });
     }
 
     let isActive: boolean;

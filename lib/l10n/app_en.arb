@@ -60,11 +60,11 @@
   "notificationDailyBody": "Cast your vote and keep your streak alive.",
 
   "notifNudgeTitle1": "Pick a side 🔥",
-  "notifNudgeBody1": "Today's question splits the room. Which side are you on?",
+  "notifNudgeBody1": "There's a question that splits the room. Which side are you on?",
   "notifNudgeTitle2": "Cast your vote today 🤔",
   "notifNudgeBody2": "Plenty of people disagree today. Do you?",
   "notifNudgeTitle3": "Yes or no?",
-  "notifNudgeBody3": "Cast today's vote before everyone else does.",
+  "notifNudgeBody3": "Cast your vote before everyone else does.",
   "notifStreakTitle": "Don't let it die 🔥",
   "notifStreakBody": "Day {streak} of your streak. Vote today to keep it alive.",
   "@notifStreakBody": {
@@ -77,14 +77,14 @@
     "placeholders": { "days": { "type": "int" } }
   },
   "notifMinorityTitle": "Still in the minority? 🤔",
-  "notifMinorityBody": "{pct}% disagreed with you today. See how it's ending.",
+  "notifMinorityBody": "{pct}% disagreed with you. See how the split is shaping up.",
   "@notifMinorityBody": {
     "placeholders": { "pct": { "type": "int" } }
   },
-  "notifResultTitle": "Today's split is in",
+  "notifResultTitle": "How's the vote going?",
   "notifResultBody": "See what the majority actually picked.",
-  "notifNextTitle": "Tomorrow's question 🔮",
-  "notifNextBody": "A fresh one drops tomorrow. Will you be in the minority again?",
+  "notifNextTitle": "More questions are waiting 🔮",
+  "notifNextBody": "Plenty more to vote on. Will you be in the minority again?",
   "notifSafeTitle": "Streak secured 🔥",
   "notifSafeBody": "Nice one. Come back tomorrow to keep it going.",
 
@@ -410,7 +410,7 @@
   "onboardingStartAnon": "Start anonymously",
   "onboardingStartAnonHint": "With some limits",
   "onboardingNotifyTitle": "Never miss a new question",
-  "onboardingNotifyBody": "Turn on reminders and we'll nudge you once a day about the new question. No spam — just one a day.",
+  "onboardingNotifyBody": "Turn on reminders and we'll nudge you once a day to come and vote. No spam — just one a day.",
   "onboardingNotifyEnable": "Turn on reminders",
   "onboardingNotifySkip": "Not now",
   "paywallTitle": "Unlock every question and vote",

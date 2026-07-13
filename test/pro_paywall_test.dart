@@ -62,7 +62,10 @@ void main() {
     await pumpSheet(tester, loadPackages: () async => [lifetime, monthly]);
 
     // Headline + the four benefit rows.
-    expect(find.text('Zyskaj dostęp do wszystkich pytań i głosów'), findsOneWidget);
+    expect(
+      find.text('Zyskaj dostęp do wszystkich pytań i głosów'),
+      findsOneWidget,
+    );
     expect(find.text('Nieograniczone pytania'), findsOneWidget);
     expect(find.text('Zero reklam'), findsOneWidget);
     expect(find.text('Argumenty do każdego pytania'), findsOneWidget);
@@ -93,12 +96,18 @@ void main() {
       find.text('Poznaj wszystkie argumenty do każdego pytania'),
       findsOneWidget,
     );
-    expect(find.text('Zyskaj dostęp do wszystkich pytań i głosów'), findsNothing);
+    expect(
+      find.text('Zyskaj dostęp do wszystkich pytań i głosów'),
+      findsNothing,
+    );
 
     // The smaczki benefit is reordered above the default lead (unlimited).
-    final smaczkiY =
-        tester.getTopLeft(find.text('Argumenty do każdego pytania')).dy;
-    final unlimitedY = tester.getTopLeft(find.text('Nieograniczone pytania')).dy;
+    final smaczkiY = tester
+        .getTopLeft(find.text('Argumenty do każdego pytania'))
+        .dy;
+    final unlimitedY = tester
+        .getTopLeft(find.text('Nieograniczone pytania'))
+        .dy;
     expect(smaczkiY, lessThan(unlimitedY));
   });
 
@@ -113,9 +122,12 @@ void main() {
 
     expect(find.text('Wszystkie Twoje głosy w jednym miejscu'), findsOneWidget);
 
-    final favoritesY =
-        tester.getTopLeft(find.text('Ulubione i historia głosów')).dy;
-    final unlimitedY = tester.getTopLeft(find.text('Nieograniczone pytania')).dy;
+    final favoritesY = tester
+        .getTopLeft(find.text('Ulubione i historia głosów'))
+        .dy;
+    final unlimitedY = tester
+        .getTopLeft(find.text('Nieograniczone pytania'))
+        .dy;
     expect(favoritesY, lessThan(unlimitedY));
   });
 
@@ -130,7 +142,9 @@ void main() {
 
     expect(find.text('Czytaj dalej — bez limitów i czekania'), findsOneWidget);
 
-    final unlimitedY = tester.getTopLeft(find.text('Nieograniczone pytania')).dy;
+    final unlimitedY = tester
+        .getTopLeft(find.text('Nieograniczone pytania'))
+        .dy;
     final noAdsY = tester.getTopLeft(find.text('Zero reklam')).dy;
     expect(unlimitedY, lessThan(noAdsY));
   });
@@ -175,7 +189,10 @@ void main() {
     await tester.tap(find.text('Miesięczny'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Bez zobowiązań — anulujesz w każdej chwili'), findsOneWidget);
+    expect(
+      find.text('Bez zobowiązań — anulujesz w każdej chwili'),
+      findsOneWidget,
+    );
     expect(find.text('Jedna płatność — na zawsze'), findsNothing);
   });
 
@@ -298,7 +315,9 @@ void main() {
     );
 
     expect(
-      find.text('Nie udało się wczytać oferty. Sprawdź połączenie i spróbuj ponownie.'),
+      find.text(
+        'Nie udało się wczytać oferty. Sprawdź połączenie i spróbuj ponownie.',
+      ),
       findsOneWidget,
     );
 

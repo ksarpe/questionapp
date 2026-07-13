@@ -80,10 +80,9 @@ class _DailyVotePanelState extends ConsumerState<DailyVotePanel> {
 
       // Activation, the step the onboarding funnel drives toward, is a vote on
       // the served daily; feed votes get their own event.
-      Analytics.log(
-        widget.isDaily ? 'daily_vote_cast' : 'question_vote_cast',
-        {'choice': choiceLabel},
-      );
+      Analytics.log(widget.isDaily ? 'daily_vote_cast' : 'question_vote_cast', {
+        'choice': choiceLabel,
+      });
       // EVERY vote may move the streak now (server: once per UTC day), so the
       // engagement upkeep runs for all of them: refresh the streak chip, flip
       // today's reminder to a post-vote message, maybe ask for a review.

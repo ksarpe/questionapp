@@ -121,8 +121,9 @@ class _FakeRepo implements QuestionRepository {
   }) async => null;
 
   @override
-  Future<Question?> revealFreeQuestion({List<String> excludeIds = const []}) async =>
-      null;
+  Future<Question?> revealFreeQuestion({
+    List<String> excludeIds = const [],
+  }) async => null;
 
   @override
   Future<VoteResult> getDailyVoteState(String questionId) async =>

@@ -177,7 +177,7 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get notifNudgeBody1 =>
-      'Dzisiejsze pytanie dzieli ludzi. Po której jesteś stronie?';
+      'Jest pytanie, które dzieli ludzi. Po której jesteś stronie?';
 
   @override
   String get notifNudgeTitle2 => 'Zagłosuj dziś 🤔';
@@ -189,8 +189,7 @@ class AppLocalizationsPl extends AppLocalizations {
   String get notifNudgeTitle3 => 'Tak czy nie?';
 
   @override
-  String get notifNudgeBody3 =>
-      'Zagłosuj w dzisiejszym pytaniu, zanim zrobią to inni.';
+  String get notifNudgeBody3 => 'Oddaj głos, zanim zrobią to inni.';
 
   @override
   String get notifStreakTitle => 'Nie zgaś jej 🔥';
@@ -217,20 +216,20 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String notifMinorityBody(int pct) {
-    return '$pct% nie zgodziło się dziś z Tobą. Zobacz, jak to się kończy.';
+    return '$pct% nie zgodziło się z Tobą. Zobacz, jak rozkłada się głos.';
   }
 
   @override
-  String get notifResultTitle => 'Dzisiejszy wynik jest już znany';
+  String get notifResultTitle => 'Jak idzie głosowanie?';
 
   @override
   String get notifResultBody => 'Sprawdź, co naprawdę wybrała większość.';
 
   @override
-  String get notifNextTitle => 'Jutrzejsze pytanie 🔮';
+  String get notifNextTitle => 'Czekają kolejne pytania 🔮';
 
   @override
-  String get notifNextBody => 'Jutro nowe. Znów będziesz w mniejszości?';
+  String get notifNextBody => 'Jest ich więcej. Znów będziesz w mniejszości?';
 
   @override
   String get notifSafeTitle => 'Seria zabezpieczona 🔥';
@@ -875,7 +874,7 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get onboardingNotifyBody =>
-      'Włącz przypomnienia, a codziennie damy Ci znać o nowym pytaniu. Bez spamu — jedno na dzień.';
+      'Włącz przypomnienia, a codziennie przypomnimy Ci, żeby zagłosować. Bez spamu — jedno na dzień.';
 
   @override
   String get onboardingNotifyEnable => 'Włącz przypomnienia';

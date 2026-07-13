@@ -151,6 +151,5 @@ class _RevealRepo extends MockQuestionRepository {
   @override
   Future<({String id, String teaser})?> peekNextQuestion({
     List<String> excludeIds = const [],
-  }) async =>
-      (id: 'peek', teaser: 'Czy coś');
+  }) async => (id: 'peek', teaser: 'Czy coś');
 }

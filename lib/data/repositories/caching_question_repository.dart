@@ -174,8 +174,7 @@ class CachingQuestionRepository implements QuestionRepository {
   // so it goes straight to the server every open rather than serving a stale
   // cache; offline it throws and the sheet shows its retry state.
   @override
-  Future<List<VoteHistoryEntry>> fetchVoteHistory() =>
-      inner.fetchVoteHistory();
+  Future<List<VoteHistoryEntry>> fetchVoteHistory() => inner.fetchVoteHistory();
 
   // ---- Daily vote state (cache-fallback for the user's OWN vote) -------------
 

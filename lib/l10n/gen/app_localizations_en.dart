@@ -177,7 +177,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notifNudgeBody1 =>
-      'Today\'s question splits the room. Which side are you on?';
+      'There\'s a question that splits the room. Which side are you on?';
 
   @override
   String get notifNudgeTitle2 => 'Cast your vote today 🤔';
@@ -189,7 +189,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notifNudgeTitle3 => 'Yes or no?';
 
   @override
-  String get notifNudgeBody3 => 'Cast today\'s vote before everyone else does.';
+  String get notifNudgeBody3 => 'Cast your vote before everyone else does.';
 
   @override
   String get notifStreakTitle => 'Don\'t let it die 🔥';
@@ -216,21 +216,21 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String notifMinorityBody(int pct) {
-    return '$pct% disagreed with you today. See how it\'s ending.';
+    return '$pct% disagreed with you. See how the split is shaping up.';
   }
 
   @override
-  String get notifResultTitle => 'Today\'s split is in';
+  String get notifResultTitle => 'How\'s the vote going?';
 
   @override
   String get notifResultBody => 'See what the majority actually picked.';
 
   @override
-  String get notifNextTitle => 'Tomorrow\'s question 🔮';
+  String get notifNextTitle => 'More questions are waiting 🔮';
 
   @override
   String get notifNextBody =>
-      'A fresh one drops tomorrow. Will you be in the minority again?';
+      'Plenty more to vote on. Will you be in the minority again?';
 
   @override
   String get notifSafeTitle => 'Streak secured 🔥';
@@ -854,7 +854,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get onboardingNotifyBody =>
-      'Turn on reminders and we\'ll nudge you once a day about the new question. No spam — just one a day.';
+      'Turn on reminders and we\'ll nudge you once a day to come and vote. No spam — just one a day.';
 
   @override
   String get onboardingNotifyEnable => 'Turn on reminders';

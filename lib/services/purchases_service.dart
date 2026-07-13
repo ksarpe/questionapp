@@ -240,10 +240,10 @@ class PurchasesService {
       return const <Package>[];
     }
     final offerings = await Purchases.getOfferings();
-    final packages =
-        offerings.current?.availablePackages ?? const <Package>[];
-    return [...packages]
-      ..sort((a, b) => _packageRank(a.packageType) - _packageRank(b.packageType));
+    final packages = offerings.current?.availablePackages ?? const <Package>[];
+    return [...packages]..sort(
+      (a, b) => _packageRank(a.packageType) - _packageRank(b.packageType),
+    );
   }
 
   static int _packageRank(PackageType type) {

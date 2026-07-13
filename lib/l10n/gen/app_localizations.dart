@@ -419,7 +419,7 @@ abstract class AppLocalizations {
   /// No description provided for @notifNudgeBody1.
   ///
   /// In en, this message translates to:
-  /// **'Today\'s question splits the room. Which side are you on?'**
+  /// **'There\'s a question that splits the room. Which side are you on?'**
   String get notifNudgeBody1;
 
   /// No description provided for @notifNudgeTitle2.
@@ -443,7 +443,7 @@ abstract class AppLocalizations {
   /// No description provided for @notifNudgeBody3.
   ///
   /// In en, this message translates to:
-  /// **'Cast today\'s vote before everyone else does.'**
+  /// **'Cast your vote before everyone else does.'**
   String get notifNudgeBody3;
 
   /// No description provided for @notifStreakTitle.
@@ -485,13 +485,13 @@ abstract class AppLocalizations {
   /// No description provided for @notifMinorityBody.
   ///
   /// In en, this message translates to:
-  /// **'{pct}% disagreed with you today. See how it\'s ending.'**
+  /// **'{pct}% disagreed with you. See how the split is shaping up.'**
   String notifMinorityBody(int pct);
 
   /// No description provided for @notifResultTitle.
   ///
   /// In en, this message translates to:
-  /// **'Today\'s split is in'**
+  /// **'How\'s the vote going?'**
   String get notifResultTitle;
 
   /// No description provided for @notifResultBody.
@@ -503,13 +503,13 @@ abstract class AppLocalizations {
   /// No description provided for @notifNextTitle.
   ///
   /// In en, this message translates to:
-  /// **'Tomorrow\'s question 🔮'**
+  /// **'More questions are waiting 🔮'**
   String get notifNextTitle;
 
   /// No description provided for @notifNextBody.
   ///
   /// In en, this message translates to:
-  /// **'A fresh one drops tomorrow. Will you be in the minority again?'**
+  /// **'Plenty more to vote on. Will you be in the minority again?'**
   String get notifNextBody;
 
   /// No description provided for @notifSafeTitle.
@@ -1511,7 +1511,7 @@ abstract class AppLocalizations {
   /// No description provided for @onboardingNotifyBody.
   ///
   /// In en, this message translates to:
-  /// **'Turn on reminders and we\'ll nudge you once a day about the new question. No spam — just one a day.'**
+  /// **'Turn on reminders and we\'ll nudge you once a day to come and vote. No spam — just one a day.'**
   String get onboardingNotifyBody;
 
   /// No description provided for @onboardingNotifyEnable.

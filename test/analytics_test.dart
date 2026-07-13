@@ -8,26 +8,29 @@ import 'package:shared_preferences/shared_preferences.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  test('init mints a well-formed v4 install id and keeps it across restarts', () async {
-    SharedPreferences.setMockInitialValues({});
-    final prefs = await SharedPreferences.getInstance();
+  test(
+    'init mints a well-formed v4 install id and keeps it across restarts',
+    () async {
+      SharedPreferences.setMockInitialValues({});
+      final prefs = await SharedPreferences.getInstance();
 
-    Analytics.init(prefs);
-    final minted = prefs.getString(kInstallIdPrefKey);
-    expect(
-      minted,
-      matches(
-        RegExp(
-          r'^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$',
+      Analytics.init(prefs);
+      final minted = prefs.getString(kInstallIdPrefKey);
+      expect(
+        minted,
+        matches(
+          RegExp(
+            r'^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$',
+          ),
         ),
-      ),
-    );
+      );
 
-    // A relaunch re-reads the same id instead of minting a fresh one — the
-    // funnel would fall apart if every session looked like a new install.
-    Analytics.init(prefs);
-    expect(prefs.getString(kInstallIdPrefKey), minted);
-  });
+      // A relaunch re-reads the same id instead of minting a fresh one — the
+      // funnel would fall apart if every session looked like a new install.
+      Analytics.init(prefs);
+      expect(prefs.getString(kInstallIdPrefKey), minted);
+    },
+  );
 
   test('log is a safe no-op when Supabase is not configured', () async {
     SharedPreferences.setMockInitialValues({});

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:purchases_flutter/purchases_flutter.dart' show Package, PackageType;
+import 'package:purchases_flutter/purchases_flutter.dart'
+    show Package, PackageType;
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/config/app_config.dart';
@@ -396,10 +397,9 @@ class _ProPaywallSheetState extends ConsumerState<ProPaywallSheet> {
                         package: packages[i],
                         selected: packages[i] == selected,
                         recommended: i == 0 && packages.length > 1,
-                        subline:
-                            packages[i].packageType == PackageType.lifetime
-                                ? lifetimeSubline
-                                : null,
+                        subline: packages[i].packageType == PackageType.lifetime
+                            ? lifetimeSubline
+                            : null,
                         onTap: _busy
                             ? null
                             : () {
@@ -481,10 +481,12 @@ class _ProHeroState extends State<_ProHero>
 
   /// Both text layers must share the exact same metrics to stay aligned; only
   /// the paint differs (stroke below, gradient fill above).
-  static final TextStyle _stroke =
-      QuestionTextStyles.strokeFor(_fontSize).copyWith(letterSpacing: 3);
-  static final TextStyle _fill =
-      QuestionTextStyles.fillFor(_fontSize).copyWith(letterSpacing: 3);
+  static final TextStyle _stroke = QuestionTextStyles.strokeFor(
+    _fontSize,
+  ).copyWith(letterSpacing: 3);
+  static final TextStyle _fill = QuestionTextStyles.fillFor(
+    _fontSize,
+  ).copyWith(letterSpacing: 3);
 
   static const Gradient _fillGradient = LinearGradient(
     colors: [Color(0xFFFFC168), AppTheme.spark, Color(0xFFEA580C)],
@@ -685,8 +687,9 @@ class _PlanCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    final priceSuffix =
-        package.packageType == PackageType.monthly ? context.l10n.paywallPerMonth : '';
+    final priceSuffix = package.packageType == PackageType.monthly
+        ? context.l10n.paywallPerMonth
+        : '';
 
     final card = AnimatedContainer(
       duration: const Duration(milliseconds: 180),
@@ -795,7 +798,11 @@ class _PlanCard extends StatelessWidget {
 
 /// The single primary CTA — a glowing spark-gradient pill.
 class _CtaButton extends StatelessWidget {
-  const _CtaButton({required this.label, required this.busy, required this.onTap});
+  const _CtaButton({
+    required this.label,
+    required this.busy,
+    required this.onTap,
+  });
 
   final String label;
   final bool busy;

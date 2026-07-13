@@ -381,8 +381,10 @@ class _HistoryUpsellState extends ConsumerState<_HistoryUpsell> {
     if (_opening) return;
     setState(() => _opening = true);
     try {
-      final purchased =
-          await showProPaywall(context, source: PaywallSource.history);
+      final purchased = await showProPaywall(
+        context,
+        source: PaywallSource.history,
+      );
       if (!mounted) return;
       if (purchased) {
         await ref.read(sessionProvider.notifier).refresh();

@@ -243,15 +243,13 @@ class _FakeRepo implements QuestionRepository {
   @override
   Future<({String id, String teaser})?> peekNextQuestion({
     List<String> excludeIds = const [],
-  }) =>
-      throw UnimplementedError();
+  }) => throw UnimplementedError();
 
   @override
   Future<Question?> revealAdQuestion({
     String? questionId,
     List<String> excludeIds = const [],
-  }) =>
-      throw UnimplementedError();
+  }) => throw UnimplementedError();
 
   @override
   Future<Question?> revealFreeQuestion({List<String> excludeIds = const []}) =>

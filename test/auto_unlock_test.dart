@@ -172,7 +172,9 @@ class _RevealRepo extends MockQuestionRepository {
   }
 
   @override
-  Future<Question?> revealFreeQuestion({List<String> excludeIds = const []}) async {
+  Future<Question?> revealFreeQuestion({
+    List<String> excludeIds = const [],
+  }) async {
     freeReveals++;
     _n++;
     return Question(id: 'free$_n', category: 'C', questionText: 'Free $_n?');
