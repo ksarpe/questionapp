@@ -70,8 +70,9 @@ abstract class QuestionRepository {
 
   /// Casts the user's binary vote ([choice] = 1 TAK / 2 NIE) on [questionId].
   ///
-  /// When the question is the current daily, this also advances the user's
-  /// streak server-side (at most once per UTC day). Returns the updated split.
+  /// ANY vote advances the user's streak server-side (at most once per UTC
+  /// day) — "vote on anything today" is the streak rule since the
+  /// personal-daily migration. Returns the updated split.
   Future<VoteResult> castDailyVote(String questionId, int choice);
 
   /// Reveals the next UNSEEN question paid with the daily free credit instead of
@@ -374,8 +375,10 @@ class SupabaseQuestionRepository implements QuestionRepository {
 
   @override
   Future<Question?> fetchDailyQuestion(DateTime date) async {
-    // The RPC returns the flat shape Question.fromJson expects and applies the
-    // free-daily / premium gate itself.
+    // The RPC serves the caller's PERSONAL daily for their local date: on the
+    // first call of the day it draws a random not-yet-voted question (unseen
+    // first) and pins it for the rest of that date, so every user opens to a
+    // fresh, votable question — never a re-run they already answered.
     final data = await _db.rpc(
       'get_daily_question',
       params: {'p_locale': locale, 'p_date': _dateOnly(date)},

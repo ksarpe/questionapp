@@ -81,10 +81,15 @@ class _ShareQuestionButtonState extends State<ShareQuestionButton> {
   }) async {
     final message = l10n.shareMessage(text);
     try {
+      // Decode the brand logo up front: the card is captured in one synchronous
+      // off-screen pass, so an async Image.asset would paint blank. Null just
+      // falls back to the text wordmark.
+      final logo = await QuestionShareCard.loadLogo();
       final png = await renderWidgetToPng(
         child: QuestionShareCard(
           questionText: text,
-          tagline: l10n.shareCardTagline,
+          tagline: l10n.shareCardHook,
+          logo: logo,
         ),
         logicalSize: const Size(360, 640),
         view: view,

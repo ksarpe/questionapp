@@ -365,7 +365,7 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get aboutTagline =>
-      'Jedno przewrotne pytanie dziennie, które rozpala prawdziwą rozmowę.';
+      'Przewrotne pytania, które rozpalają prawdziwą rozmowę.';
 
   @override
   String get privacyDocsSection => 'DOKUMENTY';
@@ -599,11 +599,14 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String shareMessage(String question) {
-    return '$question\n\nDebatly — jedno przewrotne pytanie dziennie.';
+    return '$question\n\nDebatly — przewrotne pytania, które rozpalają rozmowę.';
   }
 
   @override
-  String get shareCardTagline => 'Jedno przewrotne pytanie dziennie';
+  String get shareCardTagline => 'Pytania, które rozpalają rozmowę';
+
+  @override
+  String get shareCardHook => 'A Ty? TAK czy NIE?';
 
   @override
   String get streakTooltip => 'Twoja seria';
@@ -808,7 +811,7 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String rankShareMessage(String rank) {
-    return 'Moja nowa ranga w Debatly: $rank 🔥\n\nDebatly — jedno przewrotne pytanie dziennie.';
+    return 'Moja nowa ranga w Debatly: $rank 🔥\n\nDebatly — przewrotne pytania, które rozpalają rozmowę.';
   }
 
   @override
@@ -822,7 +825,7 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get onboardingWelcomeBody =>
-      'Jedno mocne pytanie dziennie — i wszystko, co je otacza.';
+      'Mocne pytania, które dzielą ludzi — zagłosuj i zobacz, po której stronie jesteś.';
 
   @override
   String get onboardingTasteKicker => 'TWÓJ RUCH';
@@ -884,6 +887,20 @@ class AppLocalizationsPl extends AppLocalizations {
   String get paywallTitle => 'Zyskaj dostęp do wszystkich pytań i głosów';
 
   @override
+  String get paywallTitleReadingLimit =>
+      'Czytaj dalej — bez limitów i czekania';
+
+  @override
+  String get paywallTitleSmaczki =>
+      'Poznaj wszystkie argumenty do każdego pytania';
+
+  @override
+  String get paywallTitleFavorites => 'Zachowaj ulubione pytania na zawsze';
+
+  @override
+  String get paywallTitleHistory => 'Wszystkie Twoje głosy w jednym miejscu';
+
+  @override
   String get paywallBenefitUnlimitedTitle => 'Nieograniczone pytania';
 
   @override
@@ -931,6 +948,19 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get paywallCta => 'Odblokuj pełny dostęp';
+
+  @override
+  String paywallLifetimeVsMonthly(int months) {
+    String _temp0 = intl.Intl.pluralLogic(
+      months,
+      locale: localeName,
+      other: 'Mniej niż $months miesiąca subskrypcji',
+      many: 'Mniej niż $months miesięcy subskrypcji',
+      few: 'Mniej niż $months miesiące subskrypcji',
+      one: 'Mniej niż $months miesiąc subskrypcji',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get paywallLifetimeNote => 'Jedna płatność — na zawsze';

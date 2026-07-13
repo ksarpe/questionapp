@@ -62,3 +62,30 @@ SQL in this folder for reference.
   `20260627120000_seed_global_dilemmas_batch_2.sql` and
   `20260627130000_seed_global_dilemmas_batch_3.sql` (deleted from the tree
   later).
+- `20260713150000_vote_farming_monitoring.sql` (admin-only views
+  `admin_vote_farming_suspects` + `admin_question_vote_velocity` for spotting
+  vote-farming bot accounts) — applied to prod 2026-07-13 via MCP. Idempotent
+  (create-or-replace), safe to re-run. Smoke test
+  `select * from admin_vote_farming_suspects limit 20;` returned only
+  no-app-events test accounts, as expected on a clean base.
+- `20260713120000_personal_daily_question.sql` (personal per-user daily +
+  streak on any vote; retires the shared calendar daily) applied to prod
+  2026-07-13 via MCP as `personal_daily_question` — file and remote content
+  match 1:1. `daily_questions` is legacy from this point: read-only fallback,
+  nothing writes it.
+- `20260713170000_paywall_funnel_analytics.sql` (read-side `paywall_funnel`
+  view over `app_events`; the client logs `paywall_*` events since app version
+  1.0.3+) — **NOT yet applied to prod**. Idempotent (`create or replace view`),
+  no schema change; apply via MCP / SQL editor whenever.
+- `20260713160000_vote_seed_baseline.sql` (hand-curated phantom-vote baseline:
+  client-invisible `question_vote_seeds` table prefilled 50/0 for every
+  question + all four tally RPCs add the seeds) — **applied to prod 2026-07-13**
+  via MCP as remote version `vote_seed_baseline`. Verified live: 1000 seed rows
+  (one per question), 0 active seeds (`seed_total<>0`), 0 orphans, all four RPCs
+  (`cast_daily_vote`, `get_daily_vote_state`, `get_vote_history`,
+  `get_daily_history`) reference `question_vote_seeds`, RLS on with zero client
+  grants. Idempotent (guarded DDL + `on conflict do nothing` prefill), so
+  re-running is a no-op. With every `seed_total = 0` there is zero behaviour
+  change until the values are curated by hand. The seed values themselves are
+  curated manually (Excel round-trip; export query in the file header) and are
+  NOT tracked as migrations.

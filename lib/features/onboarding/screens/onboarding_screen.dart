@@ -111,7 +111,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     // A deliberately short funnel: a warm welcome, then straight into the real
     // moment — a juicy question to actually vote on. The taste card is the aha;
     // one swipe is all it takes to reach it (the welcome copy already carries
-    // the "one question a day" pitch, so no feature card stands in the way).
+    // the "vote and see which side you're on" pitch, so no feature card stands
+    // in the way).
     final introCards = <Widget>[
       OnboardingIntroCard(
         glyph: const SparkLogo(size: 52),

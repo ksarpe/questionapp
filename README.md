@@ -133,7 +133,9 @@ released app.
   `android/app/src/main/AndroidManifest.xml` and `ios/Runner/Info.plist`.
   Replace both with your real id before release.
 - **Ad consent.** `ConsentService` ([consent_service.dart](lib/services/consent_service.dart))
-  runs before `AdsService.initialise` in `main()`: it gathers GDPR consent via
+  runs before `AdsService.initialise`, both sequenced by `AdsBootstrap` on the
+  first home-screen entry (after onboarding — never over the welcome funnel):
+  it gathers GDPR consent via
   Google's UMP (configure the message in the AdMob console → *Privacy & messaging*)
   and, on iOS, requests App Tracking Transparency (`NSUserTrackingUsageDescription`
   is set in `Info.plist`). Before release, add Google's full SKAdNetwork list to

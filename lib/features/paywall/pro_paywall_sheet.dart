@@ -7,8 +7,31 @@ import '../../core/config/app_config.dart';
 import '../../core/feedback/app_toast.dart';
 import '../../core/locale/l10n_extension.dart';
 import '../../core/theme/app_theme.dart';
+import '../../services/analytics.dart';
 import '../../services/purchases_service.dart';
 import '../account/widgets/restore_sign_in_prompt.dart';
+
+/// Where the user opened the paywall from. Each entry point leads with the
+/// headline and benefit that match the desire that brought them here (the
+/// locked feature they just tapped), instead of one generic pitch. The enum
+/// name doubles as the analytics `source` value once paywall funnel events
+/// land.
+enum PaywallSource {
+  /// Settings row and other neutral entry points — the generic pitch.
+  general,
+
+  /// The reveal wall: the user wanted to read the next question.
+  readingLimit,
+
+  /// The locked PRO argument on the smaczki panel.
+  smaczki,
+
+  /// The greyed-out favorite star.
+  favorites,
+
+  /// The history upsell (voting record).
+  history,
+}
 
 /// Opens the in-app PRO paywall as a modal sheet and reports whether the user
 /// ended up with the premium entitlement (bought or restored).
@@ -16,11 +39,15 @@ import '../account/widgets/restore_sign_in_prompt.dart';
 /// This replaces the RevenueCat-hosted paywall: packages and localized prices
 /// still come live from the current RevenueCat offering, but the presentation
 /// is ours — themed to the app, bilingual via l10n, light/dark aware.
+/// [source] picks the contextual headline + benefit order.
 ///
 /// A dismissed sheet is a quiet `false`, matching the old
 /// `PurchasesService.presentPaywall()` contract, so call sites keep their
 /// "purchase not completed" handling unchanged.
-Future<bool> showProPaywall(BuildContext context) async {
+Future<bool> showProPaywall(
+  BuildContext context, {
+  PaywallSource source = PaywallSource.general,
+}) async {
   final result = await showModalBottomSheet<bool>(
     context: context,
     backgroundColor: context.colors.background,
@@ -29,9 +56,16 @@ Future<bool> showProPaywall(BuildContext context) async {
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
     ),
-    builder: (_) => const ProPaywallSheet(),
+    builder: (_) => ProPaywallSheet(source: source),
   );
-  return result ?? false;
+  final purchased = result ?? false;
+  // The funnel exit: closed without ending up entitled (close button, swipe
+  // down, or gave up after a cancelled purchase). Purchases and restores log
+  // their own events inside the sheet.
+  if (!purchased) {
+    Analytics.log('paywall_dismissed', {'source': source.name});
+  }
+  return purchased;
 }
 
 /// The paywall content: hero + benefit list + live package picker + CTA.
@@ -39,8 +73,14 @@ Future<bool> showProPaywall(BuildContext context) async {
 /// [loadPackages] exists for widget tests (RevenueCat can't be configured
 /// there); production always uses [PurchasesService.paywallPackages].
 class ProPaywallSheet extends ConsumerStatefulWidget {
-  const ProPaywallSheet({super.key, this.loadPackages, this.buy});
+  const ProPaywallSheet({
+    super.key,
+    this.source = PaywallSource.general,
+    this.loadPackages,
+    this.buy,
+  });
 
+  final PaywallSource source;
   final Future<List<Package>> Function()? loadPackages;
   final Future<bool> Function(Package package)? buy;
 
@@ -61,23 +101,63 @@ class _ProPaywallSheetState extends ConsumerState<ProPaywallSheet> {
   @override
   void initState() {
     super.initState();
-    _packagesFuture =
-        (widget.loadPackages ?? PurchasesService.paywallPackages)();
+    Analytics.log('paywall_shown', {'source': widget.source.name});
+    _packagesFuture = _loadOffer();
   }
 
   void _retryLoad() {
     setState(() {
-      _packagesFuture =
-          (widget.loadPackages ?? PurchasesService.paywallPackages)();
+      _packagesFuture = _loadOffer();
     });
+  }
+
+  /// Fetches the offering, reporting an unusable one (fetch failure or empty —
+  /// both render as the retry state) so funnel drop-offs between `shown` and
+  /// `purchase_started` can be told apart from plain disinterest.
+  Future<List<Package>> _loadOffer() async {
+    final List<Package> packages;
+    try {
+      packages =
+          await (widget.loadPackages ?? PurchasesService.paywallPackages)();
+    } catch (_) {
+      Analytics.log('paywall_offer_unavailable', {
+        'source': widget.source.name,
+        'reason': 'error',
+      });
+      rethrow;
+    }
+    if (packages.isEmpty) {
+      Analytics.log('paywall_offer_unavailable', {
+        'source': widget.source.name,
+        'reason': 'empty',
+      });
+    }
+    return packages;
   }
 
   Future<void> _buy() async {
     final package = _selected;
     if (_busy || package == null) return;
     setState(() => _busy = true);
+    Analytics.log('paywall_purchase_started', {
+      'source': widget.source.name,
+      'plan': package.packageType.name,
+    });
 
     final purchased = await (widget.buy ?? PurchasesService.purchase)(package);
+    if (purchased) {
+      Analytics.log('paywall_purchased', {
+        'source': widget.source.name,
+        'plan': package.packageType.name,
+        'price': package.storeProduct.price,
+        'currency': package.storeProduct.currencyCode,
+      });
+    } else {
+      Analytics.log('paywall_purchase_abandoned', {
+        'source': widget.source.name,
+        'plan': package.packageType.name,
+      });
+    }
     if (!mounted) return;
 
     if (purchased) {
@@ -98,6 +178,9 @@ class _ProPaywallSheetState extends ConsumerState<ProPaywallSheet> {
     setState(() => _busy = true);
 
     final restored = await PurchasesService.restorePurchases();
+    if (restored) {
+      Analytics.log('paywall_restored', {'source': widget.source.name});
+    }
     if (!mounted) return;
 
     if (restored) {
@@ -126,9 +209,66 @@ class _ProPaywallSheetState extends ConsumerState<ProPaywallSheet> {
     }
   }
 
+  /// The contextual headline: names the locked feature the user just tapped,
+  /// falling back to the generic pitch for neutral entry points.
+  String _headline(BuildContext context) {
+    final l10n = context.l10n;
+    switch (widget.source) {
+      case PaywallSource.readingLimit:
+        return l10n.paywallTitleReadingLimit;
+      case PaywallSource.smaczki:
+        return l10n.paywallTitleSmaczki;
+      case PaywallSource.favorites:
+        return l10n.paywallTitleFavorites;
+      case PaywallSource.history:
+        return l10n.paywallTitleHistory;
+      case PaywallSource.general:
+        return l10n.paywallTitle;
+    }
+  }
+
+  /// The four benefit rows, reordered so the one matching [PaywallSource]
+  /// leads the list — the sheet should answer the exact desire that opened it
+  /// before widening to the rest of PRO.
+  List<Widget> _benefits(BuildContext context) {
+    final l10n = context.l10n;
+    final unlimited = _Benefit(
+      icon: Icons.all_inclusive,
+      title: l10n.paywallBenefitUnlimitedTitle,
+      body: l10n.paywallBenefitUnlimitedBody,
+    );
+    final noAds = _Benefit(
+      icon: Icons.block,
+      title: l10n.paywallBenefitNoAdsTitle,
+      body: l10n.paywallBenefitNoAdsBody,
+    );
+    final smaczki = _Benefit(
+      icon: Icons.psychology_alt_outlined,
+      title: l10n.paywallBenefitSmaczkiTitle,
+      body: l10n.paywallBenefitSmaczkiBody,
+    );
+    final favorites = _Benefit(
+      icon: Icons.star_outline_rounded,
+      title: l10n.paywallBenefitFavoritesTitle,
+      body: l10n.paywallBenefitFavoritesBody,
+    );
+    switch (widget.source) {
+      // The reveal wall is about reading more, which the default order
+      // already leads with.
+      case PaywallSource.general:
+      case PaywallSource.readingLimit:
+        return [unlimited, noAds, smaczki, favorites];
+      case PaywallSource.smaczki:
+        return [smaczki, unlimited, noAds, favorites];
+      // One benefit row covers both favorites and history.
+      case PaywallSource.favorites:
+      case PaywallSource.history:
+        return [favorites, unlimited, smaczki, noAds];
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final l10n = context.l10n;
     final colors = context.colors;
 
     return ConstrainedBox(
@@ -142,11 +282,11 @@ class _ProPaywallSheetState extends ConsumerState<ProPaywallSheet> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const SizedBox(height: 20),
-                const _ProBadge(),
-                const SizedBox(height: 18),
+                const SizedBox(height: 10),
+                const _ProHero(),
+                const SizedBox(height: 14),
                 Text(
-                  l10n.paywallTitle,
+                  _headline(context),
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: colors.ink,
@@ -157,26 +297,7 @@ class _ProPaywallSheetState extends ConsumerState<ProPaywallSheet> {
                   ),
                 ),
                 const SizedBox(height: 24),
-                _Benefit(
-                  icon: Icons.all_inclusive,
-                  title: l10n.paywallBenefitUnlimitedTitle,
-                  body: l10n.paywallBenefitUnlimitedBody,
-                ),
-                _Benefit(
-                  icon: Icons.block,
-                  title: l10n.paywallBenefitNoAdsTitle,
-                  body: l10n.paywallBenefitNoAdsBody,
-                ),
-                _Benefit(
-                  icon: Icons.psychology_alt_outlined,
-                  title: l10n.paywallBenefitSmaczkiTitle,
-                  body: l10n.paywallBenefitSmaczkiBody,
-                ),
-                _Benefit(
-                  icon: Icons.star_outline_rounded,
-                  title: l10n.paywallBenefitFavoritesTitle,
-                  body: l10n.paywallBenefitFavoritesBody,
-                ),
+                ..._benefits(context),
                 const SizedBox(height: 20),
                 _buildOffer(context),
                 const SizedBox(height: 8),
@@ -208,6 +329,33 @@ class _ProPaywallSheetState extends ConsumerState<ProPaywallSheet> {
     );
   }
 
+  /// Price-anchoring subline for the lifetime card: the lifetime price
+  /// expressed in months of the monthly subscription ("less than N months").
+  ///
+  /// `floor + 1` keeps the claim strictly true even when the lifetime price
+  /// is an exact multiple of the monthly one. Returns null (no subline) when
+  /// the offering has no monthly/lifetime pair to compare, the currencies
+  /// differ, or the comparison wouldn't flatter the lifetime plan (< 2).
+  String? _lifetimeSubline(BuildContext context, List<Package> packages) {
+    Package? monthly;
+    Package? lifetime;
+    for (final package in packages) {
+      if (package.packageType == PackageType.monthly) monthly ??= package;
+      if (package.packageType == PackageType.lifetime) lifetime ??= package;
+    }
+    if (monthly == null || lifetime == null) return null;
+    if (monthly.storeProduct.currencyCode !=
+        lifetime.storeProduct.currencyCode) {
+      return null;
+    }
+    if (monthly.storeProduct.price <= 0) return null;
+
+    final months =
+        (lifetime.storeProduct.price / monthly.storeProduct.price).floor() + 1;
+    if (months < 2) return null;
+    return context.l10n.paywallLifetimeVsMonthly(months);
+  }
+
   /// The live part of the sheet: package cards + CTA, with loading and
   /// retryable error states while the offering fetch resolves.
   Widget _buildOffer(BuildContext context) {
@@ -227,26 +375,47 @@ class _ProPaywallSheetState extends ConsumerState<ProPaywallSheet> {
             child: Center(child: CircularProgressIndicator(strokeWidth: 2.5)),
           );
         }
-        final selected = _selected ?? packages.first;
+        // Commit the default selection (not just render it), otherwise the
+        // CTA has nothing to buy until a card is tapped — the first card
+        // already LOOKS selected, so a straight-to-CTA tap must work.
+        final selected = _selected ??= packages.first;
+        final lifetimeSubline = _lifetimeSubline(context, packages);
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Row(
-              children: [
-                for (var i = 0; i < packages.length; i++) ...[
-                  if (i > 0) const SizedBox(width: 12),
-                  Expanded(
-                    child: _PlanCard(
-                      package: packages[i],
-                      selected: packages[i] == selected,
-                      recommended: i == 0 && packages.length > 1,
-                      onTap: _busy
-                          ? null
-                          : () => setState(() => _selected = packages[i]),
+            // IntrinsicHeight + stretch keep both cards the same height even
+            // though only the lifetime one carries the comparison subline.
+            IntrinsicHeight(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  for (var i = 0; i < packages.length; i++) ...[
+                    if (i > 0) const SizedBox(width: 12),
+                    Expanded(
+                      child: _PlanCard(
+                        package: packages[i],
+                        selected: packages[i] == selected,
+                        recommended: i == 0 && packages.length > 1,
+                        subline:
+                            packages[i].packageType == PackageType.lifetime
+                                ? lifetimeSubline
+                                : null,
+                        onTap: _busy
+                            ? null
+                            : () {
+                                if (_selected != packages[i]) {
+                                  Analytics.log('paywall_plan_selected', {
+                                    'source': widget.source.name,
+                                    'plan': packages[i].packageType.name,
+                                  });
+                                }
+                                setState(() => _selected = packages[i]);
+                              },
+                      ),
                     ),
-                  ),
+                  ],
                 ],
-              ],
+              ),
             ),
             const SizedBox(height: 20),
             _CtaButton(
@@ -284,47 +453,134 @@ class _ProPaywallSheetState extends ConsumerState<ProPaywallSheet> {
   }
 }
 
-/// The glowing "PRO" chip that anchors the sheet visually.
-class _ProBadge extends StatelessWidget {
-  const _ProBadge();
+/// The paywall hero: "PRO" as a brand sticker — the question text's signature
+/// Anton stroke-and-fill treatment, but with a spark-gradient fill — slightly
+/// tilted, glowing from behind, with a counter-tilted bolt badge pinned to its
+/// corner. Pops in once when the sheet opens (one-shot, so tests can settle).
+class _ProHero extends StatefulWidget {
+  const _ProHero();
+
+  @override
+  State<_ProHero> createState() => _ProHeroState();
+}
+
+class _ProHeroState extends State<_ProHero>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 550),
+  )..forward();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  static const double _fontSize = 56;
+
+  /// Both text layers must share the exact same metrics to stay aligned; only
+  /// the paint differs (stroke below, gradient fill above).
+  static final TextStyle _stroke =
+      QuestionTextStyles.strokeFor(_fontSize).copyWith(letterSpacing: 3);
+  static final TextStyle _fill =
+      QuestionTextStyles.fillFor(_fontSize).copyWith(letterSpacing: 3);
+
+  static const Gradient _fillGradient = LinearGradient(
+    colors: [Color(0xFFFFC168), AppTheme.spark, Color(0xFFEA580C)],
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+  );
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [AppTheme.spark, Color(0xFFEA580C)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderRadius: BorderRadius.circular(999),
-          boxShadow: const [
-            BoxShadow(
-              color: Color(0x66F97316),
-              blurRadius: 28,
-              spreadRadius: 2,
-            ),
-          ],
+    return SizedBox(
+      height: 104,
+      child: ScaleTransition(
+        scale: Tween<double>(begin: 0.55, end: 1).animate(
+          CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
         ),
-        child: const Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.bolt_rounded, color: Colors.white, size: 18),
-            SizedBox(width: 4),
-            Text(
-              'PRO',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 15,
-                fontWeight: FontWeight.w900,
-                letterSpacing: 2.5,
+        child: FadeTransition(
+          opacity: CurvedAnimation(
+            parent: _controller,
+            curve: const Interval(0, 0.5),
+          ),
+          child: Stack(
+            alignment: Alignment.center,
+            clipBehavior: Clip.none,
+            children: [
+              // Soft spark wash radiating from behind the sticker.
+              Container(
+                width: 260,
+                height: 104,
+                decoration: const BoxDecoration(
+                  gradient: RadialGradient(
+                    colors: [Color(0x47F97316), Color(0x00F97316)],
+                  ),
+                ),
               ),
-            ),
-          ],
+              Transform.rotate(
+                angle: -0.055,
+                child: Stack(
+                  alignment: Alignment.center,
+                  clipBehavior: Clip.none,
+                  children: [
+                    Text('PRO', style: _stroke),
+                    ShaderMask(
+                      shaderCallback: _fillGradient.createShader,
+                      child: Text('PRO', style: _fill),
+                    ),
+                    Positioned(
+                      top: -8,
+                      right: -26,
+                      child: Transform.rotate(
+                        angle: 0.30,
+                        child: const _BoltSticker(),
+                      ),
+                    ),
+                    Positioned(
+                      bottom: -2,
+                      left: -26,
+                      child: Icon(
+                        Icons.auto_awesome,
+                        size: 18,
+                        color: AppTheme.spark.withValues(alpha: 0.75),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
+    );
+  }
+}
+
+/// The little round bolt badge riding the corner of the "PRO" sticker. The
+/// background-coloured ring separates it from the letters underneath.
+class _BoltSticker extends StatelessWidget {
+  const _BoltSticker();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 38,
+      height: 38,
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [AppTheme.spark, Color(0xFFEA580C)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        shape: BoxShape.circle,
+        border: Border.all(color: context.colors.background, width: 3),
+        boxShadow: const [
+          BoxShadow(color: Color(0x55F97316), blurRadius: 14, spreadRadius: 1),
+        ],
+      ),
+      child: const Icon(Icons.bolt_rounded, color: Colors.white, size: 20),
     );
   }
 }
@@ -393,12 +649,17 @@ class _PlanCard extends StatelessWidget {
     required this.selected,
     required this.recommended,
     required this.onTap,
+    this.subline,
   });
 
   final Package package;
   final bool selected;
   final bool recommended;
   final VoidCallback? onTap;
+
+  /// Optional quiet line under the price (e.g. the lifetime-vs-monthly
+  /// comparison); null keeps the card exactly as before.
+  final String? subline;
 
   /// Human label for the plan; predefined durations are localized, custom
   /// packages fall back to the store product title.
@@ -477,12 +738,26 @@ class _PlanCard extends StatelessWidget {
               fontWeight: FontWeight.w800,
             ),
           ),
+          if (subline != null) ...[
+            const SizedBox(height: 4),
+            Text(
+              subline!,
+              style: TextStyle(
+                color: colors.subtle,
+                fontSize: 11.5,
+                height: 1.25,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
         ],
       ),
     );
 
     return Stack(
       clipBehavior: Clip.none,
+      // Pass the Row's stretched height through so both cards fill it.
+      fit: StackFit.passthrough,
       children: [
         Material(
           color: Colors.transparent,

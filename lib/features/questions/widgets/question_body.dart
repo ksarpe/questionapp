@@ -27,8 +27,9 @@ class QuestionBody extends ConsumerWidget {
     final questionId = current?.id;
     final isReadable = current != null && current.isLocked != true;
 
-    // The daily is where the streak is earned, so its overlay carries the binary
-    // vote panel (TAK/NIE → community split). Other readable questions don't.
+    // Whether the visible question is the served daily (deck position 0) —
+    // drives the analytics split in the vote panel and hides the "back to the
+    // free question" link while already on it.
     final isDaily = ref.watch(isShowingDailyProvider);
 
     // The "back to the free question" escape hatch is only meaningful to a free
@@ -80,11 +81,11 @@ class QuestionBody extends ConsumerWidget {
                   // peeked teaser).
                   const WindQuestionView(key: ValueKey('wind_question_view')),
                   // Vote under EVERY readable question — casting reveals the
-                  // community split, the feed's core hook. Keyed by (user, id) so
-                  // it resets both when swiping to a new question and when the
-                  // account changes. `isDaily` gates the streak/reminder side
-                  // effects to the daily anchor (the server keeps streak
-                  // daily-only regardless).
+                  // community split, the feed's core hook, and any vote can
+                  // move the streak (server: once per UTC day). Keyed by
+                  // (user, id) so it resets both when swiping to a new question
+                  // and when the account changes. `isDaily` only picks the
+                  // analytics event.
                   if (isReadable && questionId != null) ...[
                     const SizedBox(height: 28),
                     DailyVotePanel(

@@ -141,7 +141,8 @@ final questionIndexProvider = NotifierProvider<QuestionDeckNotifier, int>(
   QuestionDeckNotifier.new,
 );
 
-/// Today's scheduled daily question (resolved for the user's local date).
+/// Today's PERSONAL daily question (drawn server-side for the user's local
+/// date from the questions they haven't voted on yet, stable for the day).
 ///
 /// Captures "now" once when first read, so it does not refetch on every rebuild
 /// the way `dailyQuestionProvider(DateTime.now())` would (a fresh DateTime is a
@@ -287,12 +288,12 @@ final isAtRevealSlotProvider = Provider<bool>((ref) {
   return ref.watch(questionIndexProvider) >= deck.length;
 });
 
-/// Whether the question currently on screen is today's free daily question.
+/// Whether the question currently on screen is today's free (personal) daily.
 ///
-/// Drives the "Daily" badge: true only when the visible question's id matches
-/// today's scheduled daily. The daily shares its id with its deck entry (both
-/// the mock list and the `get_daily_question` RPC return the same id), so an id
-/// comparison is enough and stays correct even if the deck wraps around.
+/// True only when the visible question's id matches the served daily. The
+/// daily shares its id with its deck entry (both the mock list and the
+/// `get_daily_question` RPC return the same id), so an id comparison is enough
+/// and stays correct even if the deck wraps around.
 final isShowingDailyProvider = Provider<bool>((ref) {
   final current = ref.watch(currentQuestionProvider);
   final daily = ref.watch(todaysDailyQuestionProvider).asData?.value;

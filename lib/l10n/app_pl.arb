@@ -132,7 +132,7 @@
       "build": { "type": "String" }
     }
   },
-  "aboutTagline": "Jedno przewrotne pytanie dziennie, które rozpala prawdziwą rozmowę.",
+  "aboutTagline": "Przewrotne pytania, które rozpalają prawdziwą rozmowę.",
   "privacyDocsSection": "DOKUMENTY",
   "privacyPolicy": "Polityka prywatności",
   "privacyTerms": "Regulamin",
@@ -199,15 +199,19 @@
   "shareLabel": "Udostępnij",
   "shareTooltip": "Udostępnij pytanie",
   "shareSubject": "Pytanie z Debatly",
-  "shareMessage": "{question}\n\nDebatly — jedno przewrotne pytanie dziennie.",
+  "shareMessage": "{question}\n\nDebatly — przewrotne pytania, które rozpalają rozmowę.",
   "@shareMessage": {
     "placeholders": {
       "question": { "type": "String" }
     }
   },
-  "shareCardTagline": "Jedno przewrotne pytanie dziennie",
+  "shareCardTagline": "Pytania, które rozpalają rozmowę",
   "@shareCardTagline": {
     "description": "Brand tagline shown on the shareable question image card, under the question."
+  },
+  "shareCardHook": "A Ty? TAK czy NIE?",
+  "@shareCardHook": {
+    "description": "Punchy call-to-action on the shareable question image card, shown above the debatly.app URL. Mirrors the app's YES/NO vote buttons to nudge the recipient to answer."
   },
 
   "streakTooltip": "Twoja seria",
@@ -270,7 +274,7 @@
     }
   },
   "rankShareSubject": "Moja ranga w Debatly",
-  "rankShareMessage": "Moja nowa ranga w Debatly: {rank} 🔥\n\nDebatly — jedno przewrotne pytanie dziennie.",
+  "rankShareMessage": "Moja nowa ranga w Debatly: {rank} 🔥\n\nDebatly — przewrotne pytania, które rozpalają rozmowę.",
   "@rankShareMessage": {
     "placeholders": {
       "rank": {
@@ -282,7 +286,7 @@
   "onboardingSkip": "Pomiń",
   "onboardingNext": "Dalej",
   "onboardingWelcomeTitle": "Witaj w Debatly",
-  "onboardingWelcomeBody": "Jedno mocne pytanie dziennie — i wszystko, co je otacza.",
+  "onboardingWelcomeBody": "Mocne pytania, które dzielą ludzi — zagłosuj i zobacz, po której stronie jesteś.",
   "onboardingTasteKicker": "TWÓJ RUCH",
   "onboardingTasteQuestion": "Czy zdrada emocjonalna jest gorsza niż fizyczna?",
   "onboardingTasteMajority": "Jesteś z większością. 🙌",
@@ -301,6 +305,10 @@
   "onboardingNotifyEnable": "Włącz przypomnienia",
   "onboardingNotifySkip": "Nie teraz",
   "paywallTitle": "Zyskaj dostęp do wszystkich pytań i głosów",
+  "paywallTitleReadingLimit": "Czytaj dalej — bez limitów i czekania",
+  "paywallTitleSmaczki": "Poznaj wszystkie argumenty do każdego pytania",
+  "paywallTitleFavorites": "Zachowaj ulubione pytania na zawsze",
+  "paywallTitleHistory": "Wszystkie Twoje głosy w jednym miejscu",
   "paywallBenefitUnlimitedTitle": "Nieograniczone pytania",
   "paywallBenefitUnlimitedBody": "Czytaj całą bibliotekę 1000 pytań — bez dziennych limitów i czekania.",
   "paywallBenefitNoAdsTitle": "Zero reklam",
@@ -316,6 +324,7 @@
   "paywallPerMonth": "/mies.",
   "paywallBestValue": "NAJLEPSZA OFERTA",
   "paywallCta": "Odblokuj pełny dostęp",
+  "paywallLifetimeVsMonthly": "{months, plural, one{Mniej niż {months} miesiąc subskrypcji} few{Mniej niż {months} miesiące subskrypcji} many{Mniej niż {months} miesięcy subskrypcji} other{Mniej niż {months} miesiąca subskrypcji}}",
   "paywallLifetimeNote": "Jedna płatność — na zawsze",
   "paywallSubscriptionNote": "Bez zobowiązań — anulujesz w każdej chwili",
   "paywallLoadError": "Nie udało się wczytać oferty. Sprawdź połączenie i spróbuj ponownie.",

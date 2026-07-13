@@ -598,7 +598,10 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get shareCardTagline => 'One thought-provoking question a day';
+  String get shareCardTagline => 'Questions that spark real conversation';
+
+  @override
+  String get shareCardHook => 'You? Yes or no?';
 
   @override
   String get streakTooltip => 'Your streak';
@@ -801,7 +804,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get onboardingWelcomeBody =>
-      'One sharp question a day — and everything around it.';
+      'Sharp questions that split the room — vote and see which side you\'re on.';
 
   @override
   String get onboardingTasteKicker => 'YOUR TURN';
@@ -863,6 +866,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get paywallTitle => 'Unlock every question and vote';
 
   @override
+  String get paywallTitleReadingLimit => 'Keep reading — no limits, no waiting';
+
+  @override
+  String get paywallTitleSmaczki => 'Unlock every argument, for every question';
+
+  @override
+  String get paywallTitleFavorites => 'Keep your favorite questions forever';
+
+  @override
+  String get paywallTitleHistory => 'Every vote you\'ve cast, in one place';
+
+  @override
   String get paywallBenefitUnlimitedTitle => 'Unlimited questions';
 
   @override
@@ -910,6 +925,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get paywallCta => 'Unlock full access';
+
+  @override
+  String paywallLifetimeVsMonthly(int months) {
+    String _temp0 = intl.Intl.pluralLogic(
+      months,
+      locale: localeName,
+      other: 'Less than $months months of the subscription',
+      one: 'Less than $months month of the subscription',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get paywallLifetimeNote => 'One-time payment — yours forever';

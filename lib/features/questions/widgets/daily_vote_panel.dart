@@ -25,11 +25,12 @@ import 'vote_visuals.dart';
 /// `ValueKey(questionId)` so swiping to a new question resets its local state.
 ///
 /// Shown under EVERY readable question, not only the daily — unlocking a
-/// question and seeing how the crowd voted is the core feed hook. The daily is
-/// still special in one way: it's where the streak is earned, so the
-/// streak/reminder/review side effects only run when [isDaily] is true. A vote
-/// on any other feed question just records + reveals the split (the server also
-/// keeps the streak daily-only, so this gating is belt-and-suspenders).
+/// question and seeing how the crowd voted is the core feed hook. Since the
+/// personal-daily migration the server advances the streak on ANY vote (once
+/// per UTC day), so every vote runs the same side effects here: refresh the
+/// stats chip, mark the reminder loop "voted today", maybe ask for a review.
+/// [isDaily] only distinguishes the analytics event (the activation funnel
+/// counts a vote on the served daily).
 ///
 /// Guests see the buttons too, but may neither vote nor see the community split:
 /// tapping either side sends them to the sign-in sheet instead of casting a vote.
@@ -42,8 +43,9 @@ class DailyVotePanel extends ConsumerStatefulWidget {
 
   final String questionId;
 
-  /// True only for today's daily question (the streak anchor). Drives the
-  /// daily-only after-vote side effects; false for every other feed question.
+  /// True only for the served daily (deck position 0). Analytics-only since
+  /// the personal-daily migration: it picks `daily_vote_cast` (the activation
+  /// event) over `question_vote_cast`; the side effects run for every vote.
   final bool isDaily;
 
   @override
@@ -76,19 +78,18 @@ class _DailyVotePanelState extends ConsumerState<DailyVotePanel> {
       ref.invalidate(dailyVoteStateProvider(widget.questionId));
       setState(() => _local = result);
 
-      if (widget.isDaily) {
-        // Activation, the step the onboarding funnel drives toward: a real,
-        // counting vote on the daily (the streak anchor).
-        Analytics.log('daily_vote_cast', {'choice': choiceLabel});
-        // The vote may have moved the streak — refresh the top chip.
-        ref.invalidate(userStatsProvider);
-        await _refreshReminderAfterVote(result, l10n);
-        await _maybeAskForReview();
-      } else {
-        // A vote on a feed question: it counts + reveals the split, but earns no
-        // streak (server-side too), so skip the streak/reminder/review upkeep.
-        Analytics.log('question_vote_cast', {'choice': choiceLabel});
-      }
+      // Activation, the step the onboarding funnel drives toward, is a vote on
+      // the served daily; feed votes get their own event.
+      Analytics.log(
+        widget.isDaily ? 'daily_vote_cast' : 'question_vote_cast',
+        {'choice': choiceLabel},
+      );
+      // EVERY vote may move the streak now (server: once per UTC day), so the
+      // engagement upkeep runs for all of them: refresh the streak chip, flip
+      // today's reminder to a post-vote message, maybe ask for a review.
+      ref.invalidate(userStatsProvider);
+      await _refreshReminderAfterVote(result, l10n);
+      await _maybeAskForReview();
     } catch (e) {
       if (!mounted) return;
       // Offline gets the calmer "no connection" line — the vote isn't lost, it
@@ -102,8 +103,8 @@ class _DailyVotePanelState extends ConsumerState<DailyVotePanel> {
     }
   }
 
-  /// Now that today's daily is answered, refresh the reminder loop (only called
-  /// on the daily path — `isDaily` — so a vote here is always today's daily).
+  /// A vote just counted for today (any question moves the streak now), so
+  /// refresh the reminder loop.
   /// Stamps the local vote date — plus the share who disagreed with this vote,
   /// for the "X% disagreed with you today" nudge — then re-arms the loop, which
   /// now picks a post-vote message for today's slot instead of a "go vote" one.
@@ -131,7 +132,7 @@ class _DailyVotePanelState extends ConsumerState<DailyVotePanel> {
     }
   }
 
-  /// After a successful daily vote — a natural high point, especially when it
+  /// After a successful vote — a natural high point, especially when it
   /// just extended a streak — consider asking for a store rating. The streak is
   /// read from the now-refreshed stats; the controller enforces the milestone +
   /// weekly cooldown, so the vast majority of votes ask for nothing.

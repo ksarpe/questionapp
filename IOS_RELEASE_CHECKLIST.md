@@ -171,6 +171,6 @@ Alternatywy, gdyby CI nie wystarczyło (debugowanie natywne): wynajem Maca w chm
 - [ ] **App Privacy** (nutrition labels): identyfikatory (IDFA — reklamy), email (konto), historia zakupów; **Tracking = Yes** (AdMob + ATT). Musi być SPÓJNE z manifestem `ios/Runner/PrivacyInfo.xcprivacy` (już w repo, wpięty w target Runner) — jeśli zmienisz etykiety, zaktualizuj też manifest
 - [ ] Privacy Policy URL: https://debatly.app/privacy
 - [ ] Auto-odnawialne subskrypcje: link do **Terms of Use (EULA)** w opisie apki albo w polu EULA — Apple to egzekwuje (https://debatly.app/terms)
-- [ ] **App Review Information**: konto demo (email + hasło działającego konta) + notka, że darmowy user widzi 1 pytanie dziennie
+- [ ] **App Review Information**: konto demo (email + hasło działającego konta) + notka, że darmowy user dostaje 1 darmowe pytanie dziennie (+1 za dzienny kredyt, kolejne po rewarded ad; pełny katalog = subskrypcja PRO)
 - [ ] W formularzu wersji: sekcja **In-App Purchases and Subscriptions** → dołącz subskrypcje do pierwszego review
 - [ ] Age rating, kategoria (np. Lifestyle / Social Networking), słowa kluczowe

@@ -254,9 +254,13 @@
       }
     }
   },
-  "shareCardTagline": "One thought-provoking question a day",
+  "shareCardTagline": "Questions that spark real conversation",
   "@shareCardTagline": {
     "description": "Brand tagline shown on the shareable question image card, under the question."
+  },
+  "shareCardHook": "You? Yes or no?",
+  "@shareCardHook": {
+    "description": "Punchy call-to-action on the shareable question image card, shown above the debatly.app URL. Mirrors the app's YES/NO vote buttons to nudge the recipient to answer."
   },
   "streakTooltip": "Your streak",
   "freeUnlockTooltip": "Free unlock",
@@ -391,7 +395,7 @@
   "onboardingSkip": "Skip",
   "onboardingNext": "Next",
   "onboardingWelcomeTitle": "Welcome to Debatly",
-  "onboardingWelcomeBody": "One sharp question a day — and everything around it.",
+  "onboardingWelcomeBody": "Sharp questions that split the room — vote and see which side you're on.",
   "onboardingTasteKicker": "YOUR TURN",
   "onboardingTasteQuestion": "Is emotional cheating worse than physical cheating?",
   "onboardingTasteMajority": "You're with the majority. 🙌",
@@ -410,6 +414,10 @@
   "onboardingNotifyEnable": "Turn on reminders",
   "onboardingNotifySkip": "Not now",
   "paywallTitle": "Unlock every question and vote",
+  "paywallTitleReadingLimit": "Keep reading — no limits, no waiting",
+  "paywallTitleSmaczki": "Unlock every argument, for every question",
+  "paywallTitleFavorites": "Keep your favorite questions forever",
+  "paywallTitleHistory": "Every vote you've cast, in one place",
   "paywallBenefitUnlimitedTitle": "Unlimited questions",
   "paywallBenefitUnlimitedBody": "Browse the whole library of 1000 questions — no daily limits, no waiting.",
   "paywallBenefitNoAdsTitle": "Zero ads",
@@ -425,6 +433,15 @@
   "paywallPerMonth": "/mo",
   "paywallBestValue": "BEST VALUE",
   "paywallCta": "Unlock full access",
+  "paywallLifetimeVsMonthly": "{months, plural, one{Less than {months} month of the subscription} other{Less than {months} months of the subscription}}",
+  "@paywallLifetimeVsMonthly": {
+    "description": "Subline on the lifetime plan card: the lifetime price expressed as months of the monthly subscription, rounded so the claim is always true.",
+    "placeholders": {
+      "months": {
+        "type": "int"
+      }
+    }
+  },
   "paywallLifetimeNote": "One-time payment — yours forever",
   "paywallSubscriptionNote": "No commitment, cancel anytime",
   "paywallLoadError": "Couldn't load the offers. Check your connection and try again.",

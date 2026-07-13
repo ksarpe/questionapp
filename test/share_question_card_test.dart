@@ -20,7 +20,7 @@ void main() {
           body: Center(
             child: QuestionShareCard(
               questionText: 'Czy zdrada myślami jest zdradą?',
-              tagline: 'Jedno przewrotne pytanie dziennie',
+              tagline: 'Pytania, które rozpalają rozmowę',
             ),
           ),
         ),
@@ -31,7 +31,7 @@ void main() {
     // The question is rendered uppercased, in two stacked Text layers
     // (stroke + fill), so it appears twice.
     expect(find.text('CZY ZDRADA MYŚLAMI JEST ZDRADĄ?'), findsNWidgets(2));
-    expect(find.text('JEDNO PRZEWROTNE PYTANIE DZIENNIE'), findsOneWidget);
+    expect(find.text('PYTANIA, KTÓRE ROZPALAJĄ ROZMOWĘ'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 

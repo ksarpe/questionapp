@@ -1145,8 +1145,14 @@ abstract class AppLocalizations {
   /// Brand tagline shown on the shareable question image card, under the question.
   ///
   /// In en, this message translates to:
-  /// **'One thought-provoking question a day'**
+  /// **'Questions that spark real conversation'**
   String get shareCardTagline;
+
+  /// Punchy call-to-action on the shareable question image card, shown above the debatly.app URL. Mirrors the app's YES/NO vote buttons to nudge the recipient to answer.
+  ///
+  /// In en, this message translates to:
+  /// **'You? Yes or no?'**
+  String get shareCardHook;
 
   /// No description provided for @streakTooltip.
   ///
@@ -1415,7 +1421,7 @@ abstract class AppLocalizations {
   /// No description provided for @onboardingWelcomeBody.
   ///
   /// In en, this message translates to:
-  /// **'One sharp question a day — and everything around it.'**
+  /// **'Sharp questions that split the room — vote and see which side you\'re on.'**
   String get onboardingWelcomeBody;
 
   /// No description provided for @onboardingTasteKicker.
@@ -1526,6 +1532,30 @@ abstract class AppLocalizations {
   /// **'Unlock every question and vote'**
   String get paywallTitle;
 
+  /// No description provided for @paywallTitleReadingLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep reading — no limits, no waiting'**
+  String get paywallTitleReadingLimit;
+
+  /// No description provided for @paywallTitleSmaczki.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock every argument, for every question'**
+  String get paywallTitleSmaczki;
+
+  /// No description provided for @paywallTitleFavorites.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep your favorite questions forever'**
+  String get paywallTitleFavorites;
+
+  /// No description provided for @paywallTitleHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Every vote you\'ve cast, in one place'**
+  String get paywallTitleHistory;
+
   /// No description provided for @paywallBenefitUnlimitedTitle.
   ///
   /// In en, this message translates to:
@@ -1615,6 +1645,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Unlock full access'**
   String get paywallCta;
+
+  /// Subline on the lifetime plan card: the lifetime price expressed as months of the monthly subscription, rounded so the claim is always true.
+  ///
+  /// In en, this message translates to:
+  /// **'{months, plural, one{Less than {months} month of the subscription} other{Less than {months} months of the subscription}}'**
+  String paywallLifetimeVsMonthly(int months);
 
   /// No description provided for @paywallLifetimeNote.
   ///

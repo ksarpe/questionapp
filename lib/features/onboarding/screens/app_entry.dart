@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../services/ads_bootstrap.dart';
+import '../../monetization/providers/monetization_providers.dart';
 import '../../questions/screens/question_screen.dart';
 import '../providers/onboarding_providers.dart';
 import 'onboarding_screen.dart';
@@ -39,7 +41,11 @@ class _AppEntryState extends ConsumerState<AppEntry> {
         : const Duration(milliseconds: 1900);
     _timer = Timer(splashFor, () {
       if (!mounted) return;
-      setState(() => _phase = onboardingDone ? _Phase.home : _Phase.onboarding);
+      if (onboardingDone) {
+        _enterHome();
+      } else {
+        setState(() => _phase = _Phase.onboarding);
+      }
     });
   }
 
@@ -52,7 +58,24 @@ class _AppEntryState extends ConsumerState<AppEntry> {
   void _finishOnboarding() {
     // Persist so the tutorial never runs again, then reveal the live app.
     ref.read(onboardingControllerProvider.notifier).complete();
-    if (mounted) setState(() => _phase = _Phase.home);
+    if (mounted) _enterHome();
+  }
+
+  /// Reveals the live app and brings up the ad stack behind it.
+  ///
+  /// Consent (the UMP GDPR form + iOS ATT prompt) is deliberately gathered only
+  /// HERE — once the home screen is on, never during onboarding — so the legal
+  /// dialogs can't interrupt the welcome funnel (see [AdsBootstrap]). Once
+  /// consent + AdMob are up, the shared rewarded-ad service re-preloads: its
+  /// creation-time preload no-ops while the SDK is uninitialised, so this is
+  /// what actually warms the first ad.
+  void _enterHome() {
+    setState(() => _phase = _Phase.home);
+    unawaited(
+      AdsBootstrap.ensureStarted().then((_) {
+        if (mounted) ref.read(rewardedAdServiceProvider).preload();
+      }),
+    );
   }
 
   @override

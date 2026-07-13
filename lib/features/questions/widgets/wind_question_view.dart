@@ -537,7 +537,8 @@ class _WindQuestionViewState extends ConsumerState<WindQuestionView>
     if (_unlocking) return;
     setState(() => _unlocking = true);
 
-    final purchased = await showProPaywall(context);
+    final purchased =
+        await showProPaywall(context, source: PaywallSource.readingLimit);
     if (!mounted) return;
 
     if (purchased) {

@@ -47,7 +47,8 @@ class _SmaczkiSheetState extends ConsumerState<_SmaczkiSheet> {
   Future<void> _getPremium() async {
     setState(() => _busy = true);
 
-    final purchased = await showProPaywall(context);
+    final purchased =
+        await showProPaywall(context, source: PaywallSource.smaczki);
     if (!mounted) return;
 
     if (purchased) {

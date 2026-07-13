@@ -118,7 +118,8 @@ class _FavoriteStarButtonState extends ConsumerState<FavoriteStarButton>
     if (_opening) return;
     setState(() => _opening = true);
     try {
-      final purchased = await showProPaywall(context);
+      final purchased =
+          await showProPaywall(context, source: PaywallSource.favorites);
       if (!mounted) return;
       if (purchased) {
         await ref.read(sessionProvider.notifier).refresh();

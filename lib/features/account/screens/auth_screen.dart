@@ -124,7 +124,8 @@ class _AuthCardState extends ConsumerState<_AuthCard> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       _buildCloseRow(context),
-                      const SizedBox(height: 4),
+                      _buildBrandHeader(context),
+                      const SizedBox(height: 20),
                       AuthSegmentedTabs(
                         mode: _mode,
                         enabled: !_isSubmitting,
@@ -300,6 +301,37 @@ class _AuthCardState extends ConsumerState<_AuthCard> {
       child: AuthCircleIconButton(
         icon: Icons.close,
         onTap: () => Navigator.of(context).maybePop(),
+      ),
+    );
+  }
+
+  /// Brand header shown above the sign-in / sign-up tabs: the app icon in a
+  /// softly glowing rounded tile. It gives the sheet an identity instead of
+  /// opening cold on a form.
+  Widget _buildBrandHeader(BuildContext context) {
+    return Center(
+      child: Container(
+        width: 72,
+        height: 72,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: AppTheme.spark.withValues(alpha: 0.30),
+              blurRadius: 22,
+              offset: const Offset(0, 10),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: Image.asset(
+            'assets/images/logo.png',
+            width: 72,
+            height: 72,
+            fit: BoxFit.cover,
+          ),
+        ),
       ),
     );
   }

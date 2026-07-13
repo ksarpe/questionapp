@@ -20,6 +20,7 @@
 //   SCREENSHOT_OUT_DIR      default "build/store_screenshots"
 //   SCREENSHOT_PIXEL_RATIO  default "3"  (3 ⇒ 360×640 logical ⇒ 1080×1920 px)
 import 'dart:io';
+import 'dart:ui' as ui;
 
 import 'package:debatly/core/share/widget_to_image.dart';
 import 'package:debatly/features/questions/widgets/share_question_card.dart';
@@ -49,6 +50,9 @@ void main() {
         3;
 
     var total = 0;
+    // Decoded once and reused: the brand logo painted at the top of every
+    // poster. Loaded lazily inside the first runAsync (rootBundle needs it).
+    ui.Image? logo;
     for (final code in locales) {
       final questions = _readQuestions(code);
       if (questions.isEmpty) {
@@ -64,10 +68,12 @@ void main() {
         // Run the off-screen raster outside the fake-async test zone.
         late final List<int> png;
         await tester.runAsync(() async {
+          logo ??= await QuestionShareCard.loadLogo();
           final bytes = await renderWidgetToPng(
             child: QuestionShareCard(
               questionText: questions[i],
-              tagline: l10n.shareCardTagline,
+              tagline: l10n.shareCardHook,
+              logo: logo,
             ),
             logicalSize: _logicalSize,
             view: tester.view,

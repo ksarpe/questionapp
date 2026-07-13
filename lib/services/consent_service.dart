@@ -16,8 +16,11 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 ///      an app touches the IDFA, which AdMob uses — so we request it on iOS only,
 ///      and only when the user hasn't already answered.
 ///
-/// Call [gather] once at startup, BEFORE [AdsService.initialise], so the AdMob
-/// SDK already has a consent decision when it initialises and loads ads.
+/// Call [gather] BEFORE `AdsService.initialise`, so the AdMob SDK already has a
+/// consent decision when it initialises and loads ads. Both are sequenced by
+/// `AdsBootstrap`, which runs on the first home-screen entry rather than at app
+/// launch — deliberately, so the consent/ATT dialogs never interrupt the
+/// onboarding funnel.
 ///
 /// Best-effort throughout: every call is guarded so a consent hiccup (or running
 /// on a platform without the native SDKs, e.g. desktop dev) never blocks launch.
