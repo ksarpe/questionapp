@@ -21,10 +21,12 @@
 	<key>NSPrivacyTracking</key>
 	<true/>
 
-	<!-- Tracking domains are enumerated by the Google Mobile Ads SDK's own manifest;
-	     the app's first-party code initiates no tracking connections of its own. -->
-	<key>NSPrivacyTrackingDomains</key>
-	<array/>
+	<!-- NO NSPrivacyTrackingDomains key: the app's first-party code initiates no
+	     tracking connections of its own (the Google Mobile Ads SDK gates its own
+	     endpoints on ATT internally and its manifest declares no domains either).
+	     Per Apple TN3181, NSPrivacyTracking=true with an EMPTY domains array is an
+	     INVALID manifest (ITMS-91064) — the key must be non-empty or absent. That
+	     empty array is what got v1.0.7 builds 7-10 rejected. -->
 
 	<key>NSPrivacyCollectedDataTypes</key>
 	<array>

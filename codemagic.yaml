@@ -50,40 +50,50 @@ workflows:
         script: flutter pub get
       - name: Apply signing profiles to Xcode project
         script: xcode-project use-profiles
-      - name: Patch Swift Package privacy manifests (ITMS-91064)
+      - name: Validate privacy manifests (ITMS-91064 guard)
         script: |
-          # This project integrates plugins via Swift Package Manager (no CocoaPods).
-          # A bundled SDK ships a PrivacyInfo.xcprivacy that lists NSPrivacyTrackingDomains
-          # while NSPrivacyTracking is not true, which Apple rejects (ITMS-91064).
+          # ROOT CAUSE of the v1.0.7 build 7-10 rejections (found 2026-07-14): our OWN
+          # ios/Runner/PrivacyInfo.xcprivacy had NSPrivacyTracking=true with an EMPTY
+          # NSPrivacyTrackingDomains array. Per Apple TN3181 that combination is an
+          # invalid manifest (ITMS-91064) — the domains key must be non-empty or ABSENT.
+          # (Apple's rejection email only quotes the opposite rule, which misled earlier
+          # fixes into patching SDK manifests; GMA/UMP/Sentry/RevenueCat manifests were
+          # all verified clean.) The source file is fixed; this step stays as a guard.
           #
-          # SPM lays packages out in two places under DerivedData/SourcePackages/:
-          #   - checkouts/  : source packages (git)
-          #   - artifacts/  : prebuilt BINARY xcframeworks (e.g. GoogleMobileAds) <- the
-          #                   likely culprit; the previous scan wrongly looked only in
-          #                   checkouts/ and missed these.
-          # So: materialise the ephemeral iOS SPM package, resolve into the default
-          # DerivedData that `flutter build ipa` reuses, then scan EVERY *.xcprivacy in
-          # DerivedData + the build dir, log its state, and force NSPrivacyTracking=true
-          # wherever tracking domains are declared (chmod first — xcframework files can be
-          # read-only). FULLY NON-FATAL (set +e / exit 0): can never break the build; the
-          # [privacy] log lines name any culprit + path for a precise follow-up.
+          # It scans every *.xcprivacy reachable by the build (repo + SPM checkouts/ and
+          # binary artifacts/ under DerivedData) and heals BOTH invalid combos from
+          # TN3181:
+          #   1. NSPrivacyTrackingDomains non-empty while NSPrivacyTracking != true
+          #      -> force NSPrivacyTracking=true
+          #   2. NSPrivacyTracking=true while NSPrivacyTrackingDomains is EMPTY
+          #      -> remove the empty NSPrivacyTrackingDomains key
+          # FULLY NON-FATAL (set +e / exit 0): can never break the build; the [privacy]
+          # log lines name every manifest + its state for follow-up.
           set +e
           flutter build ios --config-only --no-codesign >/dev/null 2>&1
           xcodebuild -resolvePackageDependencies \
             -workspace ios/Runner.xcworkspace -scheme Runner >/dev/null 2>&1
-          echo "=== [privacy] scanning all Swift Package privacy manifests ==="
+          echo "=== [privacy] scanning all privacy manifests ==="
           find "$HOME/Library/Developer/Xcode/DerivedData" "$CM_BUILD_DIR" \
             -name '*.xcprivacy' 2>/dev/null | sort -u | while IFS= read -r f; do
             [ -z "$f" ] && continue
-            dom=no
-            /usr/bin/plutil -extract NSPrivacyTrackingDomains.0 raw "$f" >/dev/null 2>&1 && dom=yes
+            # plutil raw on an array prints its element count; absent key errors out.
+            domcount=$(/usr/bin/plutil -extract NSPrivacyTrackingDomains raw "$f" 2>/dev/null)
+            [ -z "$domcount" ] && domcount=absent
             trk=$(/usr/bin/plutil -extract NSPrivacyTracking raw "$f" 2>/dev/null)
             [ -z "$trk" ] && trk=absent
-            echo "[privacy] domains=$dom tracking=$trk :: $f"
-            if [ "$dom" = yes ] && [ "$trk" != "true" ]; then
+            echo "[privacy] domains=$domcount tracking=$trk :: $f"
+            if [ "$domcount" != absent ] && [ "$domcount" -gt 0 ] 2>/dev/null && [ "$trk" != "true" ]; then
               chmod u+w "$f" 2>/dev/null
               if /usr/bin/plutil -replace NSPrivacyTracking -bool true "$f" 2>/dev/null; then
-                echo "[privacy]   >> ITMS-91064 FIX applied"
+                echo "[privacy]   >> FIX: set NSPrivacyTracking=true (domains present)"
+              else
+                echo "[privacy]   >> WARNING could not patch: $f"
+              fi
+            elif [ "$domcount" = "0" ] && [ "$trk" = "true" ]; then
+              chmod u+w "$f" 2>/dev/null
+              if /usr/bin/plutil -remove NSPrivacyTrackingDomains "$f" 2>/dev/null; then
+                echo "[privacy]   >> FIX: removed EMPTY NSPrivacyTrackingDomains (tracking=true)"
               else
                 echo "[privacy]   >> WARNING could not patch: $f"
               fi
