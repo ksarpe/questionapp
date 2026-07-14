@@ -55,29 +55,38 @@ workflows:
           # This project integrates plugins via Swift Package Manager (no CocoaPods).
           # A bundled SDK ships a PrivacyInfo.xcprivacy that lists NSPrivacyTrackingDomains
           # while NSPrivacyTracking is not true, which Apple rejects (ITMS-91064).
-          # Materialise the iOS ephemeral SPM package, resolve the remote packages into
-          # the same default DerivedData that `flutter build ipa` reuses, then log every
-          # manifest and flip NSPrivacyTracking=true wherever tracking domains exist.
-          # FULLY NON-FATAL by design (set +e / exit 0): this step can never fail the
-          # build. If the patch doesn't land, the log still names the exact culprit
-          # framework + path so we can follow up precisely.
+          #
+          # SPM lays packages out in two places under DerivedData/SourcePackages/:
+          #   - checkouts/  : source packages (git)
+          #   - artifacts/  : prebuilt BINARY xcframeworks (e.g. GoogleMobileAds) <- the
+          #                   likely culprit; the previous scan wrongly looked only in
+          #                   checkouts/ and missed these.
+          # So: materialise the ephemeral iOS SPM package, resolve into the default
+          # DerivedData that `flutter build ipa` reuses, then scan EVERY *.xcprivacy in
+          # DerivedData + the build dir, log its state, and force NSPrivacyTracking=true
+          # wherever tracking domains are declared (chmod first — xcframework files can be
+          # read-only). FULLY NON-FATAL (set +e / exit 0): can never break the build; the
+          # [privacy] log lines name any culprit + path for a precise follow-up.
           set +e
           flutter build ios --config-only --no-codesign >/dev/null 2>&1
           xcodebuild -resolvePackageDependencies \
             -workspace ios/Runner.xcworkspace -scheme Runner >/dev/null 2>&1
-          echo "=== [privacy] Swift Package privacy manifests ==="
+          echo "=== [privacy] scanning all Swift Package privacy manifests ==="
           find "$HOME/Library/Developer/Xcode/DerivedData" "$CM_BUILD_DIR" \
-            -path '*SourcePackages/checkouts*' -name '*.xcprivacy' 2>/dev/null \
-            | sort -u | while IFS= read -r f; do
+            -name '*.xcprivacy' 2>/dev/null | sort -u | while IFS= read -r f; do
             [ -z "$f" ] && continue
             dom=no
             /usr/bin/plutil -extract NSPrivacyTrackingDomains.0 raw "$f" >/dev/null 2>&1 && dom=yes
             trk=$(/usr/bin/plutil -extract NSPrivacyTracking raw "$f" 2>/dev/null)
             [ -z "$trk" ] && trk=absent
-            echo "[privacy] domains=$dom tracking=$trk :: ${f##*/checkouts/}"
+            echo "[privacy] domains=$dom tracking=$trk :: $f"
             if [ "$dom" = yes ] && [ "$trk" != "true" ]; then
-              /usr/bin/plutil -replace NSPrivacyTracking -bool true "$f" \
-                && echo "[privacy]   >> ITMS-91064 FIX applied to ${f##*/checkouts/}"
+              chmod u+w "$f" 2>/dev/null
+              if /usr/bin/plutil -replace NSPrivacyTracking -bool true "$f" 2>/dev/null; then
+                echo "[privacy]   >> ITMS-91064 FIX applied"
+              else
+                echo "[privacy]   >> WARNING could not patch: $f"
+              fi
             fi
           done
           echo "=== [privacy] done ==="
