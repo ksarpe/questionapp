@@ -50,6 +50,38 @@ workflows:
         script: flutter pub get
       - name: Apply signing profiles to Xcode project
         script: xcode-project use-profiles
+      - name: Patch Swift Package privacy manifests (ITMS-91064)
+        script: |
+          # This project integrates plugins via Swift Package Manager (no CocoaPods).
+          # A bundled SDK ships a PrivacyInfo.xcprivacy that lists NSPrivacyTrackingDomains
+          # while NSPrivacyTracking is not true, which Apple rejects (ITMS-91064).
+          # Materialise the iOS ephemeral SPM package, resolve the remote packages into
+          # the same default DerivedData that `flutter build ipa` reuses, then log every
+          # manifest and flip NSPrivacyTracking=true wherever tracking domains exist.
+          # FULLY NON-FATAL by design (set +e / exit 0): this step can never fail the
+          # build. If the patch doesn't land, the log still names the exact culprit
+          # framework + path so we can follow up precisely.
+          set +e
+          flutter build ios --config-only --no-codesign >/dev/null 2>&1
+          xcodebuild -resolvePackageDependencies \
+            -workspace ios/Runner.xcworkspace -scheme Runner >/dev/null 2>&1
+          echo "=== [privacy] Swift Package privacy manifests ==="
+          find "$HOME/Library/Developer/Xcode/DerivedData" "$CM_BUILD_DIR" \
+            -path '*SourcePackages/checkouts*' -name '*.xcprivacy' 2>/dev/null \
+            | sort -u | while IFS= read -r f; do
+            [ -z "$f" ] && continue
+            dom=no
+            /usr/bin/plutil -extract NSPrivacyTrackingDomains.0 raw "$f" >/dev/null 2>&1 && dom=yes
+            trk=$(/usr/bin/plutil -extract NSPrivacyTracking raw "$f" 2>/dev/null)
+            [ -z "$trk" ] && trk=absent
+            echo "[privacy] domains=$dom tracking=$trk :: ${f##*/checkouts/}"
+            if [ "$dom" = yes ] && [ "$trk" != "true" ]; then
+              /usr/bin/plutil -replace NSPrivacyTracking -bool true "$f" \
+                && echo "[privacy]   >> ITMS-91064 FIX applied to ${f##*/checkouts/}"
+            fi
+          done
+          echo "=== [privacy] done ==="
+          exit 0
       - name: Build IPA
         script: |
           # --obfuscate + --split-debug-info produce the Dart symbol maps that
