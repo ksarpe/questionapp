@@ -52,21 +52,24 @@ workflows:
         script: xcode-project use-profiles
       - name: Validate privacy manifests (ITMS-91064 guard)
         script: |
-          # ROOT CAUSE of the v1.0.7 build 7-10 rejections (found 2026-07-14): our OWN
-          # ios/Runner/PrivacyInfo.xcprivacy had NSPrivacyTracking=true with an EMPTY
-          # NSPrivacyTrackingDomains array. Per Apple TN3181 that combination is an
-          # invalid manifest (ITMS-91064) — the domains key must be non-empty or ABSENT.
-          # (Apple's rejection email only quotes the opposite rule, which misled earlier
-          # fixes into patching SDK manifests; GMA/UMP/Sentry/RevenueCat manifests were
-          # all verified clean.) The source file is fixed; this step stays as a guard.
+          # ROOT CAUSE of the v1.0.7 build 7-11 ITMS-91064 rejections (nailed 2026-07-18
+          # by inspecting build 11's IPA): App Store validation treats NSPrivacyTracking
+          # and NSPrivacyTrackingDomains as a PAIR — tracking=true REQUIRES a non-empty
+          # domains list. Proven on this app: true + empty array rejected (builds 7-10),
+          # true + ABSENT domains rejected too (build 11). TN3181's table doesn't spell
+          # out the second case and the email quotes yet another rule — do not trust
+          # either; trust the IPA. Correct state for this app: NEITHER key present
+          # (first-party code contacts no tracking domains; declaring Google's ad domains
+          # would make iOS block them when ATT is denied). GMA's own manifest ships the
+          # same keyless state. The source file is fixed; this step stays as a guard.
           #
           # It scans every *.xcprivacy reachable by the build (repo + SPM checkouts/ and
-          # binary artifacts/ under DerivedData) and heals BOTH invalid combos from
-          # TN3181:
+          # binary artifacts/ under DerivedData) and heals both invalid states:
           #   1. NSPrivacyTrackingDomains non-empty while NSPrivacyTracking != true
           #      -> force NSPrivacyTracking=true
-          #   2. NSPrivacyTracking=true while NSPrivacyTrackingDomains is EMPTY
-          #      -> remove the empty NSPrivacyTrackingDomains key
+          #   2. NSPrivacyTracking=true while NSPrivacyTrackingDomains is EMPTY or ABSENT
+          #      -> remove BOTH keys (removing just the domains key leaves true+absent,
+          #         which build 11 proved still gets rejected)
           # FULLY NON-FATAL (set +e / exit 0): can never break the build; the [privacy]
           # log lines name every manifest + its state for follow-up.
           set +e
@@ -90,10 +93,11 @@ workflows:
               else
                 echo "[privacy]   >> WARNING could not patch: $f"
               fi
-            elif [ "$domcount" = "0" ] && [ "$trk" = "true" ]; then
+            elif [ "$trk" = "true" ] && { [ "$domcount" = "0" ] || [ "$domcount" = absent ]; }; then
               chmod u+w "$f" 2>/dev/null
-              if /usr/bin/plutil -remove NSPrivacyTrackingDomains "$f" 2>/dev/null; then
-                echo "[privacy]   >> FIX: removed EMPTY NSPrivacyTrackingDomains (tracking=true)"
+              /usr/bin/plutil -remove NSPrivacyTrackingDomains "$f" 2>/dev/null
+              if /usr/bin/plutil -remove NSPrivacyTracking "$f" 2>/dev/null; then
+                echo "[privacy]   >> FIX: removed tracking key pair (true without domains is rejected)"
               else
                 echo "[privacy]   >> WARNING could not patch: $f"
               fi
